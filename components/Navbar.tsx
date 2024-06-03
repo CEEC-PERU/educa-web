@@ -13,7 +13,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ bgColor = 'bg-blue-600', textColor = 'text-white' ,   fontSize = 'text-lg',
 fontFamily = 'font-sans'}) => {
   return (
-    <nav className={`${bgColor} p-4`}>
+    <nav className={`${bgColor } from-indigo-500 p-4 `}>
       <div className="container mx-auto flex justify-between items-center">
         <div className={`${textColor}  ${fontSize} ${fontFamily}  text-lg font-bold`}>
           EducaWeb

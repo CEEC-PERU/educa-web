@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar bgColor="bg-blue-400"  />
+        <Navbar bgColor="bg-gradient-to-r from-sky-600 via-purple-500 to-fuchsia-900"  />
         {children}
       </body>
     </html>
