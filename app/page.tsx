@@ -1,8 +1,7 @@
 // app/page.tsx
-
 import CardImage from '../components/CardImage';
 import CardCarousel from "../components/CardCarousel";
-
+import Footter from "../components/Footter";
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100">
@@ -20,7 +19,6 @@ export default function Home() {
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">Tarjetas de Propiedades</h1>
         <CardCarousel />
-      
       </div>
     </main>
   );

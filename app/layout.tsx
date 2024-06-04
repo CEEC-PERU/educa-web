@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/Navbar";
+import Footter from "../components/Footter"; // Importa el componente Footer
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navbar bgColor="bg-gradient-to-r from-sky-600 via-purple-500 to-fuchsia-900"  />
+        <Navbar bgColor="bg-gradient-to-r from-cyan-900 to-emerald-900"  />
         {children}
+        <Footter  footerText="2024 EducaWeb. Todos los derechos reservados."/> {/* Agrega el componente Footer aquí */}
       </body>
     </html>
   );
