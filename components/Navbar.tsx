@@ -13,18 +13,20 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({
   bgColor = 'bg-blue-600',
   textColor = 'text-white',
-  fontSize = 'text-lg',
+  fontSize = 'text-2xl',
   fontFamily = 'font-sans',
-  navbarHeight = 'h-35', // altura del navbar
+  navbarHeight = 'h-16', // altura del navbar ajustada
 }) => {
   return (
-    <nav className={`${bgColor} ${navbarHeight} from-indigo-700 p-4`}>
-      <div className="container mx-auto flex justify-between items-center">
-        <div className={`${textColor} ${fontSize} ${fontFamily} text-lg font-bold`}>
+    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50`}>
+      <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
+        <div className={`${textColor} ${fontSize} ${fontFamily} font-bold`}>
           EducaWeb
         </div>
         <div className="space-x-4">
-          <Link href="/login" className={`${textColor} ${fontSize} ${fontFamily} hover:text-gray-300`}>Inicio de Sesión</Link>
+          <Link href="/login" className={`${textColor} ${fontSize} ${fontFamily} hover:text-gray-300 font-bold`}>
+            Iniciar Sesión
+          </Link>
         </div>
       </div>
     </nav>

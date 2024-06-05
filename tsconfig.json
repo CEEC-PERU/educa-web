@@ -8,6 +8,10 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./heroicons.d.ts"
+    ],
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
