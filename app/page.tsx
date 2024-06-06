@@ -3,6 +3,7 @@ import CardCarousel from "../components/CardCarousel";
 import Footter from "../components/Footter";
 import ButtonComponent from '@/components/ButtonComponent';
 
+//pagina principal
 export default function Home() {
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -46,7 +47,7 @@ export default function Home() {
       <section className="relative z-10 flex flex-col items-center justify-center min-h-screen w-full p-6 bg-white text-gray-800">
         <div className="container mx-auto mb-6">
           {/* Aquí puedes agregar el contenido del carrusel de tarjetas */}
-         
+         <CardCarousel/>
         </div>
       </section>
 
