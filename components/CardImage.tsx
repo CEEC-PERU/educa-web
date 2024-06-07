@@ -1,19 +1,21 @@
 import React from 'react';
 import ButtonComponent from "../components/ButtonComponent";
+import { useRouter } from 'next/router';
 interface CardImageProps {
-  imageUrl: string;
-  title: string;
   rating: number;
-  description: string;
+  image: string;
+  name: string;
+  description_short: string;
+  duracion_curso: string;
   buttonLabel: string;
   textColor: string;
 }
 
 const CardImage: React.FC<CardImageProps> = ({
-  imageUrl,
-  title,
+  image,
+  name,
   rating,
-  description,
+  description_short,
   buttonLabel,
   textColor
 }) => {
@@ -21,8 +23,8 @@ const CardImage: React.FC<CardImageProps> = ({
     <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
       <div className="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
         <img
-          src={imageUrl}
-          alt={title}
+          src={image}
+          alt={name}
           className="w-full"
         />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
@@ -36,7 +38,7 @@ const CardImage: React.FC<CardImageProps> = ({
       <div className="p-6">
         <div className="flex items-center justify-between mb-3">
           <h5 className={`block font-sans text-xl antialiased font-medium leading-snug tracking-normal ${textColor}`}>
-            {title}
+            {name}
           </h5>
           <p className="flex items-center gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
@@ -46,19 +48,19 @@ const CardImage: React.FC<CardImageProps> = ({
           </p>
         </div>
         <p className="block font-sans text-base antialiased font-light leading-relaxed text-gray-700 text-center truncate">
-          {description}
+          {description_short}
         </p>
         
         <div className="p-6 pt-3">
          
         <ButtonComponent 
-  buttonLabel="Detalle de curso" 
-  backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
-  textColor="text-yellow-200" 
-  fontSize="text-xs" 
-  buttonSize="py-2 px-7"
-/>
-         
+          buttonLabel="Detalle de curso" 
+          backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
+          textColor="text-yellow-200" 
+          fontSize="text-xs" 
+          buttonSize="py-2 px-7"
+        />
+                
 
         </div>
        

@@ -14,7 +14,6 @@ export default function Home() {
     <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"></div>
   </div>
 
-
   <div>
         <div className="md:w-1/2 relative z-10 px-6">
           <h1 className="text-6xl md:text-54xl font-bold mb-2  text-left">La plataforma que fideliza a tu cliente</h1>
