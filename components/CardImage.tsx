@@ -1,6 +1,7 @@
 import React from 'react';
 import ButtonComponent from "../components/ButtonComponent";
-import { useRouter } from 'next/router';
+import Link from 'next/link';
+
 interface CardImageProps {
   rating: number;
   image: string;
@@ -9,6 +10,7 @@ interface CardImageProps {
   duracion_curso: string;
   buttonLabel: string;
   textColor: string;
+  id: number; // Añadir el id del curso
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -17,7 +19,8 @@ const CardImage: React.FC<CardImageProps> = ({
   rating,
   description_short,
   buttonLabel,
-  textColor
+  textColor,
+  id // Añadir el id del curso
 }) => {
   return (
     <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
@@ -52,16 +55,15 @@ const CardImage: React.FC<CardImageProps> = ({
         </p>
         
         <div className="p-6 pt-3">
-         
-        <ButtonComponent 
-          buttonLabel="Detalle de curso" 
-          backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
-          textColor="text-yellow-200" 
-          fontSize="text-xs" 
-          buttonSize="py-2 px-7"
-        />
-                
-
+          <Link href={`/contenido/${id}`}>
+            <ButtonComponent 
+              buttonLabel="Detalle de curso" 
+              backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
+              textColor="text-yellow-200" 
+              fontSize="text-xs" 
+              buttonSize="py-2 px-7"
+            />
+          </Link>
         </div>
        
       </div>

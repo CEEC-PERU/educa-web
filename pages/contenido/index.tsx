@@ -10,6 +10,7 @@ import Link from 'next/link';
 import './../../app/globals.css';
 
 interface Course {
+  course_id: number; // Añadir el id del curso
   image: string;
   name: string;
   description_short: string;
@@ -20,6 +21,18 @@ const Home: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true); // Iniciar con la barra lateral visible
   const [cursos, setCursos] = useState<Course[]>([]);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedState = localStorage.getItem('sidebarState');
+    if (savedState !== null) {
+      setShowSidebar(JSON.parse(savedState));
+    }
+  }, []);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,10 +49,10 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+    <div className="relative min-h-screen flex flex-col bg-gray-100 pt-16"> {/* Ajusta el padding top */}
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-4xl font-bold">Bienvenido a EducaWeb</h1>
         </div>
@@ -60,6 +73,7 @@ const Home: React.FC = () => {
           {cursos.map((curso, index) => (
             <CardImage
               key={index}
+              id={curso.course_id} // Añadir el id del curso
               image={curso.image}
               rating={4.9} 
               name={curso.name}

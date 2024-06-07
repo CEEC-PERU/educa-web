@@ -53,9 +53,15 @@ const AgregarCurso: React.FC = () => {
         setLoading(false);
       }
     };
+  
 
     fetchCategoriesAndProfessors();
   }, []);
+
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
@@ -83,7 +89,7 @@ const AgregarCurso: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gray-100">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
         <h1 className="text-4xl font-bold mb-6">Añadir Nuevo Curso</h1>
