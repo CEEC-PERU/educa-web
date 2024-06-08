@@ -3,10 +3,11 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import Footter from '../../components/Footter';
 import axios from '../../services/axios';
+import Link from 'next/link';
 import './../../app/globals.css';
 
 interface Category {
-  id: number;
+  category_id: number;
   name: string;
 }
 
@@ -14,6 +15,7 @@ const CategoriasPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [categoria, setCategoria] = useState('');
   const [categories, setCategories] = useState<Category[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get<Category[]>('/categories/')
@@ -22,12 +24,17 @@ const CategoriasPage: React.FC = () => {
       })
       .catch(error => {
         console.error('Error fetching categories:', error);
+        setError('Error fetching categories');
       });
   }, []);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
     localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCategoria(e.target.value);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -39,6 +46,18 @@ const CategoriasPage: React.FC = () => {
       })
       .catch(error => {
         console.error('Error adding category:', error);
+        setError('Error adding category');
+      });
+  };
+
+  const handleDelete = (category_id: number) => {
+    axios.delete(`/categories/${category_id}`)
+      .then(() => {
+        setCategories(categories.filter(category => category.category_id !== category_id));
+      })
+      .catch(error => {
+        console.error('Error deleting category:', error);
+        setError('Error deleting category');
       });
   };
 
@@ -57,7 +76,7 @@ const CategoriasPage: React.FC = () => {
                   type="text"
                   id="categoria"
                   value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
+                  onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
               </div>
@@ -65,9 +84,18 @@ const CategoriasPage: React.FC = () => {
             </form>
             <div className="bg-white p-6 rounded shadow-md w-full">
               <h2 className="text-2xl font-bold mb-4">Lista de Categorías</h2>
-              <ul className="mt-4">
-                {categories.map((category) => (
-                  <li key={category.id} className="py-2 border-b border-gray-200">{category.name}</li>
+              {error && <p className="text-red-500">{error}</p>}
+              <ul className="mt-4 space-y-2">
+                {categories.map(category => (
+                  <li key={category.category_id} className="flex justify-between items-center py-2 border-b border-gray-200">
+                    <span>{category.name}</span>
+                    <div>
+                      <Link href={`/contenido/editCategoria?id=${category.category_id}`}>
+                        <button className="mr-2 bg-yellow-500 text-white py-1 px-2 rounded">Editar</button>
+                      </Link>
+                      <button onClick={() => handleDelete(category.category_id)} className="bg-red-500 text-white py-1 px-2 rounded">Eliminar</button>
+                    </div>
+                  </li>
                 ))}
               </ul>
             </div>

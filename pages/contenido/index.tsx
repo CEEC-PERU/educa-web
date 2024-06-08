@@ -59,7 +59,7 @@ const Home: React.FC = () => {
         <p className="mt-4">Selecciona una opción en el menú para continuar.</p>
         {error && <p className="text-red-500">{error}</p>}
         <div className="flex justify-between items-center mb-4 mt-4">
-        <Link href="/contenido/addCourse">
+        <Link href="/contenido/agregarCurso">
               <ButtonComponent 
                 buttonLabel="Añadir Curso" 
                 backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
@@ -70,15 +70,15 @@ const Home: React.FC = () => {
           </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-          {cursos.map((curso, index) => (
+          {cursos.map((curso) => (
             <CardImage
-              key={index}
-              id={curso.course_id} // Añadir el id del curso
+              key={curso.course_id}
+              id={curso.course_id}
               image={curso.image}
-              rating={4.9} 
               name={curso.name}
               description_short={curso.description_short}
               duracion_curso={curso.duracion_curso}
+              rating={4.9} 
               buttonLabel="Ver detalles"
               textColor="text-blue-gray-900"
             />

@@ -3,31 +3,42 @@ import ButtonComponent from "../components/ButtonComponent";
 import Link from 'next/link';
 
 interface CardImageProps {
-  rating: number;
-  image: string;
-  name: string;
-  description_short: string;
-  duracion_curso: string;
-  buttonLabel: string;
-  textColor: string;
-  id: number; // Añadir el id del curso
+  rating?: number;
+  description?: string;
+  imageUrl?: string;
+  title?: string;
+  name?: string;
+  description_short?: string;
+  duracion_curso?: string;
+  buttonLabel?: string;
+  textColor?: string;
+  image?: string;
+  id?: number; // Hacer el id opcional
 }
 
 const CardImage: React.FC<CardImageProps> = ({
-  image,
+  imageUrl = 'https://via.placeholder.com/150',
+  title = 'Nombre del curso',
+  rating = 0,
+  description = 'Descripción corta del curso',
+  buttonLabel = 'Ver detalles',
+  textColor = 'text-gray-900',
+  id,
   name,
-  rating,
   description_short,
-  buttonLabel,
-  textColor,
-  id // Añadir el id del curso
+  image,
+  duracion_curso
 }) => {
+  const displayName = name || title;
+  const displayDescription = description_short || description;
+  const displayImage = image || imageUrl;
+
   return (
     <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
       <div className="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
         <img
-          src={image}
-          alt={name}
+          src={displayImage}
+          alt={displayName}
           className="w-full"
         />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
@@ -41,7 +52,7 @@ const CardImage: React.FC<CardImageProps> = ({
       <div className="p-6">
         <div className="flex items-center justify-between mb-3">
           <h5 className={`block font-sans text-xl antialiased font-medium leading-snug tracking-normal ${textColor}`}>
-            {name}
+            {displayName}
           </h5>
           <p className="flex items-center gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
@@ -51,13 +62,13 @@ const CardImage: React.FC<CardImageProps> = ({
           </p>
         </div>
         <p className="block font-sans text-base antialiased font-light leading-relaxed text-gray-700 text-center truncate">
-          {description_short}
+          {displayDescription}
         </p>
         
         <div className="p-6 pt-3">
           <Link href={`/contenido/${id}`}>
             <ButtonComponent 
-              buttonLabel="Detalle de curso" 
+              buttonLabel={buttonLabel} 
               backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
               textColor="text-yellow-200" 
               fontSize="text-xs" 
