@@ -1,10 +1,25 @@
-// pages/login.tsx
-
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import './../app/globals.css'; // Asegúrate de importar tus estilos globales
 
 const LoginPage: React.FC = () => {
+  const [dni, setDni] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useAuth();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      await login(dni, password);
+      console.log(dni);
+      console.log(password);
+    } catch (error) {
+      console.error('Error logging in:', error);
+      setErrorMessage('Error al iniciar sesión, verifique sus credenciales.');
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -18,14 +33,14 @@ const LoginPage: React.FC = () => {
       <div className="relative z-10 bg-gray-800 bg-opacity-50 p-8 rounded-lg shadow-md max-w-md w-full ml-auto mr-auto lg:ml-16">
         <h1 className="text-4xl font-bold text-center text-gray-200 mb-6">¡Nos alegra verte de nuevo por aquí!</h1>
         <p className="text-4x text-center text-gray-200 mb-6">Inicia sesión para acceder a tu cuenta</p>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleLogin}>
           <div>
-            <label className="block text-x font-medium text-gray-300" htmlFor="email">Username</label>
-            <input type="email" id="email" className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm" placeholder="Introduce tu usuario" />
+            <label className="block text-x font-medium text-gray-300" htmlFor="dni">Username</label>
+            <input id="dni" type="text" value={dni} onChange={(e) => setDni(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm" placeholder="Introduce tu usuario" />
           </div>
           <div className="relative mb-8">
             <label className="block text-x font-medium text-gray-300" htmlFor="password">Contraseña</label>
-            <input type={showPassword ? "text" : "password"} id="password" className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm" placeholder="Introduce tu contraseña" />
+            <input type={showPassword ? "text" : "password"} id="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm" placeholder="Introduce tu contraseña" />
             <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400">
               {showPassword ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
@@ -38,24 +53,16 @@ const LoginPage: React.FC = () => {
               )}
             </button>
           </div>
-          {/* 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input id="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">Recordarme</label>
+          {errorMessage && (
+            <div className="text-red-500 text-center mb-4">
+              {errorMessage}
             </div>
-            <div className="text-sm">
-              <a href="#" className="font-medium text-blue-400 hover:text-blue-500">¿Olvidaste tu contraseña?</a>
-            </div>
-          </div>
-          */}
+          )}
           <div>
             <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Iniciar Sesión</button>
           </div>
         </form>
       </div>
-  
-
     </div>
   );
 };

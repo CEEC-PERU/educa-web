@@ -36,17 +36,17 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
       <nav className="mt-4">
         <ul className="space-y-2">
           <li>
-            <Link href="/contenido">
+            <Link href="/content">
               <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Cursos</span>
             </Link>
           </li>
           <li>
-            <Link href="/contenido/categorias">
+            <Link href="/content/categorias">
               <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Categorías</span>
             </Link>
           </li>
           <li>
-            <Link href="/contenido/profesores">
+            <Link href="/content/profesores">
               <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Profesores</span>
             </Link>
           </li>

@@ -6,7 +6,7 @@ import CardImage from '../../components/CardImage';
 import ButtonComponent from '../../components/ButtonComponent'; // Asegúrate de que la ruta sea correcta
 import axios from '../../services/axios'; // Importar axios
 import Link from 'next/link';
-
+import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 
 interface Course {
@@ -18,6 +18,7 @@ interface Course {
 }
 
 const Home: React.FC = () => {
+  const { logout } = useAuth();
   const [showSidebar, setShowSidebar] = useState(true); // Iniciar con la barra lateral visible
   const [cursos, setCursos] = useState<Course[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -84,6 +85,12 @@ const Home: React.FC = () => {
             />
           ))}
         </div>
+        <button 
+          onClick={logout} 
+          className="mt-4 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+        >
+          Cerrar Sesión
+        </button>
       </main>
       <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
     </div>
