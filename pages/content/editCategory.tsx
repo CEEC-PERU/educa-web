@@ -1,35 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from '../../services/axios';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import Footter from '../../components/Footter';
+import { getCategory, updateCategory } from '../../services/categoryService';
+import { Category } from '../../interfaces/Category';
 import './../../app/globals.css';
-
-interface Category {
-  id: number;
-  name: string;
-}
 
 const EditCategoria: React.FC = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: category_id } = router.query as { id: string };
   const [category, setCategory] = useState<Category | null>(null);
   const [showSidebar, setShowSidebar] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      axios.get(`/categories/${id}`)
-        .then(response => {
-          setCategory(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching category details:', error);
-          setError('Error fetching category details');
-        });
+    const fetchCategory = async () => {
+      try {
+        const category = await getCategory(category_id);
+        setCategory(category);
+      } catch (error) {
+        console.error('Error fetching category details:', error);
+        setError('Error fetching category details');
+      }
+    };
+
+    if (category_id) {
+      fetchCategory();
     }
-  }, [id]);
+  }, [category_id]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
@@ -45,8 +44,8 @@ const EditCategoria: React.FC = () => {
     e.preventDefault();
     if (category) {
       try {
-        await axios.put(`/categories/${id}`, category);
-        router.push('/contenido/categorias');
+        await updateCategory(category_id, category);
+        router.push('/content/category');
       } catch (error) {
         console.error('Error updating category:', error);
         setError('Error updating category');

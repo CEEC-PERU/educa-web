@@ -2,14 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import Footter from '../../components/Footter';
-import axios from '../../services/axios';
+import { getCategories, addCategory, deleteCategory } from '../../services/categoryService';
+import { Category } from '../../interfaces/Category';
 import Link from 'next/link';
 import './../../app/globals.css';
-
-interface Category {
-  category_id: number;
-  name: string;
-}
 
 const CategoriasPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -18,14 +14,18 @@ const CategoriasPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get<Category[]>('/categories/')
-      .then(response => {
-        setCategories(response.data);
-      })
-      .catch(error => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await getCategories();
+        console.log('Fetched categories:', categories); // Log para depuración
+        setCategories(categories);
+      } catch (error) {
         console.error('Error fetching categories:', error);
         setError('Error fetching categories');
-      });
+      }
+    };
+  
+    fetchCategories();
   }, []);
 
   const toggleSidebar = () => {
@@ -37,28 +37,26 @@ const CategoriasPage: React.FC = () => {
     setCategoria(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    axios.post('/categories/', { name: categoria })
-      .then(response => {
-        setCategories([...categories, response.data]);
-        setCategoria('');
-      })
-      .catch(error => {
-        console.error('Error adding category:', error);
-        setError('Error adding category');
-      });
+    try {
+      const newCategory = await addCategory(categoria);
+      setCategories([...categories, newCategory]);
+      setCategoria('');
+    } catch (error) {
+      console.error('Error adding category:', error);
+      setError('Error adding category');
+    }
   };
 
-  const handleDelete = (category_id: number) => {
-    axios.delete(`/categories/${category_id}`)
-      .then(() => {
-        setCategories(categories.filter(category => category.category_id !== category_id));
-      })
-      .catch(error => {
-        console.error('Error deleting category:', error);
-        setError('Error deleting category');
-      });
+  const handleDelete = async (category_id: number) => {
+    try {
+      await deleteCategory(category_id);
+      setCategories(categories.filter(category => category.category_id !== category_id));
+    } catch (error) {
+      console.error('Error deleting category:', error);
+      setError('Error deleting category');
+    }
   };
 
   return (
@@ -90,7 +88,7 @@ const CategoriasPage: React.FC = () => {
                   <li key={category.category_id} className="flex justify-between items-center py-2 border-b border-gray-200">
                     <span>{category.name}</span>
                     <div>
-                      <Link href={`/contenido/editCategoria?id=${category.category_id}`}>
+                      <Link href={`/content/editCategory?id=${category.category_id}`}>
                         <button className="mr-2 bg-yellow-500 text-white py-1 px-2 rounded">Editar</button>
                       </Link>
                       <button onClick={() => handleDelete(category.category_id)} className="bg-red-500 text-white py-1 px-2 rounded">Eliminar</button>

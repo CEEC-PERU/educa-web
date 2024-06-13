@@ -22,8 +22,7 @@ interface Level {
 
 const Profesores: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
-  const [profesor, setProfesor] = useState<Professor>({
-    professor_id: 0,
+  const [profesor, setProfesor] = useState<Omit<Professor, 'professor_id' | 'created_at' | 'updated_at'>>({
     full_name: '',
     image: '',
     especialitation: '',
@@ -66,7 +65,6 @@ const Profesores: React.FC = () => {
       .then(response => {
         setProfessors([...professors, response.data]);
         setProfesor({
-          professor_id: 0,
           full_name: '',
           image: '',
           especialitation: '',
@@ -174,7 +172,7 @@ const Profesores: React.FC = () => {
                 <li key={professor.professor_id} className="flex justify-between items-center py-2 border-b border-gray-200">
                   <span>{professor.full_name}</span>
                   <div>
-                    <Link href={`/contenido/editProfesor?id=${professor.professor_id}`}>
+                    <Link href={`/content/editProfessor?id=${professor.professor_id}`}>
                       <button className="mr-2 bg-yellow-500 text-white py-1 px-2 rounded">Editar</button>
                     </Link>
                     <button onClick={() => handleDelete(professor.professor_id)} className="bg-red-500 text-white py-1 px-2 rounded">Eliminar</button>

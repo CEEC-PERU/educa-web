@@ -1,43 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import axios from '../../services/axios';
+import { getCourse, deleteCourse } from '../../services/courseService';
+import { Course } from '../../interfaces/Course';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import Footter from '../../components/Footter';
 import './../../app/globals.css';
 
-interface Course {
-  course_id: number;
-  name: string;
-  description_short: string;
-  description_large: string;
-  duracion_curso: string;
-  intro_video?: string;
-  image?: string;
-  category_id?: number;
-  professor_id?: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  is_finish: boolean;
-  limit_date?: string;
-}
-
 const CourseDetail: React.FC = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id } = router.query as { id: string };
   const [course, setCourse] = useState<Course | null>(null);
   const [showSidebar, setShowSidebar] = useState(true);
 
   useEffect(() => {
     if (id) {
-      axios.get(`/courses/${id}`)
-        .then(response => {
-          setCourse(response.data);
-        })
-        .catch(error => {
+      const fetchCourse = async () => {
+        try {
+          const courseData = await getCourse(id);
+          setCourse(courseData);
+        } catch (error) {
           console.error('Error fetching course details:', error);
-        });
+        }
+      };
+
+      fetchCourse();
     }
   }, [id]);
 
@@ -48,20 +35,18 @@ const CourseDetail: React.FC = () => {
 
   const handleEdit = () => {
     if (course) {
-      router.push(`/contenido/editCurso?id=${course.course_id}`);
+      router.push(`/content/editCourse?id=${course.course_id}`);
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (course) {
-      axios.delete(`/courses/${course.course_id}`)
-        .then(() => {
-          console.log('Curso eliminado');
-          router.push('/contenido');
-        })
-        .catch(error => {
-          console.error('Error eliminando el curso:', error);
-        });
+      try {
+        await deleteCourse(course.course_id.toString());
+        router.push('/content');
+      } catch (error) {
+        console.error('Error eliminando el curso:', error);
+      }
     }
   };
 
@@ -93,10 +78,6 @@ const CourseDetail: React.FC = () => {
             </div>
           )}
           <p className="mb-4 text-lg"><strong>Activo:</strong> {course.is_active ? 'Sí' : 'No'}</p>
-          <p className="mb-4 text-lg"><strong>Finalizado:</strong> {course.is_finish ? 'Sí' : 'No'}</p>
-          {course.limit_date && (
-            <p className="mb-4 text-lg"><strong>Fecha límite:</strong> {new Date(course.limit_date).toLocaleDateString()}</p>
-          )}
           <p className="mb-4 text-lg"><strong>Creado el:</strong> {new Date(course.created_at).toLocaleDateString()}</p>
           <p className="mb-4 text-lg"><strong>Actualizado el:</strong> {new Date(course.updated_at).toLocaleDateString()}</p>
           <div className="flex justify-end space-x-4 mt-6">

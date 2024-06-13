@@ -41,13 +41,23 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
             </Link>
           </li>
           <li>
-            <Link href="/content/categorias">
+            <Link href="/content/category">
               <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Categorías</span>
             </Link>
           </li>
           <li>
-            <Link href="/content/profesores">
+            <Link href="/content/professors">
               <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Profesores</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/content/module">
+              <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Modulos</span>
+            </Link>
+          </li>
+          <li>
+            <Link href="/content/session">
+              <span className="block px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">Sesiones</span>
             </Link>
           </li>
         </ul>

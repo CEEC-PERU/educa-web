@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import axios from '../../services/axios';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import Footter from '../../components/Footter';
+import { getProfessor, updateProfessor, getLevels } from '../../services/professorService';
+import { Professor, Level } from '../../interfaces/Professor';
 import './../../app/globals.css';
 
-interface Professor {
-  professor_id: number;
-  full_name: string;
-  image: string;
-  especialitation: string;
-  description: string;
-  level_id: number;
-}
-
-interface Level {
-  level_id: number;
-  name: string;
-}
-
-const EditProfesor: React.FC = () => {
+const EditProfessor: React.FC = () => {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: professor_id } = router.query as { id: string };
   const [professor, setProfessor] = useState<Professor | null>(null);
   const [levels, setLevels] = useState<Level[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
@@ -30,26 +17,31 @@ const EditProfesor: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      axios.get(`/professors/${id}`)
-        .then(response => {
-          setProfessor(response.data);
-        })
-        .catch(error => {
-          console.error('Error fetching professor details:', error);
-          setError('Error fetching professor details');
-        });
-    }
+    const fetchProfessor = async () => {
+      try {
+        const professorData = await getProfessor(professor_id);
+        setProfessor(professorData);
+      } catch (error) {
+        console.error('Error fetching professor details:', error);
+        setError('Error fetching professor details');
+      }
+    };
 
-    axios.get('/professors/levels')
-      .then(response => {
-        setLevels(response.data);
-      })
-      .catch(error => {
+    const fetchLevels = async () => {
+      try {
+        const levelsData = await getLevels();
+        setLevels(levelsData);
+      } catch (error) {
         console.error('Error fetching levels:', error);
         setError('Error fetching levels');
-      });
-  }, [id]);
+      }
+    };
+
+    if (professor_id) {
+      fetchProfessor();
+    }
+    fetchLevels();
+  }, [professor_id]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
@@ -65,9 +57,9 @@ const EditProfesor: React.FC = () => {
     e.preventDefault();
     if (professor) {
       try {
-        await axios.put(`/professors/${id}`, professor);
+        await updateProfessor(professor_id, professor);
         setSuccess('Profesor actualizado exitosamente');
-        router.push('/contenido/profesores');
+        router.push('/content/professors');
       } catch (error) {
         console.error('Error updating professor:', error);
         setError('Error updating professor');
@@ -158,4 +150,4 @@ const EditProfesor: React.FC = () => {
   );
 };
 
-export default EditProfesor;
+export default EditProfessor;

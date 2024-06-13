@@ -66,7 +66,7 @@ const CardImage: React.FC<CardImageProps> = ({
         </p>
         
         <div className="p-6 pt-3">
-          <Link href={`/contenido/${id}`}>
+          <Link href={`/content/${id}`}>
             <ButtonComponent 
               buttonLabel={buttonLabel} 
               backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
