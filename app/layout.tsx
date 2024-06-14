@@ -22,7 +22,9 @@ export default function RootLayout({
       <body className={inter.className}>
         
         <div className="min-h-screen bg-gradient-to-r from-cyan-500 to-blue-500 relative">
-          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" /> 
+          <Navbar bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300  " /> 
+
+        
           <main className="z-1">{children}</main>
         </div>
         <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />

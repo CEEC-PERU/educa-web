@@ -76,7 +76,7 @@ const AgregarCurso: React.FC = () => {
     try {
       const response = await axios.post('/courses', formData);
       if (response.status === 201) {
-        router.push('/contenido');
+        router.push('/content');
       }
     } catch (error) {
       setError('Error creating course');

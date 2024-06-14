@@ -28,7 +28,7 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 relative">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-300 to-violet-500 opacity-90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"></div>
       </div>
       <div className="relative z-10 bg-gray-800 bg-opacity-50 p-8 rounded-lg shadow-md max-w-md w-full ml-auto mr-auto lg:ml-16">
         <h1 className="text-4xl font-bold text-center text-gray-200 mb-6">¡Nos alegra verte de nuevo por aquí!</h1>
@@ -59,7 +59,7 @@ const LoginPage: React.FC = () => {
             </div>
           )}
           <div>
-            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Iniciar Sesión</button>
+            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Iniciar Sesión</button>
           </div>
         </form>
       </div>

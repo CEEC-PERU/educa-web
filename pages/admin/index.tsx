@@ -1,11 +1,12 @@
 // pages/admin/index.tsx (anteriormente studentList.js)
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const AdminIndex: React.FC = () => {
   const { logout } = useAuth();
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="p-8 rounded-lg shadow-md max-w-md w-full bg-gray-50">
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
@@ -19,6 +20,7 @@ const AdminIndex: React.FC = () => {
         </button>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

@@ -1,10 +1,12 @@
 // pages/student/studentList.js
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const StudentIndex : React.FC = () => {
   const { logout } = useAuth();
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="min-h-screen flex items-center justify-center bg-white">
       <div className="p-8 rounded-lg shadow-md max-w-md w-full bg-gray-50">
@@ -20,6 +22,7 @@ const StudentIndex : React.FC = () => {
       </div>
     </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

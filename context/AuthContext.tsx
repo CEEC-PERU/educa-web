@@ -1,45 +1,94 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+//validar al usuario que inicio sesion , que no tenga perfil
+import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Corrige la importación de jwtDecode
 import api from '../services/api';
-import { User, AuthProviderProps, AuthContextData } from '../interfaces/Auth';
-import { signin } from '../services/authService';
+import { getProfile } from "../services/profile";
+import { removeToken, signin, getToken } from '../services/authService';
+import { AuthContextData, AuthProviderProps, User } from '../interfaces/Auth'; 
 
 const AuthContext = createContext<AuthContextData | undefined>(undefined);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [profileInfo, setProfileInfo] = useState<any>(null); 
+
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode<User>(token);
-        setUser(decoded);
-        api.defaults.headers.Authorization = `Bearer ${token}`;
-        redirectToDashboard(decoded.role);
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        logout();
+    const initializeAuth = async () => {
+      setIsLoading(true);
+      const storedToken = getToken();
+      if (storedToken) {
+        try {
+          const decoded = jwtDecode<User>(storedToken);
+          setUser(decoded);
+          setToken(storedToken);
+          api.defaults.headers.Authorization = `Bearer ${storedToken}`;
+          
+          // Obtener perfil del usuario
+          const profile = await getProfile(storedToken, decoded.id); 
+          if (profile) {
+            setProfileInfo(profile);
+            localStorage.setItem('profileInfo', JSON.stringify(profile));
+            redirectToDashboard(decoded.role);
+          } else {
+            redirectToProfile(decoded.role);
+          }
+        } catch (error) {
+          console.error('Error decoding token:', error);
+          logout();
+        }
       }
-    }
+      setIsLoading(false);
+    };
+    initializeAuth();
   }, []);
 
   const login = async (dni: string, password: string) => {
+    setIsLoading(true);
     try {
       const decoded = await signin(dni, password);
+      const storedToken = getToken();
       setUser(decoded);
-      redirectToDashboard(decoded.role);
+      setToken(storedToken);
+
+      if (!storedToken || !decoded) {
+        throw new Error('Token or user data is null');
+      }
+
+      api.defaults.headers.Authorization = `Bearer ${storedToken}`;
+
+      // Obtener perfil del usuario después de iniciar sesión
+      const profile = await getProfile(storedToken, decoded.id); 
+      if (profile) {
+        setProfileInfo(profile);
+        localStorage.setItem('profileInfo', JSON.stringify(profile));
+      }
+
+      // Redireccionar según el rol y la existencia de perfil
+      if (profile) {
+        router.push('/profile');
+      } else {
+        redirectToDashboard(decoded.role);
+      }
     } catch (error) {
       console.error('Error logging in:', error);
-      throw error; // Re-throw the error to be caught by the component
+      setError('Login failed. Please check your credentials and try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('profileInfo');
+    removeToken();
     setUser(null);
+    setToken(null);
     router.push('/');
   };
 
@@ -62,8 +111,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const redirectToProfile = (role: number) => {
+    switch (role) {
+      case 1:
+        router.push('/student/profile');
+        break;
+      case 2:
+        router.push('/corporate/profile');
+        break;
+      case 3:
+        router.push('/content/profile');
+        break;
+      case 4:
+        router.push('/admin/profile');
+        break;
+      default:
+        router.push('/');
+    }
+  };
+
+  const value = useMemo(() => ({
+    user,
+    token,
+    isLoading,
+    error,
+    login,
+    logout,
+    redirectToDashboard,
+  }), [user, token, isLoading, error]);
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
