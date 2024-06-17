@@ -1,4 +1,7 @@
+// Navbar.tsx
+import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router'; // Ensure this import is needed for client-side routing operations
 
 interface NavbarProps {
   bgColor?: string;
@@ -6,8 +9,10 @@ interface NavbarProps {
   fontSize?: string;
   fontFamily?: string;
   navbarHeight?: string;
-  toggleSidebar?: () => void; // Nueva prop opcional para manejar el toggle del sidebar
-  showMenuButton?: boolean; // Nueva prop para controlar la visibilidad del botón
+  toggleSidebar?: () => void;
+  showMenuButton?: boolean;
+  links?: { href: string; label: string }[];
+  user?: { profilePicture?: string };
 }
 
 const Navbar: React.FC<NavbarProps> = ({
@@ -17,8 +22,12 @@ const Navbar: React.FC<NavbarProps> = ({
   fontFamily = 'font-sans',
   navbarHeight = 'h-16',
   toggleSidebar,
-  showMenuButton = true, // Por defecto, el botón se muestra
+  showMenuButton = true,
+  links = [],
+  user,
 }) => {
+
+
   return (
     <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50`}>
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
@@ -32,10 +41,22 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
           <div className={`${textColor} ${fontSize} ${fontFamily} font-bold ${showMenuButton ? 'ml-2' : ''}`}>EducaWeb</div>
         </div>
-        <div className="space-x-4">
-          <Link href="/login" className={`${textColor} ${fontSize} ${fontFamily} hover:text-gray-300 font-bold`}>
-            Iniciar Sesión
-          </Link>
+        <div className="flex items-center space-x-4">
+          {links.map((link) => (
+            <Link key={link.href} href={link.href}>
+              <span className={`${textColor} hover:underline cursor-pointer`}>{link.label}</span>
+            </Link>
+          ))}
+          {user ? (
+            <Link href="/profile">
+              <img src={user.profilePicture} alt="Profile" className="h-8 w-8 rounded-full cursor-pointer" />
+              <p>{user.profilePicture}</p>
+            </Link>
+          ) : (
+            <Link href="/login">
+              <span className={`${textColor} hover:underline cursor-pointer`}>Iniciar Sesión</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

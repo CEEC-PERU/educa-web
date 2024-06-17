@@ -13,8 +13,6 @@ const LoginPage: React.FC = () => {
     event.preventDefault();
     try {
       await login(dni, password);
-      console.log(dni);
-      console.log(password);
     } catch (error) {
       console.error('Error logging in:', error);
       setErrorMessage('Error al iniciar sesión, verifique sus credenciales.');
@@ -44,22 +42,20 @@ const LoginPage: React.FC = () => {
             <button type="button" onClick={togglePasswordVisibility} className="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400">
               {showPassword ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12m0 0a3 3 0 11-6 0 3 3 0 016 0zm0 0c1.104 0 2.149.217 3.134.616m.325 1.585A8.12 8.12 0 0121 12c-1.637-3.134-4.833-6-9-6s-7.363 2.866-9 6c.8 1.529 2.033 2.89 3.541 3.928M15 12a3.009 3.009 0 01-2.166.84m-3.215-1.804C8.252 10.227 9.354 9 12 9m3 3a3 3 0 01-2.166 2.997M3.541 15.928C4.86 16.895 6.351 17 8 17h8c1.649 0 3.14-.105 4.459-.072" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12m0 0a3 3 0 11-6 0 3 3 0 016 0zm0 0c1.104 0 2.149.217 3.134.616m.325 1.585A8.12 8.12 0 0121 12c-1.637-3.134-4.833-6-9-6s-7.363 2.866-9 6c.8 1.529 2.033 2.89 3.541 3.928M15 12a3.009 3.009 0 01-2.166.84m-3.215-1.804C8.252 10.227 9.354 9 12 9m3 3a3 3 0 01-2.166 2.997M3.75 3l16.5 16.5" />
                 </svg>
               ) : (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.027 10.027 0 0112 19c-4.167 0-7.363-2.866-9-6a10.119 10.119 0 013.035-3.928m12.48 3.928A8.093 8.093 0 0112 5c-1.83 0-3.54.517-5.034 1.41M12 12m0 0a3 3 0 113-3 3 3 0 01-3 3zm0 0a3.009 3.009 0 01-2.166-.84M3.512 3.512a3 3 0 000 3.962M3 7.714a8.093 8.093 0 014.034 4.286M12 12c1.276 0 2.415-.467 3.275-1.218m4.656 4.098A10.091 10.091 0 0121 12a10.119 10.119 0 00-1.464-2.732" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12m0 0a3 3 0 11-6 0 3 3 0 016 0zm0 0c1.104 0 2.149.217 3.134.616m.325 1.585A8.12 8.12 0 0121 12c-1.637-3.134-4.833-6-9-6s-7.363 2.866-9 6c.8 1.529 2.033 2.89 3.541 3.928M15 12a3.009 3.009 0 01-2.166.84m-3.215-1.804C8.252 10.227 9.354 9 12 9m3 3a3 3 0 01-2.166 2.997M3.75 3l16.5 16.5" />
                 </svg>
               )}
             </button>
           </div>
-          {errorMessage && (
-            <div className="text-red-500 text-center mb-4">
-              {errorMessage}
-            </div>
-          )}
+          {errorMessage && <div className="text-red-500 text-sm">{errorMessage}</div>}
           <div>
-            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-brand-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Iniciar Sesión</button>
+            <button type="submit" className="w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Iniciar sesión
+            </button>
           </div>
         </form>
       </div>

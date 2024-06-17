@@ -1,3 +1,4 @@
+import { Profile, UserInfo } from "./UserInterfaces";
 export interface User {
     id: number;
     role: number;
@@ -15,6 +16,7 @@ export interface User {
     logout: () => void;
     isLoading?: boolean;
     error?: string | null;
+    profileInfo?: Profile | null | UserInfo
   }
   
   export interface AuthProviderProps {

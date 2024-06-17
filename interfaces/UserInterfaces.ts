@@ -33,7 +33,7 @@ export interface Profile {
     first_name : string;
     last_name : string;
     user_id: number;
-    phone : string;
-    profile_picture : string;
-    email: string;
+    phone? : string;
+    profile_picture? : string;
+    email?: string;
 }
