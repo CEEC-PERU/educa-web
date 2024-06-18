@@ -2,11 +2,11 @@ export interface LoginResponse {
     code?: number;
     msg?: string;
     token?: string;
-    possibleAttemps?: number
+    possibleAttempts?: number
 }
 
 export interface LoginRequest {
-    email: string;
+    dni: string;
     password: string;
 }
 
@@ -25,7 +25,7 @@ export interface UserInfo {
     dni: string;
     role_id: number;
     enterprise_id : number;
-    Profile?: Profile
+    userProfile?: Profile
 }
 
 export interface Profile {

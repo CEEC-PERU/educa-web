@@ -14,7 +14,9 @@ const config: Config = {
         "brand-300": "#24033D",
         "brand-500" : "#071144",
         "brandazul-600":"#030A32",
-        "brandmorado-700" : "#590F87"
+        "brandmorado-700" : "#590F87",
+        "brandrosado-800" : "#A959FF",
+        "brandfucsia-900" : "#6017AF"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

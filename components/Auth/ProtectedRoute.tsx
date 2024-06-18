@@ -1,4 +1,3 @@
-// src/components/ProtectedRoute.tsx
 import React from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../context/AuthContext';
@@ -8,18 +7,21 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   React.useEffect(() => {
-    if (!user) {
+    if (!user && !isLoading) {
       router.push('/login'); 
     }
-  }, [user, router]);
+  }, [user, isLoading, router]);
+
+  if (isLoading) {
+    return <p>Loading...</p>; // Mostrar una pantalla de carga mientras se verifica la autenticación
+  }
 
   if (!user) {
-    return null;
-    //Posibilidad de mostrar una pantalla de carga
+    return null; // Opcional: mostrar un mensaje o pantalla cuando no hay usuario autenticado
   }
 
   return <>{children}</>;

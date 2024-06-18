@@ -1,18 +1,14 @@
 import { Profile, UserInfo } from "./UserInterfaces";
-export interface User {
-    id: number;
-    role: number;
-    dni: string;
-    enterprise_id: number;
-    loginTime: string;
-    iat: number;
-    exp: number;
-  }
-  
+
   export interface AuthContextData {
-    user: User | null;
-    token: string | null;
-    login: (dni: string, password: string) => Promise<void>;
+    user?: {
+      id: number;
+      role: number;
+      dni: string;
+      enterprise_id: number;
+    }| string |  null ;
+    token?: string | null;
+    login: (dni: string, password: string) => any;
     logout: () => void;
     isLoading?: boolean;
     error?: string | null;

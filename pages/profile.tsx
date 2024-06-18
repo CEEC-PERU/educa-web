@@ -14,6 +14,13 @@ const ProfilePage: React.FC = () => {
   const { updateProfile, error, isLoading } = useProfile();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  
+  //verificar
+  if (!user || typeof user !== 'object' || !('role' in user)) return;
+
+  const { role } = user as { role: number };
+
+  
   const handleProfileUpdate = async (event: React.FormEvent) => {
 
     const redirectToDashboard = (role: number) => {
@@ -49,7 +56,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       await updateProfile(profileData);
-      redirectToDashboard(user.role); // Redirigir al perfil correspondiente después de la actualización
+      redirectToDashboard(role); // Redirigir al perfil correspondiente después de la actualización
     } catch (error) {
       console.error('Error updating profile:', error);
       setErrorMessage('Error al actualizar el perfil, por favor intente nuevamente.');
