@@ -15,3 +15,10 @@ export const API_APPSESSION = `${baseURL}/api/appsession`;
 
 //obtener info de usuarios 
 export const API_GET_PROFILE_BY_USER = `${baseURL}/api/profiles/alldata`;
+
+
+//obtener info de empresa por usuario
+export const API_GET_EMPRESA_BY_USER = `${baseURL}/api/users/enterprise`;
+
+//actualizar perfil por user_id
+export const API_PUT_PROFILE = `${baseURL}/api/profiles`;

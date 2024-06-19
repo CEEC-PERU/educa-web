@@ -6,6 +6,11 @@ export interface ProfileRequest {
     email:string;
   }
 
+  export interface UpdateProfileRequest {
+    phone :string | undefined;
+    email:string | undefined;
+  }
+
   export interface ProfileResponse {
     profile_id: number;
     first_name : string;

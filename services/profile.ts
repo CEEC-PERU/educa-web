@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { ProfileRequest , ProfileResponse} from '../interfaces/Profile';
-import { API_PROFILE, API_GET_PROFILE_BY_USER } from '../utils/Endpoints';
-import { Profile, UserInfo } from "../interfaces/UserInterfaces";
+import { ProfileRequest , ProfileResponse , UpdateProfileRequest} from '../interfaces/Profile';
+import { API_PROFILE, API_GET_PROFILE_BY_USER  , API_PUT_PROFILE} from '../utils/Endpoints';
+import { Profile, UserInfo  } from "../interfaces/UserInterfaces";
 export const createProfile = async ( userToken : string ,user_id : number , profileData: ProfileRequest) => {
   try {
     const config = {
@@ -45,3 +45,21 @@ export const getProfile = async (userToken: string, userId: number, allData = fa
     throw new Error('Error getting profile');
   }
 };
+
+export const updatedProfile = async ( userToken : string ,user_id : number , profileData: UpdateProfileRequest) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    // Hacer la solicitud POST a la API del perfil
+    const response = await axios.put(`${API_PUT_PROFILE}/${user_id}`, profileData, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error updateed profile:', error);
+    throw new Error('Error updated profile');
+  }
+};
+
+
