@@ -22,3 +22,9 @@ export const API_GET_EMPRESA_BY_USER = `${baseURL}/api/users/enterprise`;
 
 //actualizar perfil por user_id
 export const API_PUT_PROFILE = `${baseURL}/api/profiles`;
+
+//obtener cursos asignados al estudinate
+export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
+
+//obtener detalle d elos cursos
+export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;

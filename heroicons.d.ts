@@ -17,4 +17,6 @@ declare module '@heroicons/react/24/solid' {
   export const ComputerDesktopIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const MagnifyingGlassIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const PencilSquareIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const XCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ChevronRightIcon: ComponentType<SVGProps<SVGSVGElement>>;
 }
