@@ -37,10 +37,15 @@ const StudentIndex: React.FC = () => {
 
   const navigateToCourseDetails = () => {
     router.push({
-      pathname: '/course-details',
+      pathname: '/student/course-details',
+      
       query: { course_id: selectedCourse.course_id }
     });
+    console.log("selectedCourse:", selectedCourse); // Verifica el estado de selectedCourse
+  console.log("selectedCourse.course_id:", selectedCourse?.course_id); // Verifica course_id
+  
   };
+
 
   return (
     <ProtectedRoute>
@@ -85,13 +90,13 @@ const StudentIndex: React.FC = () => {
         <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {courseStudent.map(courseStudent => (
             <CourseCard
-              key={courseStudent.course_id}
+              key={courseStudent.Course.course_id}
               name={courseStudent.Course.name}
               description={courseStudent.Course.description_short}
               image={courseStudent.Course.image}
               profesor={courseStudent.Course.courseProfessor.full_name}
               categoria={courseStudent.Course.courseCategory.name}
-              course_id={courseStudent.course_id}
+              course_id={courseStudent.Course.course_id}
               onClick={() => openModal(courseStudent.Course)} // Pasar la función al componente
             />
           ))}
@@ -99,6 +104,7 @@ const StudentIndex: React.FC = () => {
       </div>
       {selectedCourse && (
         <Modal
+        key={selectedCourse.course_id}
           isOpen={!!selectedCourse}
           onRequestClose={closeModal}
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"

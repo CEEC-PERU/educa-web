@@ -15,6 +15,7 @@ interface NavbarProps {
   user?: { profilePicture?: string };
 }
 
+
 const Navbar: React.FC<NavbarProps> = ({
   bgColor = 'bg-blue-600',
   textColor = 'text-white',

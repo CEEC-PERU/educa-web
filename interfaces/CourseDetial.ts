@@ -14,7 +14,21 @@ export interface CourseProfessor{
 export interface CourseCategory{
     name : string
 }
+
+export interface ModuleSessions{
+    name : string,
+
+}
+
+export interface CourseModules{
+    name : string,
+    is_active: string,
+    module_id : number,
+    moduleSessions :ModuleSessions[],
+}
+
 export interface CourseDetail{
+    course_id : number;
     name : string;
     description_short : string;
     description_large : string;
@@ -25,4 +39,5 @@ export interface CourseDetail{
     is_active : boolean;
     courseCategory : CourseCategory;
     courseProfessor : CourseProfessor;
+    courseModules: CourseModules[];
   }

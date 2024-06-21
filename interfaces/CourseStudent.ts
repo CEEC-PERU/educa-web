@@ -8,6 +8,7 @@ export interface CourseCategory{
 
 export interface Course{
     name : string;
+    course_id : number;
     description_short : string;
     image : string,
     courseCategory : CourseCategory,
