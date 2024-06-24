@@ -53,7 +53,7 @@ const CardCarousel: React.FC = () => {
             rating={4.9}
             description="Descubre el arte de equilibrar con éxito tu vida personal y laboral con nuestro curso especializado. Exploraremos estrategias prácticas y herramientas efectivas que te permitirán gestionar tus responsabilidades profesionales mientras cultivas un bienestar personal duradero. Aprenderás a establecer límites saludables, gestionar el tiempo con eficacia y nutrir tus relaciones, permitiéndote alcanzar un equilibrio sostenible que te llevará a una vida más plena y satisfactoria."
             buttonLabel="Check Availability"
-            textColor="text-blue-gray-900"
+            textColor="text-white"
           />
         </div>
         <div className="swiper-slide">
@@ -63,7 +63,7 @@ const CardCarousel: React.FC = () => {
             rating={4.9}
             description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
             buttonLabel="Check Availability"
-            textColor="text-blue-gray-900"
+            textColor="text-white"
           />
         </div>
         <div className="swiper-slide">
@@ -73,7 +73,7 @@ const CardCarousel: React.FC = () => {
             rating={4.9}
             description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
             buttonLabel="Check Availability"
-            textColor="text-blue-gray-900"
+            textColor="text-white"
           />
         </div>
         <div className="swiper-slide">
@@ -83,7 +83,7 @@ const CardCarousel: React.FC = () => {
             rating={4.9}
             description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
             buttonLabel="Check Availability"
-            textColor="text-blue-gray-900"
+            textColor="text-white"
           />
         </div>
         <div className="swiper-slide">
@@ -93,7 +93,7 @@ const CardCarousel: React.FC = () => {
             rating={4.9}
             description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
             buttonLabel="Check Availability"
-            textColor="text-blue-gray-900"
+            textColor="text-white"
           />
         </div>
         {/* Añade más tarjetas si es necesario */}

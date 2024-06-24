@@ -1,11 +1,20 @@
+// src/pages/_app.tsx
 import { AuthProvider } from '../context/AuthContext';
 import { AppProps } from 'next/app';
+import ProtectedRoute from '../components/Auth/ProtectedRoute';
 
-function MyApp({ Component, pageProps }: AppProps) { 
+function MyApp({ Component, pageProps }: AppProps) {
+  const protectedRoutes = ['/home', '/contenido/agregarCurso', '/student', '/corporate', '/content', '/admin'];
+
   return (
-    // Retorna el componente AuthProvider como contenedor principal de la aplicación.
     <AuthProvider>
-      <Component {...pageProps} />
+      {protectedRoutes.includes(Component.name) ? (
+        <ProtectedRoute>
+          <Component {...pageProps} />
+        </ProtectedRoute>
+      ) : (
+        <Component {...pageProps} />
+      )}
     </AuthProvider>
   );
 }
