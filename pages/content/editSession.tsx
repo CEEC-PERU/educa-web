@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import Footter from '../../components/Footter';
 import { getSession, updateSession } from '../../services/sessionService';
 import { uploadVideo } from '../../services/videoService';
 import { getModules } from '../../services/moduleService';
 import { Session } from '../../interfaces/Session';
 import { Module } from '../../interfaces/Module';
 import './../../app/globals.css';
+import MediaUploadPreview from '../../components/MediaUploadPreview';
+import FormField from '../../components/FormField';
+import ButtonComponent from '../../components/ButtonDelete';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const EditSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -16,7 +19,7 @@ const EditSession: React.FC = () => {
     video_enlace: '',
     duracion_minutos: 0,
     name: '',
-    modul_id: 0
+    module_id: 0
   });
   const [modules, setModules] = useState<Module[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -35,7 +38,7 @@ const EditSession: React.FC = () => {
           video_enlace: '',
           duracion_minutos: sessionRes.duracion_minutos,
           name: sessionRes.name,
-          modul_id: sessionRes.modul_id
+          module_id: sessionRes.module_id
         });
         setModules(modulesRes);
       } catch (error) {
@@ -60,10 +63,8 @@ const EditSession: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setVideoFile(e.target.files[0]);
-    }
+  const handleFileChange = (file: File) => {
+    setVideoFile(file);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -71,7 +72,7 @@ const EditSession: React.FC = () => {
     try {
       let videoUrl = session.video_enlace;
       if (videoFile) {
-        videoUrl = await uploadVideo(videoFile);
+        videoUrl = await uploadVideo(videoFile, 'Sesiones');
       }
       await updateSession(id as string, {
         ...session,
@@ -84,73 +85,70 @@ const EditSession: React.FC = () => {
     }
   };
 
+  const handleSaveClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+  };
+
+  const handleCancel = () => {
+    router.push('/content/session');
+  };
+
   if (!session) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100">
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h1 className="text-4xl font-bold mb-4">Editar Sesión</h1>
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16 mt-6`}>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center text-purple-600 mb-4"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          Volver
+        </button>
+        <div className="max-w-2xl p-6 rounded-lg">
           {error && <p className="text-red-500">{error}</p>}
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                value={session.name}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
+            <FormField
+              id="name"
+              label="Nombre"
+              type="text"
+              value={session.name}
+              onChange={handleChange}
+            />
             <div className="mb-4">
               <label htmlFor="video_enlace" className="block text-gray-700 text-sm font-bold mb-2">Enlace del Video</label>
-              <input
-                type="file"
-                id="video_enlace"
+              <MediaUploadPreview
+                onMediaUpload={handleFileChange}
                 accept="video/*"
-                onChange={handleFileChange}
-                className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-              />
-              {session.video_enlace && !videoFile && (
-                <p className="text-sm text-gray-500 mt-2">El video actual se mantendrá si no subes uno nuevo.</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <label htmlFor="duracion_minutos" className="block text-gray-700 text-sm font-bold mb-2">Duración (minutos)</label>
-              <input
-                type="text"
-                id="duracion_minutos"
-                value={session.duracion_minutos}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                label="Subir video"
               />
             </div>
-            <div className="mb-4">
-              <label htmlFor="modul_id" className="block text-gray-700 text-sm font-bold mb-2">Módulo</label>
-              <select
-                id="modul_id"
-                value={session.modul_id}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option value={0}>Seleccione un módulo</option>
-                {modules.map(module => (
-                  <option key={module.module_id} value={module.module_id}>
-                    {module.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded">Guardar</button>
+            <FormField
+              id="duracion_minutos"
+              label="Duración (minutos)"
+              type="text"
+              value={session.duracion_minutos.toString()}
+              onChange={handleChange}
+            />
+            <FormField
+              id="module_id"
+              label="Módulo"
+              type="select"
+              value={session.module_id.toString()}
+              onChange={handleChange}
+              options={modules.map(module => ({ value: module.module_id.toString(), label: module.name }))}
+            />
+             <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
+              
           </form>
         </div>
       </main>
-      <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
     </div>
   );
 };

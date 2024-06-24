@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import Footter from '../../components/Footter';
 import { getModule, updateModule } from '../../services/moduleService';
 import { getCourses } from '../../services/courseService';
 import { getEvaluations } from '../../services/evaluationService';
 import { Module } from '../../interfaces/Module';
 import { Course } from '../../interfaces/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
+import FormField from '../../components/FormField';
+import ButtonComponent from '../../components/ButtonDelete';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 
 const EditModule: React.FC = () => {
@@ -65,70 +67,63 @@ const EditModule: React.FC = () => {
     }
   };
 
+  const handleSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
+  };
+
+  const handleCancel = () => {
+    router.push('/content/module');
+  };
+
   if (!module) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100">
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b ">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-          <h1 className="text-4xl font-bold mb-4">Editar Módulo</h1>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center text-purple-600 mb-4"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          Volver
+        </button>
+        <div className="max-w-4xl bg-white p-6 rounded-lg">
           {error && <p className="text-red-500">{error}</p>}
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={module.name}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="course_id" className="block text-gray-700 text-sm font-bold mb-2">Curso</label>
-              <select
-                id="course_id"
-                name="course_id"
-                value={module.course_id}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option value={0}>Seleccione un curso</option>
-                {courses.map(course => (
-                  <option key={course.course_id} value={course.course_id}>
-                    {course.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="mb-4">
-              <label htmlFor="evaluation_id" className="block text-gray-700 text-sm font-bold mb-2">Evaluación</label>
-              <select
-                id="evaluation_id"
-                name="evaluation_id"
-                value={module.evaluation_id}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              >
-                <option value={0}>Seleccione una evaluación</option>
-                {evaluations.map(evaluation => (
-                  <option key={evaluation.evaluation_id} value={evaluation.evaluation_id}>
-                    {evaluation.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <FormField
+              id="name"
+              label="Nombre"
+              type="text"
+              value={module.name}
+              onChange={handleChange}
+            />
+            <FormField
+              id="course_id"
+              label="Curso"
+              type="select"
+              value={module.course_id.toString()}
+              onChange={handleChange}
+              options={courses.map(course => ({ value: course.course_id.toString(), label: course.name }))}
+            />
+            <FormField
+              id="evaluation_id"
+              label="Evaluación"
+              type="select"
+              value={module.evaluation_id.toString()}
+              onChange={handleChange}
+              options={evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
+            />
             <div className="mb-4">
               <label htmlFor="is_active" className="block text-gray-700 text-sm font-bold mb-2">Activo</label>
               <input
                 type="checkbox"
                 id="is_active"
-                name="is_active"
                 checked={module.is_active}
                 onChange={handleChange}
                 className="mr-2 leading-tight"
@@ -139,17 +134,15 @@ const EditModule: React.FC = () => {
               <input
                 type="checkbox"
                 id="is_finish"
-                name="is_finish"
                 checked={module.is_finish}
                 onChange={handleChange}
                 className="mr-2 leading-tight"
               />
-            </div>
-            <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded">Guardar</button>
+            </div> 
+            <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
           </form>
         </div>
       </main>
-      <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
     </div>
   );
 };

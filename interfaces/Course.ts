@@ -3,8 +3,8 @@ export interface Course {
   name: string;
   description_short: string;
   description_large: string;
-  duracion_curso: string;
-  duracion_video: string; // Añadido basado en el modelo
+  duration_course: string;
+  duration_video: string; // Añadido basado en el modelo
   intro_video: string;
   image: string;
   category_id: number;

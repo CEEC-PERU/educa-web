@@ -1,5 +1,5 @@
 import React from 'react';
-import ButtonComponent from "../components/ButtonComponent";
+import ButtonComponent from "./ButtonDelete";
 import Link from 'next/link';
 
 interface CardImageProps {
@@ -9,11 +9,12 @@ interface CardImageProps {
   title?: string;
   name?: string;
   description_short?: string;
-  duracion_curso?: string;
+  duration_course?: string;
   buttonLabel?: string;
   textColor?: string;
   image?: string;
   id?: number; // Hacer el id opcional
+  isCircular?: boolean; // Nueva prop opcional
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -27,7 +28,8 @@ const CardImage: React.FC<CardImageProps> = ({
   name,
   description_short,
   image,
-  duracion_curso
+  duration_course,
+  isCircular = false // Valor por defecto
 }) => {
   const displayName = name || title;
   const displayDescription = description_short || description;
@@ -35,18 +37,17 @@ const CardImage: React.FC<CardImageProps> = ({
 
   return (
     <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
-      <div className="relative mx-4 mt-4 overflow-hidden text-white shadow-lg rounded-xl bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40">
+      <div className={`relative mx-4 mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
           alt={displayName}
-          className="w-full"
+          className={`w-full ${isCircular ? 'h-48 object-cover rounded-full' : ''}`}
         />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
         <button
           className="!absolute top-4 right-4 h-8 max-h-[32px] w-8 max-w-[32px] select-none rounded-full text-center align-middle font-sans text-xs font-medium uppercase text-red-500 transition-all hover:bg-red-500/10 active:bg-red-500/30 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           type="button"
         >
-        
         </button>
       </div>
       <div className="p-6">
@@ -69,14 +70,13 @@ const CardImage: React.FC<CardImageProps> = ({
           <Link href={`/content/${id}`}>
             <ButtonComponent 
               buttonLabel={buttonLabel} 
-              backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
-              textColor="text-yellow-200" 
+              backgroundColor="bg-gradient-blue" 
+              textColor="text-white" 
               fontSize="text-xs" 
               buttonSize="py-2 px-7"
             />
           </Link>
         </div>
-       
       </div>
     </div>
   );

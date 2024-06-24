@@ -1,38 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import Footter from '../../components/Footter';
+import { Professor, Level } from '../../interfaces/Professor';
 import axios from '../../services/axios';
+import ButtonComponent from '../../components/ButtonDelete';
+import ProfileCard from '../../components/ProfileCard'; // Asegúrate de importar ProfileCard
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import './../../app/globals.css';
 
-interface Professor {
-  professor_id: number;
-  full_name: string;
-  image: string;
-  especialitation: string;
-  description: string;
-  level_id: number;
-}
-
-interface Level {
-  level_id: number;
-  name: string;
-}
-
 const Profesores: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
-  const [profesor, setProfesor] = useState<Omit<Professor, 'professor_id' | 'created_at' | 'updated_at'>>({
-    full_name: '',
-    image: '',
-    especialitation: '',
-    description: '',
-    level_id: 0,
-  });
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     axios.get<Professor[]>('/professors/')
@@ -54,136 +37,53 @@ const Profesores: React.FC = () => {
       });
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setProfesor(prevProfesor => ({ ...prevProfesor, [name]: value }));
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    axios.post('/professors', profesor)
-      .then(response => {
-        setProfessors([...professors, response.data]);
-        setProfesor({
-          full_name: '',
-          image: '',
-          especialitation: '',
-          description: '',
-          level_id: 0,
-        });
-        setSuccess('Profesor agregado exitosamente');
-      })
-      .catch(error => {
-        console.error('Error adding professor:', error);
-        setError('Error adding professor');
-      });
+  const handleViewProfile = (id: number) => {
+    router.push(`/content/detailProfessor?id=${id}`);
   };
 
-  const handleDelete = (id: number) => {
-    axios.delete(`/professors/${id}`)
-      .then(() => {
-        setProfessors(professors.filter(prof => prof.professor_id !== id));
-      })
-      .catch(error => {
-        console.error('Error deleting professor:', error);
-        setError('Error deleting professor');
-      });
+  const getLevelName = (levelId: number) => {
+    const level = levels.find(l => l.level_id === levelId);
+    return level ? level.name : 'N/A';
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Ingresar Profesor</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="full_name" className="block text-gray-700 mb-2">Nombre Completo</label>
-                <input
-                  type="text"
-                  id="full_name"
-                  name="full_name"
-                  value={profesor.full_name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="image" className="block text-gray-700 mb-2">Imagen</label>
-                <input
-                  type="text"
-                  id="image"
-                  name="image"
-                  value={profesor.image}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="especialitation" className="block text-gray-700 mb-2">Especialización</label>
-                <input
-                  type="text"
-                  id="especialitation"
-                  name="especialitation"
-                  value={profesor.especialitation}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="description" className="block text-gray-700 mb-2">Descripción</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={profesor.description}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="level_id" className="block text-gray-700 mb-2">Nivel</label>
-                <select
-                  id="level_id"
-                  name="level_id"
-                  value={profesor.level_id}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                >
-                  <option value="">Seleccionar Nivel</option>
-                  {levels.map(level => (
-                    <option key={level.level_id} value={level.level_id}>
-                      {level.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded">Guardar</button>
-              {success && <p className="text-green-500 mt-2">{success}</p>}
-              {error && <p className="text-red-500 mt-2">{error}</p>}
-            </form>
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+      <div className="flex flex-1 pt-16">
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
+          <div className="flex justify-between items-center mb-4"></div>
+          {error && <p className="text-red-500">{error}</p>}
+          <div className="flex justify-between items-center mb-6 mt-4">
+            <Link href="/content/addProfessor">
+              <ButtonComponent
+                buttonLabel="Añadir Profesor"
+                backgroundColor="bg-gradient-blue"
+                textColor="text-white"
+                fontSize="text-xs"
+                buttonSize="py-2 px-7"
+              />
+            </Link>
           </div>
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Lista de Profesores</h2>
-            {error && <p className="text-red-500">{error}</p>}
-            <ul className="mt-4 space-y-2">
-              {professors.map(professor => (
-                <li key={professor.professor_id} className="flex justify-between items-center py-2 border-b border-gray-200">
-                  <span>{professor.full_name}</span>
-                  <div>
-                    <Link href={`/content/editProfessor?id=${professor.professor_id}`}>
-                      <button className="mr-2 bg-yellow-500 text-white py-1 px-2 rounded">Editar</button>
-                    </Link>
-                    <button onClick={() => handleDelete(professor.professor_id)} className="bg-red-500 text-white py-1 px-2 rounded">Eliminar</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Ajuste a 4 columnas */}
+            {professors.map(professor => (
+              <ProfileCard
+                key={professor.professor_id}
+                name={professor.full_name}
+                title={professor.especialitation}
+                imageUrl={professor.image}
+                level={getLevelName(professor.level_id)} // Pasar el nivel del profesor
+                onViewProfile={() => handleViewProfile(professor.professor_id)} // Pasar la función onViewProfile
+              />
+            ))}
           </div>
-        </div>
-      </main>
-      <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
+        </main>
+      </div>
     </div>
   );
 };

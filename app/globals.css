@@ -4,29 +4,83 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-color: #F9FAFC;
+  --custom-blue: #0221d3b8;
+  --custom-purple: #6017AF;
+  --sidebar-color: #F9FAFC;
+  --sidebar-hover-color: #a485bd;
+  --border-color: #b484e7;
 }
+
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-start-color: #F9FAFC;
+    --sidebar-color: #ffffffbf;
+    --sidebar-hover-color: #a485bd;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
-    to bottom,
-    transparent,
-    rgb(var(--background-end-rgb))
-  ) rgb(var(--background-start-rgb));
+    to right,
+    var(--background-start-color),
+  );
+  background-attachment: fixed;
+  background-size: cover;
+  min-height: 100vh;
+  margin: 0;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+  
+  .bg-gradient-blue {
+    @apply bg-gradient-to-r from-blue-400 to-blue-300;
+  }
+
+  .bg-gradient-purple {
+    @apply bg-gradient-to-r from-purple-300 to-purple-200;
+  }
+}
+
+.container-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: white;
+}
+
+.border-global {
+  border-color: var(--border-color) !important;
+}
+
+.focus-border-global:focus {
+  border-color: var(--border-color) !important;
+  ring-color: var(--border-color) !important;
+}
+
+.sidebar-gradient {
+  background-color: var(--sidebar-color);
+}
+
+.sidebar-hover:hover {
+  background-color: var(--sidebar-hover-color);
+}
+
+/* Clases personalizadas */
+.text-custom-blue {
+  color: var(--custom-blue);
+}
+
+.bg-custom-purple {
+  background-color: var(--custom-purple);
+}
+
+.bg-custom-blue {
+  background-color: var(--custom-blue);
 }

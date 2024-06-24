@@ -16,11 +16,11 @@ export const deleteCategory = async (category_id: number): Promise<void> => {
   await axios.delete(`${API_CATEGORIES}/${category_id}`);
 };
 
-export const getCategory = async (category_id: string): Promise<Category> => {
+export const getCategory = async (category_id: number): Promise<Category> => {
   const response = await axios.get<Category>(`${API_CATEGORIES}/${category_id}`);
   return response.data;
 };
 
-export const updateCategory = async (category_id: string, category: Category): Promise<void> => {
+export const updateCategory = async (category_id: number, category: Category): Promise<void> => {
   await axios.put(`${API_CATEGORIES}/${category_id}`, category);
 };

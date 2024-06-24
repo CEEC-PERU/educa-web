@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import Footter from '../../components/Footter';
 import { getModules, addModule, deleteModule } from '../../services/moduleService';
 import { getCourses } from '../../services/courseService';
 import { getEvaluations } from '../../services/evaluationService';
@@ -10,6 +9,9 @@ import { Course } from '../../interfaces/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
 import Link from 'next/link';
 import './../../app/globals.css';
+import { Disclosure } from '@headlessui/react';
+import { ChevronUpIcon, ChevronDownIcon, PencilIcon, CheckCircleIcon, TrashIcon, BookOpenIcon, ClipboardIcon, CheckIcon } from '@heroicons/react/24/outline';
+import FloatingButton from '../../components/FloatingButton'; // Asegúrate de importar FloatingButton
 
 const ModulePage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -80,100 +82,87 @@ const ModulePage: React.FC = () => {
     }
   };
 
+  const getCourseName = (course_id: number) => {
+    const course = courses.find(c => c.course_id === course_id);
+    return course ? course.name : 'N/A';
+  };
+
+  const getEvaluationName = (evaluation_id: number) => {
+    const evaluation = evaluations.find(e => e.evaluation_id === evaluation_id);
+    return evaluation ? evaluation.name : 'N/A';
+  };
+
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl mx-auto mt-16">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow-md w-full">
-              <h2 className="text-2xl font-bold mb-4">Ingresar Módulo</h2>
-              <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700 mb-2">Nombre</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={module.name}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                />
+          <div className="max-w-4xl mt-16">
+            <div className="p-6 w-full">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Módulos</h2>
+                <FloatingButton link="/content/addModule" label="Añadir Módulo" />
               </div>
-              <div className="mb-4">
-                <label htmlFor="course_id" className="block text-gray-700 mb-2">Curso</label>
-                <select
-                  id="course_id"
-                  value={module.course_id}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                >
-                  <option value={0}>Seleccione un curso</option>
-                  {courses.map(course => (
-                    <option key={course.course_id} value={course.course_id}>
-                      {course.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="evaluation_id" className="block text-gray-700 mb-2">Evaluación</label>
-                <select
-                  id="evaluation_id"
-                  value={module.evaluation_id}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded"
-                >
-                  <option value={0}>Seleccione una evaluación</option>
-                  {evaluations.map(evaluation => (
-                    <option key={evaluation.evaluation_id} value={evaluation.evaluation_id}>
-                      {evaluation.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mb-4">
-                <label htmlFor="is_active" className="block text-gray-700 mb-2">Activo</label>
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={module.is_active}
-                  onChange={handleChange}
-                  className="mr-2 leading-tight"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="is_finish" className="block text-gray-700 mb-2">Finalizado</label>
-                <input
-                  type="checkbox"
-                  id="is_finish"
-                  checked={module.is_finish}
-                  onChange={handleChange}
-                  className="mr-2 leading-tight"
-                />
-              </div>
-              <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded">Guardar</button>
-            </form>
-            <div className="bg-white p-6 rounded shadow-md w-full">
-              <h2 className="text-2xl font-bold mb-4">Lista de Módulos</h2>
               {error && <p className="text-red-500">{error}</p>}
-              <ul className="mt-4 space-y-2">
+              <div className="space-y-2 mb-10">
                 {modules.map(module => (
-                  <li key={module.module_id} className="flex justify-between items-center py-2 border-b border-gray-200">
-                    <span>{module.name}</span>
-                    <div>
-                      <Link href={`/content/editModule?id=${module.module_id}`}>
-                        <button className="mr-2 bg-yellow-500 text-white py-1 px-2 rounded">Editar</button>
-                      </Link>
-                      <button onClick={() => handleDelete(module.module_id)} className="bg-red-500 text-white py-1 px-2 rounded">Eliminar</button>
-                    </div>
-                  </li>
+                  <Disclosure key={module.module_id} defaultOpen={true}>
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex justify-between items-center w-full px-6 py-4 text-sm font-medium text-left text-purple-1000 bg-gradient-purple focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75">
+                          <div className="flex items-center">
+                            {open ? (
+                              <ChevronUpIcon className="w-5 h-5 text-purple-500 mr-2" />
+                            ) : (
+                              <ChevronDownIcon className="w-5 h-5 text-purple-500 mr-2" />
+                            )}
+                            <span className="flex-grow">{module.name}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Link href={`/content/editModule?id=${module.module_id}`}>
+                              <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
+                            </Link>
+                            <button onClick={() => handleDelete(module.module_id)}>
+                              <TrashIcon className="w-6 h-5  text-red-500 cursor-pointer" />
+                            </button>
+                            {module.is_active ? (
+                              <CheckCircleIcon className="w-7 h-7 text-green-500" />
+                            ) : (
+                              <CheckCircleIcon className="w-7 h-7 text-gray-500" />
+                            )}
+                          </div>
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="text-m text-gray-700">
+                          <div className="flex flex-col space-y-2">
+                            <div className="flex items-center py-4 px-6">
+                              <BookOpenIcon className="w-5 h-5 text-gray-500 mr-2" />
+                              <strong>Curso:</strong>
+                              <span className="ml-2">{getCourseName(module.course_id)}</span>
+                            </div>
+                            <hr className="my-2" />
+                            <div className="flex items-center py-4 px-6">
+                              <ClipboardIcon className="w-5 h-5 text-gray-500 mr-2" />
+                              <strong>Evaluación:</strong>
+                              <span className="ml-2">{getEvaluationName(module.evaluation_id)}</span>
+                            </div>
+                            <hr className="my-2" />
+                            <div className="flex items-center py-4 px-6">
+                              <CheckIcon className="w-5 h-5 text-gray-500 mr-2" />
+                              <strong>Finalizado:</strong>
+                              <span className="ml-2">{module.is_finish ? 'Sí' : 'No'}</span>
+                            </div>
+                          </div>
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </main>
       </div>
-      <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
     </div>
   );
 };

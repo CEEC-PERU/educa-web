@@ -34,3 +34,7 @@ export const API_OPTIONS = `${baseURL}/api/options`;
 
 // videos
 export const API_VIDEOS = `${baseURL}/api/videos`;
+
+
+// images
+export const API_IMAGES = `${baseURL}/api/images`;

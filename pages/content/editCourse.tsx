@@ -2,14 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import Footer from '../../components/Footter';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
 import { getCourse, updateCourse } from '../../services/courseService';
-import { uploadVideo } from '../../services/videoService';  // Importa el servicio de video
+import { uploadVideo } from '../../services/videoService';
+import { uploadImage } from '../../services/imageService';
 import { Category } from '../../interfaces/Category';
 import { Professor } from '../../interfaces/Professor';
 import { Course } from '../../interfaces/Course';
+import MediaUploadPreview from '../../components/MediaUploadPreview';
+import FormField from '../../components/FormField';
+import ActionButtons from '../../components/ActionButtons';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import ButtonComponent from '../../components/ButtonDelete';
 import './../../app/globals.css';
 
 const EditCourse: React.FC = () => {
@@ -19,6 +24,7 @@ const EditCourse: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Omit<Course, 'course_id' | 'created_at' | 'updated_at'>>({
     name: '',
     description_short: '',
@@ -26,9 +32,9 @@ const EditCourse: React.FC = () => {
     category_id: 0,
     professor_id: 0,
     intro_video: '',
-    duracion_video: '',
+    duration_video: '',
     image: '',
-    duracion_curso: '',
+    duration_course: '',
     is_active: true,
   });
 
@@ -51,10 +57,10 @@ const EditCourse: React.FC = () => {
           description_large: courseRes.description_large,
           category_id: courseRes.category_id,
           professor_id: courseRes.professor_id,
-          intro_video: '',
-          duracion_video: courseRes.duracion_video,
+          intro_video: courseRes.intro_video,
+          duration_video: courseRes.duration_video,
           image: courseRes.image,
-          duracion_curso: courseRes.duracion_curso,
+          duration_course: courseRes.duration_course,
           is_active: courseRes.is_active,
         });
         setLoading(false);
@@ -81,22 +87,32 @@ const EditCourse: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setVideoFile(e.target.files[0]);
-    }
+  const handleVideoUpload = (file: File) => {
+    setVideoFile(file);
+  };
+
+  const handleImageUpload = (file: File) => {
+    setImageFile(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       let videoUrl = formData.intro_video;
+      let imageUrl = formData.image;
+
       if (videoFile) {
-        videoUrl = await uploadVideo(videoFile);
+        videoUrl = await uploadVideo(videoFile, 'Cursos/Videos');
       }
+
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile, 'Cursos/Images');
+      }
+
       await updateCourse(id as string, {
         ...formData,
         intro_video: videoUrl,
+        image: imageUrl
       });
       router.push('/content');
     } catch (error) {
@@ -105,155 +121,123 @@ const EditCourse: React.FC = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      // Lógica para eliminar el curso
+      // await deleteCourse(id as string);
+      router.push('/content');
+    } catch (error) {
+      setError('Error deleting course');
+      console.error('Error deleting course:', error);
+    }
+  };
+
   if (loading) {
     return <div>Cargando...</div>;
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-100">
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
       <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <h1 className="text-4xl font-bold mb-6">Editar Curso</h1>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div className="max-w-6xl bg-white p-6 rounded-lg">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center text-purple-600 mb-4"
+          >
+            <ArrowLeftIcon className="h-5 w-5 mr-2" />
+            Volver
+          </button>
           {error && <p className="text-red-500">{error}</p>}
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Nombre del Curso
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor="description_short" className="block text-sm font-medium text-gray-700">
-              Descripción Corta
-            </label>
-            <textarea
-              id="description_short"
-              value={formData.description_short}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor="description_large" className="block text-sm font-medium text-gray-700">
-              Descripción Larga
-            </label>
-            <textarea
-              id="description_large"
-              value={formData.description_large}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700">
-              Categoría
-            </label>
-            <select
-              id="category_id"
-              value={formData.category_id}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            >
-              <option value="">Seleccione una categoría</option>
-              {categories.map(category => (
-                <option key={category.category_id} value={category.category_id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="professor_id" className="block text-sm font-medium text-gray-700">
-              Profesor
-            </label>
-            <select
-              id="professor_id"
-              value={formData.professor_id}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            >
-              <option value="">Seleccione un profesor</option>
-              {professors.map(professor => (
-                <option key={professor.professor_id} value={professor.professor_id}>
-                  {professor.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="intro_video" className="block text-sm font-medium text-gray-700">
-              Video de Introducción
-            </label>
-            <input
-              type="file"
-              id="intro_video"
-              accept="video/*"
-              onChange={handleFileChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-            {formData.intro_video && !videoFile && (
-              <p className="text-sm text-gray-500 mt-2">El video actual se mantendrá si no subes uno nuevo.</p>
-            )}
-          </div>
-          <div>
-            <label htmlFor="duracion_video" className="block text-sm font-medium text-gray-700">
-              Duración del Video
-            </label>
-            <input
-              type="text"
-              id="duracion_video"
-              value={formData.duracion_video}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-              URL de la Imagen
-            </label>
-            <input
-              type="text"
-              id="image"
-              value={formData.image}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div>
-            <label htmlFor="duracion_curso" className="block text-sm font-medium text-gray-700">
-              Duración del Curso
-            </label>
-            <input
-              type="text"
-              id="duracion_curso"
-              value={formData.duracion_curso}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
-            />
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="is_active"
-              checked={formData.is_active}
-              onChange={handleChange}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-            />
-            <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-              Activo
-            </label>
-          </div>
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 px-4 rounded">Guardar</button>
-        </form>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <FormField
+                id="name"
+                label="Nombre del Curso"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+              />
+              <FormField
+                id="description_short"
+                label="Descripción Corta"
+                type="textarea"
+                value={formData.description_short}
+                onChange={handleChange}
+              />
+              <FormField
+                id="description_large"
+                label="Descripción Larga"
+                type="textarea"
+                value={formData.description_large}
+                onChange={handleChange}
+              />
+              <FormField
+                id="category_id"
+                label="Categoría"
+                type="select"
+                value={formData.category_id.toString()}
+                onChange={handleChange}
+                options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
+              />
+              <div>
+                <label htmlFor="image" className="block text-sm font-medium mb-4 text-blue-400">
+                  Imagen del Curso
+                </label>
+                <MediaUploadPreview onMediaUpload={handleImageUpload} accept="image/*" label="Subir Imagen" />
+              </div>
+              
+            </div>
+            <div className="space-y-4">
+              <FormField
+                id="professor_id"
+                label="Profesor"
+                type="select"
+                value={formData.professor_id.toString()}
+                onChange={handleChange}
+                options={professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))}
+              />
+              <FormField
+                id="duration_video"
+                label="Duración del Video"
+                type="text"
+                value={formData.duration_video}
+                onChange={handleChange}
+              />
+              <div>
+                <label htmlFor="intro_video" className="block text-sm font-medium mb-4 text-blue-400">
+                  Video de Introducción
+                </label>
+                <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir Video" />
+              </div>
+              <FormField
+                id="duration_course"
+                label="Duración del Curso"
+                type="text"
+                value={formData.duration_course}
+                onChange={handleChange}
+              />
+              <div className="flex items-center mt-6">
+                <input
+                  type="checkbox"
+                  id="is_active"
+                  checked={formData.is_active}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                />
+                <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+                  Activo
+                </label>
+              </div>
+            </div>
+            <div className="col-span-1 md:col-span-2 flex justify-end mt-4">
+              <ButtonComponent buttonLabel="Guardar" onClick={handleSubmit} backgroundColor="bg-purple-500" textColor="text-white" fontSize="text-sm" buttonSize="py-3 px-4" />
+            </div>
+          </form>
+        </div>
       </main>
-      <Footer footerText="2024 EducaWeb. Todos los derechos reservados." />
     </div>
   );
 };

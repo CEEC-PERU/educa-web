@@ -3,5 +3,5 @@ export interface Session {
   video_enlace: string;
   duracion_minutos: number;
   name: string;
-  modul_id: number;
+  module_id: number;
 }

@@ -12,7 +12,7 @@ export const addProfessor = async (professor: Professor): Promise<Professor> => 
     return response.data;
 };
 
-export const getProfessor = async (professor_id: string): Promise<Professor> => {
+export const getProfessor = async (professor_id: number): Promise<Professor> => {
   const response = await axios.get<Professor>(`${API_PROFESSORS}/${professor_id}`);
   return response.data;
 };
@@ -21,7 +21,7 @@ export const deleteProfessor = async (professor_id: number): Promise<void> => {
     await axios.delete(`${API_PROFESSORS}/${professor_id}`);
   };
 
-export const updateProfessor = async (professor_id: string, professor: Professor): Promise<void> => {
+export const updateProfessor = async (professor_id: number, professor: Professor): Promise<void> => {
   await axios.put(`${API_PROFESSORS}/${professor_id}`, professor);
 };
 

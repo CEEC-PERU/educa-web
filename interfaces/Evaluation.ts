@@ -11,12 +11,15 @@ export interface Question {
     evaluation_id: number;
     question_text: string;
     type_id: number;
+    score: number;
+    image?: string;
+    options?: Option[];
     created_at?: string;
     updated_at?: string;
 }
 
 export interface Option {
-    option_id: number;
+    option_id?: number;
     question_id: number;
     option_text: string;
     is_correct: boolean;
