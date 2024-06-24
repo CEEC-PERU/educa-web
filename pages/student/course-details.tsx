@@ -24,6 +24,15 @@ const CourseDetails = () => {
     uri_picture = profile.profile_picture!;
   }
 
+  const navigateToCourseDetails = () => {
+    router.push({
+      pathname: '/student/modulos/',
+    });
+
+  
+  };
+
+
   return (
     <ProtectedRoute>
       <div className="relative z-10">
@@ -96,7 +105,14 @@ const CourseDetails = () => {
 
 
                 ))}
-             
+              <div className="flex justify-end mt-4">
+                <button 
+                  className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
+                  onClick={navigateToCourseDetails}
+                >
+                  Detalles del curso 
+                </button>
+              </div>
             </div>
            
           </div>
