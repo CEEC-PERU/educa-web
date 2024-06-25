@@ -2,7 +2,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router'; // Ensure this import is needed for client-side routing operations
-import { AcademicCapIcon , ChevronDownIcon} from '@heroicons/react/24/solid';
+import { AcademicCapIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
+
 interface NavbarProps {
   bgColor?: string;
   textColor?: string;
@@ -11,10 +12,10 @@ interface NavbarProps {
   navbarHeight?: string;
   toggleSidebar?: () => void;
   showMenuButton?: boolean;
+  borderColor? : string;
   links?: { href: string; label: string }[];
   user?: { profilePicture?: string };
 }
-
 
 const Navbar: React.FC<NavbarProps> = ({
   bgColor = 'bg-blue-600',
@@ -23,14 +24,13 @@ const Navbar: React.FC<NavbarProps> = ({
   fontFamily = 'font-sans',
   navbarHeight = 'h-16',
   toggleSidebar,
+  borderColor,
   showMenuButton = true,
   links = [],
   user,
 }) => {
-
-
   return (
-    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50`}>
+    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50  ${borderColor} `}> {/* Añadir borde blanco */}
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
           {showMenuButton && toggleSidebar && (
@@ -49,28 +49,21 @@ const Navbar: React.FC<NavbarProps> = ({
             </Link>
           ))}
           {user ? (
-          <>
-          <Link href="/student">
-            <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
-              <AcademicCapIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
-          
-            </button>
-          </Link>
-    
-          <Link href="/student">
-            <img src={user.profilePicture} alt="Profile" className="h-16 w-16 p-2 rounded-full cursor-pointer" />
-          </Link>
-    
-          <Link href="/student">
-            <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
-              <ChevronDownIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
-            
-            </button>
-          </Link>
-        </>
-           
-            
-            
+            <>
+              <Link href="/student">
+                <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
+                  <AcademicCapIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
+                </button>
+              </Link>
+              <Link href="/student">
+                <img src={user.profilePicture} alt="Profile" className="h-16 w-16 p-2 rounded-full cursor-pointer" />
+              </Link>
+              <Link href="/student">
+                <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
+                  <ChevronDownIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
+                </button>
+              </Link>
+            </>
           ) : (
             <Link href="/login">
               <span className={`${textColor} hover:underline cursor-pointer`}>Iniciar Sesión</span>

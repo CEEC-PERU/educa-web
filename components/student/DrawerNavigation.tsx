@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/solid'; // Importar íconos
-import { useAuth } from '../context/AuthContext';
-import { Profile } from '../interfaces/UserInterfaces';
+import { useAuth } from '../../context/AuthContext';
+import { Profile } from '../../interfaces/UserInterfaces';
 
 const DrawerNavigation: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,9 +31,9 @@ const DrawerNavigation: React.FC = () => {
   };
 
   return (
-    <div className="fixed h-96 z-50">
+    <div className="fixed left-0 top-16 h-full z-50">
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-brandmorado-700 text-white transition-all transform ${
+        className={`bg-brandmorado-700  h-full rounded-r-lg text-white transition-all transform ${
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}

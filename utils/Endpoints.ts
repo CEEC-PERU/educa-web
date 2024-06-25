@@ -66,5 +66,5 @@ export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 
 //Obtener modulos , sesiones , evaluacion y prox evaluacion_final
-export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules/`;
+export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules`;
 

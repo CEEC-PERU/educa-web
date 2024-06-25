@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/DrawerNavigation';
+import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useEnterprise } from '../../hooks/useEnterprise';

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
-import SidebarDrawer from '../../components/DrawerNavigation';
+import SidebarDrawer from '../../components/student/DrawerNavigation';
 import { useCourseDetail } from '../../hooks/useCourseDetail';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
@@ -27,17 +27,18 @@ const CourseDetails = () => {
   const navigateToCourseDetails = () => {
     router.push({
       pathname: '/student/modulos/',
+      query: { course_id: courseIdNumber }
     });
 
   
   };
-
 
   return (
     <ProtectedRoute>
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+          borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
         />
         <SidebarDrawer />

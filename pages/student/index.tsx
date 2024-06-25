@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/DrawerNavigation';
+import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent} from '../../hooks/useCourseStudents';
-import CourseCard from '../../components/CourseCard';
+import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 
-Modal.setAppElement('#__next'); // Asegúrate de que esto apunte al elemento de tu aplicación
+Modal.setAppElement('#__next'); 
 
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -38,7 +38,6 @@ const StudentIndex: React.FC = () => {
   const navigateToCourseDetails = () => {
     router.push({
       pathname: '/student/course-details',
-      
       query: { course_id: selectedCourse.course_id }
     });
     console.log("selectedCourse:", selectedCourse); // Verifica el estado de selectedCourse
@@ -52,6 +51,7 @@ const StudentIndex: React.FC = () => {
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+          borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
         />
         <SidebarDrawer />
