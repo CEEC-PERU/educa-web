@@ -5,7 +5,7 @@ import { Profile } from '../../interfaces/UserInterfaces';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import { useCourseDetail } from '../../hooks/useCourseDetail';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-
+import React, { useState } from 'react';
 const CourseDetails = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
@@ -14,14 +14,16 @@ const CourseDetails = () => {
   // Convertir course_id a número si es una cadena y no está indefinido
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
   const { courseDetail, isLoading } = useCourseDetail(courseIdNumber);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '';
   let uri_picture = '';
+
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
+
   }
 
   const navigateToCourseDetails = () => {
@@ -41,7 +43,7 @@ const CourseDetails = () => {
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
         />
-        <SidebarDrawer />
+        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
         {courseDetail.map(courseDetails => (
@@ -96,15 +98,9 @@ const CourseDetails = () => {
               <p className="text-lg mb-4">{courseDetails.description_short}</p>
               {courseDetails.courseModules.map(module => (
                  <div key={module.module_id} >
-               
                  <p key={module.module_id} className="text-base">Modulo : {module.name}</p>
                
-                
                </div>
-                
-
-
-
                 ))}
               <div className="flex justify-end mt-4">
                 <button 

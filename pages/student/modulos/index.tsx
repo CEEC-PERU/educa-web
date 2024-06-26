@@ -5,7 +5,7 @@ import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
 import MainContentPrueba from '../../../components/student/MainContentPrueba';
 import { Profile } from '../../../interfaces/UserInterfaces';
-import { Course, Question, ModuleEvaluation } from '../../../interfaces/StudentModule';
+import { Question, ModuleEvaluation } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import DrawerNavigation from '../../../components/student/DrawerNavigation';
 
@@ -16,6 +16,7 @@ const Home: React.FC = () => {
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[] }>({});
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
   let name = '';
   let uri_picture = '';
@@ -45,6 +46,11 @@ const Home: React.FC = () => {
     }
   };
 
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+    
+  };
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -64,11 +70,12 @@ const Home: React.FC = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
+          toggleSidebar={toggleSidebar}
         />
       </div>
-      <div className="flex flex-grow pt-16"> {/* pt-16 to offset the fixed Navbar height */}
-        <DrawerNavigation />
-        <div className="ml-16 mr-80 w-full p-4"> {/* Adjusted margins to accommodate DrawerNavigation and SidebarPrueba */}
+      <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
+        <DrawerNavigation isDrawerOpen={isDrawerOpen} />
+        <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba sessionVideo={selectedSession.video} evaluationQuestions={selectedSession.questions} />
         </div>
         <SidebarPrueba

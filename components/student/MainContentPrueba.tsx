@@ -35,7 +35,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({ sessionVideo, evaluatio
     return (
       <div className="flex flex-col justify-center items-center h-full w-full p-4">
         <div className="max-w-2xl w-full">
-          <p>{question.question_text}</p>
+          <h1>Evaluación </h1>
+          <h3>{question.question_text}</h3>
+          <p>Puntaje :  {question.score}</p>
+          <img src={question.image}></img>
           <ul>
             {question.options.map((option, idx) => (
               <li key={idx}>{option.option_text}</li>

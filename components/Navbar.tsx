@@ -1,8 +1,6 @@
-// Navbar.tsx
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router'; // Ensure this import is needed for client-side routing operations
-import { AcademicCapIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
+import { AcademicCapIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface NavbarProps {
   bgColor?: string;
@@ -12,7 +10,7 @@ interface NavbarProps {
   navbarHeight?: string;
   toggleSidebar?: () => void;
   showMenuButton?: boolean;
-  borderColor? : string;
+  borderColor?: string;
   links?: { href: string; label: string }[];
   user?: { profilePicture?: string };
 }
@@ -30,14 +28,15 @@ const Navbar: React.FC<NavbarProps> = ({
   user,
 }) => {
   return (
-    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50  ${borderColor} `}> {/* Añadir borde blanco */}
+    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50 ${borderColor}`}>
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
           {showMenuButton && toggleSidebar && (
-            <button onClick={toggleSidebar} className={`${textColor} p-0 m-0 flex items-center justify-center h-full`}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12h18M3 6h18M3 18h18" />
-              </svg>
+            <button
+              onClick={toggleSidebar}
+              className={`${textColor} p-0 m-0 flex items-center justify-center h-full lg:hidden`}
+            >
+              <ChevronRightIcon className="h-6 w-6" />
             </button>
           )}
           <div className={`${textColor} ${fontSize} ${fontFamily} font-bold ${showMenuButton ? 'ml-2' : ''}`}>EducaWeb</div>
@@ -52,7 +51,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <>
               <Link href="/student">
                 <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
-                  <AcademicCapIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
+                  <AcademicCapIcon className="h-6 w-6 mr-2 text-white" />
                 </button>
               </Link>
               <Link href="/student">
@@ -60,7 +59,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </Link>
               <Link href="/student">
                 <button className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left">
-                  <ChevronDownIcon className="h-6 w-6 mr-2 text-white" /> {/* Añadir text-white para el color */}
+                  <ChevronDownIcon className="h-6 w-6 mr-2 text-white" />
                 </button>
               </Link>
             </>
