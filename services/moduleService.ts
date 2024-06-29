@@ -11,6 +11,17 @@ export const getModule = async (moduleId: string): Promise<Module> => {
   const response = await axios.get<Module>(`${API_MODULES}/${moduleId}`);
   return response.data;
 };
+// services/moduleService.ts
+
+export const getModuleById = async (moduleId: string): Promise<Module> => {
+  const response = await fetch(`${API_MODULES}/${moduleId}`);
+  
+  if (!response.ok) {
+    throw new Error('Failed to fetch module');
+  }
+  
+  return response.json();
+};
 
 export const addModule = async (moduleData: Partial<Module>): Promise<Module> => {
   const response = await axios.post(API_MODULES, moduleData);

@@ -5,12 +5,12 @@ import { BookOpenIcon, TagIcon, UserGroupIcon, CubeIcon, DocumentTextIcon, Arrow
 import { useAuth } from '../context/AuthContext';
 import { Profile } from '../interfaces/UserInterfaces';
 
-interface SidebarProps {
+interface SidebarAdminProps {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
@@ -48,6 +48,15 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
       >
         <nav className="flex-1">
           <ul>
+          <li>
+              <button
+                onClick={() => handleNavigation('/admin')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <BookOpenIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Usuarios</span>}
+              </button>
+            </li>
             <li>
               <button
                 onClick={() => handleNavigation('/content')}
@@ -110,4 +119,4 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
 };
 
 
-export default Sidebar;
+export default SidebarAdmin;

@@ -2,16 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
-import { getModules, addModule } from '../../services/moduleService';
-import { getCourses } from '../../services/courseService';
+import { addModule } from '../../services/moduleService';
 import { getEvaluations } from '../../services/evaluationService';
-import { Module } from '../../interfaces/Module';
-import { Course } from '../../interfaces/Course';
-import { Evaluation } from '../../interfaces/Evaluation';
+import { Evaluation } from '../../interfaces/Evaluation'; 
+import { Module } from '../../interfaces/Module'; 
 import FormField from '../../components/FormField';
 import ActionButtons from '../../components/ActionButtons';
-import ButtonComponent from '../../components/ButtonDelete';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'; // Importa el ícono de flecha
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 
 const ModulePage: React.FC = () => {
@@ -23,31 +20,23 @@ const ModulePage: React.FC = () => {
     is_active: true,
     name: ''
   });
-  const [modules, setModules] = useState<Module[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
+  const { courseId } = router.query; // Obtener el ID del curso de la URL
 
   useEffect(() => {
-    const fetchModulesCoursesAndEvaluations = async () => {
+    const fetchEvaluations = async () => {
       try {
-        const [modulesRes, coursesRes, evaluationsRes] = await Promise.all([
-          getModules(),
-          getCourses(),
-          getEvaluations()
-        ]);
-        setModules(modulesRes);
-        setCourses(coursesRes);
+        const evaluationsRes = await getEvaluations();
         setEvaluations(evaluationsRes);
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setError('Error fetching data');
+        console.error('Error fetching evaluations:', error);
+        setError('Error fetching evaluations');
       }
     };
 
-    fetchModulesCoursesAndEvaluations();
+    fetchEvaluations();
   }, []);
 
   const toggleSidebar = () => {
@@ -66,9 +55,9 @@ const ModulePage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const newModule = await addModule(module);
-      setModules([...modules, newModule]);
+      const newModule = await addModule({ ...module, course_id: Number(courseId) });
       setModule({ course_id: 0, evaluation_id: 0, is_finish: false, is_active: true, name: '' });
+      router.push(`/content/detailModule?id=${courseId}`); // Redirigir a la página de módulos del curso actual
     } catch (error) {
       console.error('Error adding module:', error);
       setError('Error adding module');
@@ -77,6 +66,7 @@ const ModulePage: React.FC = () => {
 
   const handleCancel = () => {
     setModule({ course_id: 0, evaluation_id: 0, is_finish: false, is_active: true, name: '' });
+    router.back();
   };
 
   if (error) {
@@ -85,34 +75,26 @@ const ModulePage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
-      <div className="flex flex-1">
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded w-full mt-8">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-6 mt-4"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Volver
-            </button>
+            <form onSubmit={handleSubmit} className="bg-white rounded w-full">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="flex items-center text-purple-600 mb-6 "
+              >
+                <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                Volver
+              </button>
               <FormField
                 id="name"
                 label="Nombre"
                 type="text"
                 value={module.name}
                 onChange={handleChange}
-              />
-              <FormField
-                id="course_id"
-                label="Curso"
-                type="select"
-                value={module.course_id.toString()}
-                onChange={handleChange}
-                options={[{ value: '0', label: 'Seleccione un curso' }, ...courses.map(course => ({ value: course.course_id.toString(), label: course.name }))]}
               />
               <FormField
                 id="evaluation_id"
@@ -122,29 +104,6 @@ const ModulePage: React.FC = () => {
                 onChange={handleChange}
                 options={[{ value: '0', label: 'Seleccione una evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
               />
-              <div className="mb-4">
-                <label htmlFor="is_active" className="block text-gray-700 mb-2">Activo</label>
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={module.is_active}
-                  onChange={handleChange}
-                  className="mr-2 leading-tight"
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="is_finish" className="block text-gray-700 mb-2">Finalizado</label>
-                <input
-                  type="checkbox"
-                  id="is_finish"
-                  checked={module.is_finish}
-                  onChange={handleChange}
-                  className="mr-2 leading-tight"
-                />
-              </div>
-              <div className="flex justify-end space-x-2 mt-4">
-              <ButtonComponent buttonLabel="Guardar" onClick={handleSubmit} backgroundColor="bg-purple-500" textColor="text-white" fontSize="text-sm" buttonSize="py-3 px-4" />
-              </div>
             </form>
             <div className="mt-14">
               <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />

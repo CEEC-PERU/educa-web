@@ -1,6 +1,5 @@
 import React from 'react';
 import ButtonComponent from "./ButtonDelete";
-import Link from 'next/link';
 
 interface CardImageProps {
   rating?: number;
@@ -15,6 +14,7 @@ interface CardImageProps {
   image?: string;
   id?: number; // Hacer el id opcional
   isCircular?: boolean; // Nueva prop opcional
+  onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del botón
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -29,19 +29,20 @@ const CardImage: React.FC<CardImageProps> = ({
   description_short,
   image,
   duration_course,
-  isCircular = false // Valor por defecto
+  isCircular = false, // Valor por defecto
+  onButtonClick // Nueva prop para manejar el clic del botón
 }) => {
   const displayName = name || title;
   const displayDescription = description_short || description;
   const displayImage = image || imageUrl;
 
   return (
-    <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
+    <div className="relative flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
       <div className={`relative mx-4 mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
           alt={displayName}
-          className={`w-full ${isCircular ? 'h-48 object-cover rounded-full' : ''}`}
+          className={`w-full h-48 object-cover ${isCircular ? 'rounded-full' : ''}`}
         />
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60"></div>
         <button
@@ -50,9 +51,9 @@ const CardImage: React.FC<CardImageProps> = ({
         >
         </button>
       </div>
-      <div className="p-6">
+      <div className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h5 className={`block font-sans text-xl antialiased font-medium leading-snug tracking-normal ${textColor}`}>
+          <h5 className={`block font-sans text-xl antialiased font-medium leading-snug tracking-normal ${textColor} truncate`}>
             {displayName}
           </h5>
           <p className="flex items-center gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
@@ -62,20 +63,18 @@ const CardImage: React.FC<CardImageProps> = ({
             {rating.toFixed(1)}
           </p>
         </div>
-        <p className="block font-sans text-base antialiased font-light leading-relaxed text-gray-700 text-center truncate">
+        <p className="block font-sans text-base antialiased font-light leading-relaxed text-gray-700 text-center break-words">
           {displayDescription}
         </p>
-        
-        <div className="p-6 pt-3">
-          <Link href={`/content/${id}`}>
-            <ButtonComponent 
-              buttonLabel={buttonLabel} 
-              backgroundColor="bg-gradient-blue" 
-              textColor="text-white" 
-              fontSize="text-xs" 
-              buttonSize="py-2 px-7"
-            />
-          </Link>
+        <div className="pt-4 flex justify-center">
+          <ButtonComponent 
+            buttonLabel={buttonLabel} 
+            backgroundColor="bg-gradient-blue" 
+            textColor="text-white" 
+            fontSize="text-xs" 
+            buttonSize="py-2 px-7"
+            onClick={() => onButtonClick && onButtonClick(id)}
+          />
         </div>
       </div>
     </div>

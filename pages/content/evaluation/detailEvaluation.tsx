@@ -89,11 +89,11 @@ const EvaluationDetail: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <div className="flex flex-1">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
-          <div className="grid grid-cols-1 mx-auto mt-16">
+          <div className="grid grid-cols-1 mx-auto">
             <div className="container mx-auto flex">
               <DetailContainer
                 evaluation={evaluation}

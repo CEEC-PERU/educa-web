@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface MediaUploadPreviewProps {
   onMediaUpload: (file: File) => void;
   accept: string;
   label: string;
+  initialPreview?: string;
 }
 
-const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, accept, label }) => {
-  const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, accept, label, initialPreview }) => {
+  const [mediaPreview, setMediaPreview] = useState<string | null>(initialPreview || null);
 
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -20,6 +21,10 @@ const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, 
       onMediaUpload(file);
     }
   };
+
+  useEffect(() => {
+    setMediaPreview(initialPreview || null);
+  }, [initialPreview]);
 
   const isImage = accept.startsWith('image/');
 

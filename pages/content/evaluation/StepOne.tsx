@@ -1,4 +1,3 @@
-// StepOne.tsx
 import React, { useState } from 'react';
 import { Evaluation } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
@@ -8,11 +7,12 @@ import './../../../app/globals.css';
 interface StepOneProps {
   nextStep: () => void;
   setEvaluationData: (data: Omit<Evaluation, 'evaluation_id'>) => void;
+  evaluationData: Omit<Evaluation, 'evaluation_id'>;
 }
 
-const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData }) => {
-  const [evaluationName, setEvaluationName] = useState('');
-  const [evaluationDescription, setEvaluationDescription] = useState('');
+const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluationData }) => {
+  const [evaluationName, setEvaluationName] = useState(evaluationData.name);
+  const [evaluationDescription, setEvaluationDescription] = useState(evaluationData.description);
 
   const handleNext = () => {
     setEvaluationData({ name: evaluationName, description: evaluationDescription });

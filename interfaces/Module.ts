@@ -1,3 +1,4 @@
+import { Session } from './Session'; // Asegúrate de que existe la interfaz Session
 export interface Module {
   module_id: number;
   name: string;
@@ -7,4 +8,5 @@ export interface Module {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  moduleSessions?: Session[]; 
 }

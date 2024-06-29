@@ -25,6 +25,7 @@ const EditModule: React.FC = () => {
   });
   const [courses, setCourses] = useState<Course[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const [availableEvaluations, setAvailableEvaluations] = useState<Evaluation[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +35,14 @@ const EditModule: React.FC = () => {
         .then(([moduleRes, coursesRes, evaluationsRes]) => {
           setModule(moduleRes);
           setCourses(coursesRes);
+
+          // Incluir la evaluación actual del módulo en las opciones disponibles
+          const filteredEvaluations = evaluationsRes.filter(evaluation => {
+            return evaluation.evaluation_id === moduleRes.evaluation_id || !coursesRes.some(course => course.evaluation_id === evaluation.evaluation_id);
+          });
+
           setEvaluations(evaluationsRes);
+          setAvailableEvaluations(filteredEvaluations);
         })
         .catch(error => {
           console.error('Error fetching module details:', error);
@@ -60,7 +68,7 @@ const EditModule: React.FC = () => {
     e.preventDefault();
     try {
       await updateModule(id as string, module);
-      router.push('/content/module');
+      router.push(`/content/detailModule?id=${module.course_id}`); // Redirigir al curso correcto
     } catch (error) {
       console.error('Error updating module:', error);
       setError('Error updating module');
@@ -73,7 +81,7 @@ const EditModule: React.FC = () => {
   };
 
   const handleCancel = () => {
-    router.push('/content/module');
+    router.push(`/content/detailModule?id=${module.course_id}`); // Redirigir al curso correcto
   };
 
   if (!module) {
@@ -81,10 +89,11 @@ const EditModule: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b ">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
         <button
           type="button"
           onClick={() => router.back()}
@@ -117,7 +126,7 @@ const EditModule: React.FC = () => {
               type="select"
               value={module.evaluation_id.toString()}
               onChange={handleChange}
-              options={evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
+              options={availableEvaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
             />
             <div className="mb-4">
               <label htmlFor="is_active" className="block text-gray-700 text-sm font-bold mb-2">Activo</label>
@@ -143,6 +152,7 @@ const EditModule: React.FC = () => {
           </form>
         </div>
       </main>
+      </div>
     </div>
   );
 };

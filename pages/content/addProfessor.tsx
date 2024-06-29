@@ -99,10 +99,11 @@ const AddProfessors: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-6 rounded w-full">
             <form onSubmit={handleSubmit}>
               <button
@@ -147,9 +148,6 @@ const AddProfessors: React.FC = () => {
                 onChange={handleChange}
                 options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
               />
-              <div className="flex justify-end space-x-2 mt-4">
-                <ButtonComponent buttonLabel="Guardar" onClick={handleSubmit} backgroundColor="bg-purple-500" textColor="text-white" fontSize="text-sm" buttonSize="py-3 px-4" />
-              </div>
             </form>
           </div>
           <div className="items-center">
@@ -157,6 +155,7 @@ const AddProfessors: React.FC = () => {
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 };

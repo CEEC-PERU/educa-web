@@ -1,4 +1,3 @@
-// StepTwo.tsx
 import React, { useState, useEffect } from 'react';
 import { Question, QuestionType } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
@@ -12,12 +11,11 @@ interface StepTwoProps {
   nextStep: () => void;
   prevStep: () => void;
   setQuestionsData: (data: Omit<Question, 'question_id'>[]) => void;
+  initialQuestions: Omit<Question, 'question_id'>[];
 }
 
-const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData }) => {
-  const [questions, setQuestions] = useState<Omit<Question, 'question_id'>[]>([
-    { question_text: '', type_id: 1, score: 0, evaluation_id: 0, image: '' }
-  ]);
+const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData, initialQuestions }) => {
+  const [questions, setQuestions] = useState<Omit<Question, 'question_id'>[]>(initialQuestions);
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +39,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData 
   const handleImageUpload = async (index: number, file: File) => {
     try {
       setLoading(true);
-      const imageUrl = await uploadImage(file);
+      const imageUrl = await uploadImage(file, 'questions');
       const newQuestions = [...questions];
       newQuestions[index] = { ...newQuestions[index], image: imageUrl };
       setQuestions(newQuestions);
@@ -64,15 +62,15 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData 
   };
 
   const addQuestionToState = () => {
-    setQuestions([...questions, { question_text: '', type_id: 1, score: 0, evaluation_id: 0, image: '' }]);
+    setQuestions([...questions, { question_text: '', type_id: questionTypes[0]?.type_id || 1, score: 0, evaluation_id: 0, image: '' }]);
   };
 
   return (
-    <WizardStepContainer>
+    <WizardStepContainer title="Step 2: Add Questions">
       {loading && <p>Cargando imagen...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {questions.map((question, index) => (
-        <div key={index} className="mb-4">
+        <div key={index} className="mb-6 border border-gray-300 rounded-lg p-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">Pregunta</label>
           <input
             type="text"
@@ -106,7 +104,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData 
           <MediaUploadPreview
             onMediaUpload={(file) => handleImageUpload(index, file)}
             accept="image/*"
-            label="Subir imagen"
+            label={`question-${index}`}
+            initialPreview={question.image}
           />
         </div>
       ))}

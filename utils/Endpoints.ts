@@ -65,3 +65,8 @@ export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 //obtener detalle d elos cursos
 export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 
+//obtener info de empresas
+export const API_GET_EMPRESA = `${baseURL}/api/enterprises`;
+
+//crear usuarios
+export const API_USERS = `${baseURL}/api/superadmin/import`;

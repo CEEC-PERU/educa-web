@@ -85,3 +85,35 @@ body {
 .bg-custom-blue {
   background-color: var(--custom-blue);
 }
+
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.bg-blue-100 {
+  background-color: #ebf8ff;
+}
+
+.text-blue-900 {
+  color: #2a4365;
+}
+
+.bg-red-100 {
+  background-color: #fff5f5;
+}
+
+.text-red-900 {
+  color: #742a2a;
+}
+
+.bg-green-100 {
+  background-color: #f0fff4;
+}
+
+.text-green-900 {
+  color: #276749;
+}

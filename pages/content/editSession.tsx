@@ -35,7 +35,7 @@ const EditSession: React.FC = () => {
           getModules()
         ]);
         setSession({
-          video_enlace: '',
+          video_enlace: sessionRes.video_enlace,
           duracion_minutos: sessionRes.duracion_minutos,
           name: sessionRes.name,
           module_id: sessionRes.module_id
@@ -78,7 +78,7 @@ const EditSession: React.FC = () => {
         ...session,
         video_enlace: videoUrl
       });
-      router.push('/content/session');
+      alert('Actualización realizada con éxito');
     } catch (error) {
       setError('Error updating session');
       console.error('Error updating session:', error);
@@ -91,7 +91,7 @@ const EditSession: React.FC = () => {
   };
 
   const handleCancel = () => {
-    router.push('/content/session');
+    router.push(`/content/detailModule?id=${session.module_id}`);
   };
 
   if (!session) {
@@ -100,9 +100,10 @@ const EditSession: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16 mt-6`}>
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
         <button
           type="button"
           onClick={() => router.back()}
@@ -127,6 +128,7 @@ const EditSession: React.FC = () => {
                 onMediaUpload={handleFileChange}
                 accept="video/*"
                 label="Subir video"
+                initialPreview={session.video_enlace} // Mostrar el video actual
               />
             </div>
             <FormField
@@ -136,19 +138,11 @@ const EditSession: React.FC = () => {
               value={session.duracion_minutos.toString()}
               onChange={handleChange}
             />
-            <FormField
-              id="module_id"
-              label="Módulo"
-              type="select"
-              value={session.module_id.toString()}
-              onChange={handleChange}
-              options={modules.map(module => ({ value: module.module_id.toString(), label: module.name }))}
-            />
-             <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
-              
+            <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
           </form>
         </div>
       </main>
+      </div>
     </div>
   );
 };

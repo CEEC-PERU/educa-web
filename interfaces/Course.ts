@@ -9,6 +9,7 @@ export interface Course {
   image: string;
   category_id: number;
   professor_id: number;
+  evaluation_id:number;
   is_active: boolean;
   created_at: string;
   updated_at: string;

@@ -108,9 +108,10 @@ const DetailProfessor: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" toggleSidebar={toggleSidebar} />
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <div className="flex flex-1 pt-16">
       <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16 mt-6`}>
+      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
         <button
           type="button"
           onClick={() => router.back()}
@@ -167,7 +168,6 @@ const DetailProfessor: React.FC = () => {
                   onChange={handleChange}
                   options={levels.map(level => ({ value: level.level_id.toString(), label: level.name }))}
                 />
-                <ButtonComponent buttonLabel="Guardar" onClick={handleSave} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
               </form>
             )}
           </div>
@@ -184,6 +184,7 @@ const DetailProfessor: React.FC = () => {
         {error && <p className="text-red-500 mt-2">{error}</p>}
         {success && <p className="text-green-500 mt-2">{success}</p>}
       </main>
+      </div>
     </div>
   );
 };
