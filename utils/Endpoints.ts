@@ -69,3 +69,10 @@ export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`
 export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules`;
 
 export const API_POST_SESSION_PROGRESS = `${baseURL}/api/userSessionProgress`;
+
+export const API_POST_MODULE_PROGRESS =  `${baseURL}/api/userModuleProgress`;
+
+//PRUEBA
+export const API_POST_MODULE_RESULT =  `${baseURL}/api/moduleresults`;
+
+export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
