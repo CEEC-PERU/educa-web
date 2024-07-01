@@ -9,53 +9,62 @@ interface SidebarProps {
   courseEvaluation: ModuleEvaluation;
   moduleEvaluations: ModuleEvaluation[];
   onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => void;
+  videoProgress?: { [key: string]: number }; // New prop for video progress
 }
 
-// Función que obtiene el progreso de una sesión
-const getSessionProgress = (progresses: UserSessionProgress[]) => {
+// Function to get the progress of a session
+const getSessionProgress = (progresses: UserSessionProgress[], videoProgress: number) => {
   const progress = progresses?.[0]?.progress ?? 0;
-  return progress;
+  return Math.max(progress, videoProgress);
 };
 
-// Función para determinar si todos los módulos están completos
+// Function to determine if all modules are completed
 const areAllModulesCompleted = (modules: CourseModule[]) => {
   return modules.every(module => module.usermoduleprogress?.[0]?.progress === 100);
 };
 
-// Función para determinar si todas las sesiones de un módulo están completas
+// Function to determine if all sessions of a module are completed
 const areAllSessionsCompleted = (sessions: UserSessionProgress[]) => {
   return sessions.every(session => session.progress === 100);
 };
 
-// Componente SidebarPrueba
-const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, moduleEvaluations, onSelect }) => {
+// SidebarPrueba Component
+const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, moduleEvaluations, onSelect, videoProgress = {} }) => {
 
-  // Función que determina si una sesión está bloqueada
-  const isLocked = (progress: number, allCompleted: boolean) => {
-    return progress === 0 || !allCompleted;
+  // Function to determine if a session is locked
+  const isLocked = (progress: number, allCompleted: boolean, sessionIndex: number, moduleIndex: number) => {
+    if (moduleIndex === 0 && sessionIndex === 0) {
+      // First session of the first module is always unlocked
+      return false;
+    }
+    if (sessionIndex === 0) {
+      // First session of other modules depends on the previous module completion
+      return !allCompleted;
+    }
+    return progress === 0;
   };
 
-  // Verifica si todos los módulos están completos
+  // Verify if all modules are completed
   const allModulesCompleted = areAllModulesCompleted(courseModules);
 
   return (
     <div className="bg-brand-500 text-white divide-y divide-neutral-100 h-full p-4 overflow-y-auto lg:w-96 lg:fixed lg:right-0 lg:top-16 lg:h-full w-full">
-      {courseModules.map((module, index) => (
-        <div key={index} className="py-4">
+      {courseModules.map((module, moduleIndex) => (
+        <div key={moduleIndex} className="py-4">
           <div className="flex items-center">
             <div className="w-10 h-10 mr-4">
               <CircularProgressbar value={module.usermoduleprogress?.[0]?.progress ?? 0} text={`${module.usermoduleprogress?.[0]?.progress ?? 0}%`} />
             </div>
-            <h2 className="font-bold text-lg flex-1">Módulo {index + 1}: {module.name}</h2>
+            <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
           </div>
-          {module.moduleSessions.map((session, idx) => {
-            const sessionProgress = getSessionProgress(session.usersessionprogress);
+          {module.moduleSessions.map((session, sessionIndex) => {
+            const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
             const allSessionsCompleted = areAllSessionsCompleted(session.usersessionprogress);
-            const locked = isLocked(sessionProgress, allSessionsCompleted);
+            const locked = isLocked(sessionProgress, allSessionsCompleted, sessionIndex, moduleIndex);
 
             return (
               <div
-                key={idx}
+                key={sessionIndex}
                 className={`cursor-pointer py-2 flex items-center ${locked ? 'text-gray-400' : ''}`}
                 onClick={() => !locked && onSelect(session.name)}
               >
@@ -64,13 +73,13 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
                 </div>
                 <div className="flex-1">
                   {locked ? <LockClosedIcon className="w-5 h-5 inline-block mr-2" /> : null}
-                  Sesión {idx + 1}: {session.name}
+                  Sesión {sessionIndex + 1}: {session.name}
                 </div>
               </div>
             );
           })}
           <div className="mt-2 cursor-pointer font-bold text-sm" onClick={() => onSelect('', module.moduleEvaluation)}>
-            Evaluación del Módulo {index + 1}: {module.moduleEvaluation.name}
+            Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
             {allModulesCompleted ? null : <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
           </div>
         </div>

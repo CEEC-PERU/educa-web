@@ -68,3 +68,4 @@ export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`
 //Obtener modulos , sesiones , evaluacion y prox evaluacion_final
 export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules`;
 
+export const API_POST_SESSION_PROGRESS = `${baseURL}/api/userSessionProgress`;

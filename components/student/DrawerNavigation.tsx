@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/solid'; // Importar íconos
+import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/solid'; 
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 

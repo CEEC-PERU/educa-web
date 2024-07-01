@@ -1,105 +1,141 @@
-import React, { useState, useEffect } from 'react'; 
-import { useRouter } from 'next/router'; 
-import SidebarPrueba from '../../../components/student/SideBarPrueba'; 
-import { useAuth } from '../../../context/AuthContext'; 
-import Navbar from '../../../components/Navbar'; 
-import MainContentPrueba from '../../../components/student/MainContentPrueba'; 
-import { Profile } from '../../../interfaces/UserInterfaces'; 
-import { Question, ModuleEvaluation } from '../../../interfaces/StudentModule'; 
-import { useModuleDetail } from '../../../hooks/useModuleDetail'; 
-import DrawerNavigation from '../../../components/student/DrawerNavigation'; 
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import SidebarPrueba from '../../../components/student/SideBarPrueba';
+import { useAuth } from '../../../context/AuthContext';
+import Navbar from '../../../components/Navbar';
+import MainContentPrueba from '../../../components/student/MainContentPrueba';
+import { Profile } from '../../../interfaces/UserInterfaces';
+import { Question, ModuleEvaluation, ModuleSessions } from '../../../interfaces/StudentModule';
+import { useModuleDetail } from '../../../hooks/useModuleDetail';
+import DrawerNavigation from '../../../components/student/DrawerNavigation';
 
 const Home: React.FC = () => {
-  const { logout, user, profileInfo } = useAuth(); 
-  const router = useRouter(); // Inicializa el hook useRouter para obtener datos de la ruta
-  const { course_id } = router.query; 
-  const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0'); // Convierte el ID del curso a número entero
-  const { courseData, isLoading, error } = useModuleDetail(courseIdNumber); // Obtiene los datos del curso usando el hook useModuleDetail
-  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[] }>({}); // Estado para la sesión seleccionada y preguntas de evaluación
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true); // Estado para controlar si el menú lateral está abierto o cerrado
+  const { logout, user, profileInfo } = useAuth();
+  const router = useRouter();
+  const { course_id } = router.query;
+  const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
+  const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
+  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[] }>({});
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({}); // State to track video progress
 
-  let name = ''; 
-  let uri_picture = ''; 
+  let name = '';
+  let uri_picture = '';
 
-  if (profileInfo) { // Si hay información de perfil disponible
-    const profile = profileInfo as Profile; // Convierte el perfil a la interfaz Profile
-    name = profile.first_name; // Asigna el nombre del usuario desde el perfil
-    uri_picture = profile.profile_picture!; // Asigna la URL de la imagen de perfil desde el perfil
+  if (profileInfo) {
+    const profile = profileInfo as Profile;
+    name = profile.first_name;
+    uri_picture = profile.profile_picture!;
   }
 
   const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => {
-    if (Array.isArray(evaluation)) { // Si es un array de evaluaciones
-      setSelectedSession({ questions: evaluation }); // Establece las preguntas de evaluación seleccionadas
-    } else if (evaluation && 'questions' in evaluation) { // Si es un objeto con preguntas de evaluación
-      setSelectedSession({ questions: evaluation.questions }); // Establece las preguntas de evaluación seleccionadas
-    } else { // Si es una sesión de video
+    if (Array.isArray(evaluation)) {
+      setSelectedSession({ questions: evaluation });
+    } else if (evaluation && 'questions' in evaluation) {
+      setSelectedSession({ questions: evaluation.questions });
+    } else {
       const module = courseData?.[0]?.courseModules.find(m =>
         m.moduleSessions.some(s => s.name === sessionName)
-      ); // Encuentra el módulo que contiene la sesión seleccionada
+      );
 
-      if (module) { // Si se encuentra el módulo
-        const session = module.moduleSessions.find(s => s.name === sessionName); // Encuentra la sesión específica por nombre
+      if (module) {
+        const session = module.moduleSessions.find(s => s.name === sessionName);
         if (session) {
-          setSelectedSession({ video: session.video_enlace }); // Establece el video de la sesión seleccionada
+          setSelectedSession({ video: session.video_enlace });
         }
       }
     }
   };
 
+  const handleContinue = () => {
+    const currentModule = courseData?.[0]?.courseModules.find(m =>
+      m.moduleSessions.some(s => s.video_enlace === selectedSession.video)
+    );
+
+    if (!currentModule) return;
+
+    const currentSessionIndex = currentModule.moduleSessions.findIndex(s => s.video_enlace === selectedSession.video);
+
+    if (currentSessionIndex === -1) return;
+
+    const nextSession = currentModule.moduleSessions[currentSessionIndex + 1];
+
+    if (nextSession) {
+      setSelectedSession({ video: nextSession.video_enlace });
+    } else {
+      setSelectedSession({ questions: currentModule.moduleEvaluation.questions });
+    }
+  };
+
   const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen); // Función para alternar entre abrir y cerrar el menú lateral
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  const handleVideoProgress = (progress: number) => {
+    if (selectedSession.video) {
+      setVideoProgress((prevProgress) => ({
+        ...prevProgress,
+        [selectedSession.video!]: progress,
+      }));
+    }
   };
 
   useEffect(() => {
-    const handleResize = () => { // Función para manejar cambios en el tamaño de la ventana
-      if (window.innerWidth > 1014) { // Si el ancho de la ventana es mayor que 1014px
-        setIsDrawerOpen(true); // Abre el menú lateral
+    const handleResize = () => {
+      if (window.innerWidth > 1014) {
+        setIsDrawerOpen(true);
       }
     };
 
-    window.addEventListener('resize', handleResize); // Agrega un evento para escuchar cambios en el tamaño de la ventana
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Remueve el evento cuando el componente se desmonta
+      window.removeEventListener('resize', handleResize);
     };
-  }, []); // Se ejecuta solo una vez al montar el componente
+  }, []);
 
-  if (isLoading) { // Si los datos del curso están cargando
-    return <div>Loading...</div>; // Muestra un mensaje de carga
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (error) { // Si hay un error al obtener los datos del curso
-    return <div>Error: {error}</div>; // Muestra un mensaje de error
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
-  if (!courseData || courseData.length === 0) { // Si no hay datos del curso o está vacío
-    return <div>No course data available.</div>; // Muestra un mensaje indicando que no hay datos de curso disponibles
+  if (!courseData || courseData.length === 0) {
+    return <div>No course data available.</div>;
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"> {/* Contenedor principal con diseño flexible y fondo gradiente */}
-      <div className="fixed w-full z-10"> {/* Barra de navegación fija en la parte superior */}
+    <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="fixed w-full z-10">
         <Navbar
-          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300" // Color de fondo de la barra de navegación
-          borderColor="border border-stone-300" // Color del borde de la barra de navegación
-          user={user ? { profilePicture: uri_picture } : undefined} // Proporciona datos del usuario (nombre y foto de perfil)
-          toggleSidebar={toggleSidebar} // Función para alternar el menú lateral
+          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+          borderColor="border border-stone-300"
+          user={user ? { profilePicture: uri_picture } : undefined}
+          toggleSidebar={toggleSidebar}
         />
       </div>
-      <div className="flex flex-grow pt-16 flex-col lg:flex-row relative"> {/* Contenido principal flexible con navegación lateral y barra superior */}
-        <DrawerNavigation isDrawerOpen={isDrawerOpen} /> {/* Navegación lateral con estado para abrir/cerrar */}
-        <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}> {/* Contenido principal que se ajusta según el estado del menú lateral */}
-          <MainContentPrueba sessionVideo={selectedSession.video} evaluationQuestions={selectedSession.questions} /> {/* Componente principal para mostrar video o preguntas de evaluación */}
+      <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
+        <DrawerNavigation isDrawerOpen={isDrawerOpen} />
+        <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
+          <MainContentPrueba
+            sessionVideo={selectedSession.video}
+            evaluationQuestions={selectedSession.questions}
+            onContinue={handleContinue}
+            onProgress={handleVideoProgress} // Pass the handleVideoProgress function
+          />
         </div>
         <SidebarPrueba
-          courseModules={courseData[0].courseModules} // Módulos del curso
-          courseEvaluation={courseData[0].Evaluation} // Evaluación final del curso
-          moduleEvaluations={courseData[0].courseModules.map(module => module.moduleEvaluation)} // Evaluaciones de cada módulo
-          onSelect={handleSelect} // Función para seleccionar sesión o evaluación
+          courseModules={courseData[0].courseModules}
+          courseEvaluation={courseData[0].Evaluation}
+          moduleEvaluations={courseData[0].courseModules.map(module => module.moduleEvaluation)}
+          onSelect={handleSelect}
+          videoProgress={videoProgress} // Pass the video progress
         />
       </div>
     </div>
   );
 };
 
-export default Home; // Exporta el componente Home para su uso en otras partes de la aplicación
+export default Home;
