@@ -8,11 +8,14 @@ import { Profile } from '../../../interfaces/UserInterfaces';
 import { Question, ModuleEvaluation, ModuleSessions } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import DrawerNavigation from '../../../components/student/DrawerNavigation';
-
+import io from 'socket.io-client';
+import { API_SOCKET_URL } from '../../../utils/Endpoints';
+const socket = io(API_SOCKET_URL);
 const Home: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
+    const userInfo = user as { id: number };
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[] }>({});
@@ -71,8 +74,17 @@ const Home: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const handleVideoProgress = (progress: number) => {
+  const handleVideoProgress = (progress: number, isCompleted: boolean) => {
     if (selectedSession.video) {
+      const sessionProgress = {
+        session_id : 2,
+        progress,
+        is_completed: isCompleted,
+        user_id : userInfo.id
+      };
+
+      socket.emit('session-progress', sessionProgress);
+
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
         [selectedSession.video!]: progress,

@@ -6,7 +6,7 @@ interface MainContentProps {
   evaluationQuestions?: Question[];
   onFinish?: () => void;
   onContinue?: () => void;
-  onProgress?: (progress: number) => void; // New prop to handle video progress
+  onProgress?: (progress: number, isCompleted: boolean) => void; // New prop to handle video progress
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({ sessionVideo, evaluationQuestions, onFinish, onContinue, onProgress }) => {
@@ -24,7 +24,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({ sessionVideo, evaluatio
         const duration = videoRef.current!.duration;
         const progress = (currentTime / duration) * 100;
         if (onProgress) {
-          onProgress(progress);
+          onProgress(progress, false);
         }
         setCurrentTime(currentTime);
       };
@@ -66,6 +66,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({ sessionVideo, evaluatio
 
   const handleVideoEnd = () => {
     setVideoEnded(true); // Set videoEnded to true when the video ends
+    if (onProgress) {
+      onProgress(100, true); // Pass 100% progress and isCompleted as true
+    }
   };
 
   return (

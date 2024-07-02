@@ -10,6 +10,7 @@ interface SidebarProps {
   moduleEvaluations: ModuleEvaluation[];
   onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => void;
   videoProgress?: { [key: string]: number }; // New prop for video progress
+  
 }
 
 // Function to get the progress of a session

@@ -72,6 +72,10 @@ export const API_POST_SESSION_PROGRESS = `${baseURL}/api/userSessionProgress`;
 
 export const API_POST_MODULE_PROGRESS =  `${baseURL}/api/userModuleProgress`;
 
+export const API_GET_PROGRESS_SESSION_BYUSER =  `${baseURL}/api/userSessionProgress/progress/user`;
+
+export const API_PUT_PROGRESS_SESSION_BYUSER =  `${baseURL}/api/userSessionProgress/progress/user`;
+
 //PRUEBA
 export const API_POST_MODULE_RESULT =  `${baseURL}/api/moduleresults`;
 
