@@ -54,12 +54,18 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
         <div key={moduleIndex} className="py-4">
           <div className="flex items-center">
             <div className="w-10 h-10 mr-4">
-              <CircularProgressbar value={module.usermoduleprogress?.[0]?.progress ?? 0} text={`${module.usermoduleprogress?.[0]?.progress ?? 0}%`} />
+              <CircularProgressbar value={module.usermoduleprogress?.[0]?.progress ?? 0} text={`${module.usermoduleprogress?.[0]?.progress ?? 0}%`} 
+              styles={{
+                path: { stroke: "#8204E7" }, // "brandrosa-800" color
+                text: { fill: "#8204E7" }, // "brandrosa-800" color
+              }} 
+               />
             </div>
             <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
           </div>
           {module.moduleSessions.map((session, sessionIndex) => {
             const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
+            const progressupdate= Math.round(sessionProgress)
             const allSessionsCompleted = areAllSessionsCompleted(session.usersessionprogress);
             const locked = isLocked(sessionProgress, allSessionsCompleted, sessionIndex, moduleIndex);
 
@@ -70,7 +76,10 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
                 onClick={() => !locked && onSelect(session.name)}
               >
                 <div className="w-8 h-8 mr-2">
-                  <CircularProgressbar value={sessionProgress} text={`${sessionProgress}%`} />
+                  <CircularProgressbar value={sessionProgress} text={`${progressupdate}%`}   styles={{
+                      path: { stroke: "#8204E7" }, // "brandrosa-800" color
+                      text: { fill: "#8204E7" }, // "brandrosa-800" color
+                    }} />
                 </div>
                 <div className="flex-1">
                   {locked ? <LockClosedIcon className="w-5 h-5 inline-block mr-2" /> : null}

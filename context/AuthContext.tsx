@@ -118,7 +118,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     switch (role) {
       case 1:
         router.push('/student');
-        //socket.emit('login', { userToken: token });
         if (token) {
           const decodedToken: { id: number; role: number; email: string; client_id: number } = jwtDecode(token);
           if (decodedToken.role === 1) {

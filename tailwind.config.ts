@@ -21,7 +21,8 @@ const config: Config = {
         "brandmorad-600" : "#572481",
         "brandmora-500" : "#501B7A",
         "brandborder-400" : "#6300B2",
-        "brandpurpura-600" : "#3E0552"
+        "brandpurpura-600" : "#3E0552",
+        "brandrosa-800" : "#8204E7"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
