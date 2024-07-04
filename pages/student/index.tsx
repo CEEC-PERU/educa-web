@@ -9,7 +9,7 @@ import { useCourseStudent} from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
-
+import './../../app/globals.css';
 Modal.setAppElement('#__next'); 
 
 const StudentIndex: React.FC = () => {
@@ -17,7 +17,7 @@ const StudentIndex: React.FC = () => {
   const { courseStudent, isLoading } = useCourseStudent();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const router = useRouter();
-  
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '';
   let uri_picture = '';
   
@@ -47,14 +47,14 @@ const StudentIndex: React.FC = () => {
 
 
   return (
-    <ProtectedRoute>
+   <div>
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
         />
-        <SidebarDrawer />
+        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
         <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg">
@@ -138,7 +138,7 @@ const StudentIndex: React.FC = () => {
           </div>
         </Modal>
       )}
-    </ProtectedRoute>
+  </div>
   );
 }
 

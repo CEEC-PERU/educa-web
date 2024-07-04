@@ -11,7 +11,7 @@ import DrawerNavigation from '../../../components/student/DrawerNavigation'; // 
 import io from 'socket.io-client'; // Importamos la biblioteca Socket.io para cliente.
 import { API_SOCKET_URL } from '../../../utils/Endpoints'; // Importamos la URL del socket desde los endpoints configurados.
 import { progress } from '@material-tailwind/react';
-
+import './../../../app/globals.css';
 const socket = io(API_SOCKET_URL); // Inicializamos la conexión al servidor de sockets con la URL definida.
 
 const Home: React.FC = () => {
