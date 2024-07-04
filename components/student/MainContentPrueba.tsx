@@ -9,6 +9,7 @@ interface MainContentProps {
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number; // New prop for video progress
 }
+
 const MainContentPrueba: React.FC<MainContentProps> = ({
   sessionVideo,
   evaluationQuestions,

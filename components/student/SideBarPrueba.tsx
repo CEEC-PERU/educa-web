@@ -1,5 +1,5 @@
 import React from 'react';
-import { CourseModule, ModuleEvaluation, Question, UserSessionProgress } from '../../interfaces/StudentModule';
+import { CourseModule, ModuleEvaluation, Question, UserSessionProgress , ModuleSessions } from '../../interfaces/StudentModule';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import 'react-circular-progressbar/dist/styles.css';
@@ -10,7 +10,6 @@ interface SidebarProps {
   moduleEvaluations: ModuleEvaluation[];
   onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => void;
   videoProgress?: { [key: string]: number }; // New prop for video progress
-  
 }
 
 // Function to get the progress of a session
@@ -27,6 +26,17 @@ const areAllModulesCompleted = (modules: CourseModule[]) => {
 // Function to determine if all sessions of a module are completed
 const areAllSessionsCompleted = (sessions: UserSessionProgress[]) => {
   return sessions.every(session => session.progress === 100);
+};
+
+// Function to calculate the progress of a module based on its sessions
+const calculateModuleProgress = (sessions: ModuleSessions[], videoProgress: { [key: string]: number }) => {
+  const totalSessions = sessions.length;
+  const totalProgress = sessions.reduce((acc, session) => {
+    const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
+    return acc + sessionProgress;
+  }, 0);
+
+  return totalSessions > 0 ? totalProgress / totalSessions : 0;
 };
 
 // SidebarPrueba Component
@@ -50,50 +60,55 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
 
   return (
     <div className="bg-brand-500 text-white divide-y divide-neutral-100 h-full p-4 overflow-y-auto lg:w-96 lg:fixed lg:right-0 lg:top-16 lg:h-full w-full">
-      {courseModules.map((module, moduleIndex) => (
-        <div key={moduleIndex} className="py-4">
-          <div className="flex items-center">
-            <div className="w-10 h-10 mr-4">
-              <CircularProgressbar value={module.usermoduleprogress?.[0]?.progress ?? 0} text={`${module.usermoduleprogress?.[0]?.progress ?? 0}%`} 
-              styles={{
-                path: { stroke: "#8204E7" }, // "brandrosa-800" color
-                text: { fill: "#8204E7" }, // "brandrosa-800" color
-              }} 
-               />
-            </div>
-            <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
-          </div>
-          {module.moduleSessions.map((session, sessionIndex) => {
-            const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
-            const progressupdate= Math.round(sessionProgress)
-            const allSessionsCompleted = areAllSessionsCompleted(session.usersessionprogress);
-            const locked = isLocked(sessionProgress, allSessionsCompleted, sessionIndex, moduleIndex);
+      {courseModules.map((module, moduleIndex) => {
+        const moduleProgress = calculateModuleProgress(module.moduleSessions, videoProgress);
+        const roundedModuleProgress = Math.round(moduleProgress);
 
-            return (
-              <div
-                key={sessionIndex}
-                className={`cursor-pointer py-2 flex items-center ${locked ? 'text-gray-400' : ''}`}
-                onClick={() => !locked && onSelect(session.name)}
-              >
-                <div className="w-8 h-8 mr-2">
-                  <CircularProgressbar value={sessionProgress} text={`${progressupdate}%`}   styles={{
+        return (
+          <div key={moduleIndex} className="py-4">
+            <div className="flex items-center">
+              <div className="w-10 h-10 mr-4">
+                <CircularProgressbar value={moduleProgress} text={`${roundedModuleProgress}%`} 
+                styles={{
+                  path: { stroke: "#8204E7" }, // "brandrosa-800" color
+                  text: { fill: "#8204E7" }, // "brandrosa-800" color
+                }} 
+                 />
+              </div>
+              <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
+            </div>
+            {module.moduleSessions.map((session, sessionIndex) => {
+              const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
+              const roundedSessionProgress = Math.round(sessionProgress);
+              const allSessionsCompleted = areAllSessionsCompleted(session.usersessionprogress);
+              const locked = isLocked(sessionProgress, allSessionsCompleted, sessionIndex, moduleIndex);
+
+              return (
+                <div
+                  key={sessionIndex}
+                  className={`cursor-pointer py-2 flex items-center ${locked ? 'text-gray-400' : ''}`}
+                  onClick={() => !locked && onSelect(session.name)}
+                >
+                  <div className="w-8 h-8 mr-2">
+                    <CircularProgressbar value={sessionProgress} text={`${roundedSessionProgress}%`} styles={{
                       path: { stroke: "#8204E7" }, // "brandrosa-800" color
                       text: { fill: "#8204E7" }, // "brandrosa-800" color
                     }} />
+                  </div>
+                  <div className="flex-1">
+                    {locked ? <LockClosedIcon className="w-5 h-5 inline-block mr-2" /> : null}
+                    Sesión {sessionIndex + 1}: {session.name}
+                  </div>
                 </div>
-                <div className="flex-1">
-                  {locked ? <LockClosedIcon className="w-5 h-5 inline-block mr-2" /> : null}
-                  Sesión {sessionIndex + 1}: {session.name}
-                </div>
-              </div>
-            );
-          })}
-          <div className="mt-2 cursor-pointer font-bold text-sm" onClick={() => onSelect('', module.moduleEvaluation)}>
-            Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
-            {allModulesCompleted ? null : <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
+              );
+            })}
+            <div className="mt-2 cursor-pointer font-bold text-sm" onClick={() => onSelect('', module.moduleEvaluation)}>
+              Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
+              {allModulesCompleted ? null : <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       <div className="mt-4 py-4">
         <div className="cursor-pointer font-bold text-base" onClick={() => onSelect('', courseEvaluation)}>
           Evaluación Final: {courseEvaluation.name}

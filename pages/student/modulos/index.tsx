@@ -21,7 +21,9 @@ const Home: React.FC = () => {
   const userInfo = user as { id: number }; // Tipamos el objeto `user` para que tenga un campo `id`.
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0'); // Convertimos el ID del curso en un número, manejando el caso de que sea un array.
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber); // Usamos nuestro hook personalizado para obtener los datos del curso.
-  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[] }>({}); // Estado para la sesión seleccionada, que puede tener un video o preguntas.
+
+  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number }>({});
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(true); // Estado para controlar si el drawer (navegación lateral) está abierto.
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({}); // Estado para rastrear el progreso del video.
 
@@ -34,25 +36,28 @@ const Home: React.FC = () => {
     uri_picture = profile.profile_picture!; // Obtenemos la URL de la imagen de perfil.
   }
 
-  const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => { // Función para manejar la selección de una sesión.
-    if (Array.isArray(evaluation)) { // Si la evaluación es un array de preguntas...
-      setSelectedSession({ questions: evaluation }); // Actualizamos el estado con las preguntas.
-    } else if (evaluation && 'questions' in evaluation) { // Si la evaluación tiene preguntas...
-      setSelectedSession({ questions: evaluation.questions }); // Actualizamos el estado con las preguntas de la evaluación.
-    } else { // Si no hay evaluación, buscamos la sesión por nombre.
+  const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => {
+    if (Array.isArray(evaluation)) {
+      setSelectedSession({ questions: evaluation });
+    } else if (evaluation && 'questions' in evaluation) {
+      setSelectedSession({ questions: evaluation.questions });
+    } else {
       const module = courseData?.[0]?.courseModules.find(m =>
         m.moduleSessions.some(s => s.name === sessionName)
       );
-
-      if (module) { // Si encontramos el módulo...
+  
+      if (module) {
         const session = module.moduleSessions.find(s => s.name === sessionName);
-        if (session) { // Si encontramos la sesión...
-          setSelectedSession({ video: session.video_enlace }); // Actualizamos el estado con el enlace del video.
+        if (session) {
+          setSelectedSession({ 
+            video: session.video_enlace, 
+            session_id: session.session_id // Almacena session_id aquí
+          });
         }
       }
     }
   };
-
+  
   const handleContinue = () => { // Función para manejar el botón de continuar.
     const currentModule = courseData?.[0]?.courseModules.find(m =>
       m.moduleSessions.some(s => s.video_enlace === selectedSession.video)
@@ -77,26 +82,27 @@ const Home: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const handleVideoProgress = (progress: number, isCompleted: boolean) => { // Función para manejar el progreso del video.
-   const progressupdate= Math.round(progress)
-   
-    if (selectedSession.video) { // Si hay un video seleccionado...
+  const handleVideoProgress = (progress: number, isCompleted: boolean) => {
+    const progressupdate = Math.round(progress);
+  
+    if (selectedSession.video && selectedSession.session_id) { // Verifica que session_id esté presente
       const sessionProgress = {
-        session_id : 8, // ID de la sesión (debe ser dinámico según la sesión actual).
-        progress : progressupdate,
+        session_id: selectedSession.session_id, // Usa el session_id dinámico
+        progress: progressupdate,
         is_completed: isCompleted,
-        user_id : userInfo.id 
+        user_id: userInfo.id
       };
-
-      socket.emit('session', sessionProgress); // Emitimos el evento 'session-progress' al servidor con los datos de progreso.
-      console.log("datos",sessionProgress)
+  
+      socket.emit('session', sessionProgress);
+      console.log("datos", sessionProgress);
+  
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
-        [selectedSession.video!]: progress, // Actualizamos el estado del progreso del video.
+        [selectedSession.video!]: progress,
       }));
     }
   };
-
+  
   useEffect(() => {
     const handleResize = () => { // Función para manejar el redimensionamiento de la ventana.
       if (window.innerWidth > 1014) {
