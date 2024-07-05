@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
-import Table from '../../components/Table';
-import { getEnterprises } from '../../services/enterpriseService';
-import { Enterprise } from '../../interfaces/Enterprise';
+import Table from '../../../components/Table';
+import { getEnterprises } from '../../../services/enterpriseService';
+import { Enterprise } from '../../../interfaces/Enterprise';
 
 interface AssignStepProps {
   file: File;

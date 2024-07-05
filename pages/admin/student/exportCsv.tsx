@@ -1,11 +1,12 @@
 // pages/exportCsv.tsx
 import React, { useState } from 'react';
-import Wizard from '../../components/WizardComponet';
+import Wizard from '../../../components/WizardComponet';
 import UploadStep from './UploadStep';
 import AssignStep from './AssignStep';
 import DetailsStep from './DetailsStep';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBarAdmin';
+import Navbar from '../../../components/Navbar';
+import Sidebar from '../../../components/SideBarAdmin';
+import '../../../app/globals.css';
 
 const ExportCsvPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);

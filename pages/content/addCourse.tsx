@@ -7,13 +7,13 @@ import FormField from '../../components/FormField';
 import ActionButtons from '../../components/ActionButtons';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
-import { getEvaluations } from '../../services/evaluationService'; // Importa el servicio para obtener evaluaciones
+import { getAvailableEvaluations } from '../../services/evaluationService'; // Importa el servicio adecuado
 import { addCourse } from '../../services/courseService';
 import { uploadVideo } from '../../services/videoService';
 import { uploadImage } from '../../services/imageService';
 import { Category } from '../../interfaces/Category';
 import { Professor } from '../../interfaces/Professor';
-import { Evaluation } from '../../interfaces/Evaluation'; // Importa la interfaz Evaluation
+import { Evaluation } from '../../interfaces/Evaluation';
 import { Course } from '../../interfaces/Course';
 import './../../app/globals.css';
 import ButtonComponent from '../../components/ButtonDelete'; // Importa el componente ButtonComponent
@@ -50,7 +50,7 @@ const AddCourse: React.FC = () => {
         const [categoriesRes, professorsRes, evaluationsRes] = await Promise.all([
           getCategories(),
           getProfessors(),
-          getEvaluations() // Obtén las evaluaciones
+          getAvailableEvaluations() // Obtén las evaluaciones disponibles
         ]);
         setCategories(categoriesRes);
         setProfessors(professorsRes);
@@ -138,12 +138,12 @@ const AddCourse: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-10 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16 flex`}>
-          <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl p-6 rounded-lg flex-grow mr-4">
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out flex`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl rounded-lg flex-grow mr-4">
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-4"
+              className="flex items-center text-purple-600 mb-6"
             >
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
               Volver
@@ -157,7 +157,7 @@ const AddCourse: React.FC = () => {
                 type="select"
                 value={formData.category_id.toString()}
                 onChange={handleChange}
-                options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
+                options={[{ value: '', label: 'Seleccionar Categoría' }, ...categories.map(category => ({ value: category.category_id.toString(), label: category.name }))]}
               />
               <FormField
                 id="professor_id"
@@ -165,7 +165,7 @@ const AddCourse: React.FC = () => {
                 type="select"
                 value={formData.professor_id.toString()}
                 onChange={handleChange}
-                options={professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))}
+                options={[{ value: '', label: 'Seleccionar Profesor' }, ...professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))]}
               />
               <FormField
                 id="evaluation_id"
@@ -173,7 +173,7 @@ const AddCourse: React.FC = () => {
                 type="select"
                 value={formData.evaluation_id.toString()}
                 onChange={handleChange}
-                options={evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
+                options={[{ value: '', label: 'Seleccionar Evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
               />
               <FormField id="duration_course" label="Duración del Curso" type="text" value={formData.duration_course} onChange={handleChange} />
             </div>
@@ -194,20 +194,8 @@ const AddCourse: React.FC = () => {
               <MediaUploadPreview onMediaUpload={handleImageUpload} accept="image/*" label="Subir imagen" />
             </div>
             <FormField id="duration_video" label="Duración del Video" type="text" value={formData.duration_video} onChange={handleChange} />
-            <div className="flex items-center mt-6">
-              <input
-                type="checkbox"
-                id="is_active"
-                checked={formData.is_active}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-              />
-              <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                Activo
-              </label>
-            </div>
           </form>
-          <div className="ml-4 mt-6">
+          <div className="ml-4">
             <ActionButtons
               onSave={handleSubmit}
               onCancel={handleCancel}
@@ -221,3 +209,4 @@ const AddCourse: React.FC = () => {
 };
 
 export default AddCourse;
+

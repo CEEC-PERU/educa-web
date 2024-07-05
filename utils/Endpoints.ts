@@ -70,3 +70,11 @@ export const API_GET_EMPRESA = `${baseURL}/api/enterprises`;
 
 //crear usuarios
 export const API_USERS = `${baseURL}/api/superadmin/import`;
+
+//users
+export const API_USER = `${baseURL}/api/superadmin`;
+
+//obtener info de empresas 
+export const API_GET_ENTERPRISE = `${baseURL}/api/enterprises`;
+
+export const API_GET_USERS_BY_ENTERPRISE  = `${baseURL}/api/superadmin/enterprise`;

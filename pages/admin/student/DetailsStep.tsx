@@ -1,7 +1,7 @@
 // components/DetailsStep.tsx
 import React from 'react';
 import { useRouter } from 'next/router';
-import { importUsers } from '../../services/userService';
+import { importUsers } from '../../../services/userService';
 
 interface DetailsStepProps {
   file: File;

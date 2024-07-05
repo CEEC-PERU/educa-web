@@ -53,53 +53,26 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
                 onClick={() => handleNavigation('/admin')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Usuarios</span>}
+                <UserGroupIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Estudiantes</span>}
               </button>
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/content')}
+                onClick={() => handleNavigation('/admin/user-enterprise')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cursos</span>}
+                {isOpen && <span className="ml-2">Empresas</span>}
               </button>
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/content/category')}
+                onClick={() => handleNavigation('/admin/users')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <TagIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Categorias</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/content/professors')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Profesores</span>}
-              </button>
-            </li>
-              <li>
-              <button
-                onClick={() => handleNavigation('/content/module')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <CubeIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Módulos</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/content/evaluation')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <DocumentTextIcon  className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Evaluaciones</span>}
+                {isOpen && <span className="ml-2">Usuarios</span>}
               </button>
             </li>
             <li>

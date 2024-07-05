@@ -1,9 +1,10 @@
+// src/pages/admin/addModule.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/SideBar';
 import { addModule } from '../../services/moduleService';
-import { getEvaluations } from '../../services/evaluationService';
+import { getAvailableEvaluations } from '../../services/evaluationService'; // Importar el servicio adecuado
 import { Evaluation } from '../../interfaces/Evaluation'; 
 import { Module } from '../../interfaces/Module'; 
 import FormField from '../../components/FormField';
@@ -16,7 +17,6 @@ const ModulePage: React.FC = () => {
   const [module, setModule] = useState<Omit<Module, 'module_id' | 'created_at' | 'updated_at'>>({
     course_id: 0,
     evaluation_id: 0,
-    is_finish: false,
     is_active: true,
     name: ''
   });
@@ -28,7 +28,7 @@ const ModulePage: React.FC = () => {
   useEffect(() => {
     const fetchEvaluations = async () => {
       try {
-        const evaluationsRes = await getEvaluations();
+        const evaluationsRes = await getAvailableEvaluations(); // Obtener evaluaciones disponibles
         setEvaluations(evaluationsRes);
       } catch (error) {
         console.error('Error fetching evaluations:', error);
@@ -46,6 +46,7 @@ const ModulePage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
+    setModule
     setModule(prevModule => ({
       ...prevModule,
       [id]: type === 'checkbox' ? checked : value
@@ -56,7 +57,7 @@ const ModulePage: React.FC = () => {
     e.preventDefault();
     try {
       const newModule = await addModule({ ...module, course_id: Number(courseId) });
-      setModule({ course_id: 0, evaluation_id: 0, is_finish: false, is_active: true, name: '' });
+      setModule({ course_id: 0, evaluation_id: 0, is_active: true, name: '' });
       router.push(`/content/detailModule?id=${courseId}`); // Redirigir a la página de módulos del curso actual
     } catch (error) {
       console.error('Error adding module:', error);
@@ -65,13 +66,9 @@ const ModulePage: React.FC = () => {
   };
 
   const handleCancel = () => {
-    setModule({ course_id: 0, evaluation_id: 0, is_finish: false, is_active: true, name: '' });
+    setModule({ course_id: 0, evaluation_id: 0, is_active: true, name: '' });
     router.back();
   };
-
-  if (error) {
-    return <p className="text-red-500 mt-2">{error}</p>;
-  }
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
@@ -89,6 +86,7 @@ const ModulePage: React.FC = () => {
                 <ArrowLeftIcon className="h-5 w-5 mr-2" />
                 Volver
               </button>
+              {error && <p className="text-red-500">{error}</p>}
               <FormField
                 id="name"
                 label="Nombre"
@@ -116,3 +114,4 @@ const ModulePage: React.FC = () => {
 };
 
 export default ModulePage;
+

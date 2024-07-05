@@ -3,15 +3,16 @@ import React from 'react';
 interface FormFieldProps {
   id: string;
   label: string;
-  type: string;
-  value: string;
+  type: 'text' | 'textarea' | 'select' | 'checkbox';
+  value?: string;
+  checked?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   pattern?: string;
   options?: { value: string; label: string }[];
   rows?: number;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, onChange, pattern, options, rows }) => {
+const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, checked, onChange, pattern, options, rows }) => {
   const purpleColor = 'text-[#6017AF] border-global focus:border-global focus:ring-global dark:text-[#6017AF] dark:border-global dark:focus:border-global';
 
   if (type === 'select' && options) {
@@ -58,6 +59,25 @@ const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, onChange,
           placeholder=" "
           required
         />
+      </div>
+    );
+  } else if (type === 'checkbox') {
+    return (
+      <div className="relative z-0 w-full mb-5 group flex items-center">
+        <input
+          type="checkbox"
+          name={id}
+          id={id}
+          checked={checked}
+          onChange={onChange}
+          className="mr-2 leading-tight"
+        />
+        <label
+          htmlFor={id}
+          className="text-blue-400 block text-sm font-medium dark:text-gray-300"
+        >
+          {label}
+        </label>
       </div>
     );
   } else {

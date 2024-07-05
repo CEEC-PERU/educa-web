@@ -19,7 +19,6 @@ const EditModule: React.FC = () => {
   const [module, setModule] = useState<Omit<Module, 'module_id' | 'created_at' | 'updated_at'>>({
     course_id: 0,
     evaluation_id: 0,
-    is_finish: false,
     is_active: true,
     name: ''
   });
@@ -138,16 +137,6 @@ const EditModule: React.FC = () => {
                 className="mr-2 leading-tight"
               />
             </div>
-            <div className="mb-4">
-              <label htmlFor="is_finish" className="block text-gray-700 text-sm font-bold mb-2">Finalizado</label>
-              <input
-                type="checkbox"
-                id="is_finish"
-                checked={module.is_finish}
-                onChange={handleChange}
-                className="mr-2 leading-tight"
-              />
-            </div> 
             <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
           </form>
         </div>
