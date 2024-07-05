@@ -47,7 +47,7 @@ const RoleDetail: React.FC = () => {
       const fetchUsers = async () => {
         try {
           const usersData = await getUsersByCompanyAndRole(selectedCompany, Number(roleId));
-          console.log(usersData);
+          console.log('Users data:', usersData); // Verificar la respuesta de la API
           setUsers(usersData);
         } catch (error) {
           console.error('Error fetching users:', error);
@@ -63,13 +63,13 @@ const RoleDetail: React.FC = () => {
   };
 
   const filteredUsers = users.filter(user => 
-    user.profile.first_name.includes(filter) || user.profile.last_name.includes(filter)
+    user.userProfile?.first_name?.toLowerCase().includes(filter.toLowerCase())
   );
 
   const columns = [
-    { header: '', accessor: 'profile_picture' },
-    { header: 'Nombre', accessor: 'first_name' },
-    { header: 'Apellido', accessor: 'last_name' },
+    { header: '', accessor: 'userProfile.profile_picture' },
+    { header: 'Nombre', accessor: 'userProfile.first_name' },
+    { header: 'Apellido', accessor: 'userProfile.last_name' },
     { header: 'DNI', accessor: 'dni' },
     { header: 'Contraseña', accessor: 'password' },
   ];

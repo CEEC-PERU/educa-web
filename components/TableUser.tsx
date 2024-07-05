@@ -30,19 +30,20 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
         <tbody>
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
-              {columns.map((column) => (
-                <td key={column.accessor} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
-                  {column.accessor === 'profile_picture' ? (
-                    <img src={row.profile[column.accessor]} alt="Profile" className="w-10 h-10 rounded-full" />
-                  ) : column.accessor === 'password' ? (
-                    '**** ****'
-                  ) : column.accessor === 'dni' ? (
-                    row[column.accessor]
-                  ) : (
-                    row.profile[column.accessor]
-                  )}
-                </td>
-              ))}
+              {columns.map((column) => {
+                const value = column.accessor.split('.').reduce((acc, part) => acc && acc[part], row);
+                return (
+                  <td key={column.accessor} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
+                    {column.accessor === 'userProfile.profile_picture' ? (
+                      <img src={value} alt="Profile" className="w-10 h-10 rounded-full" />
+                    ) : column.accessor === 'password' ? (
+                      '**** ****'
+                    ) : (
+                      value
+                    )}
+                  </td>
+                );
+              })}
               {onActionClick && (
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                   <button className="text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
