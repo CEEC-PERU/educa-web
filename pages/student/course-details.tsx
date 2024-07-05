@@ -13,7 +13,6 @@ const CourseDetails = () => {
   const router = useRouter();
   const { course_id } = router.query;
 
-  // Convert course_id to number if it's a string and not undefined
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
   const { courseDetail, isLoading } = useCourseDetail(courseIdNumber);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -82,41 +81,138 @@ const CourseDetails = () => {
               <div>
                 <h2 className="text-xl font-bold mb-4">Con este curso aprenderás a:</h2>
                 {courseDetails.courseModules.map(module => (
-                  <div key={module.module_id} className='flex items-center'>
-                    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1720132228/WEB_EDUCA/WEB-IMAGENES/mfhd6gr1moprougfd1ig.png" className="w-6 h-6 mr-2" alt="Module icon" />
-                    <p key={module.module_id} className="text-base">{module.name}</p>
+                  <div key={module.module_id} className="flex items-center mb-2">
+                    <img
+                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1720132228/WEB_EDUCA/WEB-IMAGENES/mfhd6gr1moprougfd1ig.png"
+                      className="w-6 h-6 mr-2"
+                      alt="Module icon"
+                    />
+                    <p className="text-base">{module.name}</p>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="bg-gray-200 border border-gray-300 rounded p-4">
+            <div className="bg-transparent border border-gray-300 rounded p-4">
               <button
-                className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
+                className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-4 border-brandborder-400 flex items-center"
                 onClick={navigateToCourseDetails}
               >
-                Detalles del curso
+                Empezar el curso
               </button>
+
+              <div className="bg-gradient-to-r from-brand-300 via-brand-200 to-brandazul-200 border-gray-300 rounded p-4 mt-4">
+                <img
+                  src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197722/WEB_EDUCA/ICONOS/gbm5c8g3wy1mzxncwany.png"
+                  className="w-6 h-6 mr-2"
+                  alt="Module icon"
+                />
+                <text className='text-white'>Gracias a nuestro cliente, accedes a todos los cursos y beneficios de nuestro catálogo.</text>
+                <button
+                  className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-4 border-brandborder-400 flex items-center mt-4"
+                  onClick={navigateToCourseDetails}
+                >
+                  Ver catálogo de cursos
+                </button>
+              </div>
+
+              <div className="bg-transparent border border-gray-300 rounded p-4 mt-4">
+                <div className="flex items-center mb-2">
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/lrnfzdnkubtj6f6nonhi.png"
+                    className="w-6 h-6 mr-2"
+                    alt="Module icon"
+                  />
+                  <p className="text-base text-white">10 Estudiantes</p>
+                </div>
+                <div className="flex items-center mb-2">
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/aztzll0keyleiitexmex.png"
+                    className="w-6 h-6 mr-2"
+                    alt="Module icon"
+                  />
+                  <p className="text-base text-white">Duración: 1h</p>
+                </div>
+                <div className="flex items-center mb-2">
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/usna5kpyfkorticwhawp.png"
+                    className="w-6 h-6 mr-2"
+                    alt="Module icon"
+                  />
+                  <p className="text-base text-white">20 Lecciones</p>
+                </div>
+                <div className="flex items-center mb-2">
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/lvnniyn1pecmrvj98zi4.png"
+                    className="w-6 h-6 mr-2"
+                    alt="Module icon"
+                  />
+                  <p className="text-base text-white">Nivel Intermedio</p>
+                </div>
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
-        {courseDetail.map(courseDetails => (
-          <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
-            <div className="text-white">
-              <h1 className="text-3xl font-bold mb-4">Temario</h1>
-              {courseDetails.courseModules.map(module => (
-                <div key={module.module_id} className="flex items-center">
-                  <p key={module.module_id} className="text-base mr-2">Módulo: {module.name}</p>
+      <div className="items-center justify-center bg-gradient-to-r px-60  from-brand-100 via-brand-200 to-brand-300  pb-20 ">
+        <h1 className="text-3xl font-bold mb-4 text-white pt-20 " >Temario</h1>
+       
+          {courseDetail.map(courseDetails => (
+             <div>
+       
+             
+                {courseDetails.courseModules.map(module => (
+                    <div className=' items-center justify-center  bg-brandazul-600'>
+                  <div key={module.module_id} className="mb-4 p-4 border text-white  border-gray-300 rounded ">
+                    <div className="flex items-center">
+                      <img
+                        src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/rp2dudec5uvmkpq2e9rw.png"
+                        className="w-6 h-20 mr-2"
+                        alt="Module icon"
+                      />
+                      <p className="text-base mr-2">Módulo: {module.name}</p>
+                    </div>
+                    <div className="ml-8">
+                      {module.moduleSessions.map(session => (
+                        <div key={module.module_id} className="flex items-center mb-2">
+                          <img
+                            src="https://res.cloudinary.com/dk2red18f/image/upload/v1720200323/WEB_EDUCA/ICONOS/pxuankjrczkaks3sei4m.png"
+                            className="w-6 h-6 mr-2"
+                            alt="Session icon"
+                          />
+                          <p className="text-base">Sesión: {session.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  </div>
+                ))}
+            
+         
+            </div>
+          ))}
+       
+
+        <h1 className="text-3xl text-left font-bold mb-4 text-white">Docente</h1>
+        <div className=" items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200 rounded from-brand-100 via-brand-200 to-brand-300 p-4">
+          {courseDetail.map(courseDetails => (
+            <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-1 gap-8 p-4">
+              <div className="text-white">
+                <div className="flex items-center">
+                  <img src={courseDetails.courseProfessor.image} className='rounded-full size-20 mr-4' alt={courseDetails.courseProfessor.full_name} />
+                  <div>
+                    <p className="text-xl text-brandrosa-500 font-bold">{courseDetails.courseProfessor.full_name}</p>
+                    <p className="text-sm">{courseDetails.courseProfessor.description}</p>
+                  </div>
                 </div>
-              ))}
-              <div className="flex justify-end mt-4">
-               
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
+
+
+        
       </div>
     </div>
   );

@@ -49,6 +49,7 @@ const Home: React.FC = () => {
     }
   };
 
+  
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
