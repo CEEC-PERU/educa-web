@@ -65,6 +65,7 @@ export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 //obtener detalle d elos cursos
 export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 
+
 //obtener info de empresas
 export const API_GET_EMPRESA = `${baseURL}/api/enterprises`;
 
@@ -78,3 +79,20 @@ export const API_USER = `${baseURL}/api/superadmin`;
 export const API_GET_ENTERPRISE = `${baseURL}/api/enterprises`;
 
 export const API_GET_USERS_BY_ENTERPRISE  = `${baseURL}/api/superadmin/enterprise`;
+
+//Obtener modulos , sesiones , evaluacion y prox evaluacion_final
+export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules`;
+
+export const API_POST_SESSION_PROGRESS = `${baseURL}/api/userSessionProgress`;
+
+export const API_POST_MODULE_PROGRESS =  `${baseURL}/api/userModuleProgress`;
+
+export const API_GET_PROGRESS_SESSION_BYUSER =  `${baseURL}/api/userSessionProgress/progress/user`;
+
+export const API_PUT_PROGRESS_SESSION_BYUSER =  `${baseURL}/api/userSessionProgress/progress/user`;
+
+//PRUEBA
+export const API_POST_MODULE_RESULT =  `${baseURL}/api/moduleresults`;
+
+export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
+

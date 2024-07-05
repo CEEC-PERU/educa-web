@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/solid'; // Importar íconos
-import { useAuth } from '../context/AuthContext';
-import { Profile } from '../interfaces/UserInterfaces';
+import { HomeIcon, UserIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon } from '@heroicons/react/24/solid'; 
+import { useAuth } from '../../context/AuthContext';
+import { Profile } from '../../interfaces/UserInterfaces';
 
-const DrawerNavigation: React.FC = () => {
+
+const DrawerNavigation: React.FC<{ isDrawerOpen: boolean }> = ({ isDrawerOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
@@ -19,26 +20,24 @@ const DrawerNavigation: React.FC = () => {
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer después de la navegación
+    setIsOpen(false); // Close the drawer after navigation
   };
 
   const handleMouseEnter = () => {
-    setIsOpen(true); // Abrir el drawer al pasar el mouse sobre los iconos
+    setIsOpen(true); // Open the drawer when the mouse enters the icons area
   };
 
   const handleMouseLeave = () => {
-    setIsOpen(false); // Cerrar el drawer al sacar el mouse de los iconos
+    setIsOpen(false); // Close the drawer when the mouse leaves the icons area
   };
 
   return (
-    <div className="fixed h-96 z-50">
+    <div className={`fixed left-0 top-16 h-full z-50 ${isOpen ? 'lg:w-64' : 'lg:w-16'} lg:block hidden`}>
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-brandmorado-700 text-white transition-all transform ${
-          isOpen ? 'w-64' : 'w-16'
-        }`}
+        className={`bg-brandmorado-700 h-full rounded-r-lg text-white transition-all transform ${isOpen ? 'w-64' : 'w-16'}`}
         style={{ transition: 'width 0.3s' }}
-        onMouseEnter={handleMouseEnter} // Abrir el drawer al pasar el mouse sobre el área del drawer
-        onMouseLeave={handleMouseLeave} // Cerrar el drawer al sacar el mouse del área del drawer
+        onMouseEnter={handleMouseEnter} // Open the drawer when the mouse enters the drawer area
+        onMouseLeave={handleMouseLeave} // Close the drawer when the mouse leaves the drawer area
       >
         <nav className="flex-1">
           <ul>
