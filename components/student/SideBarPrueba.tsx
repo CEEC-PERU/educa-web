@@ -1,5 +1,5 @@
 import React from 'react';
-import { CourseModule, ModuleEvaluation, Question, UserSessionProgress , ModuleSessions } from '../../interfaces/StudentModule';
+import { CourseModule, ModuleEvaluation, Question, UserSessionProgress, ModuleSessions } from '../../interfaces/StudentModule';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import 'react-circular-progressbar/dist/styles.css';
@@ -37,6 +37,15 @@ const calculateModuleProgress = (sessions: ModuleSessions[], videoProgress: { [k
   }, 0);
 
   return totalSessions > 0 ? totalProgress / totalSessions : 0;
+};
+
+// Function to determine if a module evaluation is locked
+const isModuleEvaluationLocked = (moduleIndex: number, modules: CourseModule[]) => {
+  if (moduleIndex === 0) {
+    return false;
+  }
+  const previousModule = modules[moduleIndex - 1];
+  return previousModule.usermoduleprogress?.[0]?.progress !== 100;
 };
 
 // SidebarPrueba Component
@@ -102,18 +111,19 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
                 </div>
               );
             })}
-            <div className="mt-2 cursor-pointer font-bold text-sm" onClick={() => onSelect('', module.moduleEvaluation)}>
+            <div className={`mt-2 cursor-pointer font-bold text-sm ${isModuleEvaluationLocked(moduleIndex, courseModules) ? 'text-gray-400' : ''}`}
+                 onClick={() => !isModuleEvaluationLocked(moduleIndex, courseModules) && onSelect('', module.moduleEvaluation)}>
+                {isModuleEvaluationLocked(moduleIndex, courseModules) && <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
               Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
-              {allModulesCompleted ? null : <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
+            
             </div>
           </div>
         );
       })}
-      <div className="mt-4 py-4">
-        <div className="cursor-pointer font-bold text-base" onClick={() => onSelect('', courseEvaluation)}>
-          Evaluación Final: {courseEvaluation.name}
-          {allModulesCompleted ? null : <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
-        </div>
+      <div className={`mt-4 py-4 cursor-pointer font-bold text-base ${allModulesCompleted ? '' : 'text-gray-400'}`}
+           onClick={() => allModulesCompleted && onSelect('', courseEvaluation)}>
+        Evaluación Final: {courseEvaluation.name}
+        {!allModulesCompleted && <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
       </div>
     </div>
   );

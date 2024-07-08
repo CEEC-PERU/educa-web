@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Question } from '../../interfaces/StudentModule';
+import axios from 'axios'; // Import axios for making POST requests
 
 interface MainContentProps {
   sessionVideo?: string;
@@ -21,7 +22,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [totalScore, setTotalScore] = useState(0); // Track total score
   const [videoEnded, setVideoEnded] = useState(false);
+  const [evaluationCompleted, setEvaluationCompleted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -72,15 +75,38 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     if (currentQuestion < (evaluationQuestions?.length || 0) - 1) {
       setCurrentQuestion(prev => prev + 1);
     } else {
-      if (onFinish) {
-        onFinish();
-      }
+      handleFinish();
     }
   };
 
   const handleOptionSelect = (optionIndex: number, isCorrect: boolean) => {
     setSelectedOption(optionIndex);
     setIsCorrect(isCorrect);
+    if (isCorrect) {
+      setTotalScore(prev => prev + (evaluationQuestions?.[currentQuestion]?.score || 0));
+    }
+  };
+
+  const handleFinish = () => {
+    setEvaluationCompleted(true);
+    if (onFinish) {
+      onFinish();
+    }
+
+    // Send total score to the backend
+    const payload = {
+      user_id: 1, // Replace with the actual user ID
+      evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
+      total_score: totalScore
+    };
+
+    axios.post('/api/evaluation/submit', payload)
+      .then(response => {
+        console.log('Evaluation submitted successfully:', response.data);
+      })
+      .catch(error => {
+        console.error('Error submitting evaluation:', error);
+      });
   };
 
   const handleVideoEnd = () => {
@@ -115,29 +141,35 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         <div className="flex flex-col justify-center items-center h-full w-full p-4">
-          <div className="max-w-2xl w-full">
-            <h1 className="text-white text-center text-3xl pb-7">Evaluación</h1>
-            <h3 className="text-white text-center text-3xl pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
-            <p className="text-white text-left text-xl pb-5">Puntaje: {evaluationQuestions[currentQuestion]?.score}</p>
-            <div className="flex justify-between items-center">
-              <ul className="text-white text-center w-1/2">
-                {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                  <li key={idx}>
-                    <button
-                      className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                      style={{ width: '270px', height: '50px' }}
-                      onClick={() => handleOptionSelect(idx, option.is_correct)}
-                      disabled={selectedOption !== null}
-                    >
-                      {option.option_text}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
+          {!evaluationCompleted ? (
+            <div className="max-w-2xl w-full">
+              <h1 className="text-white text-center text-3xl pb-7">Evaluación</h1>
+              <h3 className="text-white text-center text-3xl pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
+              <p className="text-white text-left text-xl pb-5">Puntaje: {evaluationQuestions[currentQuestion]?.score}</p>
+              <div className="flex justify-between items-center">
+                <ul className="text-white text-center w-1/2">
+                  {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                    <li key={idx}>
+                      <button
+                        className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
+                        style={{ width: '270px', height: '50px' }}
+                        onClick={() => handleOptionSelect(idx, option.is_correct)}
+                        disabled={selectedOption !== null}
+                      >
+                        {option.option_text}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
+              </div>
             </div>
-          </div>
-          {selectedOption !== null && (
+          ) : (
+            <div className="mt-6 text-white text-center text-2xl">
+              Puntaje Total: {totalScore}
+            </div>
+          )}
+          {selectedOption !== null && !evaluationCompleted && (
             <button
               className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
               style={{ width: '270px', height: '50px' }}

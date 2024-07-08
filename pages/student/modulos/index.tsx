@@ -30,6 +30,7 @@ const Home: React.FC = () => {
   let name = ''; // Variable para el nombre del usuario.
   let uri_picture = ''; // Variable para la URL de la imagen de perfil.
 
+  
   if (profileInfo) { // Si tenemos información del perfil...
     const profile = profileInfo as Profile; // Tipamos la información del perfil.
     name = profile.first_name; // Obtenemos el primer nombre.

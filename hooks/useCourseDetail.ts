@@ -17,6 +17,7 @@ export const useCourseDetail = (course_id: number) => {
       }
       setIsLoading(true);
       try {
+        
         const response = await getCourseDetail(token, course_id);
         if (response === null) {
           setCourseDetail([]); 

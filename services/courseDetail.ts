@@ -2,6 +2,8 @@ import axios from 'axios';
 import { API_GET_DETAILCOURSE, API_GET_MODULESDETAIL } from '../utils/Endpoints';
 import { CourseDetail } from '../interfaces/CourseDetial';
 import { Course } from '../interfaces/StudentModule';
+
+
 export const getCourseDetail = async (userToken: string, courseId: number): Promise<CourseDetail| null> => {
   try {
     const config = {
