@@ -19,6 +19,7 @@ export const useModuleDetail = (course_id: number) => {
       setIsLoading(true);
       try {
         const response = await getModuleDetail(token, course_id, userInfo.id);
+        console.log(response)
         if (response === null) {
           setCourseData([]);
         } else if (Array.isArray(response)) {

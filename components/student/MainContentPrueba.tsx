@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Question } from '../../interfaces/StudentModule';
-import axios from 'axios'; // Import axios for making POST requests
+import axios from 'axios';
+import './../../app/globals.css';
+import  {useResultModule } from '../../hooks/useResultModule';
+import { useAuth } from '../../context/AuthContext';
 
 interface MainContentProps {
   sessionVideo?: string;
@@ -8,7 +11,8 @@ interface MainContentProps {
   onFinish?: () => void;
   onContinue?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
-  videoProgress?: number; // New prop for video progress
+  videoProgress?: number;
+  selectedModuleId?: number | null; // New prop for selected module ID
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
@@ -17,16 +21,21 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   onFinish,
   onContinue,
   onProgress,
-  videoProgress = 0
+  videoProgress = 0,
+  selectedModuleId  // Include selectedModuleId
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [totalScore, setTotalScore] = useState(0); // Track total score
+  const [totalScore, setTotalScore] = useState(0);
   const [videoEnded, setVideoEnded] = useState(false);
   const [evaluationCompleted, setEvaluationCompleted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const { user, token } = useAuth();
+  const userInfo = user as { id: number }; 
+  const { createResultModule } = useResultModule();
+
 
   useEffect(() => {
     if (videoRef.current) {
@@ -49,12 +58,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
       videoRef.current.addEventListener('seeking', handleSeeking);
 
-      // Set video progress to start from where the user left off
       if (videoProgress > 0 && !videoEnded) {
         const duration = videoRef.current!.duration;
         const targetTime = (videoProgress / 100) * duration;
-
-        // Seek to the calculated targetTime
         if (targetTime > 0 && targetTime < duration) {
           videoRef.current.currentTime = targetTime;
         }
@@ -93,20 +99,17 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       onFinish();
     }
 
-    // Send total score to the backend
-    const payload = {
-      user_id: 1, // Replace with the actual user ID
+    const moduloResultado = {
+      user_id: userInfo.id,
       evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
-      total_score: totalScore
+      puntaje: totalScore,
+      module_id: selectedModuleId // Include module_id here
     };
 
-    axios.post('/api/evaluation/submit', payload)
-      .then(response => {
-        console.log('Evaluation submitted successfully:', response.data);
-      })
-      .catch(error => {
-        console.error('Error submitting evaluation:', error);
-      });
+    createResultModule(moduloResultado)
+
+    console.log("MODULO_RESULTADO",moduloResultado)
+   
   };
 
   const handleVideoEnd = () => {

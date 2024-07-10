@@ -30,13 +30,6 @@ export interface Question {
   options: Option[];
 }
 
-export interface ModuleEvaluation {
-  evaluation_id: number;
-  name: string;
-  description: string;
-  questions: Question[];
-}
-
 export interface UserModuleProgress {
   user_module_progress_id: number;
   is_completed: boolean;
@@ -50,6 +43,14 @@ export interface ModuleSessions {
   video_enlace: string;
   duracion_minutos: string;
   usersessionprogress: UserSessionProgress[];
+}
+
+
+export interface ModuleEvaluation {
+  evaluation_id: number;
+  name: string;
+  description: string;
+  questions: Question[];
 }
 
 export interface CourseModule {

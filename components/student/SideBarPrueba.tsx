@@ -8,7 +8,7 @@ interface SidebarProps {
   courseModules: CourseModule[];
   courseEvaluation: ModuleEvaluation;
   moduleEvaluations: ModuleEvaluation[];
-  onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => void;
+  onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[]  , moduleId?: number) => void;
   videoProgress?: { [key: string]: number }; // New prop for video progress
 }
 
@@ -96,7 +96,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
                 <div
                   key={sessionIndex}
                   className={`cursor-pointer py-2 flex items-center ${locked ? 'text-gray-400' : ''}`}
-                  onClick={() => !locked && onSelect(session.name)}
+                  onClick={() => !locked && onSelect(session.name ,undefined, module.module_id)}
                 >
                   <div className="w-8 h-8 mr-2">
                     <CircularProgressbar value={sessionProgress} text={`${roundedSessionProgress}%`} styles={{
@@ -112,16 +112,15 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
               );
             })}
             <div className={`mt-2 cursor-pointer font-bold text-sm ${isModuleEvaluationLocked(moduleIndex, courseModules) ? 'text-gray-400' : ''}`}
-                 onClick={() => !isModuleEvaluationLocked(moduleIndex, courseModules) && onSelect('', module.moduleEvaluation)}>
+                 onClick={() => !isModuleEvaluationLocked(moduleIndex, courseModules) && onSelect('', module.moduleEvaluation.questions , module.module_id)}>
                 {isModuleEvaluationLocked(moduleIndex, courseModules) && <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
               Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
-            
             </div>
           </div>
         );
       })}
       <div className={`mt-4 py-4 cursor-pointer font-bold text-base ${allModulesCompleted ? '' : 'text-gray-400'}`}
-           onClick={() => allModulesCompleted && onSelect('', courseEvaluation)}>
+           onClick={() => allModulesCompleted && onSelect('', courseEvaluation.questions)}>
         Evaluación Final: {courseEvaluation.name}
         {!allModulesCompleted && <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
       </div>
