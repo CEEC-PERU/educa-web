@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/DrawerNavigation';
+import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent} from '../../hooks/useCourseStudents';
-import CourseCard from '../../components/CourseCard';
+import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
-
-Modal.setAppElement('#__next'); // Asegúrate de que esto apunte al elemento de tu aplicación
+import './../../app/globals.css';
+Modal.setAppElement('#__next'); 
 
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const router = useRouter();
-  
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '';
   let uri_picture = '';
   
@@ -38,7 +38,6 @@ const StudentIndex: React.FC = () => {
   const navigateToCourseDetails = () => {
     router.push({
       pathname: '/student/course-details',
-      
       query: { course_id: selectedCourse.course_id }
     });
     console.log("selectedCourse:", selectedCourse); // Verifica el estado de selectedCourse
@@ -48,13 +47,14 @@ const StudentIndex: React.FC = () => {
 
 
   return (
-    <ProtectedRoute>
+   <div>
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+          borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
         />
-        <SidebarDrawer />
+        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
       </div>
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
         <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg">
@@ -138,7 +138,7 @@ const StudentIndex: React.FC = () => {
           </div>
         </Modal>
       )}
-    </ProtectedRoute>
+  </div>
   );
 }
 

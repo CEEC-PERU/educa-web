@@ -3,7 +3,7 @@ import { CourseDetail } from '../interfaces/CourseDetail';
 import { getCourseDetail } from '../services/courseDetail';
 import { useAuth } from '../context/AuthContext';
 
-export const useCourseDetail = (course_id :number) => {
+export const useCourseDetail = (course_id: number) => {
   const [courseDetail, setCourseDetail] = useState<CourseDetail[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -11,29 +11,31 @@ export const useCourseDetail = (course_id :number) => {
   const userInfo = user as { id: number };
 
   useEffect(() => {
-    const fetchCourseStudent = async () => {
+    const fetchCourseDetail = async () => {
+      if (!token) {
+        return;
+      }
       setIsLoading(true);
       try {
-        if (!token) {
-          throw new Error('Token is null or undefined');
-        }
+        
         const response = await getCourseDetail(token, course_id);
         if (response === null) {
-            setCourseDetail([]); 
-          } else if (Array.isArray(response)) {
-            setCourseDetail(response); 
-          } else {
-            setCourseDetail([response]); 
-          }
+          setCourseDetail([]); 
+        } else if (Array.isArray(response)) {
+          setCourseDetail(response); 
+        } else {
+          setCourseDetail([response]); 
+        }
       } catch (error) {
-        console.error('Error fetching course student:', error);
-        setError('Error fetching course student. Please try again.');
+        console.error('Error fetching course detail:', error);
+        setError('Error fetching course detail. Please try again.');
       } finally {
         setIsLoading(false);
       }
     };
-    fetchCourseStudent();
-  }, [token]);
+
+    fetchCourseDetail();
+  }, [token, course_id]);
 
   return {
     courseDetail,

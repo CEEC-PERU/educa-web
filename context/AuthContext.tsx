@@ -1,14 +1,17 @@
 import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import {jwtDecode  }from 'jwt-decode'; // Importación corregida de jwtDecode
-import axios from "axios";
-import { getProfile } from "../services/profile";
+import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
+import { getProfile } from '../services/profile';
 import { signin } from '../services/authService';
-import { AuthContextData, AuthProviderProps } from '../interfaces/Auth'; 
+import { AuthContextData, AuthProviderProps } from '../interfaces/Auth';
+import { API_SOCKET_URL } from '../utils/Endpoints';
 import { LoginResponse, Profile, UserInfo } from '../interfaces/UserInterfaces';
-import { validateToken } from "../helpers/helper-token";
+import { validateToken } from '../helpers/helper-token';
+import { io } from 'socket.io-client';
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+const socket = io(API_SOCKET_URL);
 
 export const useAuth = () => {
   return useContext(AuthContext);
@@ -44,11 +47,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           dni: decodedToken.dni,
           enterprise_id: decodedToken.enterprise_id,
         }));
-        console.log(token)
-        console.log(response.token)
-        
-        const profile = await getProfile(response.token ,decodedToken.id);
-        console.log("PROFILE API GET SEARCH",profile)
+        if (decodedToken.role === 1) {
+          socket.emit('login', { userToken: response.token });
+        }
+        const profile = await getProfile(response.token, decodedToken.id);
         if (profile) {
           setProfileInfo(profile);
           localStorage.setItem('profileInfo', JSON.stringify(profile));
@@ -71,47 +73,57 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem('userToken');
     localStorage.removeItem('userInfo');
     localStorage.removeItem('profileInfo');
-
+    if (token) {
+      const decodedToken: { id: number; role: number; email: string; client_id: number } = jwtDecode(token);
+      if (decodedToken.role === 1) {
+        socket.emit('logout');
+      }
+    }
+    
     setUser(null);
     setToken(null);
     router.push('/');
   };
 
   useEffect(() => {
+    try {
+      const storedUserToken = localStorage.getItem('userToken');
+      const storedUserInfo = localStorage.getItem('userInfo');
+      const isValid = storedUserToken ? validateToken(storedUserToken) : false;
 
-      try {
-        const storedUserToken = localStorage.getItem('userToken');
-        const storedUserInfo = localStorage.getItem('userInfo');
-        const isValid = storedUserToken ? validateToken(storedUserToken) : false;
-
-        if (storedUserInfo && isValid) {
-          const storedProfileInfo = localStorage.getItem('profileInfo');
-          if (storedProfileInfo) {
-            setProfileInfo(JSON.parse(storedProfileInfo));
-          }
-
-          const { id, role, dni, enterprise_id } = JSON.parse(storedUserInfo);
-          
-          setToken(storedUserToken);
-          setUser({ id, role, dni, enterprise_id });
-        } else {
-          setToken(null);
-          setUser(null);
+      if (storedUserInfo && isValid) {
+        const storedProfileInfo = localStorage.getItem('profileInfo');
+        if (storedProfileInfo) {
+          setProfileInfo(JSON.parse(storedProfileInfo));
         }
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        logout();
-      } finally {
-        setIsLoading(false);
+
+        const { id, role, dni, enterprise_id } = JSON.parse(storedUserInfo);
+        
+        setToken(storedUserToken);
+        setUser({ id, role, dni, enterprise_id });
+      } else {
+        setToken(null);
+        setUser(null);
       }
-   
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error initializing auth:', error);
+      logout();
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const redirectToDashboard = (role: number) => {
     switch (role) {
       case 1:
         router.push('/student');
+        if (token) {
+          const decodedToken: { id: number; role: number; email: string; client_id: number } = jwtDecode(token);
+          if (decodedToken.role === 1) {
+            socket.emit('login', { userToken: token });
+          }
+        }
         break;
       case 2:
         router.push('/corporate');

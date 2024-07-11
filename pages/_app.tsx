@@ -2,7 +2,7 @@
 import { AuthProvider } from '../context/AuthContext';
 import { AppProps } from 'next/app';
 import ProtectedRoute from '../components/Auth/ProtectedRoute';
-
+import './../app/globals.css';
 function MyApp({ Component, pageProps }: AppProps) {
   const protectedRoutes = ['/home', '/contenido/agregarCurso', '/student', '/corporate', '/content', '/admin'];
 

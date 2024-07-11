@@ -3,17 +3,17 @@ import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
 import { useUpdatedProfile } from '../../hooks/useProfile';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/DrawerNavigation';
+import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useEnterprise } from '../../hooks/useEnterprise';
-
+import './../../app/globals.css';
 const StudentProfile: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { enterprise, error, isLoading } = useEnterprise();
   const { updateProfile } = useUpdatedProfile();
   const router = useRouter();
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '', last_name = '', uri_picture = '', initialPhone, initialEmail;
   let userInfo = { id: 0, dni: '' };
 
@@ -60,7 +60,7 @@ const StudentProfile: React.FC = () => {
         bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
         user={user ? { profilePicture: uri_picture } : undefined}
       />
-      <SidebarDrawer />
+    <SidebarDrawer isDrawerOpen={isDrawerOpen} />
       <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 pt-16">
         <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-8">
           <img

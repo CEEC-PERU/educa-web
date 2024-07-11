@@ -1,5 +1,5 @@
 import React from 'react';
-import { CourseStudentProps } from '../interfaces/CourseStudent';
+import { CourseStudentProps } from '../../interfaces/CourseStudent';
 
 interface CourseCardProps extends CourseStudentProps {
   onClick: () => void;
