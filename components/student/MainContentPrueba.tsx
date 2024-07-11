@@ -119,6 +119,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   };
 
+  
   return (
     <div className="h-full w-full p-4">
       {sessionVideo ? (

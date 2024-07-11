@@ -45,6 +45,9 @@ export interface ModuleSessions {
   usersessionprogress: UserSessionProgress[];
 }
 
+export interface EvaluationResult{
+  name : string;
+}
 
 export interface ModuleEvaluation {
   evaluation_id: number;
