@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { BookOpenIcon, TagIcon, UserGroupIcon, CubeIcon, DocumentTextIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
-
-import { useAuth } from '../context/AuthContext';
-import { Profile } from '../interfaces/UserInterfaces';
+import { useAuth } from '../../context/AuthContext';
+import { Profile } from '../../interfaces/UserInterfaces';
+import { getAllRequirements } from '../../services/requirementService';
 
 interface SidebarAdminProps {
   showSidebar: boolean;
@@ -12,6 +12,7 @@ interface SidebarAdminProps {
 
 const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [requirements, setRequirements] = useState([]);
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
 
@@ -22,6 +23,19 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
   }
+
+  useEffect(() => {
+    const fetchRequirements = async () => {
+      try {
+        const data = await getAllRequirements();
+        setRequirements(data);
+      } catch (error) {
+        console.error('Error fetching requirements:', error);
+      }
+    };
+
+    fetchRequirements();
+  }, []);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -43,12 +57,12 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}
-        onMouseEnter={handleMouseEnter} // Abrir el drawer al pasar el mouse sobre el área del drawer
-        onMouseLeave={handleMouseLeave} // Cerrar el drawer al sacar el mouse del área del drawer
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         <nav className="flex-1">
           <ul>
-          <li>
+            <li>
               <button
                 onClick={() => handleNavigation('/admin')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
@@ -77,6 +91,20 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/admin/requirements')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left relative"
+              >
+                <CubeIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Requerimientos</span>}
+                {requirements.length > 0 && (
+                  <span className="absolute right-4 top-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {requirements.length}
+                  </span>
+                )}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={logout}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
@@ -90,6 +118,5 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
     </div>
   );
 };
-
 
 export default SidebarAdmin;

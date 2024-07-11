@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Question, Option } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
+import AlertComponent from '../../../components/AlertComponent'; // Importar el componente de alerta
 import './../../../app/globals.css';
 
 interface StepSummaryProps {
@@ -12,6 +13,16 @@ interface StepSummaryProps {
 }
 
 const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, questionsData, optionsData }) => {
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleComplete = () => {
+    completeForm();
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 3000); // Ocultar la alerta después de 3 segundos
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold mb-4">Resumen</h2>
@@ -39,11 +50,18 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
           <ArrowLeftIcon className="w-5 h-5 mr-2" />
           Anterior
         </button>
-        <button onClick={completeForm} className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center">
+        <button onClick={handleComplete} className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center">
           <CheckIcon className="w-5 h-5 mr-2" />
           Completar
         </button>
       </div>
+      {showAlert && (
+        <AlertComponent
+          type="success"
+          message="Evaluación creada exitosamente."
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 };

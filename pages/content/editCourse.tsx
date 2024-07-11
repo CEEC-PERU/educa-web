@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
 import { getCourse, updateCourse } from '../../services/courseService';
 import { uploadVideo } from '../../services/videoService';
 import { uploadImage } from '../../services/imageService';
-import { getEvaluations } from '../../services/evaluationService';
+import { getAvailableEvaluations } from '../../services/evaluationService';
 import { Category } from '../../interfaces/Category';
 import { Professor } from '../../interfaces/Professor';
 import { Evaluation } from '../../interfaces/Evaluation';
@@ -15,8 +15,10 @@ import { Course } from '../../interfaces/Course';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import ButtonComponent from '../../components/ButtonDelete';
+import ActionButtons from '../../components/ActionButtons';
 import './../../app/globals.css';
+import AlertComponent from '../../components/AlertComponent';
+import Loader from '../../components/Loader';
 
 const EditCourse: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -24,6 +26,7 @@ const EditCourse: React.FC = () => {
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null); // Estado para el mensaje de éxito
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -48,15 +51,23 @@ const EditCourse: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [categoriesRes, professorsRes, evaluationsRes, courseRes] = await Promise.all([
+        const [categoriesRes, professorsRes, availableEvaluations, courseRes] = await Promise.all([
           getCategories(),
           getProfessors(),
-          getEvaluations(),
+          getAvailableEvaluations(),
           getCourse(id as string)
         ]);
         setCategories(categoriesRes);
         setProfessors(professorsRes);
-        setEvaluations(evaluationsRes);
+
+        // Add the current evaluation to the list and remove duplicates
+        const currentEvaluation = availableEvaluations.find(evaluation => evaluation.evaluation_id === courseRes.evaluation_id);
+        const updatedEvaluations = currentEvaluation
+          ? [currentEvaluation, ...availableEvaluations.filter(evaluation => evaluation.evaluation_id !== courseRes.evaluation_id)]
+          : availableEvaluations;
+
+        setEvaluations(updatedEvaluations);
+
         setFormData({
           name: courseRes.name,
           description_short: courseRes.description_short,
@@ -104,6 +115,7 @@ const EditCourse: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormLoading(true);
     try {
       let videoUrl = formData.intro_video;
       let imageUrl = formData.image;
@@ -122,9 +134,12 @@ const EditCourse: React.FC = () => {
         image: imageUrl
       });
       setSuccess('Curso actualizado exitosamente');
+      setTimeout(() => setSuccess(null), 3000); // Ocultar la alerta después de 3 segundos
     } catch (error) {
       setError('Error updating course');
       console.error('Error updating course:', error);
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -140,130 +155,151 @@ const EditCourse: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
   }
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out pt-16`}>
-        <div className="max-w-6xl bg-white p-6 rounded-lg">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center text-purple-600 mb-4"
-          >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Volver
-          </button>
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-green-500">{success}</p>}
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-4">
-              <FormField
-                id="name"
-                label="Nombre del Curso"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
+      <div className="flex flex-1 pt-16">
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
+          <div className="max-w-6xl bg-white p-6 rounded-lg w-full">
+          {success && (
+              <AlertComponent
+                type="info"
+                message="Curso actualizado correctamente."
+                onClose={() => setSuccess(null)}
               />
-              <FormField
-                id="description_short"
-                label="Descripción Corta"
-                type="textarea"
-                value={formData.description_short}
-                onChange={handleChange}
-              />
-              <FormField
-                id="description_large"
-                label="Descripción Larga"
-                type="textarea"
-                value={formData.description_large}
-                onChange={handleChange}
-              />
-              <FormField
-                id="category_id"
-                label="Categoría"
-                type="select"
-                value={formData.category_id.toString()}
-                onChange={handleChange}
-                options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
-              />
-              <div>
-                <label htmlFor="image" className="block text-sm font-medium mb-4 text-blue-400">
-                  Imagen del Curso
-                </label>
-                <MediaUploadPreview
-                  onMediaUpload={handleImageUpload}
-                  accept="image/*"
-                  label="Subir Imagen"
-                  initialPreview={formData.image} // Mostrar la imagen actual
-                />
-              </div>
-              
-            </div>
-            <div className="space-y-4">
-              <FormField
-                id="professor_id"
-                label="Profesor"
-                type="select"
-                value={formData.professor_id.toString()}
-                onChange={handleChange}
-                options={professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))}
-              />
-              <FormField
-                id="evaluation_id"
-                label="Evaluación"
-                type="select"
-                value={formData.evaluation_id.toString()}
-                onChange={handleChange}
-                options={evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
-              />
-              <FormField
-                id="duration_video"
-                label="Duración del Video"
-                type="text"
-                value={formData.duration_video}
-                onChange={handleChange}
-              />
-              <div>
-                <label htmlFor="intro_video" className="block text-sm font-medium mb-4 text-blue-400">
-                  Video de Introducción
-                </label>
-                <MediaUploadPreview
-                  onMediaUpload={handleVideoUpload}
-                  accept="video/*"
-                  label="Subir Video"
-                  initialPreview={formData.intro_video} // Mostrar el video actual
-                />
-              </div>
-              <FormField
-                id="duration_course"
-                label="Duración del Curso"
-                type="text"
-                value={formData.duration_course}
-                onChange={handleChange}
-              />
-              <div className="flex items-center mt-6">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={formData.is_active}
+            )}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center text-purple-600 mb-4"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Volver
+            </button>
+            {error && <p className="text-red-500">{error}</p>}
+            
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <FormField
+                  id="name"
+                  label="Nombre del Curso"
+                  type="text"
+                  value={formData.name}
                   onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
-                <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                  Activo
-                </label>
+                <FormField
+                  id="description_short"
+                  label="Descripción Corta"
+                  type="textarea"
+                  value={formData.description_short}
+                  onChange={handleChange}
+                />
+                <FormField
+                  id="description_large"
+                  label="Descripción Larga"
+                  type="textarea"
+                  value={formData.description_large}
+                  onChange={handleChange}
+                />
+                <FormField
+                  id="category_id"
+                  label="Categoría"
+                  type="select"
+                  value={formData.category_id.toString()}
+                  onChange={handleChange}
+                  options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
+                />
+                <div>
+                  <label htmlFor="image" className="block text-sm font-medium mb-4 text-blue-400">
+                    Imagen del Curso
+                  </label>
+                  <MediaUploadPreview
+                    onMediaUpload={handleImageUpload}
+                    accept="image/*"
+                    label="Subir Imagen"
+                    initialPreview={formData.image}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="col-span-1 md:col-span-2 flex justify-end mt-4">
-              <ButtonComponent buttonLabel="Guardar" onClick={handleSubmit} backgroundColor="bg-purple-500" textColor="text-white" fontSize="text-sm" buttonSize="py-3 px-4" />
-            </div>
-          </form>
+              <div className="space-y-4">
+                <FormField
+                  id="professor_id"
+                  label="Profesor"
+                  type="select"
+                  value={formData.professor_id.toString()}
+                  onChange={handleChange}
+                  options={[{ value: '', label: 'Seleccionar Profesor' }, ...professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))]}
+                />
+                <FormField
+                  id="evaluation_id"
+                  label="Evaluación"
+                  type="select"
+                  value={formData.evaluation_id.toString()}
+                  onChange={handleChange}
+                  options={[{ value: '', label: 'Seleccionar Evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
+                />
+                <FormField
+                  id="duration_video"
+                  label="Duración del Video"
+                  type="text"
+                  value={formData.duration_video}
+                  onChange={handleChange}
+                />
+                <div>
+                  <label htmlFor="intro_video" className="block text-sm font-medium mb-4 text-blue-400">
+                    Video de Introducción
+                  </label>
+                  <MediaUploadPreview
+                    onMediaUpload={handleVideoUpload}
+                    accept="video/*"
+                    label="Subir Video"
+                    initialPreview={formData.intro_video}
+                  />
+                </div>
+                <FormField
+                  id="duration_course"
+                  label="Duración del Curso"
+                  type="text"
+                  value={formData.duration_course}
+                  onChange={handleChange}
+                />
+                <div className="flex items-center mt-6">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    checked={formData.is_active}
+                    onChange={handleChange}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                  />
+                  <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+                    Activo
+                  </label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div className="ml-4">
+            <ActionButtons
+              onSave={handleSubmit}
+              onCancel={() => router.back()}
+              isEditing={true}
+            />
+          </div>
+        </main>
+      </div>
+      {formLoading && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <Loader />
         </div>
-      </main>
+      )}
     </div>
   );
 };

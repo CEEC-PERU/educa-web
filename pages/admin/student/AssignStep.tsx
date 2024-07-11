@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import Table from '../../../components/Table';
 import { getEnterprises } from '../../../services/enterpriseService';
 import { Enterprise } from '../../../interfaces/Enterprise';
+import Loader from '../../../components/Loader';
 
 interface AssignStepProps {
   file: File;
@@ -21,6 +22,7 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
     { label: 'DNI', key: 'dni' },
     { label: 'Password', key: 'password' }
   ]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -29,6 +31,8 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
         setCompanies(companies);
       } catch (error) {
         console.error('Error fetching companies:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -55,6 +59,14 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
       alert('Por favor, selecciona una empresa');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center">

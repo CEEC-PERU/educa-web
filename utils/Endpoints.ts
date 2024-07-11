@@ -78,3 +78,5 @@ export const API_USER = `${baseURL}/api/superadmin`;
 export const API_GET_ENTERPRISE = `${baseURL}/api/enterprises`;
 
 export const API_GET_USERS_BY_ENTERPRISE  = `${baseURL}/api/superadmin/enterprise`;
+
+export const API_REQUIREMENTS  = `${baseURL}/api/requirements`;

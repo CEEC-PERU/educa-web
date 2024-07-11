@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import { getSession, updateSession } from '../../services/sessionService';
 import { uploadVideo } from '../../services/videoService';
 import { getModules } from '../../services/moduleService';
@@ -10,8 +10,10 @@ import { Module } from '../../interfaces/Module';
 import './../../app/globals.css';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
-import ButtonComponent from '../../components/ButtonDelete';
+import ActionButtons from '../../components/ActionButtons'; // Importar el componente ActionButtons
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import AlertComponent from '../../components/AlertComponent';
+import Loader from '../../components/Loader';
 
 const EditSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -24,6 +26,8 @@ const EditSession: React.FC = () => {
   const [modules, setModules] = useState<Module[]>([]);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Estado de carga
   const router = useRouter();
   const { id } = router.query;
 
@@ -41,8 +45,10 @@ const EditSession: React.FC = () => {
           module_id: sessionRes.module_id
         });
         setModules(modulesRes);
+        setLoading(false); // Finaliza la carga
       } catch (error) {
         setError('Error fetching session details or modules');
+        setLoading(false); // Finaliza la carga en caso de error
       }
     };
     if (id) {
@@ -78,7 +84,8 @@ const EditSession: React.FC = () => {
         ...session,
         video_enlace: videoUrl
       });
-      alert('Actualización realizada con éxito');
+      setSuccess('Sesión actualizada exitosamente');
+      setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       setError('Error updating session');
       console.error('Error updating session:', error);
@@ -90,9 +97,13 @@ const EditSession: React.FC = () => {
     handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
   };
 
-  const handleCancel = () => {
-    router.push(`/content/detailModule?id=${session.module_id}`);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   if (!session) {
     return <p>Loading...</p>;
@@ -100,21 +111,27 @@ const EditSession: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
-      <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center text-purple-600 mb-4"
-        >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
-          Volver
-        </button>
-        <div className="max-w-2xl p-6 rounded-lg">
-          {error && <p className="text-red-500">{error}</p>}
-          <form onSubmit={handleSubmit}>
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl rounded-lg flex-grow mr-4">
+            {success && (
+              <AlertComponent
+                type="info"
+                message={success}
+                onClose={() => setSuccess(null)}
+              />
+            )}
+            {error && <p className="text-red-500">{error}</p>}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center text-purple-600 mb-6"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Volver
+            </button>
             <FormField
               id="name"
               label="Nombre"
@@ -128,7 +145,7 @@ const EditSession: React.FC = () => {
                 onMediaUpload={handleFileChange}
                 accept="video/*"
                 label="Subir video"
-                initialPreview={session.video_enlace} // Mostrar el video actual
+                initialPreview={session.video_enlace}
               />
             </div>
             <FormField
@@ -138,10 +155,15 @@ const EditSession: React.FC = () => {
               value={session.duracion_minutos.toString()}
               onChange={handleChange}
             />
-            <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
           </form>
-        </div>
-      </main>
+          <div className="ml-4 flex-shrink-0">
+            <ActionButtons
+              onSave={handleSaveClick}
+              onCancel={() => router.back()}
+              isEditing={true} // Para asegurarse de que el botón "Guardar" aparezca
+            />
+          </div>
+        </main>
       </div>
     </div>
   );

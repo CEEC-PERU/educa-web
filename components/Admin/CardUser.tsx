@@ -1,5 +1,5 @@
 import React from 'react';
-import ButtonComponent from './ButtonDelete';
+import ButtonComponent from '../ButtonDelete';
 
 interface CardProps {
   Icon: React.FC<React.SVGProps<SVGSVGElement>>; // Tipo correcto para un icono

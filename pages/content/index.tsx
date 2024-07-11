@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import CardImage from '../../components/CardImage';
 import ButtonComponent from '../../components/ButtonDelete';
 import { getCourses } from '../../services/courseService';
@@ -9,11 +9,13 @@ import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 import { useRouter } from 'next/router';
+import Loader from '../../components/Loader'; // Importar el componente Loader
 
 const Home: React.FC = () => {
   const { logout } = useAuth();
   const [showSidebar, setShowSidebar] = useState(true);
   const [cursos, setCursos] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true); // Estado de carga
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -33,9 +35,11 @@ const Home: React.FC = () => {
     try {
       const data = await getCourses();
       setCursos(data);
+      setLoading(false); // Finaliza la carga
     } catch (error) {
       setError('Error fetching courses');
       console.error('Error fetching courses:', error);
+      setLoading(false); // Finaliza la carga en caso de error
     }
   };
 
@@ -49,12 +53,20 @@ const Home: React.FC = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
+        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
           <div className="flex justify-between items-center mb-4">
             <Link href="/content/addCourse">
               <ButtonComponent

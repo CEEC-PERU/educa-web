@@ -1,36 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface FormFieldProps {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox';
-  value?: string;
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password';
+  name?: string;
+  value?: string | boolean | number;
   checked?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
   pattern?: string;
   options?: { value: string; label: string }[];
   rows?: number;
+  required?: boolean;
+  touched?: boolean;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, checked, onChange, pattern, options, rows }) => {
+const FormField: React.FC<FormFieldProps> = ({ id, label, type, name, value, checked, onChange, onBlur, pattern, options, rows, required, touched }) => {
+  const [showPassword, setShowPassword] = useState(false);
   const purpleColor = 'text-[#6017AF] border-global focus:border-global focus:ring-global dark:text-[#6017AF] dark:border-global dark:focus:border-global';
+
+  const isError = required && touched && !value;
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   if (type === 'select' && options) {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-1"
-        >
+        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-1">
           {label}
         </label>
         <select
           id={id}
-          name={id}
-          value={value}
+          name={name}
+          value={value as string}
           onChange={onChange}
-          className={`block py-3 px-0 w-full text-lg text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 peer ${purpleColor}`}
-          required
+          onBlur={onBlur}
+          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          required={required}
         >
           {options.map((option) => (
             <option key={option.value} value={option.value}>
@@ -43,21 +52,18 @@ const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, checked, 
   } else if (type === 'textarea') {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-4"
-        >
+        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-4">
           {label}
         </label>
         <textarea
           id={id}
-          name={id}
-          value={value}
+          name={name}
+          value={value as string}
           onChange={onChange}
+          onBlur={onBlur}
           rows={rows}
-          className={`block p-3 w-full text-lg text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#6017AF] dark:focus:border-global focus:ring-global focus:border-global ${purpleColor}`}
-          placeholder=" "
-          required
+          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          required={required}
         />
       </div>
     );
@@ -66,39 +72,62 @@ const FormField: React.FC<FormFieldProps> = ({ id, label, type, value, checked, 
       <div className="relative z-0 w-full mb-5 group flex items-center">
         <input
           type="checkbox"
-          name={id}
+          name={name}
           id={id}
           checked={checked}
           onChange={onChange}
+          onBlur={onBlur}
           className="mr-2 leading-tight"
         />
-        <label
-          htmlFor={id}
-          className="text-blue-400 block text-sm font-medium dark:text-gray-300"
-        >
+        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300">
           {label}
         </label>
+      </div>
+    );
+  } else if (type === 'password') {
+    return (
+      <div className="relative z-0 w-full mb-10 group">
+        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300 mb-1">
+          {label}
+        </label>
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            name={name}
+            id={id}
+            pattern={pattern}
+            value={value as string}
+            onChange={onChange}
+            onBlur={onBlur}
+            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+            required={required}
+          />
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute inset-y-0 right-0 px-3 flex items-center text-sm leading-5"
+          >
+            {showPassword ? '🙈' : '👁️'}
+          </button>
+        </div>
       </div>
     );
   } else {
     return (
       <div className="relative z-0 w-full mb-10 group">
-        <label
-          htmlFor={id}
-          className="text-blue-400 block text-sm font-medium dark:text-gray-300 mb-1"
-        >
+        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300 mb-1">
           {label}
         </label>
         <input
           type={type}
-          name={id}
+          name={name}
           id={id}
           pattern={pattern}
-          value={value}
+          value={value as string}
           onChange={onChange}
-          className={`block py-3 px-4 w-full text-lg text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-global focus:outline-none focus:ring-0 focus:border-global peer ${purpleColor}`}
-          placeholder=" "
-          required
+          onBlur={onBlur}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          required={required}
         />
       </div>
     );

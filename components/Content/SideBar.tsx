@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { BookOpenIcon, TagIcon, UserGroupIcon, CubeIcon, DocumentTextIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
-import { useAuth } from '../context/AuthContext';
-import { Profile } from '../interfaces/UserInterfaces';
+import { useAuth } from '../../context/AuthContext';
+import { Profile } from '../../interfaces/UserInterfaces';
 
 interface SidebarProps {
   showSidebar: boolean;

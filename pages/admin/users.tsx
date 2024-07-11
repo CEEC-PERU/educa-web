@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBarAdmin';
-import CardUser from '../../components/CardUser';
+import Sidebar from '../../components/Admin/SideBarAdmin';
+import CardUser from '../../components/Admin/CardUser';
 import { useRouter } from 'next/router';
 import { getRoles } from '../../services/userService';
 import { Role } from '../../interfaces/UserAdmin';

@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import { Professor, Level } from '../../interfaces/Professor';
 import axios from '../../services/axios';
 import { uploadImage } from '../../services/imageService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import ActionButtons from '../../components/ActionButtons';
-import ButtonComponent from '../../components/ButtonDelete';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
+import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
+import Loader from '../../components/Loader'; // Importar el componente Loader
 
 const AddProfessors: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -25,33 +26,36 @@ const AddProfessors: React.FC = () => {
   const [levels, setLevels] = useState<Level[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showAlert, setShowAlert] = useState(false); // Estado para mostrar la alerta
+  const [loading, setLoading] = useState(true); // Estado para la carga de datos
+  const [formLoading, setFormLoading] = useState(false); // Estado para la carga del formulario
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const router = useRouter();
 
   useEffect(() => {
-    axios.get<Professor[]>('/professors/')
-      .then(response => {
-        setProfessors(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching professors:', error);
-        setError('Error fetching professors');
-      });
+    const fetchData = async () => {
+      try {
+        const [professorsRes, levelsRes] = await Promise.all([
+          axios.get<Professor[]>('/professors/'),
+          axios.get<Level[]>('/professors/levels'),
+        ]);
+        setProfessors(professorsRes.data);
+        setLevels(levelsRes.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    axios.get<Level[]>('/professors/levels')
-      .then(response => {
-        setLevels(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching levels:', error);
-        setError('Error fetching levels');
-      });
+    fetchData();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setProfesor(prevProfesor => ({ ...prevProfesor, [name]: value }));
+    const { id, value } = e.target;
+    setProfesor(prevProfesor => ({ ...prevProfesor, [id]: value }));
   };
 
   const handleFileChange = (file: File) => {
@@ -65,6 +69,7 @@ const AddProfessors: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormLoading(true);
     try {
       let imageUrl = profesor.image;
       if (imageFile) {
@@ -79,10 +84,17 @@ const AddProfessors: React.FC = () => {
         description: '',
         level_id: 0,
       });
+      setImageFile(null);
+      setShowAlert(true); // Mostrar la alerta
       setSuccess('Profesor agregado exitosamente');
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000); // Ocultar la alerta después de 3 segundos
     } catch (error) {
       console.error('Error adding professor:', error);
       setError('Error adding professor');
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -97,65 +109,86 @@ const AddProfessors: React.FC = () => {
     setImageFile(null);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
-      <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white p-6 rounded w-full">
-            <form onSubmit={handleSubmit}>
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="flex items-center text-purple-600 mb-6"
-              >
-                <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                Volver
-              </button>
-              <FormField
-                id="full_name"
-                label="Nombre Completo"
-                type="text"
-                value={profesor.full_name}
-                onChange={handleChange}
-              />
-              <div className="mb-4">
-                <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
-                <MediaUploadPreview onMediaUpload={handleFileChange} accept="image/*" label="Subir Imagen" />
-              </div>
-              <FormField
-                id="especialitation"
-                label="Especialización"
-                type="text"
-                value={profesor.especialitation}
-                onChange={handleChange}
-              />
-              <FormField
-                id="description"
-                label="Descripción"
-                type="textarea"
-                value={profesor.description}
-                onChange={handleChange}
-                rows={4}
-              />
-              <FormField
-                id="level_id"
-                label="Nivel"
-                type="select"
-                value={profesor.level_id.toString()}
-                onChange={handleChange}
-                options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
-              />
-            </form>
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-white rounded w-full">
+              <form onSubmit={handleSubmit}>
+                {showAlert && (
+                  <AlertComponent
+                    type="success"
+                    message="Profesor agregado exitosamente."
+                    onClose={() => setShowAlert(false)}
+                  />
+                )}
+                {error && <p className="text-red-500">{error}</p>}
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="flex items-center text-purple-600 mb-6"
+                >
+                  <ArrowLeftIcon className="h-5 w-5 mr-2" />
+                  Volver
+                </button>
+                <FormField
+                  id="full_name"
+                  label="Nombre Completo"
+                  type="text"
+                  value={profesor.full_name}
+                  onChange={handleChange}
+                />
+                <div className="mb-4">
+                  <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
+                  <MediaUploadPreview onMediaUpload={handleFileChange} accept="image/*" label="Subir Imagen" />
+                </div>
+                <FormField
+                  id="especialitation"
+                  label="Especialización"
+                  type="text"
+                  value={profesor.especialitation}
+                  onChange={handleChange}
+                />
+                <FormField
+                  id="description"
+                  label="Descripción"
+                  type="textarea"
+                  value={profesor.description}
+                  onChange={handleChange}
+                  rows={4}
+                />
+                <FormField
+                  id="level_id"
+                  label="Nivel"
+                  type="select"
+                  value={profesor.level_id.toString()}
+                  onChange={handleChange}
+                  options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
+                />
+              </form>
+            </div>
+            <div className="items-center">
+              <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />
+            </div>
           </div>
-          <div className="items-center">
-            <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />
-          </div>
-        </div>
-      </main>
+        </main>
       </div>
+      {formLoading && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <Loader />
+        </div>
+      )}
     </div>
   );
 };

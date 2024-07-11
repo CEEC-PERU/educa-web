@@ -5,18 +5,17 @@ export interface Profile {
 }
 
 export interface User {
-  user_id: number;
-  user_name: string;
+  user_id?: number;
   dni: string;
-  enterprise_id: number;
   password: string;
   role_id: number;
-  expired_at: Date;
-  failed_login_attempts: number;
-  last_failed_login: Date | null;
-  is_blocked: boolean;
-  created_at: Date;
-  updated_at: Date;
+  enterprise_id: number;
+  user_name?: string;
+  expired_at?: Date;
+  failed_login_attempts?: number;
+  last_failed_login?: Date;
+  created_at?: Date;
+  updated_at?: Date;
   userProfile?: Profile; // Añade esta línea
 }
 

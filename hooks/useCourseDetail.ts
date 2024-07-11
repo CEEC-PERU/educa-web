@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CourseDetail } from '../interfaces/CourseDetial';
+import { CourseDetail } from '../interfaces/CourseDetail';
 import { getCourseDetail } from '../services/courseDetail';
 import { useAuth } from '../context/AuthContext';
 

@@ -7,6 +7,11 @@ interface ImportUsersResponse {
   message: string;
 }
 
+export const createIndividualUser = async (userData: any) => {
+  const response = await axios.post(`${API_USER}/create`, userData);
+  return response.data;
+};
+
 export const importUsers = async (formData: FormData): Promise<ImportUsersResponse> => {
   const response = await axios.post<ImportUsersResponse>(API_USERS, formData, {
     headers: {

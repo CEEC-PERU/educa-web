@@ -7,8 +7,8 @@ export const getCategories = async (): Promise<Category[]> => {
   return response.data;
 };
 
-export const addCategory = async (name: string): Promise<Category> => {
-  const response = await axios.post(API_CATEGORIES, { name });
+export const addCategory = async (name: string): Promise<{ newCategory: Category }> => {
+  const response = await axios.post<{ newCategory: Category }>(API_CATEGORIES, { name });
   return response.data;
 };
 
@@ -21,6 +21,7 @@ export const getCategory = async (category_id: number): Promise<Category> => {
   return response.data;
 };
 
-export const updateCategory = async (category_id: number, category: Category): Promise<void> => {
-  await axios.put(`${API_CATEGORIES}/${category_id}`, category);
+export const updateCategory = async (category_id: number, category: Category): Promise<Category> => {
+  const response = await axios.put<Category>(`${API_CATEGORIES}/${category_id}`, category);
+  return response.data;
 };

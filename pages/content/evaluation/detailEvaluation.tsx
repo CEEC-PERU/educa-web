@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/SideBar';
+import Sidebar from '../../../components/Content/SideBar';
 import DetailContainer from './DetailContainer';
 import QuestionsContainer from './QuestionsContainer';
 import { getEvaluationById, updateEvaluation, deleteEvaluation, getQuestionTypes } from '../../../services/evaluationService';

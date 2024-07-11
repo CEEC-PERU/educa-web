@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import { getSessions, deleteSession } from '../../services/sessionService';
 import { getModules } from '../../services/moduleService';
 import { Session } from '../../interfaces/Session';

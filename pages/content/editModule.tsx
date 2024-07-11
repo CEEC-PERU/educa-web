@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBar';
+import Sidebar from '../../components/Content/SideBar';
 import { getModule, updateModule } from '../../services/moduleService';
 import { getCourses } from '../../services/courseService';
 import { getEvaluations } from '../../services/evaluationService';
@@ -9,9 +9,11 @@ import { Module } from '../../interfaces/Module';
 import { Course } from '../../interfaces/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
 import FormField from '../../components/FormField';
-import ButtonComponent from '../../components/ButtonDelete';
+import ActionButtons from '../../components/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
+import AlertComponent from '../../components/AlertComponent';
+import Loader from '../../components/Loader';
 
 const EditModule: React.FC = () => {
   const router = useRouter();
@@ -23,10 +25,13 @@ const EditModule: React.FC = () => {
     name: ''
   });
   const [courses, setCourses] = useState<Course[]>([]);
+  const [modules, setModules] = useState<Module[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [availableEvaluations, setAvailableEvaluations] = useState<Evaluation[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // Estado de carga
 
   useEffect(() => {
     if (id) {
@@ -35,17 +40,23 @@ const EditModule: React.FC = () => {
           setModule(moduleRes);
           setCourses(coursesRes);
 
-          // Incluir la evaluación actual del módulo en las opciones disponibles
+          // Filtrar evaluaciones asignadas a otros cursos o módulos
+          const assignedEvaluations = new Set(
+            [...coursesRes.map(course => course.evaluation_id), ...modules.map(mod => mod.evaluation_id)]
+          );
+
           const filteredEvaluations = evaluationsRes.filter(evaluation => {
-            return evaluation.evaluation_id === moduleRes.evaluation_id || !coursesRes.some(course => course.evaluation_id === evaluation.evaluation_id);
+            return evaluation.evaluation_id === moduleRes.evaluation_id || !assignedEvaluations.has(evaluation.evaluation_id);
           });
 
           setEvaluations(evaluationsRes);
           setAvailableEvaluations(filteredEvaluations);
+          setLoading(false); // Finaliza la carga
         })
         .catch(error => {
           console.error('Error fetching module details:', error);
           setError('Error fetching module details');
+          setLoading(false); // Finaliza la carga en caso de error
         });
     }
   }, [id]);
@@ -67,7 +78,11 @@ const EditModule: React.FC = () => {
     e.preventDefault();
     try {
       await updateModule(id as string, module);
-      router.push(`/content/detailModule?id=${module.course_id}`); // Redirigir al curso correcto
+      setSuccess('Módulo actualizado exitosamente');
+      setTimeout(() => {
+        setSuccess(null);
+        router.push(`/content/detailModule?id=${module.course_id}`);
+      }, 3000);
     } catch (error) {
       console.error('Error updating module:', error);
       setError('Error updating module');
@@ -80,8 +95,16 @@ const EditModule: React.FC = () => {
   };
 
   const handleCancel = () => {
-    router.push(`/content/detailModule?id=${module.course_id}`); // Redirigir al curso correcto
+    router.push(`/content/detailModule?id=${module.course_id}`);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   if (!module) {
     return <p>Loading...</p>;
@@ -91,33 +114,31 @@ const EditModule: React.FC = () => {
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
-      <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-      <main className={`p-6 flex-grow ${showSidebar ? 'ml-64' : ''} transition-all duration-300 ease-in-out`}>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="flex items-center text-purple-600 mb-4"
-        >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
-          Volver
-        </button>
-        <div className="max-w-4xl bg-white p-6 rounded-lg">
-          {error && <p className="text-red-500">{error}</p>}
-          <form onSubmit={handleSubmit}>
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4">
+            {success && (
+              <AlertComponent
+                type="info"
+                message={success}
+                onClose={() => setSuccess(null)}
+              />
+            )}
+            {error && <p className="text-red-500">{error}</p>}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center text-purple-600 mb-6"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Volver
+            </button>
             <FormField
               id="name"
-              label="Nombre"
+              label="Nombre del Módulo"
               type="text"
               value={module.name}
               onChange={handleChange}
-            />
-            <FormField
-              id="course_id"
-              label="Curso"
-              type="select"
-              value={module.course_id.toString()}
-              onChange={handleChange}
-              options={courses.map(course => ({ value: course.course_id.toString(), label: course.name }))}
             />
             <FormField
               id="evaluation_id"
@@ -137,10 +158,15 @@ const EditModule: React.FC = () => {
                 className="mr-2 leading-tight"
               />
             </div>
-            <ButtonComponent buttonLabel="Guardar" onClick={handleSaveClick} backgroundColor="bg-purple-600" textColor="text-white" fontSize="text-sm" buttonSize="py-2 px-4" />
           </form>
-        </div>
-      </main>
+          <div className="ml-4 flex-shrink-0">
+            <ActionButtons
+              onSave={handleSaveClick}
+              onCancel={handleCancel}
+              isEditing={true} // Para asegurarse de que el botón "Guardar" aparezca
+            />
+          </div>
+        </main>
       </div>
     </div>
   );

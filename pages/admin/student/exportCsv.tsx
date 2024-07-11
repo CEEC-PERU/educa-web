@@ -5,7 +5,7 @@ import UploadStep from './UploadStep';
 import AssignStep from './AssignStep';
 import DetailsStep from './DetailsStep';
 import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/SideBarAdmin';
+import Sidebar from '../../../components/Admin/SideBarAdmin';
 import '../../../app/globals.css';
 
 const ExportCsvPage: React.FC = () => {
@@ -128,7 +128,7 @@ const ExportCsvPage: React.FC = () => {
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main
           className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-64' : ''
+            showSidebar ? 'ml-20' : ''
           }`}
         >
           <Wizard currentStep={currentStep} steps={steps} />

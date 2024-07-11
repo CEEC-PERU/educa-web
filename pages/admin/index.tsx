@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/SideBarAdmin';
+import Sidebar from '../../components/Admin/SideBarAdmin';
 import { getUsersByEnterprise } from '../../services/userService';
 import { getEnterprises } from '../../services/enterpriseService';
 import { Enterprise } from '../../interfaces/Enterprise';
@@ -62,16 +62,13 @@ const AdminPage: React.FC = () => {
     setSelectedEnterprise(Number(e.target.value));
   };
 
-  const handleExportCSV = () => {
-    router.push('/admin/student/exportCsv'); 
-  };
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
+        <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
           <div className="bg-white p-6 rounded-lg shadow-md">
             <form className="flex items-center space-x-4 mb-4">
               <div>
@@ -97,15 +94,6 @@ const AdminPage: React.FC = () => {
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6"
                 >
                   Filtrar
-                </button>
-              </div>
-              <div>
-                <button
-                  type="button"
-                  onClick={handleExportCSV}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6"
-                >
-                  Exportar CSV
                 </button>
               </div>
             </form>

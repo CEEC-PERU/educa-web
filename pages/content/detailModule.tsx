@@ -3,16 +3,20 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import { getModulesByCourseId } from '../../services/courseService';
 import { deleteModule } from '../../services/moduleService';
+import { deleteSession } from '../../services/sessionService';
 import { getEvaluations } from '../../services/evaluationService';
-import Sidebar from '../../components/SideBar';
+import Sidebar from './../../components/Content/SideBar';
 import { Evaluation } from '../../interfaces/Evaluation';
 import ButtonComponent from '../../components/ButtonDelete';
 import { Module } from '../../interfaces/Module';
 import Link from 'next/link';
 import './../../app/globals.css';
 import { Disclosure } from '@headlessui/react';
-import FloatingButton from '../../components/FloatingButton'; // Asegúrate de importar FloatingButton
+import FloatingButton from '../../components/FloatingButton';
 import { ChevronUpIcon, ChevronDownIcon, PencilIcon, CheckCircleIcon, TrashIcon, ClipboardIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import ModalConfirmation from '../../components/ModalConfirmation';
+import useModal from '../../hooks/useModal';
+import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
 
 const ModulesPage: React.FC = () => {
   const router = useRouter();
@@ -22,6 +26,11 @@ const ModulesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [moduleToDelete, setModuleToDelete] = useState<number | null>(null);
+  const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
+  const [success, setSuccess] = useState<string | null>(null); // Estado para mensaje de éxito
+  const { isVisible: isModuleModalVisible, showModal: showModuleModal, hideModal: hideModuleModal } = useModal();
+  const { isVisible: isSessionModalVisible, showModal: showSessionModal, hideModal: hideSessionModal } = useModal();
 
   useEffect(() => {
     if (id) {
@@ -43,13 +52,38 @@ const ModulesPage: React.FC = () => {
     }
   }, [id]);
 
-  const handleDelete = async (module_id: number) => {
-    try {
-      await deleteModule(module_id);
-      setModules(modules.filter(module => module.module_id !== module_id));
-    } catch (error) {
-      console.error('Error deleting module:', error);
-      setError('Error deleting module');
+  const handleDeleteModule = async () => {
+    if (moduleToDelete !== null) {
+      try {
+        await deleteModule(moduleToDelete);
+        setModules(modules.filter(module => module.module_id !== moduleToDelete));
+        setSuccess('Registro eliminado correctamente');
+        setTimeout(() => setSuccess(null), 5000); // Ocultar la alerta después de 5 segundos
+        setModuleToDelete(null);
+        hideModuleModal();
+      } catch (error) {
+        console.error('Error deleting module:', error);
+        setError('Error deleting module');
+      }
+    }
+  };
+
+  const handleDeleteSession = async () => {
+    if (sessionToDelete !== null) {
+      try {
+        await deleteSession(sessionToDelete);
+        setModules(modules.map(module => ({
+          ...module,
+          moduleSessions: module.moduleSessions?.filter(session => session.session_id !== sessionToDelete) || []
+        })));
+        setSuccess('Registro eliminado correctamente');
+        setTimeout(() => setSuccess(null), 5000); // Ocultar la alerta después de 5 segundos
+        setSessionToDelete(null);
+        hideSessionModal();
+      } catch (error) {
+        console.error('Error deleting session:', error);
+        setError('Error deleting session');
+      }
     }
   };
 
@@ -72,7 +106,14 @@ const ModulesPage: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
+        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
+          {success && (
+            <AlertComponent
+              type={success === 'Registro eliminado correctamente' ? 'danger' : 'success'} // Mostrar alerta roja para eliminación y verde para otros mensajes de éxito
+              message={success}
+              onClose={() => setSuccess(null)}
+            />
+          )}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Módulos</h2>
             <FloatingButton link={`/content/addModule?courseId=${id}`} label="Añadir Módulo" />
@@ -109,7 +150,10 @@ const ModulesPage: React.FC = () => {
                             <Link href={`/content/editModule?id=${module.module_id}`}>
                               <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
                             </Link>
-                            <button onClick={() => handleDelete(module.module_id)}>
+                            <button onClick={() => {
+                              setModuleToDelete(module.module_id);
+                              showModuleModal();
+                            }}>
                               <TrashIcon className="w-6 h-5 text-red-500 cursor-pointer" />
                             </button>
                             {module.is_active ? (
@@ -121,7 +165,7 @@ const ModulesPage: React.FC = () => {
                         </Disclosure.Button>
                         <Disclosure.Panel className="text-m text-gray-700 px-6 py-4 rounded-b-lg">
                           <div className="flex flex-col space-y-2">
-                            {module.moduleSessions && module.moduleSessions.length > 0 ? (
+                            {module.moduleSessions?.length ? (
                               module.moduleSessions.map((session) => (
                                 <div
                                   key={session.session_id}
@@ -161,7 +205,10 @@ const ModulesPage: React.FC = () => {
                     <Link href={`/content/editSession?id=${selectedSession.session_id}`}>
                       <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
                     </Link>
-                    <button onClick={() => handleDelete(selectedSession.session_id)}>
+                    <button onClick={() => {
+                      setSessionToDelete(selectedSession.session_id);
+                      showSessionModal();
+                    }}>
                       <TrashIcon className="w-6 h-5 text-red-500 cursor-pointer" />
                     </button>
                     <button onClick={handleCloseSession}>
@@ -177,6 +224,16 @@ const ModulesPage: React.FC = () => {
           </div>
         </main>
       </div>
+      <ModalConfirmation
+        show={isModuleModalVisible}
+        onClose={hideModuleModal}
+        onConfirm={handleDeleteModule}
+      />
+      <ModalConfirmation
+        show={isSessionModalVisible}
+        onClose={hideSessionModal}
+        onConfirm={handleDeleteSession}
+      />
     </div>
   );
 };
