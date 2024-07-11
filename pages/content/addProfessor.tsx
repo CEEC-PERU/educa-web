@@ -10,8 +10,8 @@ import FormField from '../../components/FormField';
 import ActionButtons from '../../components/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
-import Loader from '../../components/Loader'; // Importar el componente Loader
+import AlertComponent from '../../components/AlertComponent';
+import Loader from '../../components/Loader';
 
 const AddProfessors: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -26,9 +26,9 @@ const AddProfessors: React.FC = () => {
   const [levels, setLevels] = useState<Level[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false); // Estado para mostrar la alerta
-  const [loading, setLoading] = useState(true); // Estado para la carga de datos
-  const [formLoading, setFormLoading] = useState(false); // Estado para la carga del formulario
+  const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const router = useRouter();
@@ -67,8 +67,25 @@ const AddProfessors: React.FC = () => {
     localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
   };
 
+  const validateFields = () => {
+    const { full_name, especialitation, description, level_id } = profesor;
+    if (!full_name || !especialitation || !description || level_id === 0) {
+      setError('Todos los campos son obligatorios.');
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateFields()) {
+      return;
+    }
     setFormLoading(true);
     try {
       let imageUrl = profesor.image;
@@ -85,11 +102,11 @@ const AddProfessors: React.FC = () => {
         level_id: 0,
       });
       setImageFile(null);
-      setShowAlert(true); // Mostrar la alerta
+      setShowAlert(true);
       setSuccess('Profesor agregado exitosamente');
       setTimeout(() => {
         setShowAlert(false);
-      }, 3000); // Ocultar la alerta después de 3 segundos
+      }, 3000);
     } catch (error) {
       console.error('Error adding professor:', error);
       setError('Error adding professor');
@@ -128,12 +145,11 @@ const AddProfessors: React.FC = () => {
               <form onSubmit={handleSubmit}>
                 {showAlert && (
                   <AlertComponent
-                    type="success"
-                    message="Profesor agregado exitosamente."
+                    type={error ? "danger" : "success"}
+                    message={error || "Profesor agregado exitosamente."}
                     onClose={() => setShowAlert(false)}
                   />
                 )}
-                {error && <p className="text-red-500">{error}</p>}
                 <button
                   type="button"
                   onClick={() => router.back()}

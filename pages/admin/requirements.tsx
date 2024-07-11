@@ -3,19 +3,33 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import { getAllRequirements, deleteRequirement } from '../../services/requirementService';
 import Loader from '../../components/Loader';
-import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';
+import RequirementCard from '../../components/Admin/RequirementCard';
+import './../../app/globals.css';
+
+interface UserProfile {
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+}
+
+interface Enterprise {
+  name: string;
+}
+
+interface User {
+  userProfile?: UserProfile;
+  enterprise: Enterprise;
+}
 
 interface Requirement {
   requirement_id: number;
-  user: {
-    name: string;
-  };
   proposed_date: string;
   course_name: string;
   material: string;
   message: string;
   course_duration: string;
+  user: User;
 }
 
 const RequirementsPage: React.FC = () => {
@@ -53,17 +67,6 @@ const RequirementsPage: React.FC = () => {
     }
   };
 
-  const formatDateTime = (dateTimeString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      hour: '2-digit',
-      minute: '2-digit',
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    };
-    return new Date(dateTimeString).toLocaleDateString('es-ES', options);
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -87,39 +90,11 @@ const RequirementsPage: React.FC = () => {
           )}
           {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
           <h2 className="text-2xl font-bold mb-6">Requerimientos</h2>
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Usuario</th>
-                <th className="py-2 px-4 border-b">Fecha Propuesta</th>
-                <th className="py-2 px-4 border-b">Nombre del Curso</th>
-                <th className="py-2 px-4 border-b">Material</th>
-                <th className="py-2 px-4 border-b">Mensaje</th>
-                <th className="py-2 px-4 border-b">Duración del Curso</th>
-                <th className="py-2 px-4 border-b">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requirements.map((req) => (
-                <tr key={req.requirement_id}>
-                  <td className="py-2 px-4 border-b">{req.user?.name}</td>
-                  <td className="py-2 px-4 border-b">{formatDateTime(req.proposed_date)}</td>
-                  <td className="py-2 px-4 border-b">{req.course_name}</td>
-                  <td className="py-2 px-4 border-b">{req.material}</td>
-                  <td className="py-2 px-4 border-b">{req.message}</td>
-                  <td className="py-2 px-4 border-b">{req.course_duration}</td>
-                  <td className="py-2 px-4 border-b">
-                    <button
-                      onClick={() => handleDelete(req.requirement_id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {requirements.map((req) => (
+              <RequirementCard key={req.requirement_id} requirement={req} onDelete={handleDelete} />
+            ))}
+          </div>
         </main>
       </div>
     </div>
