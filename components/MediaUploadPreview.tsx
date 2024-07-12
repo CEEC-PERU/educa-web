@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from 'react';
 
 interface MediaUploadPreviewProps {
   onMediaUpload: (file: File) => void;
   accept: string;
   label: string;
   initialPreview?: string;
+  inputRef?: React.RefObject<HTMLInputElement>;
+  clearMediaPreview?: boolean;
 }
 
-const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, accept, label, initialPreview }) => {
+const MediaUploadPreview = forwardRef<{ clear: () => void }, MediaUploadPreviewProps>(({ onMediaUpload, accept, label, initialPreview, inputRef, clearMediaPreview }, ref) => {
   const [mediaPreview, setMediaPreview] = useState<string | null>(initialPreview || null);
 
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,6 +27,21 @@ const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, 
   useEffect(() => {
     setMediaPreview(initialPreview || null);
   }, [initialPreview]);
+
+  useEffect(() => {
+    if (clearMediaPreview) {
+      setMediaPreview(null);
+    }
+  }, [clearMediaPreview]);
+
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      if (inputRef?.current) {
+        inputRef.current.value = '';
+        setMediaPreview(null);
+      }
+    }
+  }));
 
   const isImage = accept.startsWith('image/');
 
@@ -50,6 +67,7 @@ const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, 
             accept={accept}
             onChange={handleMediaChange}
             className="hidden"
+            ref={inputRef}
           />
         </div>
       </div>
@@ -67,6 +85,6 @@ const MediaUploadPreview: React.FC<MediaUploadPreviewProps> = ({ onMediaUpload, 
       </div>
     </div>
   );
-};
+});
 
 export default MediaUploadPreview;

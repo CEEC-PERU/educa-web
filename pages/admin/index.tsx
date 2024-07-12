@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import { getUsersByEnterprise } from '../../services/userService';
+import { getUsersActivityCount } from '../../services/appSessionService';
 import { getEnterprises } from '../../services/enterpriseService';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
@@ -14,7 +15,8 @@ const AdminPage: React.FC = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [filteredData, setFilteredData] = useState({
-    totalUsers: 0
+    totalUsers: 0,
+    visitorUsers: 0
   });
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -41,17 +43,24 @@ const AdminPage: React.FC = () => {
     if (selectedEnterprise !== null) {
       const fetchData = async () => {
         try {
-          const data = await getUsersByEnterprise(selectedEnterprise);
-          setFilteredData(data);
+          const [usersData, visitorData] = await Promise.all([
+            getUsersByEnterprise(selectedEnterprise),
+            getUsersActivityCount(startDate, endDate, selectedEnterprise)
+          ]);
+
+          setFilteredData({
+            totalUsers: usersData.totalUsers,
+            visitorUsers: visitorData.length
+          });
         } catch (error) {
-          console.error('Error fetching users by enterprise:', error);
-          setError('Error fetching users');
+          console.error('Error fetching data:', error);
+          setError('Error fetching data');
         }
       };
 
       fetchData();
     }
-  }, [selectedEnterprise]);
+  }, [selectedEnterprise, startDate, endDate]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
@@ -62,6 +71,25 @@ const AdminPage: React.FC = () => {
     setSelectedEnterprise(Number(e.target.value));
   };
 
+  const handleFilterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedEnterprise !== null) {
+      const fetchData = async () => {
+        try {
+          const visitorData = await getUsersActivityCount(startDate, endDate, selectedEnterprise);
+          setFilteredData({
+            ...filteredData,
+            visitorUsers: visitorData.length
+          });
+        } catch (error) {
+          console.error('Error fetching data:', error);
+          setError('Error fetching data');
+        }
+      };
+
+      fetchData();
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
@@ -70,7 +98,7 @@ const AdminPage: React.FC = () => {
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <form className="flex items-center space-x-4 mb-4">
+            <form className="flex items-center space-x-4 mb-4" onSubmit={handleFilterSubmit}>
               <div>
                 <label className="block text-gray-700 text-sm font-bold mb-2">Filtrar por:</label>
                 <input
@@ -98,20 +126,20 @@ const AdminPage: React.FC = () => {
               </div>
             </form>
             <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Empresa:</label>
-                <select
-                  value={selectedEnterprise || ''}
-                  onChange={handleEnterpriseChange}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                  <option value="" disabled>Seleccione una empresa</option>
-                  {enterprises.map(enterprise => (
-                    <option key={enterprise.enterprise_id} value={enterprise.enterprise_id}>
-                      {enterprise.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <label className="block text-gray-700 text-sm font-bold mb-2">Empresa:</label>
+              <select
+                value={selectedEnterprise || ''}
+                onChange={handleEnterpriseChange}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                <option value="" disabled>Seleccione una empresa</option>
+                {enterprises.map(enterprise => (
+                  <option key={enterprise.enterprise_id} value={enterprise.enterprise_id}>
+                    {enterprise.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
@@ -120,7 +148,7 @@ const AdminPage: React.FC = () => {
               <div className="text-gray-700">Usuarios inscritos</div>
             </div>
             <div className="bg-red-100 p-6 rounded-lg shadow-md flex flex-col items-center">
-              <div className="text-4xl font-bold text-red-900">{0}</div>
+              <div className="text-4xl font-bold text-red-900">{filteredData.visitorUsers}</div>
               <div className="text-gray-700">Usuarios visitantes</div>
             </div>
             <div className="bg-green-100 p-6 rounded-lg shadow-md flex flex-col items-center">

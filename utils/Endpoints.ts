@@ -98,4 +98,3 @@ export const API_PUT_PROGRESS_SESSION_BYUSER =  `${baseURL}/api/userSessionProgr
 export const API_POST_MODULE_RESULT =  `${baseURL}/api/moduleresults`;
 
 export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
-

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
@@ -30,8 +30,11 @@ const AddProfessors: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [clearMediaPreview, setClearMediaPreview] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const router = useRouter();
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,6 +59,7 @@ const AddProfessors: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setProfesor(prevProfesor => ({ ...prevProfesor, [id]: value }));
+    setErrors(prevErrors => ({ ...prevErrors, [id]: false }));
   };
 
   const handleFileChange = (file: File) => {
@@ -69,21 +73,24 @@ const AddProfessors: React.FC = () => {
 
   const validateFields = () => {
     const { full_name, especialitation, description, level_id } = profesor;
-    if (!full_name || !especialitation || !description || level_id === 0) {
-      setError('Todos los campos son obligatorios.');
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
-      return false;
-    }
-    setError(null);
-    return true;
+    const newErrors: { [key: string]: boolean } = {};
+    if (!full_name) newErrors.full_name = true;
+    if (!especialitation) newErrors.especialitation = true;
+    if (!description) newErrors.description = true;
+    if (level_id === 0) newErrors.level_id = true;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateFields()) {
+      setError('Todos los campos son obligatorios.');
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
       return;
     }
     setFormLoading(true);
@@ -102,6 +109,8 @@ const AddProfessors: React.FC = () => {
         level_id: 0,
       });
       setImageFile(null);
+      setClearMediaPreview(true);
+      setTimeout(() => setClearMediaPreview(false), 500);
       setShowAlert(true);
       setSuccess('Profesor agregado exitosamente');
       setTimeout(() => {
@@ -124,6 +133,8 @@ const AddProfessors: React.FC = () => {
       level_id: 0,
     });
     setImageFile(null);
+    setClearMediaPreview(true);
+    setTimeout(() => setClearMediaPreview(false), 500);
   };
 
   if (loading) {
@@ -164,10 +175,11 @@ const AddProfessors: React.FC = () => {
                   type="text"
                   value={profesor.full_name}
                   onChange={handleChange}
+                  error={errors.full_name}
                 />
                 <div className="mb-4">
                   <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
-                  <MediaUploadPreview onMediaUpload={handleFileChange} accept="image/*" label="Subir Imagen" />
+                  <MediaUploadPreview onMediaUpload={handleFileChange} accept="image/*" label="Subir Imagen" inputRef={imageInputRef} clearMediaPreview={clearMediaPreview} />
                 </div>
                 <FormField
                   id="especialitation"
@@ -175,6 +187,7 @@ const AddProfessors: React.FC = () => {
                   type="text"
                   value={profesor.especialitation}
                   onChange={handleChange}
+                  error={errors.especialitation}
                 />
                 <FormField
                   id="description"
@@ -183,6 +196,7 @@ const AddProfessors: React.FC = () => {
                   value={profesor.description}
                   onChange={handleChange}
                   rows={4}
+                  error={errors.description}
                 />
                 <FormField
                   id="level_id"
@@ -191,6 +205,7 @@ const AddProfessors: React.FC = () => {
                   value={profesor.level_id.toString()}
                   onChange={handleChange}
                   options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
+                  error={errors.level_id}
                 />
               </form>
             </div>

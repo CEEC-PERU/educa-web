@@ -12,6 +12,7 @@ import FormField from '../../../components/FormField';
 import ButtonComponent from '../../../components/ButtonDelete';
 import AlertComponent from '../../../components/AlertComponent';
 import Loader from '../../../components/Loader';
+import './../../app/globals.css';
 
 const AssignStudents: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);

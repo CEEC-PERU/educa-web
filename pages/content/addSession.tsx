@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
@@ -10,8 +10,8 @@ import FormField from '../../components/FormField';
 import ActionButtons from '../../components/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
-import Loader from '../../components/Loader'; // Importar el componente Loader
+import AlertComponent from '../../components/AlertComponent'; 
+import Loader from '../../components/Loader'; 
 
 const AddSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -22,17 +22,18 @@ const AddSession: React.FC = () => {
     module_id: 0
   });
   const [error, setError] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false); // Estado para mostrar la alerta
+  const [showAlert, setShowAlert] = useState(false); 
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(true); // Estado para la carga de datos
-  const [formLoading, setFormLoading] = useState(false); // Estado para la carga del formulario
+  const [loading, setLoading] = useState(true); 
+  const [formLoading, setFormLoading] = useState(false); 
   const router = useRouter();
-  const { moduleId } = router.query; // Obtener el ID del módulo de la URL
+  const { moduleId } = router.query; 
+  const videoInputRef = useRef<{ clear: () => void }>(null);
 
   useEffect(() => {
     if (moduleId) {
       setSession(prevSession => ({ ...prevSession, module_id: Number(moduleId) }));
-      setLoading(false); // Marcar la carga como completa
+      setLoading(false); 
     }
   }, [moduleId]);
 
@@ -58,14 +59,17 @@ const AddSession: React.FC = () => {
     setFormLoading(true);
     try {
       if (videoFile) {
-        const videoUrl = await uploadVideo(videoFile, 'Sesiones'); // Especificar la carpeta 'Sesiones'
+        const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
         const newSession = await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
-        setShowAlert(true); // Mostrar la alerta
+        setShowAlert(true); 
         setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
         setVideoFile(null);
+        if (videoInputRef.current) {
+          videoInputRef.current.clear();
+        }
         setTimeout(() => {
           setShowAlert(false);
-        }, 3000); // Ocultar la alerta después de 3 segundos
+        }, 3000);
       } else {
         setError('Video file is required');
       }
@@ -80,7 +84,9 @@ const AddSession: React.FC = () => {
   const handleCancel = () => {
     setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
     setVideoFile(null);
-    router.back();
+    if (videoInputRef.current) {
+      videoInputRef.current.clear();
+    }
   };
 
   if (loading) {
@@ -132,7 +138,7 @@ const AddSession: React.FC = () => {
             />
             <div className="mb-4">
               <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>
-              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" />
+              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} />
             </div>
           </form>
           <div className="ml-4 flex-shrink-0">
