@@ -105,6 +105,15 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/admin/student/AssignStudents')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <TagIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Asignación de Estudiantes</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={logout}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >

@@ -62,6 +62,7 @@ export const API_PUT_PROFILE = `${baseURL}/api/profiles`;
 //obtener cursos asignados al estudinate
 export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 
+export const API_POST_COURSESTUDENT= `${baseURL}/api/coursestudents/assign`;
 //obtener detalle d elos cursos
 export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import fileDownload from 'js-file-download';
 
 interface UserProfile {
   first_name: string;
@@ -19,18 +20,19 @@ interface Requirement {
   requirement_id: number;
   proposed_date: string;
   course_name: string;
-  material: string;
+  materials?: string[];
   message: string;
   course_duration: string;
+  is_active: boolean;
   user: User;
 }
 
 interface RequirementCardProps {
   requirement: Requirement;
-  onDelete: (id: number) => void;
+  onUpdateStatus: (id: number, isActive: boolean) => void;
 }
 
-const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onDelete }) => {
+const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onUpdateStatus }) => {
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       hour: '2-digit',
@@ -40,6 +42,18 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onDelete
       year: 'numeric',
     };
     return new Date(dateString).toLocaleDateString('es-ES', options);
+  };
+
+  const downloadAllMaterials = () => {
+    requirement.materials?.forEach((url, index) => {
+      const fileName = url.split('/').pop() || `Material_${index + 1}`;
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          fileDownload(blob, fileName);
+        })
+        .catch(err => console.error('Error downloading file:', err));
+    });
   };
 
   return (
@@ -66,15 +80,19 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onDelete
           <p className="text-gray-700 mb-2"><strong>Nombre del Curso:</strong> {requirement.course_name}</p>
           <p className="text-gray-700 mb-2"><strong>Duración del Curso:</strong> {requirement.course_duration}</p>
           <p className="text-gray-700 mb-2"><strong>Fecha propuesta:</strong> {formatDate(requirement.proposed_date)}</p>
-          <p className="text-gray-700 mb-2"><strong>Material:</strong> {requirement.material}</p>
-          {requirement.material && (
-            <a
-              href={requirement.material}
-              download
-              className="text-blue-500 hover:underline"
-            >
-              Descargar Material
-            </a>
+          <p className="text-gray-700 mb-2"><strong>Materiales:</strong></p>
+          {requirement.materials && requirement.materials.length > 0 ? (
+            <ul>
+              {requirement.materials.map((url, index) => (
+                <li key={index}>
+                  <a href={url} download className="text-blue-500 hover:underline">
+                    Descargar Material {index + 1}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No hay materiales disponibles.</p>
           )}
         </div>
         <div>
@@ -83,10 +101,10 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onDelete
       </div>
       <div className="p-4">
         <button
-          onClick={() => onDelete(requirement.requirement_id)}
-          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
+          onClick={() => onUpdateStatus(requirement.requirement_id, !requirement.is_active)}
+          className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700"
         >
-          Eliminar
+          {requirement.is_active ? 'Culminado' : 'Activar'}
         </button>
       </div>
     </div>

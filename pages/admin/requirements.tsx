@@ -1,36 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
-import { getAllRequirements, deleteRequirement } from '../../services/requirementService';
+import { getAllRequirements, updateRequirement } from '../../services/requirementService';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import RequirementCard from '../../components/Admin/RequirementCard';
+import ButtonComponent from '../../components/ButtonDelete';
+import { Requirement } from '../../interfaces/Requirement';
 import './../../app/globals.css';
-
-interface UserProfile {
-  first_name: string;
-  last_name: string;
-  profile_picture: string;
-}
-
-interface Enterprise {
-  name: string;
-}
-
-interface User {
-  userProfile?: UserProfile;
-  enterprise: Enterprise;
-}
-
-interface Requirement {
-  requirement_id: number;
-  proposed_date: string;
-  course_name: string;
-  material: string;
-  message: string;
-  course_duration: string;
-  user: User;
-}
 
 const RequirementsPage: React.FC = () => {
   const [requirements, setRequirements] = useState<Requirement[]>([]);
@@ -38,12 +15,18 @@ const RequirementsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showActive, setShowActive] = useState(true);
 
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
         const data = await getAllRequirements();
-        setRequirements(data);
+        const normalizedData = data.map((req: Requirement) => ({
+          ...req,
+          materials: req.materials || [],
+          is_active: req.is_active ?? true // Asegurarse de que is_active sea booleano
+        }));
+        setRequirements(normalizedData);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching requirements:', error);
@@ -55,17 +38,19 @@ const RequirementsPage: React.FC = () => {
     fetchRequirements();
   }, []);
 
-  const handleDelete = async (id: number) => {
+  const handleUpdateStatus = async (id: number, isActive: boolean) => {
     try {
-      await deleteRequirement(id);
-      setRequirements(requirements.filter((req) => req.requirement_id !== id));
-      setSuccess('Registro eliminado correctamente');
+      const updatedRequirement = await updateRequirement(id, { is_active: isActive });
+      setRequirements(requirements.map(req => req.requirement_id === id ? { ...req, is_active: isActive } : req));
+      setSuccess('Estado del requerimiento actualizado correctamente');
       setTimeout(() => setSuccess(null), 5000);
     } catch (error) {
-      console.error('Error deleting requirement:', error);
-      setError('Error deleting requirement');
+      console.error('Error updating requirement status:', error);
+      setError('Error actualizando el estado del requerimiento');
     }
   };
+
+  const filteredRequirements = requirements.filter(req => req.is_active === showActive);
 
   if (loading) {
     return (
@@ -90,9 +75,27 @@ const RequirementsPage: React.FC = () => {
           )}
           {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
           <h2 className="text-2xl font-bold mb-6">Requerimientos</h2>
+          <div className="flex justify-between mb-6 space-x-8">
+            <ButtonComponent
+              buttonLabel="Activos"
+              backgroundColor={showActive ? 'bg-blue-500' : 'bg-gray-300'}
+              textColor="text-white"
+              fontSize="text-xs"
+              buttonSize="py-2 px-4"
+              onClick={() => setShowActive(true)}
+            />
+            <ButtonComponent
+              buttonLabel="Inactivos"
+              backgroundColor={!showActive ? 'bg-blue-500' : 'bg-gray-300'}
+              textColor="text-white"
+              fontSize="text-xs"
+              buttonSize="py-2 px-4"
+              onClick={() => setShowActive(false)}
+            />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {requirements.map((req) => (
-              <RequirementCard key={req.requirement_id} requirement={req} onDelete={handleDelete} />
+            {filteredRequirements.map((req) => (
+              <RequirementCard key={req.requirement_id} requirement={req} onUpdateStatus={handleUpdateStatus} />
             ))}
           </div>
         </main>

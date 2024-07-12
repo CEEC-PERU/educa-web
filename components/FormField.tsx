@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface FormFieldProps {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password';
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file';
   name?: string;
   value?: string | boolean | number;
   checked?: boolean;
@@ -13,14 +13,28 @@ interface FormFieldProps {
   options?: { value: string; label: string }[];
   rows?: number;
   required?: boolean;
-  touched?: boolean;
+  multiple?: boolean;
 }
 
-const FormField: React.FC<FormFieldProps> = ({ id, label, type, name, value, checked, onChange, onBlur, pattern, options, rows, required, touched }) => {
+const FormField: React.FC<FormFieldProps> = ({
+  id,
+  label,
+  type,
+  name,
+  value,
+  checked,
+  onChange,
+  onBlur,
+  pattern,
+  options,
+  rows,
+  required,
+  multiple
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const purpleColor = 'text-[#6017AF] border-global focus:border-global focus:ring-global dark:text-[#6017AF] dark:border-global dark:focus:border-global';
 
-  const isError = required && touched && !value;
+  const isError = required && value === '';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -110,6 +124,24 @@ const FormField: React.FC<FormFieldProps> = ({ id, label, type, name, value, che
             {showPassword ? '🙈' : '👁️'}
           </button>
         </div>
+      </div>
+    );
+  } else if (type === 'date' || type === 'file') {
+    return (
+      <div className="relative z-0 w-full mb-5 group">
+        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-1">
+          {label}
+        </label>
+        <input
+          type={type}
+          name={name}
+          id={id}
+          onChange={onChange}
+          onBlur={onBlur}
+          multiple={type === 'file'}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          required={required}
+        />
       </div>
     );
   } else {
