@@ -1,5 +1,5 @@
 import React from 'react';
-import { CourseModule, ModuleEvaluation, Question, UserSessionProgress, ModuleSessions } from '../../interfaces/StudentModule';
+import { CourseModule, ModuleEvaluation, Question, UserSessionProgress } from '../../interfaces/StudentModule';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import 'react-circular-progressbar/dist/styles.css';
@@ -18,6 +18,9 @@ interface SidebarProps {
 }
 
 const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, moduleEvaluations, onSelect, videoProgress = {} }) => {
+  const { user } = useAuth(); // Get auth context
+  const userInfo = user as { id: number };
+
   // Function to get the progress of a session
   const getSessionProgress = (progresses: UserSessionProgress[], videoProgress: number) => {
     const progress = progresses?.[0]?.progress ?? 0;
@@ -34,9 +37,6 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
     return sessions.every(session => session.progress === 100);
   };
 
-  const { logout, user, profileInfo } = useAuth(); // Get auth context
-  const userInfo = user as { id: number };
-
   // Function to calculate the progress of a module based on its sessions
   const calculateModuleProgress = (module: CourseModule, videoProgress: { [key: string]: number }) => {
     const sessions = module.moduleSessions;
@@ -50,35 +50,29 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
     const isCompleted = progressNumber === 100;
 
     const moduleProgress = {
-      module_id: module.module_id, // Use the module_id dynamically
+      module_id: module.module_id,
       progress: progressNumber,
       is_completed: isCompleted,
       user_id: userInfo.id
     };
 
     socket.emit('module', moduleProgress);
-    console.log("module", moduleProgress);
 
     return progressNumber;
   };
 
   // Function to determine if a module evaluation is locked
   const isModuleEvaluationLocked = (moduleIndex: number, modules: CourseModule[]) => {
-    if (moduleIndex === 0) {
-      return false;
-    }
-    const previousModule = modules[moduleIndex - 1];
-    return previousModule.usermoduleprogress?.[0]?.progress !== 100;
+    const currentModule = modules[moduleIndex];
+    return !currentModule.usermoduleprogress?.[0]?.is_completed;
   };
 
   // Function to determine if a session is locked
   const isLocked = (progress: number, allCompleted: boolean, sessionIndex: number, moduleIndex: number) => {
     if (moduleIndex === 0 && sessionIndex === 0) {
-      // First session of the first module is always unlocked
       return false;
     }
     if (sessionIndex === 0) {
-      // First session of other modules depends on the previous module completion
       return !allCompleted;
     }
     return progress === 0;
@@ -98,11 +92,11 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
             <div className="flex items-center">
               <div className="w-10 h-10 mr-4">
                 <CircularProgressbar value={moduleProgress} text={`${roundedModuleProgress}%`} 
-                styles={{
-                  path: { stroke: "#8204E7" }, // "brandrosa-800" color
-                  text: { fill: "#8204E7" }, // "brandrosa-800" color
-                }} 
-                 />
+                  styles={{
+                    path: { stroke: "#8204E7" }, // "brandrosa-800" color
+                    text: { fill: "#8204E7" }, // "brandrosa-800" color
+                  }} 
+                />
               </div>
               <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
             </div>
@@ -119,10 +113,12 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
                   onClick={() => !locked && onSelect(session.name, undefined, module.module_id)}
                 >
                   <div className="w-8 h-8 mr-2">
-                    <CircularProgressbar value={sessionProgress} text={`${roundedSessionProgress}%`} styles={{
-                      path: { stroke: "#8204E7" }, // "brandrosa-800" color
-                      text: { fill: "#8204E7" }, // "brandrosa-800" color
-                    }} />
+                    <CircularProgressbar value={sessionProgress} text={`${roundedSessionProgress}%`} 
+                      styles={{
+                        path: { stroke: "#8204E7" }, // "brandrosa-800" color
+                        text: { fill: "#8204E7" }, // "brandrosa-800" color
+                      }} 
+                    />
                   </div>
                   <div className="flex-1">
                     {locked ? <LockClosedIcon className="w-5 h-5 inline-block mr-2" /> : null}
@@ -133,7 +129,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
             })}
             <div className={`mt-2 cursor-pointer font-bold text-sm ${isModuleEvaluationLocked(moduleIndex, courseModules) ? 'text-gray-400' : ''}`}
                  onClick={() => !isModuleEvaluationLocked(moduleIndex, courseModules) && onSelect('', module.moduleEvaluation.questions, module.module_id)}>
-                {isModuleEvaluationLocked(moduleIndex, courseModules) && <LockClosedIcon className="w-5 h-5 inline-block ml-2" />}
+              {isModuleEvaluationLocked(moduleIndex, courseModules) && <LockClosedIcon className="w-5 h-5 inline-block mr-2" />}
               Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
             </div>
           </div>

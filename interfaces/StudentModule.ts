@@ -56,6 +56,20 @@ export interface ModuleEvaluation {
   questions: Question[];
 }
 
+export interface EvaluationResult{
+  name : string,
+  description : string,
+  evaluation_id : number
+}
+
+export interface ModuleResults{
+  module_id : number,
+  puntaje : number,
+  user_id : number
+  evaluation_id : number,
+  Evaluation : EvaluationResult
+}
+
 export interface CourseModule {
   name: string;
   is_active: boolean;
@@ -64,6 +78,7 @@ export interface CourseModule {
   usermoduleprogress: UserModuleProgress[];
   moduleSessions: ModuleSessions[];
   moduleEvaluation: ModuleEvaluation;
+  ModuleResults :ModuleResults[];
 }
 
 export interface CourseEvaluation {
