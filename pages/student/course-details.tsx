@@ -7,7 +7,7 @@ import { useCourseDetail } from '../../hooks/useCourseDetail';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import React, { useState } from 'react';
 import './../../app/globals.css';
-
+//CourseDetails
 const CourseDetails = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
@@ -27,7 +27,7 @@ const CourseDetails = () => {
 
   const navigateToCourseDetails = () => {
     router.push({
-      pathname: '/student/modulos/',
+      pathname: '/student/modulos/', 
       query: { course_id: courseIdNumber }
     });
   };
@@ -209,10 +209,6 @@ const CourseDetails = () => {
             </div>
           ))}
         </div>
-
-
-
-        
       </div>
     </div>
   );

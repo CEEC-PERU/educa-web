@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CourseDetail } from '../interfaces/CourseDetail';
 import { getCourseDetail } from '../services/courseDetail';
 import { useAuth } from '../context/AuthContext';
-
+//useCourseDetail
 export const useCourseDetail = (course_id: number) => {
   const [courseDetail, setCourseDetail] = useState<CourseDetail[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,6 @@ export const useCourseDetail = (course_id: number) => {
       }
       setIsLoading(true);
       try {
-        
         const response = await getCourseDetail(token, course_id);
         if (response === null) {
           setCourseDetail([]); 
