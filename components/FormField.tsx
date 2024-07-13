@@ -15,6 +15,7 @@ interface FormFieldProps {
   required?: boolean;
   multiple?: boolean;
   error?: boolean;
+  touched?: boolean; // Añadir prop touched
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -31,7 +32,8 @@ const FormField: React.FC<FormFieldProps> = ({
   rows,
   required,
   multiple,
-  error
+  error,
+  touched // Añadir el estado touched aquí
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const purpleColor = 'text-[#6017AF] border-global focus:border-global focus:ring-global dark:text-[#6017AF] dark:border-global dark:focus:border-global';
@@ -39,6 +41,8 @@ const FormField: React.FC<FormFieldProps> = ({
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  const isError = error && touched;
 
   if (type === 'select' && options) {
     return (
@@ -52,7 +56,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${error ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
           required={required}
         >
           {options.map((option) => (
@@ -76,7 +80,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           rows={rows}
-          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${error ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
           required={required}
         />
       </div>
@@ -113,7 +117,7 @@ const FormField: React.FC<FormFieldProps> = ({
             value={value as string}
             onChange={onChange}
             onBlur={onBlur}
-            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${error ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
             required={required}
           />
           <button
@@ -139,7 +143,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           multiple={type === 'file'}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${error ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
           required={required}
         />
       </div>
@@ -158,7 +162,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${error ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
           required={required}
         />
       </div>

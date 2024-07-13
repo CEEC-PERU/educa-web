@@ -24,6 +24,7 @@ const AddSession: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false); 
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [clearMediaPreview, setClearMediaPreview] = useState(false); 
   const [loading, setLoading] = useState(true); 
   const [formLoading, setFormLoading] = useState(false); 
   const router = useRouter();
@@ -60,13 +61,15 @@ const AddSession: React.FC = () => {
     try {
       if (videoFile) {
         const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
-        const newSession = await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
+        await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
         setShowAlert(true); 
         setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
         setVideoFile(null);
+        setClearMediaPreview(true);
         if (videoInputRef.current) {
           videoInputRef.current.clear();
         }
+        setTimeout(() => setClearMediaPreview(false), 500);
         setTimeout(() => {
           setShowAlert(false);
         }, 3000);
@@ -84,9 +87,11 @@ const AddSession: React.FC = () => {
   const handleCancel = () => {
     setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
     setVideoFile(null);
+    setClearMediaPreview(true);
     if (videoInputRef.current) {
       videoInputRef.current.clear();
     }
+    setTimeout(() => setClearMediaPreview(false), 500);
   };
 
   if (loading) {
@@ -138,7 +143,7 @@ const AddSession: React.FC = () => {
             />
             <div className="mb-4">
               <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>
-              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} />
+              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} clearMediaPreview={clearMediaPreview} />
             </div>
           </form>
           <div className="ml-4 flex-shrink-0">

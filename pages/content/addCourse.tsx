@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
@@ -34,6 +34,7 @@ const AddCourse: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [clearMediaPreview, setClearMediaPreview] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description_short: '',
@@ -51,6 +52,8 @@ const AddCourse: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   const router = useRouter();
+  const imageUploadRef = useRef<{ clear: () => void }>(null);
+  const videoUploadRef = useRef<{ clear: () => void }>(null);
 
   useEffect(() => {
     const fetchCategoriesProfessorsEvaluations = async () => {
@@ -158,6 +161,11 @@ const AddCourse: React.FC = () => {
         });
         setVideoFile(null);
         setImageFile(null);
+        
+        setClearMediaPreview(true);
+        if (imageUploadRef.current) imageUploadRef.current.clear();
+        if (videoUploadRef.current) videoUploadRef.current.clear();
+        setTimeout(() => setClearMediaPreview(false), 500);
       }, 3000); // Ocultar la alerta después de 3 segundos
     } catch (error) {
       setError('Error creating course');
@@ -174,7 +182,7 @@ const AddCourse: React.FC = () => {
       description_large: '',
       category_id: 0,
       professor_id: 0,
-      evaluation_id: 0, // Restablecer evaluation_id en el estado inicial
+      evaluation_id: 0,
       intro_video: '',
       duration_video: '',
       image: '',
@@ -183,6 +191,11 @@ const AddCourse: React.FC = () => {
     });
     setVideoFile(null);
     setImageFile(null);
+    
+    setClearMediaPreview(true);
+    if (imageUploadRef.current) imageUploadRef.current.clear();
+    if (videoUploadRef.current) videoUploadRef.current.clear();
+    setTimeout(() => setClearMediaPreview(false), 500);
   };
 
   if (loading) {
@@ -266,7 +279,7 @@ const AddCourse: React.FC = () => {
                   <label htmlFor="image" className="block text-sm font-medium mb-6 text-gray-700">
                     Imagen
                   </label>
-                  <MediaUploadPreview onMediaUpload={handleImageUpload} accept="image/*" label="Subir imagen" />
+                  <MediaUploadPreview ref={imageUploadRef} onMediaUpload={handleImageUpload} accept="image/*" label="Subir imagen" clearMediaPreview={clearMediaPreview} />
                 </div>
               </div>
               <div className="space-y-4">
@@ -306,7 +319,7 @@ const AddCourse: React.FC = () => {
                   <label htmlFor="intro_video" className="block text-sm font-medium mb-6 text-gray-700">
                     Video de Introducción
                   </label>
-                  <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" />
+                  <MediaUploadPreview ref={videoUploadRef} onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" clearMediaPreview={clearMediaPreview} />
                 </div>
                 <FormField
                   id="duration_course"
