@@ -107,6 +107,7 @@ const AddCourse: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
+
     const requiredFields = [
       'name',
       'description_short',
@@ -118,10 +119,19 @@ const AddCourse: React.FC = () => {
       'duration_course',
     ];
 
+    const newTouchedFields: { [key: string]: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!formData[field]) {
+        newTouchedFields[field] = true;
+      }
+    });
+
     const hasEmptyFields = requiredFields.some((field) => !formData[field]);
 
     if (hasEmptyFields) {
+      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
       setError('Por favor, complete todos los campos requeridos.');
+      setShowAlert(true);
       setFormLoading(false);
       return;
     }
@@ -143,7 +153,8 @@ const AddCourse: React.FC = () => {
         intro_video: videoUrl,
         image: imageUrl
       });
-      setShowAlert(true); // Mostrar la alerta
+      setShowAlert(true);
+      setError(null);
       setTimeout(() => {
         setShowAlert(false);
         setFormData({
@@ -161,12 +172,11 @@ const AddCourse: React.FC = () => {
         });
         setVideoFile(null);
         setImageFile(null);
-        
         setClearMediaPreview(true);
         if (imageUploadRef.current) imageUploadRef.current.clear();
         if (videoUploadRef.current) videoUploadRef.current.clear();
         setTimeout(() => setClearMediaPreview(false), 500);
-      }, 3000); // Ocultar la alerta después de 3 segundos
+      }, 3000);
     } catch (error) {
       setError('Error creating course');
       console.error('Error creating course:', error);
@@ -191,7 +201,6 @@ const AddCourse: React.FC = () => {
     });
     setVideoFile(null);
     setImageFile(null);
-    
     setClearMediaPreview(true);
     if (imageUploadRef.current) imageUploadRef.current.clear();
     if (videoUploadRef.current) videoUploadRef.current.clear();
@@ -215,8 +224,8 @@ const AddCourse: React.FC = () => {
           <div className="max-w-6xl bg-white rounded-lg w-full">
             {showAlert && (
               <AlertComponent
-                type="success"
-                message="Curso creado exitosamente."
+                type="danger"
+                message={error || "Curso creado exitosamente."}
                 onClose={() => setShowAlert(false)}
               />
             )}
@@ -228,8 +237,6 @@ const AddCourse: React.FC = () => {
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
               Volver
             </button>
-            {error && <p className="text-red-500">{error}</p>}
-            
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
               <div className="space-y-4">
                 <FormField
@@ -239,7 +246,8 @@ const AddCourse: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  touched={touchedFields['name'] || false}
+                  error={!formData.name && touchedFields['name']}
+                  touched={touchedFields['name']}
                   required
                 />
                 <FormField
@@ -250,7 +258,8 @@ const AddCourse: React.FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   rows={4}
-                  touched={touchedFields['description_short'] || false}
+                  error={!formData.description_short && touchedFields['description_short']}
+                  touched={touchedFields['description_short']}
                   required
                 />
                 <FormField
@@ -261,7 +270,8 @@ const AddCourse: React.FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   rows={4}
-                  touched={touchedFields['description_large'] || false}
+                  error={!formData.description_large && touchedFields['description_large']}
+                  touched={touchedFields['description_large']}
                   required
                 />
                 <FormField
@@ -272,7 +282,8 @@ const AddCourse: React.FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   options={[{ value: '', label: 'Seleccionar Categoría' }, ...categories.map(category => ({ value: category.category_id.toString(), label: category.name }))]}
-                  touched={touchedFields['category_id'] || false}
+                  error={formData.category_id === 0 && touchedFields['category_id']}
+                  touched={touchedFields['category_id']}
                   required
                 />
                 <div>
@@ -291,7 +302,8 @@ const AddCourse: React.FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   options={[{ value: '', label: 'Seleccionar Profesor' }, ...professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))]}
-                  touched={touchedFields['professor_id'] || false}
+                  error={formData.professor_id === 0 && touchedFields['professor_id']}
+                  touched={touchedFields['professor_id']}
                   required
                 />
                 <FormField
@@ -302,7 +314,8 @@ const AddCourse: React.FC = () => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   options={[{ value: '', label: 'Seleccionar Evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
-                  touched={touchedFields['evaluation_id'] || false}
+                  error={formData.evaluation_id === 0 && touchedFields['evaluation_id']}
+                  touched={touchedFields['evaluation_id']}
                   required
                 />
                 <FormField
@@ -312,7 +325,8 @@ const AddCourse: React.FC = () => {
                   value={formData.duration_video}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  touched={touchedFields['duration_video'] || false}
+                  error={!formData.duration_video && touchedFields['duration_video']}
+                  touched={touchedFields['duration_video']}
                   required
                 />
                 <div>
@@ -328,7 +342,8 @@ const AddCourse: React.FC = () => {
                   value={formData.duration_course}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  touched={touchedFields['duration_course'] || false}
+                  error={!formData.duration_course && touchedFields['duration_course']}
+                  touched={touchedFields['duration_course']}
                   required
                 />
               </div>

@@ -19,6 +19,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [touchedFields, setTouchedFields] = useState<{ [key: number]: { [key: string]: boolean } }>({});
+  const [errors, setErrors] = useState<{ [key: number]: { [key: string]: boolean } }>({});
 
   useEffect(() => {
     const fetchQuestionTypes = async () => {
@@ -36,6 +38,17 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
     setQuestions(newQuestions);
   };
 
+  const handleBlur = (index: number, field: keyof Omit<Question, 'question_id'>) => {
+    setTouchedFields(prev => ({
+      ...prev,
+      [index]: { ...prev[index], [field]: true }
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [index]: { ...prev[index], [field]: !questions[index][field] }
+    }));
+  };
+
   const handleImageUpload = async (index: number, file: File) => {
     try {
       setLoading(true);
@@ -51,14 +64,38 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
     }
   };
 
-  const handleNext = async () => {
-    try {
-      setQuestionsData(questions);
-      nextStep();
-    } catch (error) {
-      setError('Error creating questions');
-      console.error('Error creating questions:', error);
+  const handleNext = () => {
+    const newErrors: { [key: number]: { [key: string]: boolean } } = {};
+    let hasErrors = false;
+
+    questions.forEach((question, index) => {
+      newErrors[index] = {
+        question_text: question.question_text.trim() === '',
+        type_id: question.type_id === 0,
+        score: question.score <= 0
+      };
+
+      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score) {
+        hasErrors = true;
+        setTouchedFields(prev => ({
+          ...prev,
+          [index]: {
+            question_text: true,
+            type_id: true,
+            score: true
+          }
+        }));
+      }
+    });
+
+    setErrors(newErrors);
+
+    if (hasErrors) {
+      return;
     }
+
+    setQuestionsData(questions);
+    nextStep();
   };
 
   const addQuestionToState = () => {
@@ -77,14 +114,16 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             name="question_text"
             value={question.question_text}
             onChange={(e) => handleQuestionChange(index, e)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            onBlur={() => handleBlur(index, 'question_text')}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields[index]?.question_text && errors[index]?.question_text ? 'border-red-500' : ''}`}
           />
           <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">Tipo de Pregunta</label>
           <select
             name="type_id"
             value={question.type_id}
             onChange={(e) => handleQuestionChange(index, e)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            onBlur={() => handleBlur(index, 'type_id')}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields[index]?.type_id && errors[index]?.type_id ? 'border-red-500' : ''}`}
           >
             {questionTypes.map((type) => (
               <option key={type.type_id} value={type.type_id}>
@@ -98,7 +137,8 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             name="score"
             value={question.score}
             onChange={(e) => handleQuestionChange(index, e)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            onBlur={() => handleBlur(index, 'score')}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields[index]?.score && errors[index]?.score ? 'border-red-500' : ''}`}
           />
           <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">Imagen (opcional)</label>
           <MediaUploadPreview
@@ -119,7 +159,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
           <ArrowLeftIcon className="w-5 h-5 mr-2" />
           Anterior
         </button>
-        <button onClick={handleNext} className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center">
+        <button onClick={handleNext} className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center" disabled={loading}>
           Siguiente
           <ArrowRightIcon className="w-5 h-5 ml-2" />
         </button>

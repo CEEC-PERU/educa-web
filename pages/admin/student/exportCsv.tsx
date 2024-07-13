@@ -6,7 +6,7 @@ import AssignStep from './AssignStep';
 import DetailsStep from './DetailsStep';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
-import '../../../app/globals.css';
+import './../../../app/globals.css';
 
 const ExportCsvPage: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);

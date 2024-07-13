@@ -23,6 +23,8 @@ const CategoryPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
+  const [showAlert, setShowAlert] = useState(false); // Definir showAlert y setShowAlert aquí
   const { isVisible, showModal, hideModal } = useModal(); // Usar el hook personalizado
 
   useEffect(() => {
@@ -49,14 +51,24 @@ const CategoryPage: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setCategory(prevCategory => prevCategory ? { ...prevCategory, [name]: value } : { category_id: 0, name: value });
+    setTouchedFields(prev => ({ ...prev, [name]: true }));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    setTouchedFields(prev => ({ ...prev, [name]: true }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!category || !category.name) {
       setError('El nombre de la categoría no puede estar vacío');
+      setTouchedFields(prev => ({ ...prev, name: true }));
+      setShowAlert(true);
       return;
     }
+
     setFormLoading(true);
     try {
       let updatedCategories;
@@ -172,6 +184,10 @@ const CategoryPage: React.FC = () => {
                         name="name"
                         value={category?.name || ''}
                         onChange={handleChange}
+                        onBlur={handleBlur}
+                        error={!category?.name && touchedFields['name']}
+                        touched={touchedFields['name']}
+                        required
                       />
                     </div>
                     <ButtonComponent

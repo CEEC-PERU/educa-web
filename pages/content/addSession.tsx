@@ -27,6 +27,7 @@ const AddSession: React.FC = () => {
   const [clearMediaPreview, setClearMediaPreview] = useState(false); 
   const [loading, setLoading] = useState(true); 
   const [formLoading, setFormLoading] = useState(false); 
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
   const { moduleId } = router.query; 
   const videoInputRef = useRef<{ clear: () => void }>(null);
@@ -49,6 +50,12 @@ const AddSession: React.FC = () => {
       ...prevSession,
       [id]: type === 'checkbox' ? checked : value
     }));
+    setTouchedFields(prev => ({ ...prev, [id]: true }));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { id } = e.target;
+    setTouchedFields(prev => ({ ...prev, [id]: true }));
   };
 
   const handleVideoUpload = (file: File) => {
@@ -58,6 +65,25 @@ const AddSession: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
+
+    const requiredFields = ['name', 'duracion_minutos', 'video_enlace'];
+    const newTouchedFields: { [key: string]: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!session[field as keyof typeof session]) {
+        newTouchedFields[field] = true;
+      }
+    });
+
+    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]);
+
+    if (hasEmptyFields) {
+      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
+      setError('Por favor, complete todos los campos requeridos.');
+      setShowAlert(true);
+      setFormLoading(false);
+      return;
+    }
+
     try {
       if (videoFile) {
         const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
@@ -111,12 +137,11 @@ const AddSession: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4">
             {showAlert && (
               <AlertComponent
-                type="success"
-                message="Sesión agregada exitosamente."
+                type="danger"
+                message={error || "Sesión agregada exitosamente."}
                 onClose={() => setShowAlert(false)}
               />
             )}
-            {error && <p className="text-red-500">{error}</p>}
 
             <button
               type="button"
@@ -133,6 +158,10 @@ const AddSession: React.FC = () => {
               type="text"
               value={session.name}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={!session.name && touchedFields['name']}
+              touched={touchedFields['name']}
+              required
             />
             <FormField
               id="duracion_minutos"
@@ -140,6 +169,10 @@ const AddSession: React.FC = () => {
               type="text"
               value={session.duracion_minutos.toString()}
               onChange={handleChange}
+              onBlur={handleBlur}
+              error={!session.duracion_minutos && touchedFields['duracion_minutos']}
+              touched={touchedFields['duracion_minutos']}
+              required
             />
             <div className="mb-4">
               <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>

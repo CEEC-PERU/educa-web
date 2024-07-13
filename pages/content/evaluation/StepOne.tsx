@@ -13,10 +13,29 @@ interface StepOneProps {
 const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluationData }) => {
   const [evaluationName, setEvaluationName] = useState(evaluationData.name);
   const [evaluationDescription, setEvaluationDescription] = useState(evaluationData.description);
+  const [touched, setTouched] = useState<{ [key: string]: boolean }>({ name: false, description: false });
+  const [errors, setErrors] = useState<{ [key: string]: boolean }>({ name: false, description: false });
 
   const handleNext = () => {
+    const newErrors = {
+      name: evaluationName.trim() === '',
+      description: evaluationDescription.trim() === ''
+    };
+
+    setErrors(newErrors);
+
+    if (newErrors.name || newErrors.description) {
+      setTouched({ name: true, description: true });
+      return;
+    }
+
     setEvaluationData({ name: evaluationName, description: evaluationDescription });
     nextStep();
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched(prev => ({ ...prev, [field]: true }));
+    setErrors(prev => ({ ...prev, [field]: !evaluationData[field as keyof typeof evaluationData] }));
   };
 
   return (
@@ -27,7 +46,8 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
           type="text" 
           value={evaluationName} 
           onChange={(e) => setEvaluationName(e.target.value)} 
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          onBlur={() => handleBlur('name')}
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touched.name && errors.name ? 'border-red-500' : ''}`}
         />
       </div>
       <div className="mb-4">
@@ -35,7 +55,8 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
         <textarea 
           value={evaluationDescription} 
           onChange={(e) => setEvaluationDescription(e.target.value)} 
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          onBlur={() => handleBlur('description')}
+          className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touched.description && errors.description ? 'border-red-500' : ''}`}
         />
       </div>
       <button 

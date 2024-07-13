@@ -90,8 +90,7 @@ const RoleDetail: React.FC = () => {
   ];
 
   const handleActionClick = (row: any) => {
-    console.log('Action clicked for row:', row);
-    // Aquí puedes manejar la lógica de la acción, como redirigir a una página de edición
+    router.push(`/admin/editUser/${row.user_id}`);
   };
 
   const handleExportCSV = () => {

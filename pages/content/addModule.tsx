@@ -24,8 +24,9 @@ const AddModule: React.FC = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [loading, setLoading] = useState(true); // Estado para la carga de evaluaciones
-  const [formLoading, setFormLoading] = useState(false); // Estado para la carga del formulario
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<{ [key in keyof typeof module]?: boolean }>({});
   const router = useRouter();
   const { courseId } = router.query;
 
@@ -58,12 +59,41 @@ const AddModule: React.FC = () => {
     }));
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { id } = e.target;
+    setTouchedFields(prevState => ({
+      ...prevState,
+      [id]: true,
+    }));
+  };
+
+  const requiredFields: (keyof typeof module)[] = ['name', 'evaluation_id'];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
+
+    const newTouchedFields: { [key in keyof typeof module]?: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!module[field]) {
+        newTouchedFields[field] = true;
+      }
+    });
+
+    const hasEmptyFields = requiredFields.some((field) => !module[field]);
+
+    if (hasEmptyFields) {
+      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
+      setError('Por favor, complete todos los campos requeridos.');
+      setShowAlert(true);
+      setFormLoading(false);
+      return;
+    }
+
     try {
       await addModule({ ...module, course_id: Number(courseId) });
       setShowAlert(true);
+      setError(null);
       setModule({ course_id: 0, evaluation_id: 0, is_active: true, name: '' });
     } catch (error) {
       console.error('Error adding module:', error);
@@ -77,6 +107,7 @@ const AddModule: React.FC = () => {
     setModule({
       course_id: 0, evaluation_id: 0, is_active: true, name: '',
     });
+    setTouchedFields({});
   };
 
   if (loading) {
@@ -96,12 +127,11 @@ const AddModule: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4 max-w-sm rounded-lg flex-grow mr-4">
             {showAlert && (
               <AlertComponent
-                type="success"
-                message="Módulo creado exitosamente."
+                type={error ? "danger" : "success"}
+                message={error || "Módulo creado exitosamente."}
                 onClose={() => setShowAlert(false)}
               />
             )}
-            {error && <p className="text-red-500">{error}</p>}
             <button
               type="button"
               onClick={() => router.back()}
@@ -111,21 +141,35 @@ const AddModule: React.FC = () => {
               Volver
             </button>
             
-            <FormField id="name" label="Nombre del Módulo" type="text" value={module.name} onChange={handleChange} />
+            <FormField
+              id="name"
+              label="Nombre del Módulo"
+              type="text"
+              value={module.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!module.name && touchedFields['name']}
+              touched={touchedFields['name']}
+              required
+            />
             <FormField
               id="evaluation_id"
               label="Evaluación"
               type="select"
               value={module.evaluation_id.toString()}
               onChange={handleChange}
+              onBlur={handleBlur}
               options={[{ value: '0', label: 'Seleccione una evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
+              error={module.evaluation_id === 0 && touchedFields['evaluation_id']}
+              touched={touchedFields['evaluation_id']}
+              required
             />
           </form>
           <div className="ml-4 flex-shrink-0">
             <ActionButtons
               onSave={handleSubmit}
               onCancel={handleCancel}
-              isEditing={true} // Para asegurarse de que el botón "Guardar" aparezca
+              isEditing={true}
             />
           </div>
         </main>

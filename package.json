@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.0.4",
-    "@heroicons/react": "^2.1.4",
+    "@heroicons/react": "^2.1.5",
     "@material-tailwind/react": "^2.1.9",
     "axios": "^1.7.2",
     "js-file-download": "^0.4.12",

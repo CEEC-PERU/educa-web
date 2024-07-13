@@ -31,7 +31,7 @@ const AddProfessors: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
 
   const router = useRouter();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
@@ -59,7 +59,12 @@ const AddProfessors: React.FC = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setProfesor(prevProfesor => ({ ...prevProfesor, [id]: value }));
-    setErrors(prevErrors => ({ ...prevErrors, [id]: false }));
+    setTouchedFields(prevTouched => ({ ...prevTouched, [id]: true }));
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { id } = e.target;
+    setTouchedFields(prevTouched => ({ ...prevTouched, [id]: true }));
   };
 
   const handleFileChange = (file: File) => {
@@ -72,14 +77,22 @@ const AddProfessors: React.FC = () => {
   };
 
   const validateFields = () => {
-    const { full_name, especialitation, description, level_id } = profesor;
-    const newErrors: { [key: string]: boolean } = {};
-    if (!full_name) newErrors.full_name = true;
-    if (!especialitation) newErrors.especialitation = true;
-    if (!description) newErrors.description = true;
-    if (level_id === 0) newErrors.level_id = true;
+    const requiredFields = ['full_name', 'especialitation', 'description', 'level_id'];
+    const newTouchedFields: { [key: string]: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!profesor[field as keyof typeof profesor]) {
+        newTouchedFields[field] = true;
+      }
+    });
 
-    setErrors(newErrors);
+    const newErrors: { [key: string]: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!profesor[field as keyof typeof profesor]) {
+        newErrors[field] = true;
+      }
+    });
+
+    setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
     return Object.keys(newErrors).length === 0;
   };
 
@@ -175,7 +188,10 @@ const AddProfessors: React.FC = () => {
                   type="text"
                   value={profesor.full_name}
                   onChange={handleChange}
-                  error={errors.full_name}
+                  onBlur={handleBlur}
+                  error={!profesor.full_name && touchedFields['full_name']}
+                  touched={touchedFields['full_name']}
+                  required
                 />
                 <div className="mb-4">
                   <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
@@ -187,7 +203,10 @@ const AddProfessors: React.FC = () => {
                   type="text"
                   value={profesor.especialitation}
                   onChange={handleChange}
-                  error={errors.especialitation}
+                  onBlur={handleBlur}
+                  error={!profesor.especialitation && touchedFields['especialitation']}
+                  touched={touchedFields['especialitation']}
+                  required
                 />
                 <FormField
                   id="description"
@@ -195,8 +214,11 @@ const AddProfessors: React.FC = () => {
                   type="textarea"
                   value={profesor.description}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   rows={4}
-                  error={errors.description}
+                  error={!profesor.description && touchedFields['description']}
+                  touched={touchedFields['description']}
+                  required
                 />
                 <FormField
                   id="level_id"
@@ -204,8 +226,11 @@ const AddProfessors: React.FC = () => {
                   type="select"
                   value={profesor.level_id.toString()}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
-                  error={errors.level_id}
+                  error={profesor.level_id === 0 && touchedFields['level_id']}
+                  touched={touchedFields['level_id']}
+                  required
                 />
               </form>
             </div>

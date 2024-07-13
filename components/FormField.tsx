@@ -15,7 +15,7 @@ interface FormFieldProps {
   required?: boolean;
   multiple?: boolean;
   error?: boolean;
-  touched?: boolean; // Añadir prop touched
+  touched?: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -33,10 +33,9 @@ const FormField: React.FC<FormFieldProps> = ({
   required,
   multiple,
   error,
-  touched // Añadir el estado touched aquí
+  touched
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const purpleColor = 'text-[#6017AF] border-global focus:border-global focus:ring-global dark:text-[#6017AF] dark:border-global dark:focus:border-global';
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -56,7 +55,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         >
           {options.map((option) => (
@@ -80,7 +79,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           rows={rows}
-          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>
@@ -95,7 +94,7 @@ const FormField: React.FC<FormFieldProps> = ({
           checked={checked}
           onChange={onChange}
           onBlur={onBlur}
-          className="mr-2 leading-tight"
+          className={`mr-2 leading-tight ${isError ? 'border-red-500' : 'border-gray-300'}`}
         />
         <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300">
           {label}
@@ -117,7 +116,7 @@ const FormField: React.FC<FormFieldProps> = ({
             value={value as string}
             onChange={onChange}
             onBlur={onBlur}
-            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
             required={required}
           />
           <button
@@ -143,7 +142,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           multiple={type === 'file'}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>
@@ -162,7 +161,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'} ${purpleColor}`}
+          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>

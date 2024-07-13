@@ -45,3 +45,13 @@ export const getUsersByCompanyAndRole = async (companyId: number, roleId: number
   const response = await axios.get(`${API_USER}/users/company/${companyId}/role/${roleId}`);
   return response.data;
 };
+
+export const getUserById = async (userId: number) => {
+  const response = await axios.get(`${API_USER}/users/${userId}`);
+  return response.data;
+};
+
+export const updateUser = async (userId: number, userData: any) => {
+  const response = await axios.put(`${API_USER}/update/${userId}`, userData);
+  return response.data;
+};
