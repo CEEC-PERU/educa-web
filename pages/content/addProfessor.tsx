@@ -7,7 +7,7 @@ import axios from '../../services/axios';
 import { uploadImage } from '../../services/imageService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';

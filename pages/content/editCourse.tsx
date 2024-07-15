@@ -15,7 +15,7 @@ import { Course } from '../../interfaces/Course';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';

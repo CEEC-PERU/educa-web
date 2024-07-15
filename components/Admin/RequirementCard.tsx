@@ -57,7 +57,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onUpdate
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-xl mx-auto">
       <div className="bg-blue-500 text-white p-4 rounded-t-lg flex items-center">
         {requirement.user && requirement.user.userProfile ? (
           <>
@@ -75,7 +75,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onUpdate
           <h3 className="text-lg font-bold">Usuario desconocido</h3>
         )}
       </div>
-      <div className="p-4 grid grid-cols-2 gap-4">
+      <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <p className="text-gray-700 mb-2"><strong>Nombre del Curso:</strong> {requirement.course_name}</p>
           <p className="text-gray-700 mb-2"><strong>Duración del Curso:</strong> {requirement.course_duration}</p>

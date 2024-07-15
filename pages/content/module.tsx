@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
-import CardImage from '../../components/CardImage';
+import CardImage from '../../components/Content/CardImage';
 import { getCourses } from '../../services/courseService';
 import { Course } from '../../interfaces/Course';
 import { useAuth } from '../../context/AuthContext';
@@ -53,8 +53,8 @@ const ModulePage: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          <div className="w-full max-w-6xl bg-white rounded-lg">
           {error && <p className="text-red-500">{error}</p>}
+          <div className="w-full bg-white rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cursos.map((curso) => (
                 <CardImage
@@ -67,7 +67,7 @@ const ModulePage: React.FC = () => {
                   rating={4.9}
                   buttonLabel="Ver Módulos"
                   textColor="text-blue-gray-900"
-                  onButtonClick={handleViewModulesClick}
+                  onButtonClick={() => handleViewModulesClick(curso.course_id)}
                 />
               ))}
             </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import ButtonComponent from "./ButtonDelete";
+import ButtonComponent from "../ButtonDelete";
 
 interface CardImageProps {
   rating?: number;

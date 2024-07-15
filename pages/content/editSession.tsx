@@ -10,7 +10,7 @@ import { Module } from '../../interfaces/Module';
 import './../../app/globals.css';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/ActionButtons'; // Importar el componente ActionButtons
+import ActionButtons from '../../components/Content/ActionButtons'; // Importar el componente ActionButtons
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';

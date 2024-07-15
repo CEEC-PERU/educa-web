@@ -10,7 +10,7 @@ interface CardProps {
 
 const CardUser: React.FC<CardProps> = ({ Icon, title, buttonLabel, onButtonClick }) => {
   return (
-    <div className="relative flex flex-col w-full max-w-sm sm:max-w-md rounded-xl bg-gray-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
+    <div className="relative flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl rounded-xl bg-gray-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
       <div className="flex justify-center items-center h-48 bg-gray-100">
         <Icon className="w-24 h-24 text-blue-500" />
       </div>

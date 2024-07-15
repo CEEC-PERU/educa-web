@@ -9,7 +9,7 @@ import { Module } from '../../interfaces/Module';
 import { Course } from '../../interfaces/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';

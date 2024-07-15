@@ -3,15 +3,15 @@ import { useRouter } from 'next/router';
 import { getProfessor, deleteProfessor, updateProfessor, getLevels } from '../../services/professorService';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { uploadImage } from '../../services/imageService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import { Professor, Level } from '../../interfaces/Professor';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
-import Loader from '../../components/Loader'; // Importar el componente Loader
+import AlertComponent from '../../components/AlertComponent';
+import Loader from '../../components/Loader';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import useModal from '../../hooks/useModal';
 
@@ -25,8 +25,8 @@ const DetailProfessor: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Estado de carga para obtener los detalles del profesor
-  const [formLoading, setFormLoading] = useState(false); // Estado de carga para las operaciones de guardar y eliminar
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const { isVisible, showModal, hideModal } = useModal();
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const DetailProfessor: React.FC = () => {
       try {
         await deleteProfessor(professor.professor_id);
         setSuccess('Registro eliminado correctamente');
-        setTimeout(() => setSuccess(null), 5000); // Ocultar la alerta después de 5 segundos
+        setTimeout(() => setSuccess(null), 5000);
         router.push('/content/professors');
       } catch (error) {
         console.error('Error deleting professor:', error);
@@ -110,7 +110,7 @@ const DetailProfessor: React.FC = () => {
         }
         await updateProfessor(professor.professor_id, { ...professor, image: imageUrl });
         setSuccess('Profesor actualizado exitosamente');
-        setTimeout(() => setSuccess(null), 3000); // Ocultar la alerta después de 3 segundos
+        setTimeout(() => setSuccess(null), 3000);
         setIsEditing(false);
       } catch (error) {
         console.error('Error updating professor:', error);
@@ -154,8 +154,8 @@ const DetailProfessor: React.FC = () => {
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
             Volver
           </button>
-          <div className="flex space-x-4">
-            <div className="w-1/2 bg-white p-10 rounded-lg shadow-md flex flex-col">
+          <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
+            <div className="md:w-1/2 bg-white p-10 rounded-lg shadow-md flex flex-col">
               <div className="flex items-center mb-4">
                 <img className="w-40 h-40 rounded-full shadow-lg mr-4" src={professor.image} alt={`${professor.full_name} image`} />
                 <h1 className="text-4xl font-bold">{professor.full_name}</h1>

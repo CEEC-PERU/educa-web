@@ -1,6 +1,6 @@
 import React from 'react';
 import { Evaluation } from '../../../interfaces/Evaluation';
-import ActionButtons from '../../../components/ActionButtons';
+import ActionButtons from '../../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import './../../../app/globals.css';

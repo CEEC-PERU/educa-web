@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
 import { getAvailableEvaluations } from '../../services/evaluationService';

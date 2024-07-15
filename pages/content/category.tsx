@@ -10,8 +10,8 @@ import Table from '../../components/Table';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
-import ModalConfirmation from '../../components/ModalConfirmation'; // Importar el componente ModalConfirmation
-import useModal from '../../hooks/useModal'; // Importar el hook personalizado
+import ModalConfirmation from '../../components/ModalConfirmation';
+import useModal from '../../hooks/useModal';
 
 const CategoryPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -24,8 +24,8 @@ const CategoryPage: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
-  const [showAlert, setShowAlert] = useState(false); // Definir showAlert y setShowAlert aquí
-  const { isVisible, showModal, hideModal } = useModal(); // Usar el hook personalizado
+  const [showAlert, setShowAlert] = useState(false);
+  const { isVisible, showModal, hideModal } = useModal();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -116,7 +116,7 @@ const CategoryPage: React.FC = () => {
         setError('Error deleting category');
       } finally {
         setFormLoading(false);
-        hideModal(); // Ocultar el modal después de eliminar
+        hideModal();
       }
     }
   };
@@ -215,7 +215,7 @@ const CategoryPage: React.FC = () => {
                 </form>
               </div>
             </div>
-            <div className="md:grid-cols-2 gap-6 w-full">
+            <div className="w-full overflow-x-auto">
               <Table columns={columns} rows={rows} />
             </div>
           </div>

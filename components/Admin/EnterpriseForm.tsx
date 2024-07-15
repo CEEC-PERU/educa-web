@@ -78,7 +78,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
   };
 
   return (
-    <div className="bg-white p-6 rounded">
+    <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-auto">
       {loading && <Loader />}
       <form onSubmit={handleSubmit}>
         {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}

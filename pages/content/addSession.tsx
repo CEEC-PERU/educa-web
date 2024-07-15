@@ -7,7 +7,7 @@ import { addSession } from '../../services/sessionService';
 import { uploadVideo } from '../../services/videoService';
 import { Session } from '../../interfaces/Session';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent'; 

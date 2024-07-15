@@ -1,4 +1,4 @@
-import CardImage from '../components/CardImage';
+import CardImage from '../components/Content/CardImage';
 import CardCarousel from "../components/student/CardCarousel";
 import Footter from "../components/Footter";
 import ButtonComponent from '@/components/ButtonDelete';

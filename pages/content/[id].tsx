@@ -7,11 +7,11 @@ import { Evaluation } from '../../interfaces/Evaluation';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import DetailView from '../../components/DetailView';
-import ActionButtons from '../../components/ActionButtons';
+import ActionButtons from '../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import Loader from '../../components/Loader'; // Importar el componente Loader
+import Loader from '../../components/Loader';
 import ModalConfirmation from '../../components/ModalConfirmation';
-import AlertComponent from '../../components/AlertComponent'; // Importar el componente AlertComponent
+import AlertComponent from '../../components/AlertComponent';
 import useModal from '../../hooks/useModal';
 import './../../app/globals.css';
 
@@ -21,9 +21,9 @@ const CourseDetail: React.FC = () => {
   const [course, setCourse] = useState<Course | null>(null);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [showSidebar, setShowSidebar] = useState(true);
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [loading, setLoading] = useState(true);
   const { isVisible, showModal, hideModal } = useModal();
-  const [success, setSuccess] = useState<string | null>(null); // Estado para mensaje de éxito
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) {
@@ -46,7 +46,7 @@ const CourseDetail: React.FC = () => {
       };
 
       Promise.all([fetchCourse(), fetchEvaluations()]).then(() => {
-        setLoading(false); // Finaliza la carga
+        setLoading(false);
       });
     }
   }, [id]);
@@ -117,14 +117,14 @@ const CourseDetail: React.FC = () => {
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
             Volver
           </button>
-          <div className="flex p-2">
+          <div className="flex flex-col md:flex-row p-2 flex-1">
             <DetailView
               title={course.name}
               imageUrl={course.image}
               details={courseDetails}
               videoUrl={course.intro_video}
             />
-            <div className="ml-8 bg-white rounded-md">
+            <div className="md:ml-8 mt-4 md:mt-0 bg-white rounded-md flex-shrink-0">
               <ActionButtons
                 onEdit={handleEdit}
                 onDelete={showModal}

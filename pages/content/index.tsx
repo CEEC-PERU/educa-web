@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
-import CardImage from '../../components/CardImage';
+import CardImage from '../../components/Content/CardImage';
 import ButtonComponent from '../../components/ButtonDelete';
 import { getCourses } from '../../services/courseService';
 import { Course } from '../../interfaces/Course';
