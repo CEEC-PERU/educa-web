@@ -10,6 +10,7 @@ import Link from 'next/link';
 import './../../app/globals.css';
 
 const Profesores: React.FC = () => {
+  
   const [showSidebar, setShowSidebar] = useState(true);
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [levels, setLevels] = useState<Level[]>([]);

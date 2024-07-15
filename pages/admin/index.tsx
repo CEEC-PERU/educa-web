@@ -8,6 +8,7 @@ import { getEnterprises } from '../../services/enterpriseService';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
 
+
 const AdminPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [enterprises, setEnterprises] = useState<Enterprise[]>([]);

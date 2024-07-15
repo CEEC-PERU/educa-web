@@ -5,12 +5,12 @@ import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
-interface SidebarAdminProps {
+interface SidebarCorporateProps {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setShowSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
@@ -62,57 +62,18 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
       >
         <nav className="flex-1">
           <ul>
+           
+            
+           
             <li>
               <button
-                onClick={() => handleNavigation('/admin')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Estudiantes</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/admin/user-enterprise')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Empresas</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/admin/users')}
+                onClick={() => handleNavigation('/corporate/addRequeriment')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <TagIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Usuarios</span>}
+                {isOpen && <span className="ml-2">Nuevo Requerimiento</span>}
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/admin/requirements')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left relative"
-              >
-                <CubeIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Requerimientos</span>}
-                {requirements.length > 0 && (
-                  <span className="absolute right-4 top-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {requirements.length}
-                  </span>
-                )}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/admin/student/AssignStudents')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <TagIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Asignación de Estudiantes</span>}
-              </button>
-            </li>
-          
             <li>
               <button
                 onClick={logout}
@@ -129,4 +90,4 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
   );
 };
 
-export default SidebarAdmin;
+export default SidebarCorporate;

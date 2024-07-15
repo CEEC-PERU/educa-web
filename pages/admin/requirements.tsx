@@ -77,7 +77,7 @@ const RequirementsPage: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6">Requerimientos</h2>
           <div className="flex justify-between mb-6 space-x-8">
             <ButtonComponent
-              buttonLabel="Activos"
+              buttonLabel="Pendiente"
               backgroundColor={showActive ? 'bg-blue-500' : 'bg-gray-300'}
               textColor="text-white"
               fontSize="text-xs"
@@ -85,7 +85,7 @@ const RequirementsPage: React.FC = () => {
               onClick={() => setShowActive(true)}
             />
             <ButtonComponent
-              buttonLabel="Inactivos"
+              buttonLabel="Requerimiento Finalizado"
               backgroundColor={!showActive ? 'bg-blue-500' : 'bg-gray-300'}
               textColor="text-white"
               fontSize="text-xs"

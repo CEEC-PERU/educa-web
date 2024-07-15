@@ -1,15 +1,17 @@
 import React, { useState, ChangeEvent, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Admin/SideBarAdmin';
+import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { createRequirement } from '../../services/requirementService';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
+import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 
 const RequirementForm: React.FC = () => {
+    const {user } = useAuth();
+    const userId= user as { id: number };
   const [showSidebar, setShowSidebar] = useState(true);
-  const [userId, setUserId] = useState('');
   const [proposedDate, setProposedDate] = useState('');
   const [courseName, setCourseName] = useState('');
   const [message, setMessage] = useState('');
@@ -35,9 +37,7 @@ const RequirementForm: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     switch (id) {
-      case 'userId':
-        setUserId(value);
-        break;
+      
       case 'proposedDate':
         setProposedDate(value);
         break;
@@ -64,7 +64,7 @@ const RequirementForm: React.FC = () => {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append('user_id', userId);
+    formData.append('user_id', userId.id.toString());
     formData.append('proposed_date', proposedDate);
     formData.append('course_name', courseName);
     formData.append('message', message);
@@ -81,7 +81,7 @@ const RequirementForm: React.FC = () => {
       const response = await createRequirement(formData);
       setSuccess('Requerimiento creado exitosamente');
       // Limpiar el formulario
-      setUserId('');
+    
       setProposedDate('');
       setCourseName('');
       setMessage('');
@@ -106,7 +106,7 @@ const RequirementForm: React.FC = () => {
             {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
             {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
             <form onSubmit={handleSubmit}>
-              <FormField id="userId" label="ID del Usuario" type="text" value={userId} onChange={handleInputChange} />
+             
               <FormField id="proposedDate" label="Fecha Propuesta" type="date" value={proposedDate} onChange={handleInputChange} />
               <FormField id="courseName" label="Nombre del Curso" type="text" value={courseName} onChange={handleInputChange} />
               <FormField id="message" label="Mensaje" type="textarea" value={message} onChange={handleInputChange} />
