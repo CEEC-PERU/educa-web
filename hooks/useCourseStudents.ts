@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { CourseStudent } from '../interfaces/CourseStudent';
 import { getCourseStudent } from '../services/courseStudent';
 import { useAuth } from '../context/AuthContext';
-
+//useCourseStudent
 export const useCourseStudent = () => {
   const [courseStudent, setCourseStudent] = useState<CourseStudent[]>([]);
   const [error, setError] = useState<string | null>(null);

@@ -21,8 +21,8 @@ const Home: React.FC = () => {
   const userInfo = user as { id: number }; // Tipamos el objeto `user` para que tenga un campo `id`.
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0'); // Convertimos el ID del curso en un número, manejando el caso de que sea un array.
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber); // Usamos nuestro hook personalizado para obtener los datos del curso.
-
-  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number }>({});
+  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(true); // Estado para controlar si el drawer (navegación lateral) está abierto.
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({}); // Estado para rastrear el progreso del video.
@@ -30,18 +30,20 @@ const Home: React.FC = () => {
   let name = ''; // Variable para el nombre del usuario.
   let uri_picture = ''; // Variable para la URL de la imagen de perfil.
 
-  
+
   if (profileInfo) { // Si tenemos información del perfil...
     const profile = profileInfo as Profile; // Tipamos la información del perfil.
     name = profile.first_name; // Obtenemos el primer nombre.
     uri_picture = profile.profile_picture!; // Obtenemos la URL de la imagen de perfil.
   }
 
-  const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[]) => {
+  const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => {
+    setSelectedModuleId(moduleId || null); 
     if (Array.isArray(evaluation)) {
-      setSelectedSession({ questions: evaluation });
+      setSelectedSession({ questions: evaluation, module_id: moduleId });
     } else if (evaluation && 'questions' in evaluation) {
-      setSelectedSession({ questions: evaluation.questions });
+      
+      setSelectedSession({ questions: evaluation.questions, module_id: moduleId });
     } else {
       const module = courseData?.[0]?.courseModules.find(m =>
         m.moduleSessions.some(s => s.name === sessionName)
@@ -52,7 +54,8 @@ const Home: React.FC = () => {
         if (session) {
           setSelectedSession({ 
             video: session.video_enlace, 
-            session_id: session.session_id // Almacena session_id aquí
+            session_id: session.session_id ,// Almacena session_id aquí
+            module_id: moduleId 
           });
         }
       }
@@ -73,9 +76,16 @@ const Home: React.FC = () => {
     const nextSession = currentModule.moduleSessions[currentSessionIndex + 1];
 
     if (nextSession) {
-      setSelectedSession({ video: nextSession.video_enlace }); // Actualizamos el estado con el video de la siguiente sesión.
+      setSelectedSession({
+        video: nextSession.video_enlace,
+        session_id: nextSession.session_id,
+        module_id: selectedSession.module_id // Mantener el module_id aquí
+      });
     } else {
-      setSelectedSession({ questions: currentModule.moduleEvaluation.questions }); // Si no hay más sesiones, mostramos las preguntas de evaluación del módulo.
+      setSelectedSession({
+        questions: currentModule.moduleEvaluation.questions,
+        module_id: selectedSession.module_id // Mantener el module_id aquí
+      });
     }
   };
 
@@ -103,7 +113,7 @@ const Home: React.FC = () => {
       }));
     }
   };
-  
+  //envio de carga de datos
   useEffect(() => {
     const handleResize = () => { // Función para manejar el redimensionamiento de la ventana.
       if (window.innerWidth > 1014) {
@@ -117,7 +127,7 @@ const Home: React.FC = () => {
       window.removeEventListener('resize', handleResize); // Eliminamos el listener cuando el componente se desmonte.
     };
   }, []);
-
+//condicional de carga de pantalla
   if (isLoading) { // Si los datos están cargando...
     return <div>Loading...</div>; // Mostramos un mensaje de carga.
   }
@@ -130,6 +140,7 @@ const Home: React.FC = () => {
     return <div>No course data available.</div>; // Mostramos un mensaje indicando que no hay datos del curso.
   }
 
+//courseData
   return (
     <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="fixed w-full z-10">
@@ -147,8 +158,8 @@ const Home: React.FC = () => {
             sessionVideo={selectedSession.video}
             evaluationQuestions={selectedSession.questions}
             onContinue={handleContinue}
-            onProgress={handleVideoProgress} // Pasamos la función handleVideoProgress como prop.
-            
+            onProgress={handleVideoProgress} // Pasamos la función handleVideoProgress como prop. 
+            selectedModuleId={selectedModuleId}           
           />
         </div>
         <SidebarPrueba
@@ -162,5 +173,5 @@ const Home: React.FC = () => {
     </div>
   );
 };
-
+//Home
 export default Home;
