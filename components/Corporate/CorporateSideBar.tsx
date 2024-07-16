@@ -63,7 +63,33 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
         <nav className="flex-1">
           <ul>
            
-            
+          <li>
+              <button
+                onClick={() => handleNavigation('/corporate/')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <TagIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Usuarios</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/corporate/courses')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <TagIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Cursos</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/corporate/progress')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <TagIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Progreso</span>}
+              </button>
+            </li>
            
             <li>
               <button
@@ -83,6 +109,7 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
                 {isOpen && <span className="ml-2">Cerrar Sesión</span>}
               </button>
             </li>
+            
           </ul>
         </nav>
       </div>

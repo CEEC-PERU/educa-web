@@ -7,7 +7,7 @@ import { Course } from '../../../interfaces/Course';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
 import { getCompanies, getUsersByCompanyAndRole } from '../../../services/userService';
 import { getCourses } from '../../../services/courseService';
-import { assignStudentsToCourse } from '../../../services/courseStudent';
+import { assignStudentsToCourse, getUnassignedStudents } from '../../../services/courseStudent';
 import FormField from '../../../components/FormField';
 import ButtonComponent from '../../../components/ButtonDelete';
 import AlertComponent from '../../../components/AlertComponent';
@@ -26,6 +26,7 @@ const AssignStudents: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [alreadyAssigned, setAlreadyAssigned] = useState<User[]>([]);
+  const [unassignedStudents, setUnassignedStudents] = useState<User[]>([]);
 
   const router = useRouter();
 
@@ -67,6 +68,21 @@ const AssignStudents: React.FC = () => {
     }
   }, [selectedCompany]);
 
+  useEffect(() => {
+    if (courseId && selectedCompany) {
+      const fetchUnassignedStudents = async () => {
+        try {
+          const unassignedStudents = await getUnassignedStudents(courseId, selectedCompany);
+          setUnassignedStudents(unassignedStudents);
+        } catch (error) {
+          console.error('Error fetching unassigned students:', error);
+        }
+      };
+
+      fetchUnassignedStudents();
+    }
+  }, [courseId, selectedCompany]);
+
   const handleCompanyChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) {
       setSelectedCompany(Number(e.target.value));
@@ -89,7 +105,7 @@ const AssignStudents: React.FC = () => {
       const result = await assignStudentsToCourse(selectedCompany, courseId);
       setSuccess('Estudiantes asignados correctamente al curso');
       if (result.alreadyAssigned.length > 0) {
-        const alreadyAssignedStudents = students.filter(student => result.alreadyAssigned.includes(student.user_id));
+        const alreadyAssignedStudents = students.filter((student: User) => result.alreadyAssigned.includes(student.user_id));
         setAlreadyAssigned(alreadyAssignedStudents);
         setError('Algunos estudiantes ya estaban asignados al curso');
       }
@@ -159,17 +175,17 @@ const AssignStudents: React.FC = () => {
           {alreadyAssigned.length > 0 && (
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-4">Estudiantes ya asignados</h3>
-              {alreadyAssigned.map(student => (
+              {alreadyAssigned.map((student: User) => (
                 <div key={student.user_id} className="mb-2">
                   {student.userProfile?.first_name} {student.userProfile?.last_name} ({student.dni})
                 </div>
               ))}
             </div>
           )}
-          {students.length > 0 && (
+          {unassignedStudents.length > 0 && (
             <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">Estudiantes de la Empresa</h3>
-              {students.map(student => (
+              <h3 className="text-lg font-semibold mb-4">Estudiantes no asignados</h3>
+              {unassignedStudents.map((student: User) => (
                 <div key={student.user_id} className="mb-2">
                   {student.userProfile?.first_name} {student.userProfile?.last_name} ({student.dni})
                 </div>
