@@ -35,7 +35,24 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
 
   const handleBlur = (field: string) => {
     setTouched(prev => ({ ...prev, [field]: true }));
-    setErrors(prev => ({ ...prev, [field]: !evaluationData[field as keyof typeof evaluationData] }));
+    setErrors(prev => ({
+      ...prev,
+      [field]: (field === 'name' ? evaluationName : evaluationDescription).trim() === ''
+    }));
+  };
+
+  const handleChange = (field: string, value: string) => {
+    if (field === 'name') {
+      setEvaluationName(value);
+      if (touched.name) {
+        setErrors(prev => ({ ...prev, name: value.trim() === '' }));
+      }
+    } else if (field === 'description') {
+      setEvaluationDescription(value);
+      if (touched.description) {
+        setErrors(prev => ({ ...prev, description: value.trim() === '' }));
+      }
+    }
   };
 
   return (
@@ -45,7 +62,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
         <input 
           type="text" 
           value={evaluationName} 
-          onChange={(e) => setEvaluationName(e.target.value)} 
+          onChange={(e) => handleChange('name', e.target.value)} 
           onBlur={() => handleBlur('name')}
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touched.name && errors.name ? 'border-red-500' : ''}`}
         />
@@ -54,7 +71,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
         <label className="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
         <textarea 
           value={evaluationDescription} 
-          onChange={(e) => setEvaluationDescription(e.target.value)} 
+          onChange={(e) => handleChange('description', e.target.value)} 
           onBlur={() => handleBlur('description')}
           className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touched.description && errors.description ? 'border-red-500' : ''}`}
         />

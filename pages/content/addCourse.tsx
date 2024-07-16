@@ -98,10 +98,12 @@ const AddCourse: React.FC = () => {
 
   const handleVideoUpload = (file: File) => {
     setVideoFile(file);
+    setTouchedFields(prevState => ({ ...prevState, intro_video: true }));
   };
 
   const handleImageUpload = (file: File) => {
     setImageFile(file);
+    setTouchedFields(prevState => ({ ...prevState, image: true }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -126,7 +128,14 @@ const AddCourse: React.FC = () => {
       }
     });
 
-    const hasEmptyFields = requiredFields.some((field) => !formData[field]);
+    if (!imageFile) {
+      newTouchedFields['image'] = true;
+    }
+    if (!videoFile) {
+      newTouchedFields['intro_video'] = true;
+    }
+
+    const hasEmptyFields = requiredFields.some((field) => !formData[field]) || !imageFile || !videoFile;
 
     if (hasEmptyFields) {
       setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
@@ -170,6 +179,7 @@ const AddCourse: React.FC = () => {
           duration_course: '',
           is_active: true,
         });
+        setTouchedFields({});
         setVideoFile(null);
         setImageFile(null);
         setClearMediaPreview(true);
@@ -199,6 +209,7 @@ const AddCourse: React.FC = () => {
       duration_course: '',
       is_active: true,
     });
+    setTouchedFields({});
     setVideoFile(null);
     setImageFile(null);
     setClearMediaPreview(true);
@@ -224,7 +235,7 @@ const AddCourse: React.FC = () => {
           <div className="max-w-6xl bg-white rounded-lg w-full">
             {showAlert && (
               <AlertComponent
-                type="danger"
+                type="success"
                 message={error || "Curso creado exitosamente."}
                 onClose={() => setShowAlert(false)}
               />
@@ -290,7 +301,15 @@ const AddCourse: React.FC = () => {
                   <label htmlFor="image" className="block text-sm font-medium mb-6 text-gray-700">
                     Imagen
                   </label>
-                  <MediaUploadPreview ref={imageUploadRef} onMediaUpload={handleImageUpload} accept="image/*" label="Subir imagen" clearMediaPreview={clearMediaPreview} />
+                  <MediaUploadPreview
+                    ref={imageUploadRef}
+                    onMediaUpload={handleImageUpload}
+                    accept="image/*"
+                    label="Subir imagen"
+                    clearMediaPreview={clearMediaPreview}
+                    error={!imageFile && touchedFields['image']}
+                    touched={touchedFields['image']}
+                  />
                 </div>
               </div>
               <div className="space-y-4">
@@ -333,7 +352,15 @@ const AddCourse: React.FC = () => {
                   <label htmlFor="intro_video" className="block text-sm font-medium mb-6 text-gray-700">
                     Video de Introducción
                   </label>
-                  <MediaUploadPreview ref={videoUploadRef} onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" clearMediaPreview={clearMediaPreview} />
+                  <MediaUploadPreview
+                    ref={videoUploadRef}
+                    onMediaUpload={handleVideoUpload}
+                    accept="video/*"
+                    label="Subir video"
+                    clearMediaPreview={clearMediaPreview}
+                    error={!videoFile && touchedFields['intro_video']}
+                    touched={touchedFields['intro_video']}
+                  />
                 </div>
                 <FormField
                   id="duration_course"

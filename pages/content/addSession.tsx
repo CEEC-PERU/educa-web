@@ -22,6 +22,7 @@ const AddSession: React.FC = () => {
     module_id: 0
   });
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false); 
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false); 
@@ -60,13 +61,14 @@ const AddSession: React.FC = () => {
 
   const handleVideoUpload = (file: File) => {
     setVideoFile(file);
+    setTouchedFields(prev => ({ ...prev, video_enlace: true }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
 
-    const requiredFields = ['name', 'duracion_minutos', 'video_enlace'];
+    const requiredFields = ['name', 'duracion_minutos'];
     const newTouchedFields: { [key: string]: boolean } = {};
     requiredFields.forEach(field => {
       if (!session[field as keyof typeof session]) {
@@ -74,10 +76,10 @@ const AddSession: React.FC = () => {
       }
     });
 
-    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]);
+    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]) || !videoFile;
 
     if (hasEmptyFields) {
-      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
+      setTouchedFields(prev => ({ ...prev, ...newTouchedFields, video_enlace: true }));
       setError('Por favor, complete todos los campos requeridos.');
       setShowAlert(true);
       setFormLoading(false);
@@ -88,9 +90,12 @@ const AddSession: React.FC = () => {
       if (videoFile) {
         const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
         await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
-        setShowAlert(true); 
+        setSuccess('Sesión agregada exitosamente.');
+        setError(null);
+        setShowAlert(true);
         setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
         setVideoFile(null);
+        setTouchedFields({});
         setClearMediaPreview(true);
         if (videoInputRef.current) {
           videoInputRef.current.clear();
@@ -101,10 +106,13 @@ const AddSession: React.FC = () => {
         }, 3000);
       } else {
         setError('Video file is required');
+        setTouchedFields(prev => ({ ...prev, video_enlace: true }));
+        setShowAlert(true);
       }
     } catch (error) {
       console.error('Error adding session:', error);
       setError('Error adding session');
+      setShowAlert(true);
     } finally {
       setFormLoading(false);
     }
@@ -113,6 +121,7 @@ const AddSession: React.FC = () => {
   const handleCancel = () => {
     setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
     setVideoFile(null);
+    setTouchedFields({});
     setClearMediaPreview(true);
     if (videoInputRef.current) {
       videoInputRef.current.clear();
@@ -137,8 +146,8 @@ const AddSession: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4">
             {showAlert && (
               <AlertComponent
-                type="danger"
-                message={error || "Sesión agregada exitosamente."}
+                type={error ? "danger" : "success"}
+                message={error || success || ''}
                 onClose={() => setShowAlert(false)}
               />
             )}
@@ -176,7 +185,15 @@ const AddSession: React.FC = () => {
             />
             <div className="mb-4">
               <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>
-              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} clearMediaPreview={clearMediaPreview} />
+              <MediaUploadPreview
+                onMediaUpload={handleVideoUpload}
+                accept="video/*"
+                label="Subir video"
+                ref={videoInputRef}
+                clearMediaPreview={clearMediaPreview}
+                error={!videoFile && touchedFields['video_enlace']}
+                touched={touchedFields['video_enlace']}
+              />
             </div>
           </form>
           <div className="ml-4 flex-shrink-0">

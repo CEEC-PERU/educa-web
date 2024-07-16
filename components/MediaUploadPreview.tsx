@@ -7,9 +7,11 @@ interface MediaUploadPreviewProps {
   initialPreview?: string;
   inputRef?: React.RefObject<HTMLInputElement>;
   clearMediaPreview?: boolean;
+  error?: boolean;
+  touched?: boolean;
 }
 
-const MediaUploadPreview = forwardRef<{ clear: () => void }, MediaUploadPreviewProps>(({ onMediaUpload, accept, label, initialPreview, inputRef, clearMediaPreview }, ref) => {
+const MediaUploadPreview = forwardRef<{ clear: () => void }, MediaUploadPreviewProps>(({ onMediaUpload, accept, label, initialPreview, inputRef, clearMediaPreview, error, touched }, ref) => {
   const [mediaPreview, setMediaPreview] = useState<string | null>(initialPreview || null);
 
   const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,8 +47,10 @@ const MediaUploadPreview = forwardRef<{ clear: () => void }, MediaUploadPreviewP
 
   const isImage = accept.startsWith('image/');
 
+  const isError = error && touched;
+
   return (
-    <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+    <div className={`w-full mb-4 border ${isError ? 'border-red-500' : 'border-gray-200'} rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600`}>
       <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
         <div className="flex items-center space-x-1 rtl:space-x-reverse sm:pe-4">
           <label htmlFor={`mediaUpload-${label}`} className="p-2 text-blue-700 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-blue-500 dark:hover:text-white dark:hover:bg-gray-600 mb-2">

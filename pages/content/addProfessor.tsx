@@ -69,6 +69,7 @@ const AddProfessors: React.FC = () => {
 
   const handleFileChange = (file: File) => {
     setImageFile(file);
+    setTouchedFields(prevTouched => ({ ...prevTouched, image: true }));
   };
 
   const toggleSidebar = () => {
@@ -91,6 +92,11 @@ const AddProfessors: React.FC = () => {
         newErrors[field] = true;
       }
     });
+
+    if (!imageFile) {
+      newTouchedFields['image'] = true;
+      newErrors['image'] = true;
+    }
 
     setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
     return Object.keys(newErrors).length === 0;
@@ -122,6 +128,7 @@ const AddProfessors: React.FC = () => {
         level_id: 0,
       });
       setImageFile(null);
+      setTouchedFields({});
       setClearMediaPreview(true);
       setTimeout(() => setClearMediaPreview(false), 500);
       setShowAlert(true);
@@ -146,6 +153,7 @@ const AddProfessors: React.FC = () => {
       level_id: 0,
     });
     setImageFile(null);
+    setTouchedFields({});
     setClearMediaPreview(true);
     setTimeout(() => setClearMediaPreview(false), 500);
   };
@@ -195,7 +203,15 @@ const AddProfessors: React.FC = () => {
                 />
                 <div className="mb-4">
                   <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
-                  <MediaUploadPreview onMediaUpload={handleFileChange} accept="image/*" label="Subir Imagen" inputRef={imageInputRef} clearMediaPreview={clearMediaPreview} />
+                  <MediaUploadPreview
+                    onMediaUpload={handleFileChange}
+                    accept="image/*"
+                    label="Subir Imagen"
+                    inputRef={imageInputRef}
+                    clearMediaPreview={clearMediaPreview}
+                    error={!imageFile && touchedFields['image']}
+                    touched={touchedFields['image']}
+                  />
                 </div>
                 <FormField
                   id="especialitation"

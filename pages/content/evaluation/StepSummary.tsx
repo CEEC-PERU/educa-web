@@ -25,6 +25,13 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
 
   return (
     <div className="space-y-6">
+      {showAlert && (
+        <AlertComponent
+          type="success"
+          message="Evaluación creada exitosamente."
+          onClose={() => setShowAlert(false)}
+        />
+      )}
       <h2 className="text-2xl font-bold mb-4">Resumen</h2>
       {questionsData.map((question, index) => (
         <WizardStepContainer key={index} title={`Pregunta ${index + 1}`}>
@@ -55,13 +62,6 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
           Completar
         </button>
       </div>
-      {showAlert && (
-        <AlertComponent
-          type="success"
-          message="Evaluación creada exitosamente."
-          onClose={() => setShowAlert(false)}
-        />
-      )}
     </div>
   );
 };
