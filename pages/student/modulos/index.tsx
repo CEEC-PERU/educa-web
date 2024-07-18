@@ -12,87 +12,77 @@ import io from 'socket.io-client'; // Importamos la biblioteca Socket.io para cl
 import { API_SOCKET_URL } from '../../../utils/Endpoints'; // Importamos la URL del socket desde los endpoints configurados.
 import { progress } from '@material-tailwind/react';
 import './../../../app/globals.css';
+
 const socket = io(API_SOCKET_URL); // Inicializamos la conexión al servidor de sockets con la URL definida.
 
 const Home: React.FC = () => {
   const { logout, user, profileInfo } = useAuth(); // Obtenemos funciones y estados del contexto de autenticación.
   const router = useRouter(); 
   const { course_id } = router.query; // Obtenemos el ID del curso desde los parámetros de la URL.
-  const userInfo = user as { id: number }; // Tipamos el objeto `user` para que tenga un campo `id`.
+  const userInfo = user as { id: number }; // Tipamos el objeto user para que tenga un campo id.
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0'); // Convertimos el ID del curso en un número, manejando el caso de que sea un array.
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber); // Usamos nuestro hook personalizado para obtener los datos del curso.
+  
+  // Estado para almacenar el ID del módulo seleccionado.
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
+  // Estado para almacenar la sesión seleccionada.
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
-
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true); // Estado para controlar si el drawer (navegación lateral) está abierto.
-  const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({}); // Estado para rastrear el progreso del video.
+  // Estado para controlar si el drawer (navegación lateral) está abierto.
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  // Estado para rastrear el progreso del video.
+  const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
 
   let name = ''; // Variable para el nombre del usuario.
   let uri_picture = ''; // Variable para la URL de la imagen de perfil.
 
-
-  if (profileInfo) { // Si tenemos información del perfil...
-    const profile = profileInfo as Profile; // Tipamos la información del perfil.
-    name = profile.first_name; // Obtenemos el primer nombre.
-    uri_picture = profile.profile_picture!; // Obtenemos la URL de la imagen de perfil.
+  // Si tenemos información del perfil, la almacenamos en las variables correspondientes.
+  if (profileInfo) { 
+    const profile = profileInfo as Profile; 
+    name = profile.first_name; 
+    uri_picture = profile.profile_picture!;
   }
 
+  // Función para manejar la selección de una sesión o evaluación.
   const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => {
-    setSelectedModuleId(moduleId || null); 
+    // Actualizamos el estado del módulo seleccionado con el ID del módulo o null si no hay módulo seleccionado.
+    setSelectedModuleId(moduleId || null);
+
+    // Si la evaluación es un array de preguntas, actualizamos el estado de la sesión seleccionada con las preguntas y el ID del módulo.
     if (Array.isArray(evaluation)) {
       setSelectedSession({ questions: evaluation, module_id: moduleId });
-    } else if (evaluation && 'questions' in evaluation) {
-      
+    }
+    // Si la evaluación es un objeto que contiene preguntas, actualizamos el estado de la sesión seleccionada con las preguntas y el ID del módulo.
+    else if (evaluation && 'questions' in evaluation) {
       setSelectedSession({ questions: evaluation.questions, module_id: moduleId });
-    } else {
+    }
+    // Si no es una evaluación o preguntas, buscamos el módulo que contiene la sesión con el nombre especificado.
+    else {
       const module = courseData?.[0]?.courseModules.find(m =>
         m.moduleSessions.some(s => s.name === sessionName)
       );
-  
+
+      // Si encontramos el módulo, buscamos la sesión dentro del módulo con el nombre especificado.
       if (module) {
         const session = module.moduleSessions.find(s => s.name === sessionName);
+
+        // Si encontramos la sesión, actualizamos el estado de la sesión seleccionada con el enlace del video, el ID de la sesión y el ID del módulo.
         if (session) {
-          setSelectedSession({ 
-            video: session.video_enlace, 
-            session_id: session.session_id ,// Almacena session_id aquí
-            module_id: moduleId 
+          setSelectedSession({
+            video: session.video_enlace, // Almacenamos el enlace del video de la sesión.
+            session_id: session.session_id, // Almacenamos el ID de la sesión.
+            module_id: moduleId // Almacenamos el ID del módulo.
           });
         }
       }
     }
   };
-  
-  const handleContinue = () => { // Función para manejar el botón de continuar.
-    const currentModule = courseData?.[0]?.courseModules.find(m =>
-      m.moduleSessions.some(s => s.video_enlace === selectedSession.video)
-    );
 
-    if (!currentModule) return;
-
-    const currentSessionIndex = currentModule.moduleSessions.findIndex(s => s.video_enlace === selectedSession.video);
-
-    if (currentSessionIndex === -1) return;
-
-    const nextSession = currentModule.moduleSessions[currentSessionIndex + 1];
-
-    if (nextSession) {
-      setSelectedSession({
-        video: nextSession.video_enlace,
-        session_id: nextSession.session_id,
-        module_id: selectedSession.module_id // Mantener el module_id aquí
-      });
-    } else {
-      setSelectedSession({
-        questions: currentModule.moduleEvaluation.questions,
-        module_id: selectedSession.module_id // Mantener el module_id aquí
-      });
-    }
-  };
-
-  const toggleSidebar = () => { // Función para alternar el estado del drawer.
+  // Función para alternar el estado del drawer.
+  const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  // Función para manejar el progreso del video.
   const handleVideoProgress = (progress: number, isCompleted: boolean) => {
     const progressupdate = Math.round(progress);
   
@@ -113,34 +103,35 @@ const Home: React.FC = () => {
       }));
     }
   };
-  //envio de carga de datos
+
+  // Manejo del evento de redimensionamiento de la ventana.
   useEffect(() => {
-    const handleResize = () => { // Función para manejar el redimensionamiento de la ventana.
+    const handleResize = () => {
       if (window.innerWidth > 1014) {
-        setIsDrawerOpen(true); // Abrimos el drawer si el ancho de la ventana es mayor a 1014px.
+        setIsDrawerOpen(true);
       }
     };
 
-    window.addEventListener('resize', handleResize); // Añadimos un listener al evento de redimensionamiento.
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Eliminamos el listener cuando el componente se desmonte.
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
-//condicional de carga de pantalla
-  if (isLoading) { // Si los datos están cargando...
-    return <div>Loading...</div>; // Mostramos un mensaje de carga.
+
+  // Condicionales para manejar diferentes estados de carga y error.
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
-  if (error) { // Si hubo un error...
-    return <div>Error: {error}</div>; // Mostramos el error.
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
-  if (!courseData || courseData.length === 0) { // Si no hay datos del curso...
-    return <div>No course data available.</div>; // Mostramos un mensaje indicando que no hay datos del curso.
+  if (!courseData || courseData.length === 0) {
+    return <div>No course data available.</div>;
   }
 
-//courseData
   return (
     <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="fixed w-full z-10">
@@ -157,9 +148,8 @@ const Home: React.FC = () => {
           <MainContentPrueba
             sessionVideo={selectedSession.video}
             evaluationQuestions={selectedSession.questions}
-            onContinue={handleContinue}
-            onProgress={handleVideoProgress} // Pasamos la función handleVideoProgress como prop. 
-            selectedModuleId={selectedModuleId}           
+            onProgress={handleVideoProgress} // Pasamos la función handleVideoProgress como prop.
+            selectedModuleId={selectedModuleId}
           />
         </div>
         <SidebarPrueba
@@ -167,11 +157,11 @@ const Home: React.FC = () => {
           courseEvaluation={courseData[0].Evaluation}
           moduleEvaluations={courseData[0].courseModules.map(module => module.moduleEvaluation)}
           onSelect={handleSelect}
-          videoProgress={videoProgress} 
+          videoProgress={videoProgress}
         />
       </div>
     </div>
   );
 };
-//Home
+
 export default Home;

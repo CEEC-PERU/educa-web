@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Question } from '../../interfaces/StudentModule';
 import axios from 'axios';
 import './../../app/globals.css';
-import  {useResultModule } from '../../hooks/useResultModule';
+import { useResultModule } from '../../hooks/useResultModule';
 import { useAuth } from '../../context/AuthContext';
 
 interface MainContentProps {
@@ -12,17 +12,16 @@ interface MainContentProps {
   onContinue?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
-  selectedModuleId?: number | null; // New prop for selected module ID
+  selectedModuleId?: number | null;
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
   sessionVideo,
   evaluationQuestions,
   onFinish,
-  onContinue,
   onProgress,
   videoProgress = 0,
-  selectedModuleId  // Include selectedModuleId
+  selectedModuleId
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -30,12 +29,22 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [totalScore, setTotalScore] = useState(0);
   const [videoEnded, setVideoEnded] = useState(false);
   const [evaluationCompleted, setEvaluationCompleted] = useState(false);
+  const [showStartMessage, setShowStartMessage] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number }; 
+  const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
 
+  useEffect(() => {
+    setCurrentQuestion(0);
+    setSelectedOption(null);
+    setIsCorrect(null);
+    setTotalScore(0);
+    setVideoEnded(false);
+    setEvaluationCompleted(false);
+    setShowStartMessage(true);
+  }, [sessionVideo, evaluationQuestions, selectedModuleId]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -43,9 +52,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         const currentTime = videoRef.current!.currentTime;
         const duration = videoRef.current!.duration;
         const progress = (currentTime / duration) * 100;
+
         if (onProgress) {
           onProgress(progress, false);
         }
+
         setCurrentTime(currentTime);
       };
 
@@ -61,6 +72,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       if (videoProgress > 0 && !videoEnded) {
         const duration = videoRef.current!.duration;
         const targetTime = (videoProgress / 100) * duration;
+
         if (targetTime > 0 && targetTime < duration) {
           videoRef.current.currentTime = targetTime;
         }
@@ -73,7 +85,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         }
       };
     }
-  }, [onProgress, currentTime, videoProgress, videoEnded]);
+  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideo]);
 
   const handleNextQuestion = () => {
     setSelectedOption(null);
@@ -103,13 +115,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       user_id: userInfo.id,
       evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
       puntaje: totalScore,
-      module_id: selectedModuleId // Include module_id here
+      module_id: selectedModuleId
     };
 
-    createResultModule(moduloResultado)
+    createResultModule(moduloResultado);
 
-    console.log("MODULO_RESULTADO",moduloResultado)
-   
+    console.log("MODULO_RESULTADO", moduloResultado);
   };
 
   const handleVideoEnd = () => {
@@ -119,12 +130,17 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   };
 
-  
+  const handleStartEvaluation = () => {
+    setShowStartMessage(false);
+  };
+
+
   return (
     <div className="h-full w-full p-4">
       {sessionVideo ? (
         <div className="flex flex-col items-center">
           <video
+            key={sessionVideo} // Añadir key para forzar el re-renderizado
             controls
             className="w-full h-full"
             style={{ maxWidth: '100%' }}
@@ -133,15 +149,15 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
           >
             <source src={sessionVideo} type="video/mp4" />
           </video>
-          {videoEnded && (
-            <button
-              className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-              style={{ width: '270px', height: '50px' }}
-              onClick={onContinue}
-            >
-              Continuar
-            </button>
-          )}
+        </div>
+      ) :  showStartMessage ? (
+        <div className="flex flex-col items-center justify-center h-full">
+          <h1 className="text-5xl text-white mb-4">Ponte a Prueba</h1>
+          <p className="text-4xl text-white mb-4">Para finalizar el Modulo .¡Inicia la Evluaciòn!</p>
+          <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png" alt="Congratulations" className="mb-4  " />
+          <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg  border border-brandborder-400 px-4 py-2">
+            Comenzar Evaluación
+          </button>
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         <div className="flex flex-col justify-center items-center h-full w-full p-4">
