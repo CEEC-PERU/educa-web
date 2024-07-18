@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENT_ENTERPRISE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
+import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
 import { CourseStudent } from '../interfaces/CourseStudent';
 
 export const getCourseStudent = async (userToken: string, userId: number): Promise<CourseStudent | null> => {
@@ -62,5 +62,16 @@ export const getUsersByEnterpriseWithSessions = async (startDate: string, endDat
       Authorization: `Bearer ${localStorage.getItem('token')}`
     }
   });
+  return response.data;
+};
+// Nueva función para obtener estudiantes por empresa
+export const getStudentsByEnterprise = async (enterpriseId: number) => {
+  const response = await axios.get(`${API_GET_COURSESTUDENT_ENTERPRISE}/${enterpriseId}/students`);
+  return response.data;
+};
+
+// Nueva función para obtener cursos y notas por estudiante
+export const getCoursesWithGradesByStudent = async (userId:number) => {
+  const response = await axios.get(`${API_GET_COURSESTUDENTS}/${userId}/grades`);
   return response.data;
 };

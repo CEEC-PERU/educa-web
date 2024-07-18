@@ -24,6 +24,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (enterprise) {
@@ -48,8 +49,25 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
     }
   };
 
+  const handleBlur = (field: string) => {
+    setTouchedFields(prev => ({ ...prev, [field]: true }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setTouchedFields({
+      name: true,
+      image_log: true,
+      image_fondo: true
+    });
+
+    // Validar campos
+    if (!formData.name || !imageLogFile || !imageFondoFile) {
+      setError('Todos los campos son obligatorios');
+      return;
+    }
+
     setLoading(true);
     try {
       let imageLogUrl = formData.image_log;
@@ -84,14 +102,37 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
         {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
         {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
 
-        <FormField id="name" label="Nombre" type="text" value={formData.name} onChange={handleChange} />
+        <FormField
+          id="name"
+          label="Nombre"
+          type="text"
+          value={formData.name}
+          onChange={handleChange}
+          onBlur={() => handleBlur('name')}
+          error={!formData.name && touchedFields['name']}
+          touched={touchedFields['name']}
+        />
         <div className="mb-4">
           <label htmlFor="image_log" className="block text-blue-400 mb-2">Imagen Logo</label>
-          <MediaUploadPreview onMediaUpload={(file) => handleFileChange(file, 'log')} accept="image/*" label="Subir Imagen Logo" initialPreview={formData.image_log} />
+          <MediaUploadPreview
+            onMediaUpload={(file) => handleFileChange(file, 'log')}
+            accept="image/*"
+            label="Subir Imagen Logo"
+            initialPreview={formData.image_log}
+            error={!imageLogFile && touchedFields['image_log']}
+            touched={touchedFields['image_log']}
+          />
         </div>
         <div className="mb-4">
           <label htmlFor="image_fondo" className="block text-blue-400 mb-2">Imagen Fondo</label>
-          <MediaUploadPreview onMediaUpload={(file) => handleFileChange(file, 'fondo')} accept="image/*" label="Subir Imagen Fondo" initialPreview={formData.image_fondo} />
+          <MediaUploadPreview
+            onMediaUpload={(file) => handleFileChange(file, 'fondo')}
+            accept="image/*"
+            label="Subir Imagen Fondo"
+            initialPreview={formData.image_fondo}
+            error={!imageFondoFile && touchedFields['image_fondo']}
+            touched={touchedFields['image_fondo']}
+          />
         </div>
         <div className="flex justify-end space-x-4">
           <button type="button" onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded">

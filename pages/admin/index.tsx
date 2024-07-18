@@ -6,8 +6,8 @@ import { getUsersByEnterprise } from '../../services/userService';
 import { getUsersActivityCount } from '../../services/appSessionService';
 import { getEnterprises } from '../../services/enterpriseService';
 import { Enterprise } from '../../interfaces/Enterprise';
+import AlertComponent from '../../components/AlertComponent';
 import './../../app/globals.css';
-
 
 const AdminPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -20,6 +20,11 @@ const AdminPage: React.FC = () => {
     visitorUsers: 0
   });
   const [error, setError] = useState<string | null>(null);
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
+    startDate: false,
+    endDate: false,
+    selectedEnterprise: false,
+  });
   const router = useRouter();
 
   useEffect(() => {
@@ -40,29 +45,6 @@ const AdminPage: React.FC = () => {
     fetchEnterprises();
   }, []);
 
-  useEffect(() => {
-    if (selectedEnterprise !== null) {
-      const fetchData = async () => {
-        try {
-          const [usersData, visitorData] = await Promise.all([
-            getUsersByEnterprise(selectedEnterprise),
-            getUsersActivityCount(startDate, endDate, selectedEnterprise)
-          ]);
-
-          setFilteredData({
-            totalUsers: usersData.totalUsers,
-            visitorUsers: visitorData.length
-          });
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setError('Error fetching data');
-        }
-      };
-
-      fetchData();
-    }
-  }, [selectedEnterprise, startDate, endDate]);
-
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
     localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
@@ -70,26 +52,41 @@ const AdminPage: React.FC = () => {
 
   const handleEnterpriseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedEnterprise(Number(e.target.value));
+    setTouchedFields((prev) => ({ ...prev, selectedEnterprise: true }));
   };
 
   const handleFilterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (selectedEnterprise !== null) {
-      const fetchData = async () => {
-        try {
-          const visitorData = await getUsersActivityCount(startDate, endDate, selectedEnterprise);
-          setFilteredData({
-            ...filteredData,
-            visitorUsers: visitorData.length
-          });
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setError('Error fetching data');
-        }
-      };
+    setTouchedFields({
+      startDate: true,
+      endDate: true,
+      selectedEnterprise: true,
+    });
 
-      fetchData();
+    if (!startDate || !endDate || selectedEnterprise === null) {
+      setError('Todos los campos deben ser llenados');
+      return;
     }
+
+    const fetchData = async () => {
+      try {
+        const [usersData, visitorData] = await Promise.all([
+          getUsersByEnterprise(selectedEnterprise),
+          getUsersActivityCount(startDate, endDate, selectedEnterprise)
+        ]);
+
+        setFilteredData({
+          totalUsers: usersData.totalUsers,
+          visitorUsers: visitorData.length
+        });
+        setError(null); // Clear the error message if data is successfully fetched
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Error fetching data');
+      }
+    };
+
+    fetchData();
   };
 
   return (
@@ -98,6 +95,7 @@ const AdminPage: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
+          {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <form className="flex items-center space-x-4 mb-4" onSubmit={handleFilterSubmit}>
               <div>
@@ -106,7 +104,8 @@ const AdminPage: React.FC = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  onBlur={() => setTouchedFields((prev) => ({ ...prev, startDate: true }))}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
                 />
               </div>
               <div>
@@ -114,7 +113,8 @@ const AdminPage: React.FC = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-6"
+                  onBlur={() => setTouchedFields((prev) => ({ ...prev, endDate: true }))}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-6 ${touchedFields.endDate && !endDate ? 'border-red-500' : ''}`}
                 />
               </div>
               <div>
@@ -131,7 +131,8 @@ const AdminPage: React.FC = () => {
               <select
                 value={selectedEnterprise || ''}
                 onChange={handleEnterpriseChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                onBlur={() => setTouchedFields((prev) => ({ ...prev, selectedEnterprise: true }))}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields.selectedEnterprise && !selectedEnterprise ? 'border-red-500' : ''}`}
               >
                 <option value="" disabled>Seleccione una empresa</option>
                 {enterprises.map(enterprise => (

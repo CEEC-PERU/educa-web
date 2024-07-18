@@ -65,6 +65,8 @@ export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 //obtener cursos asignados al estudinate
 export const API_GET_COURSESTUDENT_ENTERPRISE= `${baseURL}/api/coursestudents/enterprise`;
 
+export const API_GET_COURSESTUDENTS= `${baseURL}/api/coursestudents/students`;
+
 export const API_GET_COURSESTUDENT_ASSIGNED= `${baseURL}/api/courseStudents/assigned`;
 
 export const API_POST_COURSESTUDENT= `${baseURL}/api/coursestudents/assign`;

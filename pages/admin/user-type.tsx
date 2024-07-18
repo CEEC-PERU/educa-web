@@ -2,12 +2,12 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
-import { getCompanies, getUsersByCompanyAndRole } from '../../services/userService';
+import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
 import FormField from '../../components/FormField';
-import TableUser from '../../components/TableUser'; // Importar la tabla reutilizable
-import ButtonComponent from '../../components/ButtonDelete'; // Importar el componente ButtonComponent
+import TableUser from '../../components/TableUser';
+import ButtonComponent from '../../components/ButtonDelete';
 import UserForm from '../../components/Admin/UserForm';
-import Modal from '../../components/Admin/Modal'; // Importar el componente Modal
+import Modal from '../../components/Admin/Modal';
 
 import { User } from '../../interfaces/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
@@ -21,9 +21,11 @@ const RoleDetail: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [filter, setFilter] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
+  const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
+  const CONTENT_ROLE_ID = 3; // Reemplaza este valor con el ID real del rol de contenido
 
   const buttonColors = [
     'bg-gradient-purple text-white',
@@ -48,19 +50,22 @@ const RoleDetail: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedCompany && roleId) {
-      const fetchUsers = async () => {
-        try {
-          const usersData = await getUsersByCompanyAndRole(selectedCompany, Number(roleId));
-          console.log('Users data:', usersData); // Verificar la respuesta de la API
-          setUsers(usersData);
-        } catch (error) {
-          console.error('Error fetching users:', error);
+    const fetchUsers = async () => {
+      try {
+        let usersData: User[] = [];
+        if (roleId && (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)) {
+          usersData = await getUsersByRole(roleId.toString());
+        } else if (selectedCompany && roleId) {
+          usersData = await getUsersByCompanyAndRole(selectedCompany, Number(roleId));
         }
-      };
+        console.log('Users data:', usersData);
+        setUsers(usersData);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
 
-      fetchUsers();
-    }
+    fetchUsers();
   }, [selectedCompany, roleId]);
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -88,6 +93,16 @@ const RoleDetail: React.FC = () => {
     { header: 'DNI', accessor: 'dni' },
     { header: 'Contraseña', accessor: 'password' },
   ];
+
+  if (roleId && (Number(roleId) === STUDENT_ROLE_ID)) {
+    columnsWithProfile.push({ header: 'Sesiones', accessor: 'session_count' });
+    columnsWithoutProfile.push({ header: 'Sesiones', accessor: 'session_count' });
+  }
+
+  if (roleId && (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)) {
+    columnsWithProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
+    columnsWithoutProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
+  }
 
   const handleActionClick = (row: any) => {
     router.push(`/admin/editUser/${row.user_id}`);
@@ -151,17 +166,19 @@ const RoleDetail: React.FC = () => {
               />
             </div>
           </div>
-          <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
-            {companies.map((company, index) => (
-              <ButtonComponent
-                key={company.enterprise_id}
-                buttonLabel={company.name}
-                backgroundColor={buttonColors[index % buttonColors.length]}
-                buttonSize="py-2 px-4"
-                onClick={() => setSelectedCompany(company.enterprise_id)}
-              />
-            ))}
-          </div>
+          {roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID && (
+            <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
+              {companies.map((company, index) => (
+                <ButtonComponent
+                  key={company.enterprise_id}
+                  buttonLabel={company.name}
+                  backgroundColor={buttonColors[index % buttonColors.length]}
+                  buttonSize="py-2 px-4"
+                  onClick={() => setSelectedCompany(company.enterprise_id)}
+                />
+              ))}
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
             <FormField
               id="filter"

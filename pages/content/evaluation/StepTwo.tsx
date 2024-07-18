@@ -72,17 +72,19 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
       newErrors[index] = {
         question_text: question.question_text.trim() === '',
         type_id: question.type_id === 0,
-        score: question.score <= 0
+        score: question.score <= 0,
+        image: question.image?.trim() === ''
       };
 
-      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score) {
+      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score || newErrors[index].image) {
         hasErrors = true;
         setTouchedFields(prev => ({
           ...prev,
           [index]: {
             question_text: true,
             type_id: true,
-            score: true
+            score: true,
+            image: true
           }
         }));
       }
@@ -99,7 +101,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
   };
 
   const addQuestionToState = () => {
-    setQuestions([...questions, { question_text: '', type_id: questionTypes[0]?.type_id || 1, score: 0, evaluation_id: 0, image: '' }]);
+    setQuestions([...questions, { question_text: '', type_id: 0, score: 0, evaluation_id: 0, image: '' }]);
   };
 
   return (
@@ -125,6 +127,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             onBlur={() => handleBlur(index, 'type_id')}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields[index]?.type_id && errors[index]?.type_id ? 'border-red-500' : ''}`}
           >
+            <option value="">Seleccionar Tipo de Pregunta</option>
             {questionTypes.map((type) => (
               <option key={type.type_id} value={type.type_id}>
                 {type.name}
@@ -145,7 +148,9 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             onMediaUpload={(file) => handleImageUpload(index, file)}
             accept="image/*"
             label={`question-${index}`}
-            initialPreview={question.image}
+            initialPreview={question.image || ''}
+            error={errors[index]?.image}
+            touched={touchedFields[index]?.image}
           />
         </div>
       ))}

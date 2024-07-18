@@ -1,4 +1,3 @@
-// pages/corporate/courses.tsx
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Corporate/CorporateSideBar';
@@ -20,6 +19,7 @@ const CorporateCourses: React.FC = () => {
         setLoading(true);
         try {
           const response = await getCoursesByEnterprise(enterpriseId);
+          console.log('Courses data:', response);  // Verificar que los datos sean correctos
           setCourses(response);
         } catch (error) {
           console.error('Error fetching courses:', error);
@@ -49,7 +49,11 @@ const CorporateCourses: React.FC = () => {
                       <h3 className="text-lg font-semibold">{course.name}</h3>
                       <p>{course.description_short}</p>
                     </div>
-                    <CircularBar percentage={course.progressPercentage} />
+                    <div className="flex space-x-4">
+                      <CircularBar percentage={course.progressPercentage} label="Progreso" />
+                      <CircularBar percentage={course.completedPercentage} label="Finalizado" />
+                      <CircularBar percentage={course.approvedPercentage} label="Aprobado" />
+                    </div>
                   </div>
                 </li>
               ))}
