@@ -5,6 +5,7 @@ import './../../app/globals.css';
 import { useResultModule } from '../../hooks/useResultModule';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
+
 interface MainContentProps {
   sessionVideo?: string;
   evaluationQuestions?: Question[];
@@ -13,7 +14,7 @@ interface MainContentProps {
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
   selectedModuleId?: number | null;
-  moduleResults?: ModuleResults[];
+  moduleResults?: ModuleResults[]; // Añadido para recibir los resultados del módulo
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
@@ -23,7 +24,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   onProgress,
   videoProgress = 0,
   selectedModuleId,
-  moduleResults
+  moduleResults // Añadido para recibir los resultados del módulo
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -37,7 +38,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
-  const router = useRouter(); 
+  const router = useRouter(); // Import useRouter
 
   useEffect(() => {
     setCurrentQuestion(0);
@@ -122,11 +123,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     };
 
     createResultModule(moduloResultado);
-
     console.log("MODULO_RESULTADO", moduloResultado);
 
-      // Reload the page
-      router.reload();
+    // Reload the page
+    router.reload();
   };
 
   const handleVideoEnd = () => {
@@ -141,6 +141,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const moduleResult = moduleResults?.find(result => result.module_id === selectedModuleId);
+
+  const isFinalEvaluation = !selectedModuleId;
 
   return (
     <div className="h-full w-full p-4">
@@ -164,9 +166,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
           </div>
         ) : showStartMessage ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <h1 className="text-5xl text-white mb-4">Ponte a Prueba</h1>
-            <p className="text-4xl text-white mb-4">Para finalizar el Modulo .¡Inicia la Evaluación!</p>
-            <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png" alt="Congratulations" className="mb-4" />
+            <h1 className={`text-5xl text-white mb-4 ${isFinalEvaluation ? '' : 'hidden'}`}>EVALUACIÓN FINAL</h1>
+            <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? '' : 'hidden'}`}>Para finalizar el Curso incia esto</p>
+            <h1 className={`text-5xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Ponte a Prueba</h1>
+            <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Para finalizar el Módulo ¡Inicia la Evaluación!</p>
+            <img src={isFinalEvaluation ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png" : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"} alt="Congratulations" className="mb-4" />
             <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg border border-brandborder-400 px-4 py-2">
               Comenzar Evaluación
             </button>
