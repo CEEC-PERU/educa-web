@@ -73,6 +73,7 @@ export interface ModuleResults{
 export interface CourseModule {
   name: string;
   is_active: boolean;
+  created_at:Date;
   module_id: number;
   evaluation_id: number;
   usermoduleprogress: UserModuleProgress[];

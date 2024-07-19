@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Question } from '../../interfaces/StudentModule';
+import { Question, ModuleResults } from '../../interfaces/StudentModule';
 import axios from 'axios';
 import './../../app/globals.css';
 import { useResultModule } from '../../hooks/useResultModule';
 import { useAuth } from '../../context/AuthContext';
-
+import { useRouter } from 'next/router';
 interface MainContentProps {
   sessionVideo?: string;
   evaluationQuestions?: Question[];
@@ -13,6 +13,7 @@ interface MainContentProps {
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
   selectedModuleId?: number | null;
+  moduleResults?: ModuleResults[];
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
@@ -21,7 +22,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   onFinish,
   onProgress,
   videoProgress = 0,
-  selectedModuleId
+  selectedModuleId,
+  moduleResults
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -35,6 +37,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
+  const router = useRouter(); 
 
   useEffect(() => {
     setCurrentQuestion(0);
@@ -121,6 +124,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     createResultModule(moduloResultado);
 
     console.log("MODULO_RESULTADO", moduloResultado);
+
+      // Reload the page
+      router.reload();
   };
 
   const handleVideoEnd = () => {
@@ -134,13 +140,14 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setShowStartMessage(false);
   };
 
+  const moduleResult = moduleResults?.find(result => result.module_id === selectedModuleId);
 
   return (
     <div className="h-full w-full p-4">
       {sessionVideo ? (
         <div className="flex flex-col items-center">
           <video
-            key={sessionVideo} // Añadir key para forzar el re-renderizado
+            key={sessionVideo}
             controls
             className="w-full h-full"
             style={{ maxWidth: '100%' }}
@@ -150,57 +157,65 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             <source src={sessionVideo} type="video/mp4" />
           </video>
         </div>
-      ) :  showStartMessage ? (
-        <div className="flex flex-col items-center justify-center h-full">
-          <h1 className="text-5xl text-white mb-4">Ponte a Prueba</h1>
-          <p className="text-4xl text-white mb-4">Para finalizar el Modulo .¡Inicia la Evluaciòn!</p>
-          <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png" alt="Congratulations" className="mb-4  " />
-          <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg  border border-brandborder-400 px-4 py-2">
-            Comenzar Evaluación
-          </button>
-        </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
-        <div className="flex flex-col justify-center items-center h-full w-full p-4">
-          {!evaluationCompleted ? (
-            <div className="max-w-2xl w-full">
-              <h1 className="text-white text-center text-3xl pb-7">Evaluación</h1>
-              <h3 className="text-white text-center text-3xl pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
-              <p className="text-white text-left text-xl pb-5">Puntaje: {evaluationQuestions[currentQuestion]?.score}</p>
-              <div className="flex justify-between items-center">
-                <ul className="text-white text-center w-1/2">
-                  {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                    <li key={idx}>
-                      <button
-                        className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                        style={{ width: '270px', height: '50px' }}
-                        onClick={() => handleOptionSelect(idx, option.is_correct)}
-                        disabled={selectedOption !== null}
-                      >
-                        {option.option_text}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-                {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
-              </div>
-            </div>
-          ) : (
-            <div className="mt-6 text-white text-center text-2xl">
-              Puntaje Total: {totalScore}
-            </div>
-          )}
-          {selectedOption !== null && !evaluationCompleted && (
-            <button
-              className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-              style={{ width: '270px', height: '50px' }}
-              onClick={handleNextQuestion}
-            >
-              {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}
+        moduleResult ? (
+          <div className="mt-6 text-white text-center text-2xl">
+            Puntaje Total: {moduleResult.puntaje}
+          </div>
+        ) : showStartMessage ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <h1 className="text-5xl text-white mb-4">Ponte a Prueba</h1>
+            <p className="text-4xl text-white mb-4">Para finalizar el Modulo .¡Inicia la Evaluación!</p>
+            <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png" alt="Congratulations" className="mb-4" />
+            <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg border border-brandborder-400 px-4 py-2">
+              Comenzar Evaluación
             </button>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex flex-col justify-center items-center h-full w-full p-4">
+            {!evaluationCompleted ? (
+              <div className="max-w-2xl w-full">
+                <h1 className="text-white text-center text-3xl pb-7">Evaluación</h1>
+                <h3 className="text-white text-center text-3xl pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
+                <p className="text-white text-left text-xl pb-5">Puntaje: {evaluationQuestions[currentQuestion]?.score}</p>
+                <div className="flex justify-between items-center">
+                  <ul className="text-white text-center w-1/2">
+                    {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                      <li key={idx}>
+                        <button
+                          className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
+                          style={{ width: '270px', height: '50px' }}
+                          onClick={() => handleOptionSelect(idx, option.is_correct)}
+                          disabled={selectedOption !== null}
+                        >
+                          {option.option_text}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
+                </div>
+              </div>
+            ) : (
+              <div className="mt-6 text-white text-center text-2xl">
+                Puntaje Total: {totalScore}
+              </div>
+            )}
+            {selectedOption !== null && !evaluationCompleted && (
+              <button
+                className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
+                style={{ width: '270px', height: '50px' }}
+                onClick={handleNextQuestion}
+              >
+                {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}
+              </button>
+            )}
+          </div>
+        )
       ) : (
-        <div className="flex justify-center items-center h-full w-full p-4">Selecciona una sesión o Evaluación</div>
+        <div className="flex justify-center items-center h-full w-full p-4">
+          Selecciona una sesión o Evaluación
+        </div>
       )}
     </div>
   );

@@ -7,7 +7,6 @@ import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../utils/Endpoints';
 import { useAuth } from '../../context/AuthContext';
 
-// Inicializa la conexión con el socket
 const socket = io(API_SOCKET_URL);
 
 interface SidebarProps {
@@ -15,7 +14,7 @@ interface SidebarProps {
   courseEvaluation: ModuleEvaluation;
   moduleEvaluations: ModuleEvaluation[];
   onSelect: (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => void;
-  videoProgress?: { [key: string]: number }; // Nueva prop para el progreso de los videos
+  videoProgress?: { [key: string]: number };
 }
 
 const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, moduleEvaluations, onSelect, videoProgress = {} }) => {
@@ -58,19 +57,16 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
     return progressNumber;
   };
 
-  const isModuleEvaluationLocked = (moduleIndex: number, modules: CourseModule[]) => {
-    const currentModule = modules[moduleIndex];
-    return !currentModule.usermoduleprogress?.[0]?.is_completed || !areAllSessionsCompleted(currentModule.moduleSessions.flatMap(session => session.usersessionprogress));
-  };
-
-  const isLocked = (progress: number, allCompleted: boolean, sessionIndex: number, moduleIndex: number, modules: CourseModule[]) => {
+  const isLocked = (moduleIndex: number, sessionIndex: number) => {
     if (moduleIndex === 0 && sessionIndex === 0) {
       return false;
     }
     if (sessionIndex === 0) {
-      return !allCompleted;
+      const previousModule = courseModules[moduleIndex - 1];
+      return previousModule.usermoduleprogress?.[0]?.progress !== 100;
     }
-    const previousSessionProgress = getSessionProgress(modules[moduleIndex].moduleSessions[sessionIndex - 1].usersessionprogress, videoProgress[modules[moduleIndex].moduleSessions[sessionIndex - 1].video_enlace] || 0);
+    const currentModule = courseModules[moduleIndex];
+    const previousSessionProgress = getSessionProgress(currentModule.moduleSessions[sessionIndex - 1].usersessionprogress, videoProgress[currentModule.moduleSessions[sessionIndex - 1].video_enlace] || 0);
     return previousSessionProgress !== 100;
   };
 
@@ -98,8 +94,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
             {module.moduleSessions.map((session, sessionIndex) => {
               const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
               const roundedSessionProgress = Math.round(sessionProgress);
-              const allSessionsCompleted = areAllSessionsCompleted(session.usersessionprogress);
-              const locked = isLocked(sessionProgress, allSessionsCompleted, sessionIndex, moduleIndex, courseModules);
+              const locked = isLocked(moduleIndex, sessionIndex);
 
               return (
                 <div
