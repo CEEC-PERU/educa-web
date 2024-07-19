@@ -4,7 +4,7 @@ import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
 import { getCoursesByEnterprise } from '../../services/courseStudent';
 import Loader from '../../components/Loader';
-import CircularBar from '../../components/Corporate/CircularBar';
+import CourseCard from './CourseCard'; // Import the new component
 import './../../app/globals.css';
 
 const CorporateCourses: React.FC = () => {
@@ -19,7 +19,7 @@ const CorporateCourses: React.FC = () => {
         setLoading(true);
         try {
           const response = await getCoursesByEnterprise(enterpriseId);
-          console.log('Courses data:', response);  // Verificar que los datos sean correctos
+          console.log('Courses data:', response); // Verify that the data is correct
           setCourses(response);
         } catch (error) {
           console.error('Error fetching courses:', error);
@@ -41,23 +41,11 @@ const CorporateCourses: React.FC = () => {
           {loading ? (
             <Loader />
           ) : (
-            <ul>
-              {courses.map(course => (
-                <li key={course.course_id} className="mb-4">
-                  <div className="flex items-center">
-                    <div className="flex-grow">
-                      <h3 className="text-lg font-semibold">{course.name}</h3>
-                      <p>{course.description_short}</p>
-                    </div>
-                    <div className="flex space-x-4">
-                      <CircularBar percentage={course.progressPercentage} label="Progreso" />
-                      <CircularBar percentage={course.completedPercentage} label="Finalizado" />
-                      <CircularBar percentage={course.approvedPercentage} label="Aprobado" />
-                    </div>
-                  </div>
-                </li>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {courses.map((course) => (
+                <CourseCard key={course.course_id} course={course} />
               ))}
-            </ul>
+            </div>
           )}
         </main>
       </div>

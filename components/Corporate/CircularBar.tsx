@@ -1,4 +1,3 @@
-// components/Corporate/CircularBar.tsx
 import React from 'react';
 
 interface CircularBarProps {
@@ -9,6 +8,15 @@ interface CircularBarProps {
 const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
   const circumference = 2 * Math.PI * 45; // Radio de 45 para el círculo
   const offset = circumference - (percentage / 100) * circumference;
+
+  let strokeColor;
+  if (percentage <= 30) {
+    strokeColor = 'red';
+  } else if (percentage <= 70) {
+    strokeColor = 'blue';
+  } else {
+    strokeColor = 'green';
+  }
 
   return (
     <div className="relative">
@@ -22,7 +30,7 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
           cy="50"
         />
         <circle
-          stroke="blue"
+          stroke={strokeColor}
           fill="transparent"
           strokeWidth="10"
           r="45"
@@ -38,7 +46,7 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
           textAnchor="middle"
           dy=".3em"
           fontSize="20px"
-          fill="blue"
+          fill={strokeColor}
         >
           {percentage}%
         </text>
