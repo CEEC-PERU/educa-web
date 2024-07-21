@@ -4,13 +4,13 @@ import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
 import { getUsersByEnterpriseWithSessions } from '../../services/courseStudent';
 import Loader from '../../components/Loader';
-import Table from '../../components/Table';
+import TopStudentsChart from '../../components/Corporate/TopStudent';
 import './../../app/globals.css';
 
 const CorporateUsers: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
-  const [users, setUsers] = useState<any[]>([]);
+  const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState('');
@@ -18,7 +18,7 @@ const CorporateUsers: React.FC = () => {
 
   useEffect(() => {
     if (enterpriseId) {
-      const fetchUsers = async () => {
+      const fetchStudents = async () => {
         setLoading(true);
         try {
           const today = new Date();
@@ -27,53 +27,35 @@ const CorporateUsers: React.FC = () => {
           setStartDate(firstDayOfMonth);
           setEndDate(lastDayOfMonth);
           const response = await getUsersByEnterpriseWithSessions(firstDayOfMonth, lastDayOfMonth, enterpriseId);
-          if (Array.isArray(response)) {
-            setUsers(response);
-          } else {
-            setError('Unexpected response format');
-          }
+          setStudents(response);
         } catch (error) {
-          console.error('Error fetching users:', error);
-          setError('Error fetching users');
+          console.error('Error fetching students:', error);
+          setError('Error fetching students');
         } finally {
           setLoading(false);
         }
       };
-      fetchUsers();
+      fetchStudents();
     }
   }, [enterpriseId]);
 
   useEffect(() => {
     if (enterpriseId && startDate && endDate) {
-      const fetchUsers = async () => {
+      const fetchStudents = async () => {
         setLoading(true);
         try {
           const response = await getUsersByEnterpriseWithSessions(startDate, endDate, enterpriseId);
-          if (Array.isArray(response)) {
-            setUsers(response);
-          } else {
-            setError('Unexpected response format');
-          }
+          setStudents(response);
         } catch (error) {
-          console.error('Error fetching users:', error);
-          setError('Error fetching users');
+          console.error('Error fetching students:', error);
+          setError('Error fetching students');
         } finally {
           setLoading(false);
         }
       };
-      fetchUsers();
+      fetchStudents();
     }
   }, [enterpriseId, startDate, endDate]);
-
-  const columns = [
-    { label: 'DNI', key: 'dni' },
-    { label: 'Ingresos', key: 'loginCount' }
-  ];
-
-  const rows = users.map(user => ({
-    dni: user.dni,
-    loginCount: user.loginCount
-  }));
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
@@ -82,24 +64,27 @@ const CorporateUsers: React.FC = () => {
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
           <h2 className="text-2xl font-bold mb-6">Usuarios de la Empresa</h2>
-          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-700">Fecha de inicio:</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700">Fecha de fin:</label>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
-              />
+          <div className="flex flex-wrap gap-4 mb-4">
+            <TopStudentsChart students={students} />
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-gray-700">Fecha de inicio:</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700">Fecha de fin:</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                />
+              </div>
             </div>
           </div>
           {loading ? (
@@ -107,7 +92,25 @@ const CorporateUsers: React.FC = () => {
           ) : error ? (
             <div className="text-red-500">{error}</div>
           ) : (
-            <Table columns={columns} rows={rows} />
+            <>
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {students.map(student => (
+                  <div key={student.id} className="border-4 border-gray-400 p-4 rounded-md shadow-sm bg-purple-100">
+                    <div className="flex items-center mb-2">
+                      <img src={student.profile_picture || 'default_profile_picture.png'} alt={`${student.first_name} ${student.last_name}`} className="w-12 h-12 rounded-full bg-gray-200" />
+                      <div className="ml-4">
+                        <p className="font-semibold">{student.first_name} {student.last_name}</p>
+                        <p className="text-gray-500">{student.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-gray-600">Sesiones iniciadas:</p>
+                      <p className="font-bold">{student.loginCount}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </main>
       </div>

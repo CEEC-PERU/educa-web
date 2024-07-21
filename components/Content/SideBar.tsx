@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
   return (
     <div className="fixed h-96 z-50">
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-brandmorado-700 text-white transition-all transform ${
+        className={`bg-gradient-to-r h-dvh rounded-r-lg  bg-blue-600 text-white transition-all transform ${
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}

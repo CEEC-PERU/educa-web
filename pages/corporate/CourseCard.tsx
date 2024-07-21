@@ -43,11 +43,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               {course.students && course.students.slice(0, 4).map((student, index) => (
                 <img key={index} src={student.profile_picture} alt={student.name} className="w-10 h-10 rounded-full border-2 border-white" />
               ))}
-              {course.studentCount > 4 && (
-                <div className="flex items-center justify-center w-10 h-10 bg-gray-200 rounded-full text-gray-600 text-sm">
-                  +{course.studentCount - 4}
-                </div>
-              )}
             </div>
             <span className="text-gray-600 ml-3 text-center">{course.studentCount} estudiantes</span>
           </div>
