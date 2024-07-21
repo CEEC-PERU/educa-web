@@ -1,104 +1,77 @@
-import React, { useState, useEffect } from 'react'; // Importamos React y hooks de estado y efectos.
-import { useRouter } from 'next/router'; // Importamos el hook de enrutamiento de Next.js.
-import SidebarPrueba from '../../../components/student/SideBarPrueba'; // Importamos el componente SidebarPrueba.
-import { useAuth } from '../../../context/AuthContext'; // Importamos el contexto de autenticación.
-import Navbar from '../../../components/Navbar'; // Importamos el componente Navbar.
-import MainContentPrueba from '../../../components/student/MainContentPrueba'; // Importamos el componente MainContentPrueba.
-import { Profile } from '../../../interfaces/UserInterfaces'; // Importamos la interfaz Profile.
-import { Question, ModuleEvaluation, ModuleSessions } from '../../../interfaces/StudentModule'; // Importamos las interfaces relacionadas con los módulos de estudiante.
-import { useModuleDetail } from '../../../hooks/useModuleDetail'; // Importamos el hook personalizado para obtener detalles del módulo.
-import DrawerNavigation from '../../../components/student/DrawerNavigation'; // Importamos el componente DrawerNavigation.
-import io from 'socket.io-client'; // Importamos la biblioteca Socket.io para cliente.
-import { API_SOCKET_URL } from '../../../utils/Endpoints'; // Importamos la URL del socket desde los endpoints configurados.
-import { progress } from '@material-tailwind/react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import SidebarPrueba from '../../../components/student/SideBarPrueba';
+import { useAuth } from '../../../context/AuthContext';
+import Navbar from '../../../components/Navbar';
+import MainContentPrueba from '../../../components/student/MainContentPrueba';
+import { Profile } from '../../../interfaces/UserInterfaces';
+import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../../../interfaces/StudentModule';
+import { useModuleDetail } from '../../../hooks/useModuleDetail';
+import DrawerNavigation from '../../../components/student/DrawerNavigation';
+import io from 'socket.io-client';
+import { API_SOCKET_URL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
-const socket = io(API_SOCKET_URL); // Inicializamos la conexión al servidor de sockets con la URL definida.
+import LoadingIndicator from '../../../components/student/LoadingIndicator'; 
+const socket = io(API_SOCKET_URL);
 
 const Home: React.FC = () => {
-  const { logout, user, profileInfo } = useAuth(); // Obtenemos funciones y estados del contexto de autenticación.
-  const router = useRouter(); 
-  const { course_id } = router.query; // Obtenemos el ID del curso desde los parámetros de la URL.
-  const userInfo = user as { id: number }; // Tipamos el objeto `user` para que tenga un campo `id`.
-  const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0'); // Convertimos el ID del curso en un número, manejando el caso de que sea un array.
-  const { courseData, isLoading, error } = useModuleDetail(courseIdNumber); // Usamos nuestro hook personalizado para obtener los datos del curso.
+  const { logout, user, profileInfo } = useAuth();
+  const router = useRouter();
+  const { course_id } = router.query;
+  const userInfo = user as { id: number };
+  const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
+  const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
+  
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true); // Estado para controlar si el drawer (navegación lateral) está abierto.
-  const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({}); // Estado para rastrear el progreso del video.
+  let name = '';
+  let uri_picture = '';
 
-  let name = ''; // Variable para el nombre del usuario.
-  let uri_picture = ''; // Variable para la URL de la imagen de perfil.
-
-
-  if (profileInfo) { // Si tenemos información del perfil...
-    const profile = profileInfo as Profile; // Tipamos la información del perfil.
-    name = profile.first_name; // Obtenemos el primer nombre.
-    uri_picture = profile.profile_picture!; // Obtenemos la URL de la imagen de perfil.
+  if (profileInfo) { 
+    const profile = profileInfo as Profile; 
+    name = profile.first_name; 
+    uri_picture = profile.profile_picture!;
   }
 
   const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => {
-    setSelectedModuleId(moduleId || null); 
+    setSelectedModuleId(moduleId || null);
+
     if (Array.isArray(evaluation)) {
       setSelectedSession({ questions: evaluation, module_id: moduleId });
     } else if (evaluation && 'questions' in evaluation) {
-      
       setSelectedSession({ questions: evaluation.questions, module_id: moduleId });
     } else {
       const module = courseData?.[0]?.courseModules.find(m =>
         m.moduleSessions.some(s => s.name === sessionName)
       );
-  
+
       if (module) {
         const session = module.moduleSessions.find(s => s.name === sessionName);
+
         if (session) {
-          setSelectedSession({ 
-            video: session.video_enlace, 
-            session_id: session.session_id ,// Almacena session_id aquí
-            module_id: moduleId 
+          setSelectedSession({
+            video: session.video_enlace,
+            session_id: session.session_id,
+            module_id: moduleId
           });
         }
       }
     }
   };
-  
-  const handleContinue = () => { // Función para manejar el botón de continuar.
-    const currentModule = courseData?.[0]?.courseModules.find(m =>
-      m.moduleSessions.some(s => s.video_enlace === selectedSession.video)
-    );
 
-    if (!currentModule) return;
-
-    const currentSessionIndex = currentModule.moduleSessions.findIndex(s => s.video_enlace === selectedSession.video);
-
-    if (currentSessionIndex === -1) return;
-
-    const nextSession = currentModule.moduleSessions[currentSessionIndex + 1];
-
-    if (nextSession) {
-      setSelectedSession({
-        video: nextSession.video_enlace,
-        session_id: nextSession.session_id,
-        module_id: selectedSession.module_id // Mantener el module_id aquí
-      });
-    } else {
-      setSelectedSession({
-        questions: currentModule.moduleEvaluation.questions,
-        module_id: selectedSession.module_id // Mantener el module_id aquí
-      });
-    }
-  };
-
-  const toggleSidebar = () => { // Función para alternar el estado del drawer.
+  const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
   const handleVideoProgress = (progress: number, isCompleted: boolean) => {
     const progressupdate = Math.round(progress);
   
-    if (selectedSession.video && selectedSession.session_id) { // Verifica que session_id esté presente
+    if (selectedSession.video && selectedSession.session_id) {
       const sessionProgress = {
-        session_id: selectedSession.session_id, // Usa el session_id dinámico
+        session_id: selectedSession.session_id,
         progress: progressupdate,
         is_completed: isCompleted,
         user_id: userInfo.id
@@ -113,34 +86,34 @@ const Home: React.FC = () => {
       }));
     }
   };
-  //envio de carga de datos
+
   useEffect(() => {
-    const handleResize = () => { // Función para manejar el redimensionamiento de la ventana.
+    const handleResize = () => {
       if (window.innerWidth > 1014) {
-        setIsDrawerOpen(true); // Abrimos el drawer si el ancho de la ventana es mayor a 1014px.
+        setIsDrawerOpen(true);
       }
     };
 
-    window.addEventListener('resize', handleResize); // Añadimos un listener al evento de redimensionamiento.
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize); // Eliminamos el listener cuando el componente se desmonte.
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
-//condicional de carga de pantalla
-  if (isLoading) { // Si los datos están cargando...
-    return <div>Loading...</div>; // Mostramos un mensaje de carga.
+
+  if (isLoading) {
+  return <LoadingIndicator />; 
+    
   }
 
-  if (error) { // Si hubo un error...
-    return <div>Error: {error}</div>; // Mostramos el error.
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
-  if (!courseData || courseData.length === 0) { // Si no hay datos del curso...
-    return <div>No course data available.</div>; // Mostramos un mensaje indicando que no hay datos del curso.
+  if (!courseData || courseData.length === 0) {
+    return <LoadingIndicator />; 
   }
 
-//courseData
   return (
     <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="fixed w-full z-10">
@@ -157,9 +130,9 @@ const Home: React.FC = () => {
           <MainContentPrueba
             sessionVideo={selectedSession.video}
             evaluationQuestions={selectedSession.questions}
-            onContinue={handleContinue}
-            onProgress={handleVideoProgress} // Pasamos la función handleVideoProgress como prop. 
-            selectedModuleId={selectedModuleId}           
+            onProgress={handleVideoProgress}
+            selectedModuleId={selectedModuleId}
+            moduleResults={courseData[0].courseModules.flatMap(module => module.ModuleResults)}
           />
         </div>
         <SidebarPrueba
@@ -167,11 +140,11 @@ const Home: React.FC = () => {
           courseEvaluation={courseData[0].Evaluation}
           moduleEvaluations={courseData[0].courseModules.map(module => module.moduleEvaluation)}
           onSelect={handleSelect}
-          videoProgress={videoProgress} 
+          videoProgress={videoProgress}
         />
       </div>
     </div>
   );
 };
-//Home
+
 export default Home;

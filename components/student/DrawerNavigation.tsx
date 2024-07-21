@@ -61,6 +61,15 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean }> = ({ isDrawerOpen })
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/student/diplomas')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                  <HomeIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Mis Diplomas</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleNavigation('/student/profile')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
