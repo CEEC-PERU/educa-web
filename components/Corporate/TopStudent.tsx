@@ -38,7 +38,7 @@ const TopStudentsChart: React.FC<TopStudentsChartProps> = ({ students }) => {
   };
 
   return (
-    <div className="w-full md:w-1/2 p-4">
+    <div className="w-full md:w-1/2 lg:w-1/3 p-4">
       <Bar data={data} options={options} />
     </div>
   );
