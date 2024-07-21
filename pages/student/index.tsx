@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
@@ -35,6 +35,44 @@ const StudentIndex: React.FC = () => {
     setSelectedCourse(null);
   };
 
+
+  useEffect(() => {
+    const handleNotificationPermission = async () => {
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          notify();
+        } else {
+          Notification.requestPermission().then(res => {
+            if (res === "granted") {
+              notify();
+            } else {
+              console.error("Did not receive permission for notifications");
+            }
+          });
+        }
+      } else {
+        console.error("Browser does not support notifications");
+      }
+
+      function notify() {
+        const notification = new Notification('Breaking:', {
+          body: `Celebrity Caught in Fresh Scandal`,
+          icon: 'https://unsplash.it/400/400',
+        });
+
+        notification.addEventListener('click', function() {
+          window.open('https://www.openjavascript.com');
+        });
+
+        setTimeout(() => notification.close(), 5 * 1000);
+        navigator.vibrate([300, 200, 300]);
+      }
+    };
+
+    handleNotificationPermission();
+  }, []);
+
+
   const navigateToCourseDetails = () => {
     router.push({
       pathname: '/student/course-details',
@@ -56,6 +94,7 @@ const StudentIndex: React.FC = () => {
         />
         <SidebarDrawer isDrawerOpen={isDrawerOpen} />
       </div>
+ 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
         <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg">
           <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
@@ -74,7 +113,7 @@ const StudentIndex: React.FC = () => {
                 <p className="text-white p-3">Cursos completados</p>
               </div>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">2</p>
+                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
                 <p className="text-white p-3">Diplomas Obtenidos</p>
               </div>
             </div>

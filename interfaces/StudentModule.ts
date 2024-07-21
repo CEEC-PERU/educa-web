@@ -89,10 +89,23 @@ export interface CourseEvaluation {
   questions: Question[];
 }
 
+export interface CourseResults{
+ 
+    evaluation_id: number,
+    course_id: number,
+    puntaje: number,
+    user_id: number,
+    second_chance: boolean,
+    Evaluation: EvaluationResult
+}
+
+
+
 export interface Course {
   course_id: number;
   name: string;
   evaluation_id: number;
   courseModules: CourseModule[];
+  CourseResults : CourseResults[];
   Evaluation: CourseEvaluation;
 }
