@@ -19,7 +19,7 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col items-center">
       <svg width="100" height="100">
         <circle
           stroke="gray"

@@ -27,7 +27,7 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course }) => {
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
       <h3 className="text-xl font-bold mb-4">{course.name}</h3>
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         <div className="mr-4">
         <img src={course.image} alt={course.name} className="w-32 h-32 object-cover" />
           {getStatusButton(course.progress)}

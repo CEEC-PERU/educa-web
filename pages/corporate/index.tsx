@@ -66,7 +66,7 @@ const CorporateUsers: React.FC = () => {
           <h2 className="text-2xl font-bold mb-6">Usuarios de la Empresa</h2>
           <div className="flex flex-wrap gap-4 mb-4">
             <TopStudentsChart students={students} />
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 w-full md:w-auto">
               <div>
                 <label className="block text-gray-700">Fecha de inicio:</label>
                 <input
@@ -95,7 +95,7 @@ const CorporateUsers: React.FC = () => {
             <>
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {students.map(student => (
-                  <div key={student.id} className="border-4 border-gray-400 p-4 rounded-md shadow-sm bg-purple-100">
+                  <div key={student.id} className="border-4 border-gray-300 p-4 rounded-md shadow-sm bg-purple-200">
                     <div className="flex items-center mb-2">
                       <img src={student.profile_picture || 'default_profile_picture.png'} alt={`${student.first_name} ${student.last_name}`} className="w-12 h-12 rounded-full bg-gray-200" />
                       <div className="ml-4">

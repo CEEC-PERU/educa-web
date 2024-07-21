@@ -72,9 +72,6 @@ const StudentGrades: React.FC = () => {
                 </div>
               )}
               <div className="mt-24">
-                <h2 className="text-2xl font-bold text-center mb-8">Calificaciones</h2>
-              </div>
-              <div className="mt-24">
                 <h2 className="text-2xl font-bold text-center mb-8">Cursos</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {courses.map(course => (

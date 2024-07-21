@@ -13,13 +13,12 @@ interface DetailsStepProps {
 const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack }) => {
   const [importName, setImportName] = useState(file.name);
   const [createUsers, setCreateUsers] = useState(false);
-  const [agreeToEmails, setAgreeToEmails] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: 'info' | 'danger' | 'success' | 'warning' | 'dark', message: string } | null>(null);
   const router = useRouter();
 
   const handleSubmit = async () => {
-    if (!importName || !createUsers || !agreeToEmails) {
+    if (!importName || !createUsers) {
       setAlert({ type: 'danger', message: 'Por favor, completa todos los campos antes de continuar' });
       return;
     }
@@ -66,10 +65,6 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack })
             <input type="checkbox" checked={createUsers} onChange={(e) => setCreateUsers(e.target.checked)} />
             <span className="ml-2">* Crea usuarios a partir de esta importación</span>
           </label>
-          <label className="flex items-center mt-4">
-            <input type="checkbox" checked={agreeToEmails} onChange={(e) => setAgreeToEmails(e.target.checked)} />
-            <span className="ml-2">* Estoy de acuerdo en que todos los usuarios de esta importación esperan recibir noticias de mi organización.</span>
-          </label>
         </div>
         <div className="flex justify-between mt-8">
           <button
@@ -81,7 +76,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack })
           <button
             className={`bg-purple-500 text-white py-2 px-8 rounded ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={handleSubmit}
-            disabled={loading || !importName || !createUsers || !agreeToEmails}
+            disabled={loading || !importName || !createUsers}
           >
             {loading ? <Loader size="w-4 h-4" /> : 'Finalizar'}
           </button>

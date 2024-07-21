@@ -6,7 +6,6 @@ import { useAuth } from '../../../context/AuthContext';
 import { getStudentsByEnterprise } from '../../../services/courseStudent';
 import Loader from '../../../components/Loader';
 import ProgressBar from '../../../components/Corporate/ProgressBar';
-
 import './../../../app/globals.css';
 
 const CorporateUsers: React.FC = () => {
@@ -48,7 +47,7 @@ const CorporateUsers: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
+        <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
           <h2 className="text-2xl font-bold mb-6">Usuarios de la Empresa</h2>
           <div className="mb-4">
             <input
@@ -62,25 +61,24 @@ const CorporateUsers: React.FC = () => {
           {loading ? (
             <Loader />
           ) : (
-            <ul>
+            <ul className="space-y-4">
               {filteredStudents.map(student => (
-                <li key={student.user_id} className="mb-4 flex justify-between items-center border p-4 rounded-md shadow-sm">
-                  <div className="flex items-center w-full">
+                <li key={student.user_id} className="flex flex-col md:flex-row justify-between items-center border p-4 rounded-md shadow-sm">
+                  <div className="flex items-center w-full md:w-auto mb-4 md:mb-0 overflow-hidden">
                     <img src={student.profile_picture || 'default_profile_picture.png'} alt={`${student.first_name} ${student.last_name}`} className="w-16 h-16 rounded-full bg-gray-200 flex-shrink-0" />
-                    <div className="ml-4 flex-grow">
-                      <p className="font-semibold">{student.first_name} {student.last_name}</p>
-                      <p className="text-gray-500">{student.email}</p>
-                    </div>
-                    <div className="ml-8 flex items-center justify-center w-full">
-                      <ProgressBar percentage={student.progress !== undefined ? student.progress : 0} />
+                    <div className="ml-4 overflow-hidden">
+                      <p className="font-semibold truncate">{student.first_name} {student.last_name}</p>
+                      <p className="text-gray-500 truncate">{student.email}</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleViewGrades(student)}
-                    className="ml-8 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                  >
-                    Notas
-                  </button>
+                  <div className="w-full md:w-auto flex items-center justify-between md:justify-end space-x-4">
+                    <button
+                      onClick={() => handleViewGrades(student)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    >
+                      Notas
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
