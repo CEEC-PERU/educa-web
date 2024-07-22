@@ -11,11 +11,15 @@ interface DetailsStepProps {
 }
 
 const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack }) => {
-  const [importName, setImportName] = useState(file.name);
+  const [importName, setImportName] = useState(file.name || '');
   const [createUsers, setCreateUsers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: 'info' | 'danger' | 'success' | 'warning' | 'dark', message: string } | null>(null);
   const router = useRouter();
+
+  if (!file) {
+    return <p>No file provided</p>; // Manejo de error si 'file' no está definido
+  }
 
   const handleSubmit = async () => {
     if (!importName || !createUsers) {
