@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-color: #F9FAFC;
@@ -12,7 +11,6 @@
   --sidebar-hover-color: #a485bd;
   --border-color: #b484e7;
 }
-
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -126,3 +124,19 @@ body {
   color: #276749;
 }
 
+@keyframes float {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh); /* Ensures the emojis move all the way up */
+    opacity: 0;
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out forwards;
+  position: absolute;
+  bottom: -250%; /* Adjust this value to move the starting position of emojis down */
+}

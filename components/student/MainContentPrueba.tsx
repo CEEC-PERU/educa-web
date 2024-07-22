@@ -33,12 +33,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [videoEnded, setVideoEnded] = useState(false);
   const [evaluationCompleted, setEvaluationCompleted] = useState(false);
   const [showStartMessage, setShowStartMessage] = useState(true);
+  const [showReaction, setShowReaction] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
-  const router = useRouter(); // Import useRouter
+  const router = useRouter();
 
   useEffect(() => {
     setCurrentQuestion(0);
@@ -94,6 +95,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const handleNextQuestion = () => {
     setSelectedOption(null);
     setIsCorrect(null);
+    setShowReaction(false);
     if (currentQuestion < (evaluationQuestions?.length || 0) - 1) {
       setCurrentQuestion(prev => prev + 1);
     } else {
@@ -104,9 +106,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const handleOptionSelect = (optionIndex: number, isCorrect: boolean) => {
     setSelectedOption(optionIndex);
     setIsCorrect(isCorrect);
+    setShowReaction(true);
     if (isCorrect) {
       setTotalScore(prev => prev + (evaluationQuestions?.[currentQuestion]?.score || 0));
     }
+    setTimeout(() => {
+      setShowReaction(false);
+    }, 2000); // Show reaction for 2 seconds
   };
 
   const handleFinish = () => {
@@ -125,7 +131,6 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     createResultModule(moduloResultado);
     console.log("MODULO_RESULTADO", moduloResultado);
 
-    // Reload the page
     router.reload();
   };
 
@@ -145,7 +150,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const isFinalEvaluation = !selectedModuleId;
 
   return (
-    <div className="h-full w-full p-4">
+    <div className="h-full w-full p-4 relative">
       {sessionVideo ? (
         <div className="flex flex-col items-center">
           <video
@@ -162,7 +167,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         moduleResult ? (
           <div className="flex flex-col mt-6 items-center justify-center text-white text-center text-4xl">
-            <img src={ "https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" } alt="Congratulations" className="mb-4 justify-center" />
+            <img src={"https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png"} alt="Congratulations" className="mb-4 justify-center" />
             Puntaje Total: {moduleResult.puntaje}
           </div>
         ) : showStartMessage ? (
@@ -200,13 +205,32 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   </ul>
                   {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
                 </div>
+                {showReaction && (
+                  <div className="absolute bottom-0 left-0 w-full h-full flex justify-center items-end">
+                    <div className="relative w-full h-full flex justify-center">
+                      {Array.from({ length: 20 }).map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={`absolute text-6xl ${isCorrect ? 'text-green-500' : 'text-red-500'} animate-float`}
+                          style={{
+                            bottom: '0',
+                            left: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 0.5}s`,
+                          }}
+                        >
+                          {isCorrect ? '😊' : '😢'}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="mt-6 text-white text-center text-2xl">
                 Puntaje Total: {totalScore}
               </div>
             )}
-            {selectedOption !== null && !evaluationCompleted && (
+            {selectedOption !== null && !showReaction && !evaluationCompleted && (
               <button
                 className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
                 style={{ width: '270px', height: '50px' }}

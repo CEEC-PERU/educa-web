@@ -1,4 +1,4 @@
-export const baseURL = `http://localhost:4100`;
+export const baseURL = `https://educa-web-api.onrender.com`;
 
 // authentication
 export const API_AUTH = `${baseURL}/api/auth/signin`;
