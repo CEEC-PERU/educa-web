@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Wizard from '../../../components/WizardComponet';
 import UploadStep from './UploadStep';
 import AssignStep from './AssignStep';
-import DetailsStep from './DetailsStep';
+
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
 import './../../../app/globals.css';
@@ -102,10 +102,12 @@ const ExportCsvPage: React.FC = () => {
         );
       case 3:
         return (
-          <DetailsStep
-            file={file!}
-            enterpriseId={enterpriseId!}
-            onBack={() => setCurrentStep(2)}
+          <UploadStep
+            initialFile={file}
+            onNext={(file) => {
+              setFile(file);
+              setCurrentStep(2);
+            }}
           />
         );
       default:

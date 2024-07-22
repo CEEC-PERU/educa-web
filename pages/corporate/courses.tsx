@@ -4,7 +4,6 @@ import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
 import { getCoursesByEnterprise } from '../../services/courseStudent';
 import Loader from '../../components/Loader';
-import CourseCard from './CourseCard'; // Import the new component
 import './../../app/globals.css';
 
 const CorporateCourses: React.FC = () => {
@@ -43,7 +42,7 @@ const CorporateCourses: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {courses.map((course) => (
-                <CourseCard key={course.course_id} course={course} />
+               <p>cursos</p>
               ))}
             </div>
           )}

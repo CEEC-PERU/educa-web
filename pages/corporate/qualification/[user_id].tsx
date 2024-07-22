@@ -7,7 +7,6 @@ import { getCoursesWithGradesByStudent } from '../../../services/courseStudent';
 import { getUserById } from '../../../services/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Loader from '../../../components/Loader';
-import StudentCourseCard from './StudentCourseCard';
 import './../../../app/globals.css';
 
 const StudentGrades: React.FC = () => {
@@ -75,17 +74,7 @@ const StudentGrades: React.FC = () => {
                 <h2 className="text-2xl font-bold text-center mb-8">Cursos</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {courses.map(course => (
-                    <StudentCourseCard
-                      key={course.course_id}
-                      course={{
-                        image: course.image,
-                        name: course.name,
-                        description_short: course.description_short,
-                        progress: course.progress ?? 0,
-                        completed: course.completed ?? 0,
-                        approved: course.approved ?? 0,
-                      }}
-                    />
+                    <p>course</p>
                   ))}
                 </div>
                 <button
