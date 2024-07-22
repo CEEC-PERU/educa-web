@@ -161,7 +161,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         moduleResult ? (
-          <div className="mt-6 text-white text-center text-2xl">
+          <div className="flex flex-col mt-6 items-center justify-center text-white text-center text-4xl">
+            <img src={ "https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" } alt="Congratulations" className="mb-4 justify-center" />
             Puntaje Total: {moduleResult.puntaje}
           </div>
         ) : showStartMessage ? (

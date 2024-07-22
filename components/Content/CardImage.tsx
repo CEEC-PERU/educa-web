@@ -7,11 +7,13 @@ interface CardImageProps {
   imageUrl?: string;
   title?: string;
   name?: string;
+  background? : string;
   description_short?: string;
   duration_course?: string;
   buttonLabel?: string;
   textColor?: string;
   image?: string;
+  textColorDescription?:String;
   id?: number; // Hacer el id opcional
   isCircular?: boolean; // Nueva prop opcional
   onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del botón
@@ -24,6 +26,8 @@ const CardImage: React.FC<CardImageProps> = ({
   description = 'Descripción corta del curso',
   buttonLabel = 'Ver detalles',
   textColor = 'text-gray-900',
+  background= ' bg-violet-200',
+  textColorDescription = '  text-gray-700',
   id,
   name,
   description_short,
@@ -37,7 +41,7 @@ const CardImage: React.FC<CardImageProps> = ({
   const displayImage = image || imageUrl;
 
   return (
-    <div className="relative flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg rounded-xl bg-violet-200 bg-clip-border text-gray-700 shadow-lg mx-2 my-4">
+    <div className={`relative flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-2 my-4`}>
       <div className={`relative mx-4 mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
@@ -63,17 +67,18 @@ const CardImage: React.FC<CardImageProps> = ({
             {rating.toFixed(1)}
           </p>
         </div>
-        <p className="block font-sans text-base antialiased font-light leading-relaxed text-gray-700 text-center break-words">
+        <p className={`block font-sans text-base antialiased font-light leading-relaxed ${textColorDescription} text-center break-words`}>
           {displayDescription}
         </p>
         <div className="pt-4 flex justify-center">
           <ButtonComponent 
             buttonLabel={buttonLabel} 
-            backgroundColor="bg-gradient-blue" 
+            backgroundColor="bg-brandmora-500" 
             textColor="text-white" 
             fontSize="text-xs" 
             buttonSize="py-2 px-7"
             onClick={() => onButtonClick && onButtonClick(id)}
+            navigateTo="/login" // Nueva prop para navegación
           />
         </div>
       </div>

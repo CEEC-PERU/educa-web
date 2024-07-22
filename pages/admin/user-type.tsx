@@ -142,7 +142,7 @@ const RoleDetail: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          <div className="flex flex-wrap space-x-4 mb-4">
+          <div className="flex space-x-4 mb-4">
             {roleId && Number(roleId) === STUDENT_ROLE_ID && (
               <div>
                 <ButtonComponent
@@ -167,7 +167,7 @@ const RoleDetail: React.FC = () => {
             </div>
           </div>
           {roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID && (
-            <div className="gap-6 w-full max-w-2xl flex flex-wrap space-x-4 mb-6 mt-8">
+            <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
               {companies.map((company, index) => (
                 <ButtonComponent
                   key={company.enterprise_id}

@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 import React, { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
@@ -44,56 +44,67 @@ const CardCarousel: React.FC = () => {
   }, []);
 
   return (
-    <div className="swiper-container" ref={swiperRef}>
+    <div className="swiper-container overflow-hidden" ref={swiperRef}>
       <div className="swiper-wrapper">
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://api.lessin.pe/wp-content/uploads/2024/03/5-1.jpg"
-            title="Mentalidad Ágil Y Cultura Innovadora"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1720215037/f7upqslwrec9skm4nwez.jpg"
+            title="Habilidades Blandas"
+              background='bg-brandazul-600'
             rating={4.9}
-            description="Descubre el arte de equilibrar con éxito tu vida personal y laboral con nuestro curso especializado. Exploraremos estrategias prácticas y herramientas efectivas que te permitirán gestionar tus responsabilidades profesionales mientras cultivas un bienestar personal duradero. Aprenderás a establecer límites saludables, gestionar el tiempo con eficacia y nutrir tus relaciones, permitiéndote alcanzar un equilibrio sostenible que te llevará a una vida más plena y satisfactoria."
-            buttonLabel="Check Availability"
+            description="Desarrollar y potenciar habilidades blandas esenciales para el éxito profesional y personal en el entorno laboral.Aprende a expresar tus ideas claramente y a escuchar activamente  "
+              buttonLabel="Detalles del Curso"
             textColor="text-white"
+            textColorDescription="text-white"
           />
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://api.lessin.pe/wp-content/uploads/2024/04/Comunicacion-Asertiva-2-1.jpg"
-            title="Pscologia Infantil"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721630275/WEB_EDUCA/Cursos/ylaexmxu1it0q1vb8n3j.jpg"
+            title="Gestión del Cambio y Resiliencia"
             rating={4.9}
-            description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
-            buttonLabel="Check Availability"
+              background='bg-brandazul-600'
+            description="Líderes que buscan mejorar su capacidad para gestionar y prosperar en entornos de cambio constante  con resiliencia en un entorno laboral dinámico."
+              buttonLabel="Detalles del Curso"
             textColor="text-white"
+               textColorDescription="text-white"
           />
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://api.lessin.pe/wp-content/uploads/2023/11/Investigacion-de-mercados-4.jpg"
-            title="Investigación de Mercados"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721631666/WEB_EDUCA/Cursos/a9ncpw6jygilnrdz5vji.jpg"
+            title="Gestión del Cambio y Adaptabilidad"
             rating={4.9}
-            description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
-            buttonLabel="Check Availability"
+              background='bg-brandazul-600'
+            description="Enseña cómo manejar y adaptarse a los cambios en la vida y en el trabajo. Incluye técnicas para enfrentar la incertidumbre y aprovechar nuevas oportunidades"
+            buttonLabel="Detalles del Curso"
             textColor="text-white"
+               textColorDescription="text-white"
           />
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://api.lessin.pe/wp-content/uploads/2024/06/Declaracion-de-Impuestos-2023.png"
-            title="Declaración de Impuestos"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721631539/WEB_EDUCA/Cursos/hwmfj5fl42qqtrtqrhsd.avif"
+              background='bg-brandazul-600'
+            title="Autodisciplina y Motivación Personal"
             rating={4.9}
-            description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
-            buttonLabel="Check Availability"
+            description="Proporciona herramientas para mejorar la autodisciplina, establecer rutinas efectivas y mantenerse motivado a largo plazo y  superar la procrastinación."
+               buttonLabel="Detalles del Curso"
             textColor="text-white"
+               textColorDescription="text-white"
           />
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://api.lessin.pe/wp-content/uploads/2024/06/Declaracion-de-Impuestos-2023.png"
-            title="Declaración de Impuestos"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721631193/WEB_EDUCA/Cursos/tsb2uphnryszdxhfgghi.jpg"
+            background='bg-brandazul-600'
+            title="Ética  Empresarial"
             rating={4.9}
-            description="Stay warm in a cozy cabin nestled in the mountains of Colorado, perfect for a winter retreat."
-            buttonLabel="Check Availability"
+            
+            description="El curso está orientado a desarrollar habilidades para tomar decisiones éticas, comprender las implicaciones de las acciones y aplicar principios de ética en situaciones laborales diarias."
+               buttonLabel="Detalles del Curso"
             textColor="text-white"
+               textColorDescription="text-white"
           />
         </div>
         {/* Añade más tarjetas si es necesario */}

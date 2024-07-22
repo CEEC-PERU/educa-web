@@ -28,6 +28,7 @@ const CorporateUsers: React.FC = () => {
           setEndDate(lastDayOfMonth);
           const response = await getUsersByEnterpriseWithSessions(firstDayOfMonth, lastDayOfMonth, enterpriseId);
           setStudents(response);
+          console.log(response)
         } catch (error) {
           console.error('Error fetching students:', error);
           setError('Error fetching students');
@@ -97,9 +98,14 @@ const CorporateUsers: React.FC = () => {
                 {students.map(student => (
                   <div key={student.id} className="border-4 border-gray-300 p-4 rounded-md shadow-sm bg-purple-200">
                     <div className="flex items-center mb-2">
-                      <img src={student.profile_picture || 'default_profile_picture.png'} alt={`${student.first_name} ${student.last_name}`} className="w-12 h-12 rounded-full bg-gray-200" />
+                      <img src={student.profile_picture || 'https://res.cloudinary.com/dk2red18f/image/upload/v1713896612/CEEC/PERFIL/egwjjcrs2aon5hhtxabj.png'} alt={`${student.first_name} ${student.last_name}`} className="w-12 h-12 rounded-full bg-gray-200" />
                       <div className="ml-4">
-                        <p className="font-semibold">{student.first_name} {student.last_name}</p>
+                       
+                       
+                        <p className="font-semibold">
+  {student.first_name && student.last_name ? `${student.first_name} ${student.last_name}` : student.dni}
+</p>
+
                         <p className="text-gray-500">{student.email}</p>
                       </div>
                     </div>

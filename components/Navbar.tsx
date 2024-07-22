@@ -30,7 +30,7 @@ const Navbar: React.FC<NavbarProps> = ({
   user,
 }) => {
   return (
-    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full flex items-center z-50 ${borderColor}`}>
+    <nav className={`${bgColor} ${navbarHeight} w-full flex items-center z-50 ${borderColor}`}>
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
           {showMenuButton && toggleSidebar && (
