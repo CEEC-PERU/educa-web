@@ -125,7 +125,7 @@ const Home: React.FC = () => {
         />
       </div>
       <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
-        <DrawerNavigation isDrawerOpen={isDrawerOpen} />
+        <DrawerNavigation isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar}/>
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
             sessionVideo={selectedSession.video}

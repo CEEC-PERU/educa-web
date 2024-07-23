@@ -46,6 +46,10 @@ const Diplomas: React.FC = () => {
     console.log("selectedCourse.course_id:", selectedCourse?.course_id); // Verifica course_id
   };
 
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
   return (
     <div>
       <div className="relative z-10">
@@ -53,8 +57,9 @@ const Diplomas: React.FC = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
-        />
-        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
+          toggleSidebar={toggleSidebar}
+          />
+           <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
  
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 ">

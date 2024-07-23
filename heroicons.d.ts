@@ -20,4 +20,6 @@ declare module '@heroicons/react/24/solid' {
   export const XCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const ChevronRightIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const LockClosedIcon : ComponentType<SVGProps<SVGSVGElement>>;
+  export const PuzzlePieceIcon : ComponentType<SVGProps<SVGSVGElement>>;
+
 }

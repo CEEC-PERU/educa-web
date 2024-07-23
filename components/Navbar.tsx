@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-
 import { AcademicCapIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface NavbarProps {
@@ -29,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({
   user,
 }) => {
   return (
-    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full  items-center z-50 ${borderColor}`}>
+    <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full items-center z-50 ${borderColor}`}>
       <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
           {showMenuButton && toggleSidebar && (
@@ -40,17 +39,14 @@ const Navbar: React.FC<NavbarProps> = ({
               <ChevronRightIcon className="h-6 w-6" />
             </button>
           )}
-         <div className={`${showMenuButton ? 'ml-2' : ''} flex items-center`}>
-  <img
-    src="https://res.cloudinary.com/dk2red18f/image/upload/v1721667499/WEB_EDUCA/ygxb9ji1xcpxzv23ovje.png"
-    alt="EducaWeb Logo"
-    className="h-12" // Ajusta la altura según sea necesario
-  />
-  <h2 className="text-white font-bold">EducaWeb</h2> 
-</div>
-
-
-          
+          <div className={`${showMenuButton ? 'ml-2' : ''} flex items-center`}>
+            <img
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1721667499/WEB_EDUCA/ygxb9ji1xcpxzv23ovje.png"
+              alt="EducaWeb Logo"
+              className="h-12"
+            />
+            <h2 className="text-white font-bold">EducaWeb</h2>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           {links.map((link) => (

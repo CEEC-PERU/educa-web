@@ -33,6 +33,11 @@ const CourseDetails = () => {
     });
   };
 
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+
   return (
     <div>
       <div className="relative z-10">
@@ -40,8 +45,10 @@ const CourseDetails = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
-        />
-        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
+          toggleSidebar={toggleSidebar}
+          />
+           <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+      
       </div>
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
