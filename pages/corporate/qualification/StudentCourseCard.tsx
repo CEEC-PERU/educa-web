@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CircularBar from '../../../components/Corporate/CircularBar';
+import GradesModal from '../../../components/Corporate/Modal'; // Asegúrate de importar el componente del modal
 
 interface Course {
   image: string;
@@ -8,13 +9,15 @@ interface Course {
   progress: number | null;
   completed: number | null;
   approved: number | null;
+  course_id: number; // Asegúrate de que el ID del curso esté incluido
 }
 
 interface StudentCourseCardProps {
   course: Course;
+  onViewGrades: (course: Course) => void; // Añade la función de callback para ver las calificaciones
 }
 
-const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course }) => {
+const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course, onViewGrades }) => {
   const getStatusButton = (progress: number | null) => {
     if (progress === 100) {
       return <div className="bg-green-500 text-white px-8 py-1 rounded-full mt-4 text-center">Finalizado</div>;
@@ -45,6 +48,12 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course }) => {
               <CircularBar percentage={course.approved ?? 0} label="Aprobado" />
             </div>
           </div>
+          <button
+            onClick={() => onViewGrades(course)}
+            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Ver Calificaciones
+          </button>
         </div>
       </div>
     </div>

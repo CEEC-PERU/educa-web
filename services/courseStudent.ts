@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
+import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_GET_COURSEMODULE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
 import { CourseStudent } from '../interfaces/CourseStudent';
 
 export const getCourseStudent = async (userToken: string, userId: number): Promise<CourseStudent | null> => {
@@ -20,6 +20,11 @@ export const getCourseStudent = async (userToken: string, userId: number): Promi
     console.error('Error getting enterprise:', error);
     throw new Error('Error getting enterprise');
   }
+};
+
+export const getModulesByCourseId2 = async (courseId: number, userId: number) => {
+  const response = await axios.get(`${API_GET_COURSEMODULE}${courseId}/${userId}`);
+  return response.data;
 };
 
 export const assignStudentsToCourse = async (enterpriseId: number, courseId: number) => {
