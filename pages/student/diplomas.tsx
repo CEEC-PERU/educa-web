@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
@@ -64,7 +64,7 @@ const Diplomas: React.FC = () => {
  
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 ">
         <div className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 ">
-          <div className="text-white">
+          <div className="text-white lg:pr-8"> {/* Added lg:pr-8 for larger screens */}
             <h1 className="text-2xl font-bold mb-4">Mis Diplomas</h1>
              
             <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -80,6 +80,14 @@ const Diplomas: React.FC = () => {
                 Descargar
               </button>
             </div>
+          
+          </div>
+          <div className=" lg:pl-8"> {/* Added lg:pl-8 for larger screens */}
+            <img
+              src='https://res.cloudinary.com/dk2red18f/image/upload/v1721667505/WEB_EDUCA/p1copaxxrgtifhburiov.png'
+              className="w-full h-96 max-w-full mx-auto object-cover"
+              alt="Imagen descriptiva"
+            />
           </div>
         </div>
       </div>

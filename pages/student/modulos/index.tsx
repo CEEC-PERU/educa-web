@@ -7,7 +7,7 @@ import MainContentPrueba from '../../../components/student/MainContentPrueba';
 import { Profile } from '../../../interfaces/UserInterfaces';
 import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
-import DrawerNavigation from '../../../components/student/DrawerNavigation';
+import SidebarDrawer from '../../../components/student/DrawerNavigation';
 import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
@@ -24,7 +24,7 @@ const Home: React.FC = () => {
   
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
 
   let name = '';
@@ -65,6 +65,8 @@ const Home: React.FC = () => {
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
+  
 
   const handleVideoProgress = (progress: number, isCompleted: boolean) => {
     const progressupdate = Math.round(progress);
@@ -123,9 +125,10 @@ const Home: React.FC = () => {
           user={user ? { profilePicture: uri_picture } : undefined}
           toggleSidebar={toggleSidebar}
         />
+          <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
       <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
-        <DrawerNavigation isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar}/>
+    
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
             sessionVideo={selectedSession.video}

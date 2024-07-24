@@ -242,8 +242,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
           </div>
         )
       ) : (
-        <div className="flex justify-center items-center h-full w-full p-4">
-          Selecciona una sesión o Evaluación
+        <div className="flex justify-center items-center h-full w-full p-4 text-white">
+          Selecciona una sesión  para iniciar el curso 
         </div>
       )}
     </div>

@@ -36,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({
               onClick={toggleSidebar}
               className={`${textColor} p-0 m-0 flex items-center justify-center h-full lg:hidden`}
             >
-              <ChevronRightIcon className="h-6 w-6" />
+              <ChevronRightIcon className="h-6 w-6 lg:block" />
             </button>
           )}
           <div className={`${showMenuButton ? 'ml-2' : ''} flex items-center`}>
