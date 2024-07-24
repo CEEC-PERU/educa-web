@@ -11,8 +11,8 @@ interface StepOneProps {
 }
 
 const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluationData }) => {
-  const [evaluationName, setEvaluationName] = useState(evaluationData.name);
-  const [evaluationDescription, setEvaluationDescription] = useState(evaluationData.description);
+  const [evaluationName, setEvaluationName] = useState(evaluationData?.name || '');
+  const [evaluationDescription, setEvaluationDescription] = useState(evaluationData?.description || '');
   const [touched, setTouched] = useState<{ [key: string]: boolean }>({ name: false, description: false });
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({ name: false, description: false });
 

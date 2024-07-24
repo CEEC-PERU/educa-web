@@ -5,13 +5,13 @@ import Alert from '../../../components/AlertComponent';
 import Loader from '../../../components/Loader';
 
 interface DetailsStepProps {
-  file: File;
+  file?: File;
   enterpriseId: string;
   onBack: () => void;
 }
 
 const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack }) => {
-  const [importName, setImportName] = useState(file.name);
+  const [importName, setImportName] = useState(file?.name || '');
   const [createUsers, setCreateUsers] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: 'info' | 'danger' | 'success' | 'warning' | 'dark', message: string } | null>(null);
@@ -24,7 +24,9 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack })
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    if (file) {
+      formData.append('file', file);
+    }
     formData.append('enterprise_id', enterpriseId);
 
     setLoading(true);

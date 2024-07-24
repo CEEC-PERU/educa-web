@@ -72,6 +72,15 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({ questions, isEd
     return type ? type.name : 'Tipo desconocido';
   };
 
+  if (!questions || questions.length === 0) {
+    return <div>No hay preguntas disponibles.</div>;
+  }
+
+  if (!questionTypes || questionTypes.length === 0) {
+    return <div>No hay tipos de preguntas disponibles.</div>;
+  }
+
+
   return (
     <div className="w-3/4 p-4 bg-white shadow-md rounded-md border-2 border-blue-200">
       {questions.map((question, questionIndex) => (

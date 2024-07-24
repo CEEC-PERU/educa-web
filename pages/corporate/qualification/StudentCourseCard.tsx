@@ -27,6 +27,10 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course, onViewGra
     return <div className="bg-gray-500 text-white px-8 py-1 rounded-full mt-4 text-center">No Iniciado</div>;
   };
 
+  if (!course) {
+    return null;
+  }
+
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
       <h3 className="text-xl font-bold mb-4">{course.name}</h3>

@@ -12,7 +12,7 @@ interface StepThreeProps {
   optionsData: { [key: number]: Omit<Option, 'option_id'>[] };
 }
 
-const StepThree: React.FC<StepThreeProps> = ({ prevStep, questionsData, setOptionsData, optionsData, nextStep }) => {
+const StepThree: React.FC<StepThreeProps> = ({ prevStep, questionsData = [], setOptionsData, optionsData = {}, nextStep }) => {
   const [localOptionsData, setLocalOptionsData] = useState<{ [key: number]: Omit<Option, 'option_id'>[] }>(optionsData);
   const [touchedFields, setTouchedFields] = useState<{ [key: number]: boolean[] }>({});
   const [errors, setErrors] = useState<{ [key: number]: boolean[] }>({});

@@ -12,7 +12,7 @@ interface StepSummaryProps {
   optionsData: { [key: number]: Omit<Option, 'option_id'>[] };
 }
 
-const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, questionsData, optionsData }) => {
+const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, questionsData = [], optionsData = {} }) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const handleComplete = () => {
