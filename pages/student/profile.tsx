@@ -35,13 +35,21 @@ const StudentProfile: React.FC = () => {
     router.push('/student/edit-profile'); // Adjust the path according to your routing setup
   };
 
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+
   return (
     <ProtectedRoute>
       <Navbar
         bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+        borderColor="border border-stone-300"
         user={user ? { profilePicture: uri_picture } : undefined}
-      />
-       <SidebarDrawer isDrawerOpen={isDrawerOpen} />
+        toggleSidebar={toggleSidebar}
+        />
+         <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+    
       <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 pt-16">
         <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-8">
           <img

@@ -33,6 +33,11 @@ const CourseDetails = () => {
     });
   };
 
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+
   return (
     <div>
       <div className="relative z-10">
@@ -40,8 +45,10 @@ const CourseDetails = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
-        />
-        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
+          toggleSidebar={toggleSidebar}
+          />
+           <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+      
       </div>
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
@@ -139,7 +146,7 @@ const CourseDetails = () => {
                     className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
                     alt="Module icon"
                   />
-                  <p className="text-sm lg:text-base text-white">20 Lecciones</p>
+                  <p className="text-sm lg:text-base text-white">4 Lecciones</p>
                 </div>
                 <div className="flex items-center mb-2">
                   <img

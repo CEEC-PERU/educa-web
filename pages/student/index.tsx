@@ -79,6 +79,12 @@ const StudentIndex: React.FC = () => {
     console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
+  
+  const toggleSidebar = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
+
   return (
     <div>
       <div className="relative z-10">
@@ -86,8 +92,9 @@ const StudentIndex: React.FC = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
+          toggleSidebar={toggleSidebar}
         />
-        <SidebarDrawer isDrawerOpen={isDrawerOpen} />
+         <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-40 from-brand-100 via-brand-200 to-brand-300 p-4">
@@ -99,16 +106,25 @@ const StudentIndex: React.FC = () => {
               Este es tu portal de aprendizaje, explora tus cursos y potencia tu desarrollo profesional llevándolo al siguiente nivel con Educaweb.
             </p>
             <div className='bg-brandazul-600 border-2 border-white p-4 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4'>
-              <div className="bg-brandazul-700 p-2 rounded-lg text-center">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">5</p>
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">4</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
                 <p className="text-white p-3">Cursos inscritos</p>
               </div>
-              <div className="bg-brandazul-700 p-2 rounded-lg text-center">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
                 <p className="text-white p-3">Curso completado</p>
               </div>
-              <div className="bg-brandazul-700 p-2 rounded-lg text-center">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
                 <p className="text-white p-3">Diploma Obtenido</p>
               </div>
             </div>
