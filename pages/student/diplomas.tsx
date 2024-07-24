@@ -69,13 +69,13 @@ const Diplomas: React.FC = () => {
              
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <img
-                src="https://res.cloudinary.com/dk2red18f/image/upload/v1721669735/WEB_EDUCA/lo6gynu53ebglyuruqib.png"
+                src="https://res.cloudinary.com/dk2red18f/image/upload/v1721844303/WEB_EDUCA/DIPLOMA/zus1a1zbfsi5qstfslol.png"
                 className="w-full h-48 object-cover rounded-md mb-4 border-4 border-brand-100"
                 alt="Module icon"
               />
               <button 
                 className="bg-brand-300 text-white px-4 py-2 rounded-lg hover:bg-brand-200"
-                onClick={() => window.open('https://res.cloudinary.com/dk2red18f/image/upload/v1721669735/WEB_EDUCA/tlpcjh3x0xchq4zmxan6.pdf', '_blank')}
+                onClick={() => window.open('https://res.cloudinary.com/dk2red18f/image/upload/v1721844303/WEB_EDUCA/DIPLOMA/uzmb7q4f42vipmncvtht.pdf', '_blank')}
               >
                 Descargar
               </button>

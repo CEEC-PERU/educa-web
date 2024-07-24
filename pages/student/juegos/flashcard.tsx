@@ -9,7 +9,7 @@ import FlashcardGame from '../../../components/student/FlashcardGame';
 import { useRouter } from 'next/router';
 import './../../../app/globals.css';
 
-const JuegosIndex: React.FC = () => {
+const Flashcard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const { courseStudent, isLoading } = useCourseStudent();
@@ -30,7 +30,8 @@ const JuegosIndex: React.FC = () => {
 
   const navigateToCourseDetails = () => {
     router.push({
-      pathname: '/student/juegos/flashcard',
+      pathname: '/student/course-details',
+      query: { course_id: selectedCourse.course_id }
     });
     console.log("selectedCourse:", selectedCourse);
     console.log("selectedCourse.course_id:", selectedCourse?.course_id);
@@ -48,34 +49,16 @@ const JuegosIndex: React.FC = () => {
         <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
 
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-40 from-brand-100 via-brand-200 to-brand-300 p-4">
-        <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg pb-20">
-          <img
-            src="https://res.cloudinary.com/dk2red18f/image/upload/v1721710871/WEB_EDUCA/fdlrrlouggyv3b7yvaag.gif"
-            alt="Header Image"
-            className="w-350 h-48 object-cover"
-          />
-        </div>
-        <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 gap-4">
-          {courseStudent.map(courseStudent => (
-            <CourseCard
-              key={courseStudent.Course.course_id}
-              name={courseStudent.Course.name}
-              description={courseStudent.Course.description_short}
-              image={courseStudent.Course.image}
-              profesor={courseStudent.Course.courseProfessor.full_name}
-              categoria={courseStudent.Course.courseCategory.name}
-              course_id={courseStudent.Course.course_id}
-              onClick={() => navigateToCourseDetails()}
-              isJuegosIndex={true}
-            />
-          ))}
-        </div>
-      
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r  pb-40 from-brand-100 via-brand-200 to-brand-300 p-4">
+        
+       
+        <div className="container mx-auto">
+        <FlashcardGame />
+    </div>
 
       </div>
     </div>
   );
 }
 
-export default JuegosIndex;
+export default Flashcard;
