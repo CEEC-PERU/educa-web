@@ -6,11 +6,8 @@ import { getCoursesWithGradesByStudent, getModulesByCourseId2 } from '../../../s
 import { getUserById } from '../../../services/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Loader from '../../../components/Loader';
-<<<<<<< HEAD
-=======
 import StudentCourseCard from './StudentCourseCard';
 import GradesModal from '../../../components/Corporate/Modal';
->>>>>>> corporate
 import './../../../app/globals.css';
 
 const StudentGrades: React.FC = () => {
@@ -95,9 +92,6 @@ const StudentGrades: React.FC = () => {
                 <h2 className="text-2xl font-bold text-center mb-8">Cursos</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {courses.map(course => (
-<<<<<<< HEAD
-                    <p>course</p>
-=======
                     <StudentCourseCard
                       key={course.course_id}
                       course={{
@@ -111,7 +105,6 @@ const StudentGrades: React.FC = () => {
                       }}
                       onViewGrades={handleViewGrades}
                     />
->>>>>>> corporate
                   ))}
                 </div>
                 <button
