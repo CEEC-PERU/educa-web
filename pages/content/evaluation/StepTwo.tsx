@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Question, QuestionType } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
 import { getQuestionTypes } from '../../../services/evaluationService';
-import { uploadImage } from '../../../services/imageService';
 import MediaUploadPreview from '../../../components/MediaUploadPreview';
 import { ArrowLeftIcon, ArrowRightIcon, PlusIcon } from '@heroicons/react/24/outline';
 import './../../../app/globals.css';
@@ -10,12 +9,12 @@ import './../../../app/globals.css';
 interface StepTwoProps {
   nextStep: () => void;
   prevStep: () => void;
-  setQuestionsData: (data: Omit<Question, 'question_id'>[]) => void;
-  initialQuestions: Omit<Question, 'question_id'>[];
+  setQuestionsData: (data: (Omit<Question, 'question_id'> & { imageFile?: File | null })[]) => void;
+  initialQuestions: (Omit<Question, 'question_id'> & { imageFile?: File | null })[];
 }
 
 const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData, initialQuestions }) => {
-  const [questions, setQuestions] = useState<Omit<Question, 'question_id'>[]>(initialQuestions || []);
+  const [questions, setQuestions] = useState<(Omit<Question, 'question_id'> & { imageFile?: File | null })[]>(initialQuestions || []);
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,19 +52,10 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
     }));
   };
 
-  const handleImageUpload = async (index: number, file: File) => {
-    try {
-      setLoading(true);
-      const imageUrl = await uploadImage(file, 'questions');
-      const newQuestions = [...questions];
-      newQuestions[index] = { ...newQuestions[index], image: imageUrl };
-      setQuestions(newQuestions);
-    } catch (error) {
-      setError('Error uploading image');
-      console.error('Error uploading image:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleImageUpload = (index: number, file: File) => {
+    const newQuestions = [...questions];
+    newQuestions[index] = { ...newQuestions[index], imageFile: file, image: URL.createObjectURL(file) };
+    setQuestions(newQuestions);
   };
 
   const handleNext = () => {
@@ -77,10 +67,9 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
         question_text: question.question_text.trim() === '',
         type_id: question.type_id === 0,
         score: question.score <= 0,
-        image: question.image?.trim() === ''
       };
 
-      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score || newErrors[index].image) {
+      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score) {
         hasErrors = true;
         setTouchedFields(prev => ({
           ...prev,
@@ -88,7 +77,6 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             question_text: true,
             type_id: true,
             score: true,
-            image: true
           }
         }));
       }
@@ -105,7 +93,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
   };
 
   const addQuestionToState = () => {
-    setQuestions([...questions, { question_text: '', type_id: 0, score: 0, evaluation_id: 0, image: '' }]);
+    setQuestions([...questions, { question_text: '', type_id: 0, score: 0, evaluation_id: 0, image: '', imageFile: null }]);
   };
 
   return (

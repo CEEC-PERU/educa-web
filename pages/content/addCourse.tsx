@@ -9,8 +9,6 @@ import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
 import { getAvailableEvaluations } from '../../services/evaluationService';
 import { addCourse } from '../../services/courseService';
-import { uploadVideo } from '../../services/videoService';
-import { uploadImage } from '../../services/imageService';
 import { Category } from '../../interfaces/Category';
 import { Professor } from '../../interfaces/Professor';
 import { Evaluation } from '../../interfaces/Evaluation';
@@ -31,7 +29,8 @@ const AddCourse: React.FC = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<'success' | 'danger' | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
@@ -68,7 +67,9 @@ const AddCourse: React.FC = () => {
         setEvaluations(evaluationsRes);
         setLoading(false);
       } catch (error) {
-        setError('Error fetching categories, professors, or evaluations');
+        setAlertMessage('Error fetching categories, professors, or evaluations');
+        setAlertType('danger');
+        setShowAlert(true);
         setLoading(false);
       }
     };
@@ -139,31 +140,18 @@ const AddCourse: React.FC = () => {
 
     if (hasEmptyFields) {
       setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
-      setError('Por favor, complete todos los campos requeridos.');
+      setAlertMessage('Por favor, complete todos los campos requeridos.');
+      setAlertType('danger');
       setShowAlert(true);
       setFormLoading(false);
       return;
     }
 
     try {
-      let videoUrl = '';
-      let imageUrl = '';
-
-      if (videoFile) {
-        videoUrl = await uploadVideo(videoFile, 'Cursos/Videos');
-      }
-
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile, 'Cursos/Images');
-      }
-
-      await addCourse({
-        ...formData,
-        intro_video: videoUrl,
-        image: imageUrl
-      });
+      await addCourse(formData, videoFile!, imageFile!);
+      setAlertMessage('Curso creado exitosamente.');
+      setAlertType('success');
       setShowAlert(true);
-      setError(null);
       setTimeout(() => {
         setShowAlert(false);
         setFormData({
@@ -188,7 +176,9 @@ const AddCourse: React.FC = () => {
         setTimeout(() => setClearMediaPreview(false), 500);
       }, 3000);
     } catch (error) {
-      setError('Error creating course');
+      setAlertMessage('Error creating course');
+      setAlertType('danger');
+      setShowAlert(true);
       console.error('Error creating course:', error);
     } finally {
       setFormLoading(false);
@@ -235,8 +225,8 @@ const AddCourse: React.FC = () => {
           <div className="max-w-6xl bg-white rounded-lg w-full">
             {showAlert && (
               <AlertComponent
-                type="success"
-                message={error || "Curso creado exitosamente."}
+                type={alertType || 'info'}
+                message={alertMessage || ''}
                 onClose={() => setShowAlert(false)}
               />
             )}

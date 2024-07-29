@@ -8,7 +8,7 @@ import './../../../app/globals.css';
 interface StepSummaryProps {
   prevStep: () => void;
   completeForm: () => void;
-  questionsData: Omit<Question, 'question_id'>[];
+  questionsData: (Omit<Question, 'question_id'> & { imageFile?: File | null })[];
   optionsData: { [key: number]: Omit<Option, 'option_id'>[] };
 }
 
@@ -37,9 +37,9 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
         <WizardStepContainer key={index} title={`Pregunta ${index + 1}`}>
           <div className="mb-4">
             <h3 className="text-lg font-bold mb-2">{question.question_text}</h3>
-            {question.image && (
+            {question.imageFile && (
               <div className="mb-4">
-                <img src={question.image} alt={`Pregunta ${index + 1}`} className="max-w-full h-auto rounded-md shadow-md" />
+                <img src={URL.createObjectURL(question.imageFile)} alt={`Pregunta ${index + 1}`} className="max-w-full h-auto rounded-md shadow-md" />
               </div>
             )}
             <ul className="list-disc list-inside">
