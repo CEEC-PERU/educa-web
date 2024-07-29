@@ -7,7 +7,7 @@ import { getUserById } from '../../../services/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Loader from '../../../components/Loader';
 import StudentCourseCard from './StudentCourseCard';
-import GradesModal from './Modal';
+import GradesModal from '../../../components/Corporate/Modal';
 import './../../../app/globals.css';
 
 const StudentGrades: React.FC = () => {

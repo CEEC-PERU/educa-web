@@ -1,7 +1,7 @@
 import CardImage from '../components/Content/CardImage';
 import CardCarousel from "../components/student/CardCarousel";
 import Footter from "../components/Footter";
-import ButtonComponent from '@/components/ButtonDelete';
+import ButtonComponent from '@/components/ButtonComponent';
 
 //pagina principal
 export default function Home() {

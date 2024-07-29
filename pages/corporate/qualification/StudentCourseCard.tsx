@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import CircularBar from '../../../components/Corporate/CircularBar';
-import GradesModal from './Modal'; // Asegúrate de importar el componente del modal
+import GradesModal from '../../../components/Corporate/Modal'; // Asegúrate de importar el componente del modal
 
 interface Course {
   image: string;
