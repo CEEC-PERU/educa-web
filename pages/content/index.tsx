@@ -68,15 +68,14 @@ const Home: React.FC = () => {
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
           <div className="flex justify-between items-center mb-4">
-            <Link href="/content/addCourse">
-              <ButtonComponent
+            <ButtonComponent
                 buttonLabel="Añadir Curso"
+                buttonroute="/content/addCourse"
                 backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400"
                 textColor="text-white"
                 fontSize="text-xs"
                 buttonSize="py-2 px-7"
-              />
-            </Link>
+            />
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">

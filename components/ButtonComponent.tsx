@@ -3,6 +3,7 @@ import Link from 'next/link';
 
 interface ButtonProps {
   buttonLabel: string;
+  buttonroute?:string;
   backgroundColor?: string;
   textColor?: string;
   fontSize?: string;
@@ -13,6 +14,7 @@ interface ButtonProps {
 
 const ButtonComponent: React.FC<ButtonProps> = ({ 
   buttonLabel = "Detalles", 
+  buttonroute = "/login",
   backgroundColor = "bg-gray-900", 
   textColor = "text-white", 
   fontSize = "text-sm", 
@@ -27,7 +29,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   const buttonClasses = `block w-full select-none rounded-xl ${backgroundColor} ${textColor} ${fontSize} ${buttonSize} ${responsiveButtonSize} font-bold uppercase shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-85 focus:shadow-none active:opacity-85 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none`;
   
   return (
-    <Link href="/login">
+    <Link href={buttonroute}>
     <button className={buttonClasses} type="button" >
       {buttonLabel}
     </button>
