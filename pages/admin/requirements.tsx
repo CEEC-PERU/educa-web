@@ -5,7 +5,7 @@ import { getAllRequirements, updateRequirement } from '../../services/requiremen
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import RequirementCard from '../../components/Admin/RequirementCard';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import { Requirement } from '../../interfaces/Requirement';
 import './../../app/globals.css';
 

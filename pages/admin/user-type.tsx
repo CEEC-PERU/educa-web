@@ -5,7 +5,7 @@ import Sidebar from '../../components/Admin/SideBarAdmin';
 import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
 import FormField from '../../components/FormField';
 import TableUser from '../../components/TableUser';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import UserForm from '../../components/Admin/UserForm';
 import Modal from '../../components/Admin/Modal';
 

@@ -7,7 +7,7 @@ import { deleteSession } from '../../services/sessionService';
 import { getEvaluations } from '../../services/evaluationService';
 import Sidebar from './../../components/Content/SideBar';
 import { Evaluation } from '../../interfaces/Evaluation';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import { Module } from '../../interfaces/Module';
 import Link from 'next/link';
 import './../../app/globals.css';

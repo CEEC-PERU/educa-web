@@ -4,7 +4,7 @@ import Sidebar from '../../components/Content/SideBar';
 import { getCategories, addCategory, deleteCategory, updateCategory } from '../../services/categoryService';
 import { Category } from '../../interfaces/Category';
 import './../../app/globals.css';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import FormField from '../../components/FormField';
 import Table from '../../components/Table';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';

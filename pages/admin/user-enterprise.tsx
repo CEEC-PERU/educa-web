@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import CardEnterprise from '../../components/Admin/CardEnterprise';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import Modal from '../../components/Admin/Modal';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import EnterpriseForm from '../../components/Admin/EnterpriseForm';

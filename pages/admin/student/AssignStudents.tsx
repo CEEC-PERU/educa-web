@@ -9,7 +9,7 @@ import { getCompanies, getUsersByCompanyAndRole } from '../../../services/userSe
 import { getCourses } from '../../../services/courseService';
 import { assignStudentsToCourse, getUnassignedStudents } from '../../../services/courseStudent';
 import FormField from '../../../components/FormField';
-import ButtonComponent from '../../../components/ButtonDelete';
+import ButtonComponent from '../../../components/ButtonComponent';
 import AlertComponent from '../../../components/AlertComponent';
 import Loader from '../../../components/Loader';
 import './../../../app/globals.css';
