@@ -13,8 +13,23 @@ export const getCourse = async (id: string): Promise<Course> => {
   return response.data;
 };
 
-export const addCourse = async (course: Omit<Course, 'course_id' | 'created_at' | 'updated_at'>): Promise<void> => {
-    await axios.post(API_COURSES, course);
+export const addCourse = async (course: Omit<Course, 'course_id' | 'created_at' | 'updated_at'>, videoFile: File, imageFile: File): Promise<void> => {
+  const formData = new FormData();
+  
+  // Agrega los datos del curso al FormData
+  for (const key in course) {
+    formData.append(key, (course as any)[key]);
+  }
+
+  // Agrega los archivos al FormData
+  formData.append('video', videoFile);
+  formData.append('image', imageFile);
+
+  await axios.post(API_COURSES, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 };
 
 export const updateCourse = async (id: string, course: Omit<Course, 'course_id' | 'created_at' | 'updated_at'>): Promise<void> => {

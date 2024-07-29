@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import { Professor, Level } from '../../interfaces/Professor';
-import axios from '../../services/axios';
-import { uploadImage } from '../../services/imageService';
+import { getLevels, addProfessor } from '../../services/professorService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import ActionButtons from '../../components/Content/ActionButtons';
@@ -39,12 +38,10 @@ const AddProfessors: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [professorsRes, levelsRes] = await Promise.all([
-          axios.get<Professor[]>('/professors/'),
-          axios.get<Level[]>('/professors/levels'),
+        const [levelsRes] = await Promise.all([
+          getLevels(),
         ]);
-        setProfessors(professorsRes.data);
-        setLevels(levelsRes.data);
+        setLevels(levelsRes);
       } catch (error) {
         console.error('Error fetching data:', error);
         setError('Error fetching data');
@@ -114,12 +111,8 @@ const AddProfessors: React.FC = () => {
     }
     setFormLoading(true);
     try {
-      let imageUrl = profesor.image;
-      if (imageFile) {
-        imageUrl = await uploadImage(imageFile, 'Profesores');
-      }
-      const response = await axios.post('/professors', { ...profesor, image: imageUrl });
-      setProfessors([...professors, response.data]);
+      const response = await addProfessor(profesor, imageFile!);
+      setProfessors([...professors, response]);
       setProfesor({
         full_name: '',
         image: '',

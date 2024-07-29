@@ -14,7 +14,7 @@ const CreateEvaluationWizard: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [step, setStep] = useState(1);
   const [evaluationData, setEvaluationData] = useState<Omit<Evaluation, 'evaluation_id'>>({ name: '', description: '' });
-  const [questionsData, setQuestionsData] = useState<Omit<Question, 'question_id'>[]>([]);
+  const [questionsData, setQuestionsData] = useState<(Omit<Question, 'question_id'> & { imageFile?: File | null })[]>([]);
   const [optionsData, setOptionsData] = useState<{ [key: number]: Omit<Option, 'option_id'>[] }>({});
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ const CreateEvaluationWizard: React.FC = () => {
 
       for (const question of questionsData) {
         if (question.question_text && question.type_id !== undefined && question.score !== undefined) {
-          const newQuestion = await addQuestion({ ...question, evaluation_id: evaluationId });
+          const newQuestion = await addQuestion({ ...question, evaluation_id: evaluationId }, question.imageFile || null);
           const questionId = newQuestion.question_id;
           const questionOptions = optionsData[questionsData.indexOf(question)] || [];
 
