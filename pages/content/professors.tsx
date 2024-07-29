@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import { Professor, Level } from '../../interfaces/Professor';
 import axios from '../../services/axios';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import ProfileCard from '../../components/ProfileCard'; // Asegúrate de importar ProfileCard
 import { useRouter } from 'next/router';
 import Link from 'next/link';

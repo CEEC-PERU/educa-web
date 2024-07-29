@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import CardImage from '../../components/Content/CardImage';
-import ButtonComponent from '../../components/ButtonDelete';
+import ButtonComponent from '../../components/ButtonComponent';
 import { getCourses } from '../../services/courseService';
 import { Course } from '../../interfaces/Course';
 import Link from 'next/link';

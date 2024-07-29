@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ButtonComponent from './ButtonDelete';
+import ButtonComponent from './ButtonComponent';
 
 interface ProfileCardProps {
   name: string;
