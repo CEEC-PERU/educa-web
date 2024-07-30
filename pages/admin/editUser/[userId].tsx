@@ -5,7 +5,7 @@ import { getEnterprise } from '../../../services/enterpriseService';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
 import FormField from '../../../components/FormField';
-import ButtonComponent from '../../../components/ButtonDelete';
+import ButtonComponent from '../../../components/ButtonComponent';
 import Alert from '../../../components/AlertComponent';
 
 import './../../../app/globals.css';
