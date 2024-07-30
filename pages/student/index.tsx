@@ -53,8 +53,8 @@ const StudentIndex: React.FC = () => {
       }
 
       function notify() {
-        const notification = new Notification('Breaking:', {
-          body: `Celebrity Caught in Fresh Scandal`,
+        const notification = new Notification('EducaWeb', {
+          body: `Bienvenido a EducaWeb`,
           icon: 'https://unsplash.it/400/400',
         });
 

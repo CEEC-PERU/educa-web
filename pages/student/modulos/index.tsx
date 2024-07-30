@@ -14,6 +14,7 @@ import './../../../app/globals.css';
 import LoadingIndicator from '../../../components/student/LoadingIndicator'; 
 const socket = io(API_SOCKET_URL);
 
+
 const Home: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
@@ -90,7 +91,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 1014) {
-        setIsDrawerOpen(true);
+        setIsDrawerOpen(false);
       }
     };
 
@@ -114,16 +115,18 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
-      <div className="fixed w-full z-10">
+    <div>
+      <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
-          toggleSidebar={window.innerWidth <= 1014 ? toggleSidebar : undefined} // No mostrar el botón en pantallas grandes
+          toggleSidebar={toggleSidebar}
         />
-        <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+         <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
+    <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+     
       <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
@@ -142,6 +145,7 @@ const Home: React.FC = () => {
           videoProgress={videoProgress}
         />
       </div>
+    </div>
     </div>
   );
 };
