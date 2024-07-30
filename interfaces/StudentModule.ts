@@ -37,12 +37,26 @@ export interface UserModuleProgress {
   user_id: number;
 }
 
+export interface Videos {
+  video_id: number;
+  orden: number;
+  video_enlace: string;
+  question: string;
+  correct_answer: string;
+  incorrect_answer: string[];
+  session_id: number;
+  image : string;
+  created_at: string;
+  updated_at: string;
+}
+
+
 export interface ModuleSessions {
   session_id: number;
   name: string;
-  video_enlace: string;
   duracion_minutos: string;
   usersessionprogress: UserSessionProgress[];
+  Videos: Videos[];
 }
 
 export interface EvaluationResult{

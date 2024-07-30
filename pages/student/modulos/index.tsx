@@ -5,7 +5,7 @@ import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
 import MainContentPrueba from '../../../components/student/MainContentPrueba';
 import { Profile } from '../../../interfaces/UserInterfaces';
-import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../../../interfaces/StudentModule';
+import { Question, ModuleEvaluation, ModuleSessions, ModuleResults, Videos } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
 import io from 'socket.io-client';
@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
   
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
-  const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
+  const [selectedSession, setSelectedSession] = useState<{ videos?: Videos[], questions?: Question[], session_id?: number , module_id?: number }>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
 
@@ -53,7 +53,7 @@ const Home: React.FC = () => {
 
         if (session) {
           setSelectedSession({
-            video: session.video_enlace,
+            videos: session.Videos,
             session_id: session.session_id,
             module_id: moduleId
           });
@@ -66,12 +66,10 @@ const Home: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  
-
   const handleVideoProgress = (progress: number, isCompleted: boolean) => {
     const progressupdate = Math.round(progress);
   
-    if (selectedSession.video && selectedSession.session_id) {
+    if (selectedSession.videos && selectedSession.session_id) {
       const sessionProgress = {
         session_id: selectedSession.session_id,
         progress: progressupdate,
@@ -84,7 +82,7 @@ const Home: React.FC = () => {
   
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
-        [selectedSession.video!]: progress,
+        [selectedSession.videos![0].video_enlace]: progress, // Aquí puedes ajustar para manejar múltiples videos
       }));
     }
   };
@@ -104,8 +102,7 @@ const Home: React.FC = () => {
   }, []);
 
   if (isLoading) {
-  return <LoadingIndicator />; 
-    
+    return <LoadingIndicator />;
   }
 
   if (error) {
@@ -113,7 +110,7 @@ const Home: React.FC = () => {
   }
 
   if (!courseData || courseData.length === 0) {
-    return <LoadingIndicator />; 
+    return <LoadingIndicator />;
   }
 
   return (
@@ -123,15 +120,14 @@ const Home: React.FC = () => {
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
           user={user ? { profilePicture: uri_picture } : undefined}
-          toggleSidebar={toggleSidebar}
+          toggleSidebar={window.innerWidth <= 1014 ? toggleSidebar : undefined} // No mostrar el botón en pantallas grandes
         />
-          <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+        <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
       <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
-    
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
-            sessionVideo={selectedSession.video}
+            sessionVideos={selectedSession.videos}
             evaluationQuestions={selectedSession.questions}
             onProgress={handleVideoProgress}
             selectedModuleId={selectedModuleId}

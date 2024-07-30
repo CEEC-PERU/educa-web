@@ -9,7 +9,7 @@ const flashcardData = {
     questions: [
       {
         question_id: 2,
-        question_text: "¿Que son las habilidades blandas?",
+        question_text: "Diferentes aspectos y estilos de cómo nos comunicamos:",
         options: [
           { option_id: 5, option_text: "https://res.cloudinary.com/dk2red18f/image/upload/v1709158135/CEEC/FLASHCARD/jmpexf1hqcpa51ax5vre.png", is_correct: false },
           { option_id: 4, option_text: "https://res.cloudinary.com/dk2red18f/image/upload/v1709158095/CEEC/FLASHCARD/rbeqvaccktqh3pmepsib.png", is_correct: false },
