@@ -37,9 +37,9 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
         <WizardStepContainer key={index} title={`Pregunta ${index + 1}`}>
           <div className="mb-4">
             <h3 className="text-lg font-bold mb-2">{question.question_text}</h3>
-            {question.imageFile && (
+            {question.image && (
               <div className="mb-4">
-                <img src={URL.createObjectURL(question.imageFile)} alt={`Pregunta ${index + 1}`} className="max-w-full h-auto rounded-md shadow-md" />
+                <img src={question.image} alt={`Pregunta ${index + 1}`} className="max-w-full h-auto rounded-md shadow-md" />
               </div>
             )}
             <ul className="list-disc list-inside">

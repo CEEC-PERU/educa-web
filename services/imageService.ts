@@ -1,3 +1,4 @@
+//imageService.ts
 import axios from './axios';
 import { API_IMAGES } from '../utils/Endpoints';
 

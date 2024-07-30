@@ -7,6 +7,7 @@ import StepThree from './StepThree';
 import StepSummary from './StepSummary';
 import Wizard from '../../../components/Wizard';
 import { addEvaluation, addQuestion, addOption, getEvaluations } from '../../../services/evaluationService';
+import { uploadImage } from '../../../services/imageService';
 import { Evaluation, Question, Option } from '../../../interfaces/Evaluation';
 import './../../../app/globals.css';
 
@@ -57,8 +58,13 @@ const CreateEvaluationWizard: React.FC = () => {
       const evaluationId = newEvaluation.evaluation_id;
 
       for (const question of questionsData) {
+        if (question.imageFile) {
+          const imageUrl = await uploadImage(question.imageFile, 'Preguntas');
+          question.image = imageUrl;
+        }
+
         if (question.question_text && question.type_id !== undefined && question.score !== undefined) {
-          const newQuestion = await addQuestion({ ...question, evaluation_id: evaluationId }, question.imageFile || null);
+          const newQuestion = await addQuestion({ ...question, evaluation_id: evaluationId });
           const questionId = newQuestion.question_id;
           const questionOptions = optionsData[questionsData.indexOf(question)] || [];
 
@@ -83,28 +89,28 @@ const CreateEvaluationWizard: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : 'ml-0'}`}>
-            <div className="container bg-gradient-to-b rounded-lg">
-              <Wizard currentStep={step} />
-              {step === 1 && <StepOne nextStep={nextStep} setEvaluationData={setEvaluationData} evaluationData={evaluationData} />}
-              {step === 2 && <StepTwo nextStep={nextStep} prevStep={prevStep} setQuestionsData={setQuestionsData} initialQuestions={questionsData} />}
-              {step === 3 && (
-                <StepThree
-                  prevStep={prevStep}
-                  nextStep={nextStep}
-                  questionsData={questionsData}
-                  setOptionsData={setOptionsData}
-                  optionsData={optionsData}
-                />
-              )}
-              {step === 4 && (
-                <StepSummary
-                  prevStep={prevStep}
-                  completeForm={completeForm}
-                  questionsData={questionsData}
-                  optionsData={optionsData}
-                />
-              )}
-            </div>
+          <div className="container bg-gradient-to-b rounded-lg">
+            <Wizard currentStep={step} />
+            {step === 1 && <StepOne nextStep={nextStep} setEvaluationData={setEvaluationData} evaluationData={evaluationData} />}
+            {step === 2 && <StepTwo nextStep={nextStep} prevStep={prevStep} setQuestionsData={setQuestionsData} initialQuestions={questionsData} />}
+            {step === 3 && (
+              <StepThree
+                prevStep={prevStep}
+                nextStep={nextStep}
+                questionsData={questionsData}
+                setOptionsData={setOptionsData}
+                optionsData={optionsData}
+              />
+            )}
+            {step === 4 && (
+              <StepSummary
+                prevStep={prevStep}
+                completeForm={completeForm}
+                questionsData={questionsData}
+                optionsData={optionsData}
+              />
+            )}
+          </div>
         </main>
       </div>
     </div>

@@ -46,19 +46,8 @@ export const addOption = async (option: Omit<Option, 'option_id'>): Promise<Opti
   return response.data;
 };
 
-export const addQuestion = async (question: Omit<Question, 'question_id'>, imageFile: File | null): Promise<Question> => {
-  const formData = new FormData();
-  for (const key in question) {
-    formData.append(key, (question as any)[key]);
-  }
-  if (imageFile) {
-    formData.append('image', imageFile);
-  }
-  const response = await axios.post<Question>(API_QUESTIONS, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
+export const addQuestion = async (question: Omit<Question, 'question_id'>): Promise<Question> => {
+  const response = await axios.post<Question>(API_QUESTIONS, question);
   return response.data;
 };
 
