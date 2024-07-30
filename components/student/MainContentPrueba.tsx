@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Question, ModuleResults } from '../../interfaces/StudentModule';
+import { Question, ModuleResults, Videos } from '../../interfaces/StudentModule';
 import axios from 'axios';
 import './../../app/globals.css';
 import { useResultModule } from '../../hooks/useResultModule';
@@ -7,24 +7,24 @@ import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
 
 interface MainContentProps {
-  sessionVideo?: string;
+  sessionVideos?: Videos[];
   evaluationQuestions?: Question[];
   onFinish?: () => void;
   onContinue?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
   selectedModuleId?: number | null;
-  moduleResults?: ModuleResults[]; // Añadido para recibir los resultados del módulo
+  moduleResults?: ModuleResults[];
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
-  sessionVideo,
+  sessionVideos,
   evaluationQuestions,
   onFinish,
   onProgress,
   videoProgress = 0,
   selectedModuleId,
-  moduleResults // Añadido para recibir los resultados del módulo
+  moduleResults
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
@@ -34,6 +34,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [evaluationCompleted, setEvaluationCompleted] = useState(false);
   const [showStartMessage, setShowStartMessage] = useState(true);
   const [showReaction, setShowReaction] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [showGif, setShowGif] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const { user, token } = useAuth();
@@ -49,7 +51,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setVideoEnded(false);
     setEvaluationCompleted(false);
     setShowStartMessage(true);
-  }, [sessionVideo, evaluationQuestions, selectedModuleId]);
+    setCurrentVideoIndex(0);
+    setShowGif(false);
+  }, [sessionVideos, evaluationQuestions, selectedModuleId]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -90,7 +94,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         }
       };
     }
-  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideo]);
+  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideos]);
 
   const handleNextQuestion = () => {
     setSelectedOption(null);
@@ -112,7 +116,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
     setTimeout(() => {
       setShowReaction(false);
-    }, 2000); // Show reaction for 2 seconds
+    }, 2000);
   };
 
   const handleFinish = () => {
@@ -136,13 +140,25 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
-    if (onProgress) {
-      onProgress(100, true);
-    }
+    setShowGif(true);
+    setTimeout(() => {
+      setShowGif(false);
+    }, 3000); // Mostrar el GIF por 3 segundos antes de la pregunta
   };
 
   const handleStartEvaluation = () => {
     setShowStartMessage(false);
+  };
+
+  const handleContinue = () => {
+    if (currentVideoIndex < (sessionVideos?.length || 0) - 1) {
+      setCurrentVideoIndex(currentVideoIndex + 1);
+      setVideoEnded(false);
+      setSelectedOption(null);
+      setIsCorrect(null);
+    } else {
+      handleFinish();
+    }
   };
 
   const moduleResult = moduleResults?.find(result => result.module_id === selectedModuleId);
@@ -151,18 +167,73 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
   return (
     <div className="h-full w-full p-4 relative">
-      {sessionVideo ? (
+      {sessionVideos ? (
         <div className="flex flex-col items-center">
-          <video
-            key={sessionVideo}
-            controls
-            className="w-full h-full"
-            style={{ maxWidth: '100%' }}
-            onEnded={handleVideoEnd}
-            ref={videoRef}
-          >
-            <source src={sessionVideo} type="video/mp4" />
-          </video>
+          {!videoEnded ? (
+            <video
+              key={sessionVideos[currentVideoIndex]?.video_id}
+              controls
+              className="w-full h-full"
+              style={{ maxWidth: '100%' }}
+              onEnded={handleVideoEnd}
+              ref={videoRef}
+            >
+              <source src={sessionVideos[currentVideoIndex]?.video_enlace} type="video/mp4" />
+            </video>
+          ) : showGif ? (
+            <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721946233/WEB_EDUCA/VIDEOS/oyywqqxqwzwi7szbbmt5.gif" alt="Transition GIF" className="w-full h-full" style={{ maxWidth: '100%' }} />
+          ) : (
+            <div className="flex flex-col justify-center items-center mt-4">
+              <h3 className="text-white text-center text-3xl pb-7">
+                {sessionVideos[currentVideoIndex]?.question}
+              </h3>
+               <img src={sessionVideos[currentVideoIndex]?.image} className="w-auto h-48 mb-6" />
+              <div className="flex justify-between items-center">
+                <ul className="text-white text-center w-1/2">
+                  {[sessionVideos[currentVideoIndex]?.correct_answer, ...sessionVideos[currentVideoIndex]?.incorrect_answer].map((option, idx) => (
+                    <li key={idx}>
+                      <button
+                        className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
+                        style={{ width: '270px', height: '50px' }}
+                        onClick={() => handleOptionSelect(idx, option === sessionVideos[currentVideoIndex]?.correct_answer)}
+                        disabled={selectedOption !== null}
+                      >
+                        {option}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {showReaction && (
+                <div className="absolute bottom-0 left-0 w-full h-full flex justify-center items-end">
+                  <div className="relative w-full h-full flex justify-center">
+                    {Array.from({ length: 20 }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`absolute text-6xl ${isCorrect ? 'text-green-500' : 'text-red-500'} animate-float`}
+                        style={{
+                          bottom: '0',
+                          left: `${Math.random() * 100}%`,
+                          animationDelay: `${Math.random() * 0.5}s`,
+                        }}
+                      >
+                        {isCorrect ? '😊' : '😢'}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {selectedOption !== null && !showReaction && (
+                <button
+                  className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
+                  style={{ width: '270px', height: '50px' }}
+                  onClick={handleContinue}
+                >
+                  Continuar
+                </button>
+              )}
+            </div>
+          )}
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         moduleResult ? (
@@ -243,7 +314,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         )
       ) : (
         <div className="flex justify-center items-center h-full w-full p-4 text-white">
-          Selecciona una sesión  para iniciar el curso 
+          Selecciona una sesión para iniciar el curso
         </div>
       )}
     </div>

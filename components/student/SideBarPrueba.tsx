@@ -38,7 +38,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
     const sessions = module.moduleSessions;
     const totalSessions = sessions.length;
     const totalProgress = sessions.reduce((acc, session) => {
-      const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
+      const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.session_id] || 0);
       return acc + sessionProgress;
     }, 0);
 
@@ -66,7 +66,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
       return previousModule.usermoduleprogress?.[0]?.progress !== 100;
     }
     const currentModule = courseModules[moduleIndex];
-    const previousSessionProgress = getSessionProgress(currentModule.moduleSessions[sessionIndex - 1].usersessionprogress, videoProgress[currentModule.moduleSessions[sessionIndex - 1].video_enlace] || 0);
+    const previousSessionProgress = getSessionProgress(currentModule.moduleSessions[sessionIndex - 1].usersessionprogress, videoProgress[currentModule.moduleSessions[sessionIndex - 1].session_id] || 0);
     return previousSessionProgress !== 100;
   };
 
@@ -92,7 +92,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
               <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
             </div>
             {module.moduleSessions.map((session, sessionIndex) => {
-              const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.video_enlace] || 0);
+              const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.session_id] || 0);
               const roundedSessionProgress = Math.round(sessionProgress);
               const locked = isLocked(moduleIndex, sessionIndex);
 
