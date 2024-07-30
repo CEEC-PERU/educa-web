@@ -5,7 +5,7 @@ import Sidebar from '../../components/Admin/SideBarAdmin';
 import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
 import FormField from '../../components/FormField';
 import TableUser from '../../components/TableUser';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonContent from '../../components/Content/ButtonContent';
 import UserForm from '../../components/Admin/UserForm';
 import Modal from '../../components/Admin/Modal';
 
@@ -145,7 +145,7 @@ const RoleDetail: React.FC = () => {
           <div className="flex space-x-4 mb-4">
             {roleId && Number(roleId) === STUDENT_ROLE_ID && (
               <div>
-                <ButtonComponent
+                <ButtonContent
                   buttonLabel="Exportar CSV"
                   backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
                   textColor="text-white"
@@ -156,7 +156,7 @@ const RoleDetail: React.FC = () => {
               </div>
             )}
             <div>
-              <ButtonComponent
+              <ButtonContent
                 buttonLabel="Agregar Usuario"
                 backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
                 textColor="text-white"
@@ -169,7 +169,7 @@ const RoleDetail: React.FC = () => {
           {roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID && (
             <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
               {companies.map((company, index) => (
-                <ButtonComponent
+                <ButtonContent
                   key={company.enterprise_id}
                   buttonLabel={company.name}
                   backgroundColor={buttonColors[index % buttonColors.length]}

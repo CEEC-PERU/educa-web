@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
-import CardImage from '../../components/Content/CardImage';
+import CardCourses from '../../components/Content/CardCourses';
 import { getCourses } from '../../services/courseService';
 import { Course } from '../../interfaces/Course';
 import { useAuth } from '../../context/AuthContext';
@@ -57,7 +57,7 @@ const ModulePage: React.FC = () => {
           <div className="w-full bg-white rounded-lg">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cursos.map((curso) => (
-                <CardImage
+                <CardCourses
                   key={curso.course_id}
                   id={curso.course_id}
                   image={curso.image}

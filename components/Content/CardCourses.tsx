@@ -1,7 +1,7 @@
 import React from 'react';
-import ButtonComponent from "../ButtonComponent";
+import ButtonContent from "./ButtonContent";
 
-interface CardImageProps {
+interface CardCoursesProps {
   rating?: number;
   description?: string;
   imageUrl?: string;
@@ -19,7 +19,7 @@ interface CardImageProps {
   onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del botón
 }
 
-const CardImage: React.FC<CardImageProps> = ({
+const CardCourses: React.FC<CardCoursesProps> = ({
   imageUrl = 'https://via.placeholder.com/150',
   title = 'Nombre del curso',
   rating = 0,
@@ -71,14 +71,13 @@ const CardImage: React.FC<CardImageProps> = ({
           {displayDescription}
         </p>
         <div className="pt-4 flex justify-center">
-          <ButtonComponent 
+          <ButtonContent 
             buttonLabel={buttonLabel} 
-            backgroundColor="bg-brandmora-500" 
+            backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400" 
             textColor="text-white" 
             fontSize="text-xs" 
             buttonSize="py-2 px-7"
             onClick={() => onButtonClick && onButtonClick(id)}
-            navigateTo="/login" // Nueva prop para navegación
           />
         </div>
       </div>
@@ -86,4 +85,4 @@ const CardImage: React.FC<CardImageProps> = ({
   );
 };
 
-export default CardImage;
+export default CardCourses;

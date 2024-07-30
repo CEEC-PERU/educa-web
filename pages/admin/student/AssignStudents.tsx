@@ -9,7 +9,7 @@ import { getCompanies, getUsersByCompanyAndRole } from '../../../services/userSe
 import { getCourses } from '../../../services/courseService';
 import { assignStudentsToCourse, getUnassignedStudents } from '../../../services/courseStudent';
 import FormField from '../../../components/FormField';
-import ButtonComponent from '../../../components/ButtonComponent';
+import ButtonContent from '../../../components/Content/ButtonContent';
 import AlertComponent from '../../../components/AlertComponent';
 import Loader from '../../../components/Loader';
 import './../../../app/globals.css';
@@ -163,7 +163,7 @@ const AssignStudents: React.FC = () => {
               options={[{ value: '', label: 'Seleccionar Curso' }, ...courses.map(course => ({ value: course.course_id.toString(), label: course.name }))]}
             />
           </div>
-          <ButtonComponent
+          <ButtonContent
             buttonLabel="Asignar Estudiantes"
             backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
             textColor="text-white"

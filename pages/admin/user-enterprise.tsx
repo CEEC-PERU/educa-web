@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import CardEnterprise from '../../components/Admin/CardEnterprise';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonContent from '../../components/Content/ButtonContent';
 import Modal from '../../components/Admin/Modal';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import EnterpriseForm from '../../components/Admin/EnterpriseForm';
@@ -87,7 +87,7 @@ const EnterpriseList: React.FC = () => {
         {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
           <div className="flex justify-between items-center mb-4">
             <div onClick={handleAddEnterprise}>
-              <ButtonComponent
+              <ButtonContent
                 buttonLabel="Añadir Empresa"
                 backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400"
                 textColor="text-white"

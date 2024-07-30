@@ -5,7 +5,7 @@ import { getAllRequirements, updateRequirement } from '../../services/requiremen
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import RequirementCard from '../../components/Admin/RequirementCard';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonContent from '../../components/Content/ButtonContent';
 import { Requirement } from '../../interfaces/Requirement';
 import './../../app/globals.css';
 
@@ -76,7 +76,7 @@ const RequirementsPage: React.FC = () => {
           {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
           <h2 className="text-2xl font-bold mb-6">Requerimientos</h2>
           <div className="flex justify-between mb-6 space-x-8">
-            <ButtonComponent
+            <ButtonContent
               buttonLabel="Pendiente"
               backgroundColor={showActive ? 'bg-blue-500' : 'bg-gray-300'}
               textColor="text-white"
@@ -84,7 +84,7 @@ const RequirementsPage: React.FC = () => {
               buttonSize="py-2 px-4"
               onClick={() => setShowActive(true)}
             />
-            <ButtonComponent
+            <ButtonContent
               buttonLabel="Requerimiento Finalizado"
               backgroundColor={!showActive ? 'bg-blue-500' : 'bg-gray-300'}
               textColor="text-white"

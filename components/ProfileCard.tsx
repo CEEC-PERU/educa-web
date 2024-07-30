@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ButtonComponent from './ButtonComponent';
+import ButtonContent from './Content/ButtonContent';
 
 interface ProfileCardProps {
   name: string;
@@ -42,7 +42,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         <span className="text-sm text-gray-500">{title}</span>
         <span className="text-sm text-gray-500">Nivel: {level}</span> {/* Añadir nivel */}
         <div className="mt-4">
-          <ButtonComponent
+          <ButtonContent
             buttonLabel="Ver Perfil"
             backgroundColor="bg-gradient-blue"
             textColor="text-white"

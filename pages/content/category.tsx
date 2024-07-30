@@ -4,7 +4,7 @@ import Sidebar from '../../components/Content/SideBar';
 import { getCategories, addCategory, deleteCategory, updateCategory } from '../../services/categoryService';
 import { Category } from '../../interfaces/Category';
 import './../../app/globals.css';
-import ButtonComponent from '../../components/ButtonComponent';
+import ButtonContent from '../../components/Content/ButtonContent';
 import FormField from '../../components/FormField';
 import Table from '../../components/Table';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -190,7 +190,7 @@ const CategoryPage: React.FC = () => {
                         required
                       />
                     </div>
-                    <ButtonComponent
+                    <ButtonContent
                       buttonLabel={isEditing ? 'Guardar' : '+ Agregar'}
                       backgroundColor={isEditing ? 'bg-custom-purple' : 'bg-custom-blue'}
                       textColor="text-white"
@@ -199,7 +199,7 @@ const CategoryPage: React.FC = () => {
                       onClick={handleSubmit}
                     />
                     {isEditing && (
-                      <ButtonComponent
+                      <ButtonContent
                         buttonLabel="Cancelar"
                         backgroundColor="bg-gray-500"
                         textColor="text-white"

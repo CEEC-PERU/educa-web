@@ -19,6 +19,9 @@ const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modu
     const average = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
     return average.toFixed(2);
   };
+  if (!course || !modules || !finalExam) {
+    return null; // O algún mensaje de error / carga
+  }
 
   return (
     <Modal

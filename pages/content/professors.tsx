@@ -61,15 +61,14 @@ const Profesores: React.FC = () => {
           <div className="flex justify-between items-center mb-4"></div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex justify-between items-center mb-6 mt-4">
-            <Link href="/content/addProfessor">
-              <ButtonComponent
-                buttonLabel="Añadir Profesor"
-                backgroundColor="bg-gradient-blue"
-                textColor="text-white"
-                fontSize="text-xs"
-                buttonSize="py-2 px-7"
-              />
-            </Link>
+            <ButtonComponent
+              buttonLabel="Añadir Profesor"
+              buttonroute="/content/addProfessor"
+              backgroundColor="bg-gradient-blue"
+              textColor="text-white"
+              fontSize="text-xs"
+              buttonSize="py-2 px-7"
+            />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Ajuste a 4 columnas */}
             {professors.map(professor => (
