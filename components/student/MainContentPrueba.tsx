@@ -194,7 +194,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                     <li key={idx}>
                       <button
                         className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                        style={{ width: '270px', height: '50px' }}
+                        style={{ width: '300px', height: '100px' }}
                         onClick={() => handleOptionSelect(idx, option === sessionVideos[currentVideoIndex]?.correct_answer)}
                         disabled={selectedOption !== null}
                       >
@@ -226,7 +226,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               {selectedOption !== null && !showReaction && (
                 <button
                   className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-                  style={{ width: '300px', height: '100px' }}
+                  style={{ width: '270px', height: '100px' }}
                   onClick={handleContinue}
                 >
                   Continuar
