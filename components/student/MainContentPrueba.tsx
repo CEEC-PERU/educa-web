@@ -265,7 +265,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                       <li key={idx}>
                         <button
                           className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                          style={{ width: '270px', height: '50px' }}
+                          
+                          style={{ width: '300px', height: '80px' }}
                           onClick={() => handleOptionSelect(idx, option.is_correct)}
                           disabled={selectedOption !== null}
                         >
