@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import CircularBar from '../../../components/Corporate/CircularBar';
 import GradesModal from './Modal'; // Asegúrate de importar el componente del modal
 
+
 interface Course {
   image: string;
   name: string;
@@ -32,7 +33,7 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course, onViewGra
   }
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
+    <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6 border-collapse">
       <h3 className="text-xl font-bold mb-4">{course.name}</h3>
       <div className="flex flex-col md:flex-row">
         <div className="mr-4">

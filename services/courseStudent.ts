@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_GET_COURSEMODULE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
 import { CourseStudent } from '../interfaces/CourseStudent';
 
@@ -23,7 +24,7 @@ export const getCourseStudent = async (userToken: string, userId: number): Promi
 };
 
 export const getModulesByCourseId2 = async (courseId: number, userId: number) => {
-  const response = await axios.get(`${API_GET_COURSEMODULE}${courseId}/${userId}`);
+  const response = await axios.get(`${API_GET_COURSEMODULE}/${courseId}/${userId}`);
   return response.data;
 };
 

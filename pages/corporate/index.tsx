@@ -6,15 +6,25 @@ import { getUsersByEnterpriseWithSessions } from '../../services/courseStudent';
 import Loader from '../../components/Loader';
 import TopStudentsChart from '../../components/Corporate/TopStudent';
 import './../../app/globals.css';
-
+import { Profile } from '../../interfaces/UserInterfaces';
 const CorporateUsers: React.FC = () => {
-  const { user } = useAuth();
+  const { logout, user, profileInfo } = useAuth();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+
+  let name = '';
+  let uri_picture = '';
+
+  if (profileInfo) {
+    const profile = profileInfo as Profile;
+    name = profile.first_name;
+    uri_picture = profile.profile_picture!;
+  }
+
 
   useEffect(() => {
     if (enterpriseId) {
@@ -60,7 +70,10 @@ const CorporateUsers: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+      <Navbar 
+      bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90 "
+      borderColor="border border-stone-300"
+      user={user ? { profilePicture: uri_picture } : undefined} />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
