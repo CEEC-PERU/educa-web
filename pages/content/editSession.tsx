@@ -3,12 +3,10 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import { getSession, updateSession } from '../../services/sessionService';
-import { uploadVideo } from '../../services/videoService';
 import { getModules } from '../../services/moduleService';
 import { Session } from '../../interfaces/Session';
 import { Module } from '../../interfaces/Module';
 import './../../app/globals.css';
-import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import ActionButtons from '../../components/Content/ActionButtons'; // Importar el componente ActionButtons
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
@@ -18,13 +16,11 @@ import Loader from '../../components/Loader';
 const EditSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [session, setSession] = useState<Omit<Session, 'session_id'>>({
-    video_enlace: '',
     duracion_minutos: 0,
     name: '',
     module_id: 0
   });
   const [modules, setModules] = useState<Module[]>([]);
-  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(true); // Estado de carga
@@ -39,7 +35,6 @@ const EditSession: React.FC = () => {
           getModules()
         ]);
         setSession({
-          video_enlace: sessionRes.video_enlace,
           duracion_minutos: sessionRes.duracion_minutos,
           name: sessionRes.name,
           module_id: sessionRes.module_id
@@ -69,21 +64,10 @@ const EditSession: React.FC = () => {
     }));
   };
 
-  const handleFileChange = (file: File) => {
-    setVideoFile(file);
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      let videoUrl = session.video_enlace;
-      if (videoFile) {
-        videoUrl = await uploadVideo(videoFile, 'Sesiones');
-      }
-      await updateSession(id as string, {
-        ...session,
-        video_enlace: videoUrl
-      });
+      await updateSession(id as string, session);
       setSuccess('Sesión actualizada exitosamente');
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
@@ -139,15 +123,6 @@ const EditSession: React.FC = () => {
               value={session.name}
               onChange={handleChange}
             />
-            <div className="mb-4">
-              <label htmlFor="video_enlace" className="block text-gray-700 text-sm font-bold mb-2">Enlace del Video</label>
-              <MediaUploadPreview
-                onMediaUpload={handleFileChange}
-                accept="video/*"
-                label="Subir video"
-                initialPreview={session.video_enlace}
-              />
-            </div>
             <FormField
               id="duracion_minutos"
               label="Duración (minutos)"

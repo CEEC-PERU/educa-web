@@ -1,4 +1,3 @@
-// services/evaluationService.ts
 import axios from './axios';
 import { Evaluation, Question, Option, QuestionType } from '../interfaces/Evaluation';
 import { API_EVALUATIONS, API_QUESTIONS, API_OPTIONS, API_QUESTION_TYPES } from '../utils/Endpoints';
@@ -7,7 +6,6 @@ export const getAvailableEvaluations = async (): Promise<Evaluation[]> => {
   const response = await axios.get<Evaluation[]>(`${API_EVALUATIONS}/available`);
   return response.data;
 };
-
 
 export const getQuestionTypes = async (): Promise<QuestionType[]> => {
   const response = await axios.get<QuestionType[]>(API_QUESTION_TYPES);

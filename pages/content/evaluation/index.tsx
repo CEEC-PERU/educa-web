@@ -49,6 +49,20 @@ const CreateEvaluationWizard: React.FC = () => {
     setStep(1);
   };
 
+  const handleImageUpload = async (file: File, folder: string): Promise<string> => {
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('folder', folder);
+
+      const response = await uploadImage(file, 'Preguntas');
+      return response;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+
   const completeForm = async () => {
     console.log("Questions Data:", questionsData);
     console.log("Options Data:", optionsData);
@@ -59,7 +73,7 @@ const CreateEvaluationWizard: React.FC = () => {
 
       for (const question of questionsData) {
         if (question.imageFile) {
-          const imageUrl = await uploadImage(question.imageFile, 'Preguntas');
+          const imageUrl = await handleImageUpload(question.imageFile, 'Preguntas');
           question.image = imageUrl;
         }
 

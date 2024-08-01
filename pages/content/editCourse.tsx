@@ -28,7 +28,7 @@ const EditCourse: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null); // Estado para el mensaje de éxito
+  const [success, setSuccess] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<Omit<Course, 'course_id' | 'created_at' | 'updated_at'>>({
@@ -60,7 +60,6 @@ const EditCourse: React.FC = () => {
         setCategories(categoriesRes);
         setProfessors(professorsRes);
 
-        // Add the current evaluation to the list and remove duplicates
         const currentEvaluation = availableEvaluations.find(evaluation => evaluation.evaluation_id === courseRes.evaluation_id);
         const updatedEvaluations = currentEvaluation
           ? [currentEvaluation, ...availableEvaluations.filter(evaluation => evaluation.evaluation_id !== courseRes.evaluation_id)]
@@ -134,7 +133,7 @@ const EditCourse: React.FC = () => {
         image: imageUrl
       });
       setSuccess('Curso actualizado exitosamente');
-      setTimeout(() => setSuccess(null), 3000); // Ocultar la alerta después de 3 segundos
+      setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
       setError('Error updating course');
       console.error('Error updating course:', error);
@@ -164,12 +163,12 @@ const EditCourse: React.FC = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
           <div className="max-w-6xl bg-white p-6 rounded-lg w-full">
-          {success && (
+            {success && (
               <AlertComponent
                 type="info"
                 message="Curso actualizado correctamente."
