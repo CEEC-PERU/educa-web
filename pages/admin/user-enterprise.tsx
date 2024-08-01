@@ -6,7 +6,7 @@ import CardEnterprise from '../../components/Admin/CardEnterprise';
 import ButtonContent from '../../components/Content/ButtonContent';
 import Modal from '../../components/Admin/Modal';
 import ModalConfirmation from '../../components/ModalConfirmation';
-import EnterpriseForm from '../../components/Admin/EnterpriseForm';
+import EnterpriseForm from './enterpriseForm';
 import { Enterprise } from '../../interfaces/Enterprise';
 import axios from '../../services/axios';
 import Alert from '../../components/AlertComponent';

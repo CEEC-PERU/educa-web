@@ -172,11 +172,6 @@ const ModulesPage: React.FC = () => {
                                   className={`flex items-center cursor-pointer hover:bg-purple-100 p-2 rounded ${selectedSession?.session_id === session.session_id ? 'bg-purple-200' : ''}`}
                                   onClick={() => setSelectedSession(session)}
                                 >
-                                  <video
-                                    src={session.video_enlace}
-                                    className="w-16 h-16 rounded mr-4"
-                                    poster={`https://img.youtube.com/vi/${session.video_enlace.split('/').pop()}/0.jpg`}  // Assuming session.video_enlace is a YouTube link
-                                  />
                                   <div className="flex flex-col">
                                     <p className="font-medium">{session.name}</p>
                                     <p className="text-xs text-gray-500">{session.duracion_minutos} mins</p>
@@ -219,9 +214,6 @@ const ModulesPage: React.FC = () => {
                       <XMarkIcon className="w-6 h-5 text-gray-500 cursor-pointer" />
                     </button>
                   </div>
-                </div>
-                <div className="flex justify-center">
-                  <video controls src={selectedSession.video_enlace} className="w-full h-auto"></video>
                 </div>
               </aside>
             )}
