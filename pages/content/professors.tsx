@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import { Professor, Level } from '../../interfaces/Professor';
-import axios from '../../services/axios';
+import { getProfessors, getLevels } from '../../services/professorService'; // Importar las funciones del servicio
 import ButtonComponent from '../../components/ButtonComponent';
-import ProfileCard from '../../components/ProfileCard'; // Asegúrate de importar ProfileCard
+import ProfileCard from '../../components/ProfileCard';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import './../../app/globals.css';
@@ -19,23 +19,21 @@ const Profesores: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    axios.get<Professor[]>('/professors/')
-      .then(response => {
-        setProfessors(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching professors:', error);
-        setError('Error fetching professors');
-      });
+    const fetchProfessorsAndLevels = async () => {
+      try {
+        const [professorsData, levelsData] = await Promise.all([
+          getProfessors(),
+          getLevels()
+        ]);
+        setProfessors(professorsData);
+        setLevels(levelsData);
+      } catch (error) {
+        console.error('Error fetching professors or levels:', error);
+        setError('Error fetching professors or levels');
+      }
+    };
 
-    axios.get<Level[]>('/professors/levels')
-      .then(response => {
-        setLevels(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching levels:', error);
-        setError('Error fetching levels');
-      });
+    fetchProfessorsAndLevels();
   }, []);
 
   const toggleSidebar = () => {
@@ -70,15 +68,15 @@ const Profesores: React.FC = () => {
               buttonSize="py-2 px-7"
             />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"> {/* Ajuste a 4 columnas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {professors.map(professor => (
               <ProfileCard
                 key={professor.professor_id}
                 name={professor.full_name}
                 title={professor.especialitation}
                 imageUrl={professor.image}
-                level={getLevelName(professor.level_id)} // Pasar el nivel del profesor
-                onViewProfile={() => handleViewProfile(professor.professor_id)} // Pasar la función onViewProfile
+                level={getLevelName(professor.level_id)}
+                onViewProfile={() => handleViewProfile(professor.professor_id)}
               />
             ))}
           </div>
