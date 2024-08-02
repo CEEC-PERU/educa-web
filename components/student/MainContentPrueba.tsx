@@ -6,6 +6,8 @@ import { useResultModule } from '../../hooks/useResultModule';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
 
+
+
 interface MainContentProps {
   sessionVideos?: Videos[];
   evaluationQuestions?: Question[];

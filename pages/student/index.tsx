@@ -56,7 +56,7 @@ const StudentIndex: React.FC = () => {
       function notify() {
         const notification = new Notification('EducaWeb', {
           body: `Bienvenido a EducaWeb`,
-          icon: 'https://unsplash.it/400/400',
+          icon: 'https://res.cloudinary.com/dk2red18f/image/upload/v1721667499/WEB_EDUCA/ygxb9ji1xcpxzv23ovje.png',
         });
 
         notification.addEventListener('click', function() {
