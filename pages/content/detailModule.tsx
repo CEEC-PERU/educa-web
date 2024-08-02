@@ -137,15 +137,14 @@ const ModulesPage: React.FC = () => {
                           </div>
                           <div className="flex items-center space-x-2">
                             <div className="flex justify-between items-center mr-2">
-                              <Link href={`/content/addSession?moduleId=${module.module_id}`}>
-                                <ButtonComponent
-                                  buttonLabel="Añadir Sesión"
-                                  backgroundColor="bg-gradient-blue"
-                                  textColor="text-white"
-                                  fontSize="text-xs"
-                                  buttonSize="py-2 px-7"
-                                />
-                              </Link>
+                              <ButtonComponent
+                                buttonLabel="Añadir Sesión"
+                                buttonroute={`/content/addSession?moduleId=${module.module_id}`}
+                                backgroundColor="bg-gradient-blue"
+                                textColor="text-white"
+                                fontSize="text-xs"
+                                buttonSize="py-2 px-7"
+                              />
                             </div>
                             <Link href={`/content/editModule?id=${module.module_id}`}>
                               <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
