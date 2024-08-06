@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { AcademicCapIcon, UserGroupIcon, ClipboardDocumentCheckIcon, BuildingOfficeIcon, ArrowRightStartOnRectangleIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
-import { getAllRequirements } from '../../services/requirementService';
+import { getAllRequirementsbar } from '../../services/requirementService';
 
 interface SidebarAdminProps {
   showSidebar: boolean;
@@ -27,7 +27,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
-        const data = await getAllRequirements();
+        const data = await getAllRequirementsbar();
         setRequirements(data);
       } catch (error) {
         console.error('Error fetching requirements:', error);
@@ -112,7 +112,6 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
                 {isOpen && <span className="ml-2">Asignación de Estudiantes</span>}
               </button>
             </li>
-          
             <li>
               <button
                 onClick={logout}

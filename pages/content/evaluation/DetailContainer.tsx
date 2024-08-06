@@ -17,18 +17,10 @@ const DetailContainer: React.FC<DetailContainerProps> = ({ evaluation, isEditing
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-start space-y-4">
-      <div className="w-2/2 mr-2 p-4 bg-white rounded-md border-2 border-purple-200">
+    <div className="flex flex-col items-start space-y-4 w-full max-w-md">
+      <div className="w-full p-4 bg-white rounded-md shadow-md border-2 border-purple-200">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-blue-500">Detalles de la Evaluación</h2>
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center text-purple-600"
-          >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Volver
-          </button>
         </div>
         <hr />
         {evaluation ? (
@@ -60,10 +52,10 @@ const DetailContainer: React.FC<DetailContainerProps> = ({ evaluation, isEditing
           <p>Cargando...</p>
         )}
       </div>
-      <div className="mt-4">
+      <div className="w-full max-w-md">
         <ActionButtons
           onEdit={onEditToggle}
-          onDelete={onDelete}
+          onAbort={() => router.back()}
           onSave={onSave}
           isEditing={isEditing}
           onCancel={isEditing ? onEditToggle : undefined}

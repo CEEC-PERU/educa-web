@@ -32,23 +32,29 @@ const StepSummary: React.FC<StepSummaryProps> = ({ prevStep, completeForm, quest
           onClose={() => setShowAlert(false)}
         />
       )}
-      <h2 className="text-2xl font-bold mb-4">Resumen</h2>
       {questionsData.map((question, index) => (
-        <WizardStepContainer key={index} title={`Pregunta ${index + 1}`}>
-          <div className="mb-4">
-            <h3 className="text-lg font-bold mb-2">{question.question_text}</h3>
-            {question.image && (
-              <div className="mb-4">
-                <img src={question.image} alt={`Pregunta ${index + 1}`} className="max-w-full h-auto rounded-md shadow-md" />
-              </div>
-            )}
-            <ul className="list-disc list-inside">
-              {(optionsData[index] || []).map((option, optionIndex) => (
-                <li key={optionIndex} className={`mb-1 ${option.is_correct ? 'text-green-600 font-semibold' : ''}`}>
-                  {option.option_text}
-                </li>
-              ))}
-            </ul>
+        <WizardStepContainer key={index}>
+          <div className="mb-4 pb-4 border-b p-4 rounded-md bg-gray-50">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-purple-500 font-semibold"><strong>Pregunta {index + 1}</strong></h3>
+              <span className="text-blue-600 font-bold">{question.score} pts</span>
+            </div>
+            <hr className="border-gray-200 mb-4 mt-4" />
+            <div className="space-y-2">
+              <p className="text-gray-800">{question.question_text}</p>
+              {question.image && (
+                <div className="flex justify-center">
+                  <img src={question.image} alt={`Pregunta ${index + 1}`} className="max-w-full h-64 object-contain rounded mb-4" />
+                </div>
+              )}
+              <ul className="list-disc list-inside">
+                {(optionsData[index] || []).map((option, optionIndex) => (
+                  <li key={optionIndex} className={`mb-1 ${option.is_correct ? 'text-green-600 font-semibold' : ''}`}>
+                    {option.option_text}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </WizardStepContainer>
       ))}

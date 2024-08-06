@@ -16,6 +16,7 @@ interface FormFieldProps {
   multiple?: boolean;
   error?: boolean;
   touched?: boolean;
+  className?:string;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -33,7 +34,8 @@ const FormField: React.FC<FormFieldProps> = ({
   required,
   multiple,
   error,
-  touched
+  touched,
+  className
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 

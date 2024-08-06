@@ -29,35 +29,25 @@ const DetailProfessor: React.FC = () => {
   const [formLoading, setFormLoading] = useState(false);
   const { isVisible, showModal, hideModal } = useModal();
 
-  useEffect(() => {
-    if (id) {
-      const fetchProfessor = async () => {
-        try {
-          const professorData = await getProfessor(Number(id));
-          setProfessor(professorData);
-        } catch (error) {
-          console.error('Error fetching professor details:', error);
-          setError('Error fetching professor details');
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchProfessor();
+  const fetchProfessorAndLevels = async () => {
+    try {
+      const professorData = await getProfessor(Number(id));
+      const levelsData = await getLevels();
+      setProfessor(professorData);
+      setLevels(levelsData);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching professor details or levels:', error);
+      setError('Error fetching professor details or levels');
+      setLoading(false);
     }
-  }, [id]);
+  };
 
   useEffect(() => {
-    const fetchLevels = async () => {
-      try {
-        const levelsData = await getLevels();
-        setLevels(levelsData);
-      } catch (error) {
-        console.error('Error fetching levels:', error);
-        setError('Error fetching levels');
-      }
-    };
-    fetchLevels();
-  }, []);
+    if (id) {
+      fetchProfessorAndLevels();
+    }
+  }, [id]);
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
@@ -112,6 +102,7 @@ const DetailProfessor: React.FC = () => {
         setSuccess('Profesor actualizado exitosamente');
         setTimeout(() => setSuccess(null), 3000);
         setIsEditing(false);
+        fetchProfessorAndLevels(); // Refrescar los datos del profesor y los niveles
       } catch (error) {
         console.error('Error updating professor:', error);
         setError('Error updating professor');
@@ -212,6 +203,7 @@ const DetailProfessor: React.FC = () => {
                 onDelete={showModal}
                 onSave={isEditing ? handleSave : undefined}
                 isEditing={isEditing}
+                customSize={true}
               />
             </div>
           </div>

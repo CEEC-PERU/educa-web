@@ -12,8 +12,8 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-800 bg-opacity-75">
-      <div className="relative w-full max-w-4xl rounded-lg shadow-lg bg-white">
-        <div className="flex justify-between items-center border-b p-14 mt-20">
+      <div className="relative w-full max-w-4xl mx-4 md:mx-0 rounded-lg shadow-lg bg-white">
+        <div className="flex justify-between items-center border-b p-6">
           <h2 className="text-lg font-medium">{title}</h2>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-900">
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

@@ -5,7 +5,7 @@ import { uploadImage } from '../../services/imageService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
-import AlertComponent from '../../components/AlertComponent';
+import Alert from '../../components/AlertComponent';
 
 interface EnterpriseFormProps {
   enterprise?: Enterprise;
@@ -96,22 +96,24 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
   };
 
   return (
-    <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-auto">
+    <div className="bg-white p-6 rounded shadow-md w-full max-w-4xl mx-auto">
       {loading && <Loader />}
-      <form onSubmit={handleSubmit}>
-        {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
-        {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
+        {error && <Alert type="danger" message={error} onClose={() => setError(null)} />}
 
-        <FormField
-          id="name"
-          label="Nombre"
-          type="text"
-          value={formData.name}
-          onChange={handleChange}
-          onBlur={() => handleBlur('name')}
-          error={!formData.name && touchedFields['name']}
-          touched={touchedFields['name']}
-        />
+        <div className="md:col-span-2">
+          <FormField
+            id="name"
+            label="Nombre"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            onBlur={() => handleBlur('name')}
+            error={!formData.name && touchedFields['name']}
+            touched={touchedFields['name']}
+          />
+        </div>
         <div className="mb-4">
           <label htmlFor="image_log" className="block text-blue-400 mb-2">Imagen Logo</label>
           <MediaUploadPreview
@@ -134,7 +136,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
             touched={touchedFields['image_fondo']}
           />
         </div>
-        <div className="flex justify-end space-x-4">
+        <div className="md:col-span-2 flex justify-end space-x-4">
           <button type="button" onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded">
             Cancelar
           </button>
