@@ -62,9 +62,15 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
       image_fondo: true
     });
 
-    // Validar campos
-    if (!formData.name || !imageLogFile || !imageFondoFile) {
+    // Validar campos para la creación
+    if (!enterprise && (!formData.name || !imageLogFile || !imageFondoFile)) {
       setError('Todos los campos son obligatorios');
+      return;
+    }
+
+    // Validar campos para la edición
+    if (enterprise && !formData.name && !imageLogFile && !imageFondoFile) {
+      setError('Debe proporcionar al menos un campo para actualizar.');
       return;
     }
 
@@ -96,12 +102,11 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
   };
 
   return (
-    <div className="bg-white p-6 rounded shadow-md w-full max-w-4xl mx-auto">
+    <div className="bg-white p-6 w-full max-w-4xl mx-auto">
       {loading && <Loader />}
+      {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
+      {error && <Alert type="danger" message={error} onClose={() => setError(null)} />}
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
-        {error && <Alert type="danger" message={error} onClose={() => setError(null)} />}
-
         <div className="md:col-span-2">
           <FormField
             id="name"
@@ -121,7 +126,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
             accept="image/*"
             label="Subir Imagen Logo"
             initialPreview={formData.image_log}
-            error={!imageLogFile && touchedFields['image_log']}
+            error={!imageLogFile && touchedFields['image_log'] && !enterprise}
             touched={touchedFields['image_log']}
           />
         </div>
@@ -132,7 +137,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
             accept="image/*"
             label="Subir Imagen Fondo"
             initialPreview={formData.image_fondo}
-            error={!imageFondoFile && touchedFields['image_fondo']}
+            error={!imageFondoFile && touchedFields['image_fondo'] && !enterprise}
             touched={touchedFields['image_fondo']}
           />
         </div>

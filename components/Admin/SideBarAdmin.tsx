@@ -37,6 +37,28 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({ showSidebar, setShowSidebar
     fetchRequirements();
   }, []);
 
+  useEffect(() => {
+    const handleRequirementUpdate = () => {
+      fetchRequirements();
+    };
+
+    // Escucha un evento personalizado para la actualización de los requerimientos
+    window.addEventListener('requirementUpdate', handleRequirementUpdate);
+
+    return () => {
+      window.removeEventListener('requirementUpdate', handleRequirementUpdate);
+    };
+  }, []);
+
+  const fetchRequirements = async () => {
+    try {
+      const data = await getAllRequirementsbar();
+      setRequirements(data);
+    } catch (error) {
+      console.error('Error fetching requirements:', error);
+    }
+  };
+
   const handleNavigation = (path: string) => {
     router.push(path);
     setIsOpen(false); // Cerrar el drawer después de la navegación

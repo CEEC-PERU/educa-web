@@ -38,7 +38,7 @@ const DetailProfessor: React.FC = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching professor details or levels:', error);
-      setError('Error fetching professor details or levels');
+      setError('Error fetching professor details o levels');
       setLoading(false);
     }
   };
@@ -67,8 +67,9 @@ const DetailProfessor: React.FC = () => {
         setTimeout(() => setSuccess(null), 5000);
         router.push('/content/professors');
       } catch (error) {
-        console.error('Error deleting professor:', error);
-        setError('Error deleting professor');
+        const err = error as any;
+        console.error('Error deleting professor:', err);
+        setError(err.response?.data?.error || 'Error eliminando profesor');
       } finally {
         setFormLoading(false);
       }
@@ -104,8 +105,9 @@ const DetailProfessor: React.FC = () => {
         setIsEditing(false);
         fetchProfessorAndLevels(); // Refrescar los datos del profesor y los niveles
       } catch (error) {
-        console.error('Error updating professor:', error);
-        setError('Error updating professor');
+        const err = error as any;
+        console.error('Error updating professor:', err);
+        setError('Error actualizando profesor');
       } finally {
         setFormLoading(false);
       }
@@ -135,6 +137,13 @@ const DetailProfessor: React.FC = () => {
               type="info"
               message={success}
               onClose={() => setSuccess(null)}
+            />
+          )}
+          {error && (
+            <AlertComponent
+              type="danger"
+              message={error}
+              onClose={() => setError(null)}
             />
           )}
           <button
@@ -207,7 +216,6 @@ const DetailProfessor: React.FC = () => {
               />
             </div>
           </div>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
         </main>
       </div>
       {formLoading && (

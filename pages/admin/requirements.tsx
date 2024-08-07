@@ -1,11 +1,13 @@
+// src/pages/admin/requirements.tsx
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
-import { getAllRequirements, updateRequirement } from '../../services/requirementService';
+import { updateRequirement } from '../../services/requirementService';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import RequirementCard from '../../components/Admin/RequirementCard';
 import ButtonContent from '../../components/Content/ButtonContent';
+import { getAllRequirements } from '../../services/requirementService';
 import { Requirement } from '../../interfaces/Requirement';
 import './../../app/globals.css';
 
@@ -43,6 +45,8 @@ const RequirementsPage: React.FC = () => {
       const updatedRequirement = await updateRequirement(id, { is_active: isActive });
       setRequirements(requirements.map(req => req.requirement_id === id ? { ...req, is_active: isActive } : req));
       setSuccess('Estado del requerimiento actualizado correctamente');
+      // Disparar el evento personalizado
+      window.dispatchEvent(new Event('requirementUpdate'));
       setTimeout(() => setSuccess(null), 5000);
     } catch (error) {
       console.error('Error updating requirement status:', error);
