@@ -8,7 +8,7 @@ import Modal from '../../components/Admin/Modal';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import EnterpriseForm from './enterpriseForm';
 import { Enterprise } from '../../interfaces/Enterprise';
-import axios from '../../services/axios';
+import { getEnterprises, deleteEnterprise } from '../../services/enterpriseService';
 import Alert from '../../components/AlertComponent';
 import './../../app/globals.css';
 
@@ -29,8 +29,8 @@ const EnterpriseList: React.FC = () => {
 
   const fetchEnterprises = async () => {
     try {
-      const response = await axios.get<Enterprise[]>('/enterprises');
-      setEnterprises(response.data);
+      const data = await getEnterprises();
+      setEnterprises(data);
     } catch (error) {
       console.error('Error fetching enterprises:', error);
       setError('Error fetching enterprises');
@@ -55,7 +55,7 @@ const EnterpriseList: React.FC = () => {
   const confirmDeleteEnterprise = async () => {
     if (selectedEnterprise) {
       try {
-        await axios.delete(`/enterprises/${selectedEnterprise.enterprise_id}`);
+        await deleteEnterprise(selectedEnterprise.enterprise_id);
         setAlert({ type: 'danger', message: 'Empresa eliminada exitosamente' });
         fetchEnterprises();
       } catch (error) {

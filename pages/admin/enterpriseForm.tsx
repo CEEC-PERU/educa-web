@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Enterprise } from '../../interfaces/Enterprise';
-import axios from '../../services/axios';
+import { addEnterprise, updateEnterprise } from '../../services/enterpriseService';
 import { uploadImage } from '../../services/imageService';
 import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
@@ -87,9 +87,11 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
         imageFondoUrl = await uploadImage(imageFondoFile, 'Empresas/Fondos');
       }
 
-      const requestMethod = enterprise ? 'put' : 'post';
-      const url = enterprise ? `/enterprises/${enterprise.enterprise_id}` : '/enterprises';
-      await axios[requestMethod](url, { ...formData, image_log: imageLogUrl, image_fondo: imageFondoUrl });
+      if (enterprise) {
+        await updateEnterprise(enterprise.enterprise_id, { ...formData, image_log: imageLogUrl, image_fondo: imageFondoUrl });
+      } else {
+        await addEnterprise({ ...formData, image_log: imageLogUrl, image_fondo: imageFondoUrl });
+      }
 
       onSuccess();
       onClose();
