@@ -100,7 +100,7 @@ const StepThree: React.FC<StepThreeProps> = ({ prevStep, questionsData = [], set
           <h3 className="text-lg font-bold">{question.question_text}</h3>
           {(localOptionsData[questionIndex] || []).map((option, optionIndex) => (
             <div key={optionIndex} className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">Opción</label>
+              <label className="block text-gray-700 text-sm font-bold mb-2 mt-4">Opción</label>
               <input 
                 type="text" 
                 name="option_text" 
@@ -124,7 +124,7 @@ const StepThree: React.FC<StepThreeProps> = ({ prevStep, questionsData = [], set
               )}
             </div>
           ))}
-          <button onClick={() => addOption(questionIndex)} className="py-2 px-4 bg-green-600 text-white rounded-md mr-4 flex items-center">
+          <button onClick={() => addOption(questionIndex)} className="py-2 px-4 bg-green-600 text-white rounded-md mr-4 flex items-center mt-4">
             <PlusIcon className="w-5 h-5 mr-2" />
             Agregar Opciones
           </button>

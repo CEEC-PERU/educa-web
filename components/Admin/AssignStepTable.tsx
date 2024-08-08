@@ -1,3 +1,4 @@
+// components/AssignStepTable.tsx
 import React from 'react';
 
 interface TableColumn {
@@ -14,15 +15,15 @@ interface TableProps {
   rows: TableRow[];
 }
 
-const Table: React.FC<TableProps> = ({ columns, rows }) => {
+const AssignStepTable: React.FC<TableProps> = ({ columns, rows }) => {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="max-w-4xl mx-auto overflow-x-auto">
       <div className="overflow-hidden min-w-full">
         <div className="grid grid-cols-12 p-4 text-sm font-medium bg-gradient-blue border-t border-b border-gray-200 gap-x-4 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
           {columns.map((column) => (
             <div
               key={column.key}
-              className={`flex text-white items-center justify-center ${column.key === 'actions' ? 'col-span-3 sm:col-span-1' : 'col-span-9 sm:col-span-8'}`}
+              className={`flex text-white items-center justify-center ${column.key === 'actions' ? 'col-span-3 sm:col-span-1' : 'col-span-6 sm:col-span-5'}`}
             >
               {column.label}
             </div>
@@ -33,7 +34,7 @@ const Table: React.FC<TableProps> = ({ columns, rows }) => {
             {columns.map((column) => (
               <div
                 key={column.key}
-                className={`flex items-center justify-center text-center ${column.key === 'actions' ? 'col-span-3 sm:col-span-1' : 'col-span-9 sm:col-span-8'}`}
+                className={`flex items-center justify-center text-center ${column.key === 'actions' ? 'col-span-3 sm:col-span-1' : 'col-span-6 sm:col-span-5'}`}
               >
                 {column.key === 'actions' ? (
                   <div className="flex justify-center space-x-2">
@@ -51,4 +52,4 @@ const Table: React.FC<TableProps> = ({ columns, rows }) => {
   );
 };
 
-export default Table;
+export default AssignStepTable;

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface FormFieldProps {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file';
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file' | 'number';
   name?: string;
   value?: string | boolean | number;
   checked?: boolean;
@@ -16,6 +16,7 @@ interface FormFieldProps {
   multiple?: boolean;
   error?: boolean;
   touched?: boolean;
+  className?:string;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -33,7 +34,8 @@ const FormField: React.FC<FormFieldProps> = ({
   required,
   multiple,
   error,
-  touched
+  touched,
+  className
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 

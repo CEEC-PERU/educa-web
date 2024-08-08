@@ -12,6 +12,7 @@ import FormField from '../../../components/FormField';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import AlertComponent from '../../../components/AlertComponent';
 import Loader from '../../../components/Loader';
+import Table from '../../../components/Table'; // Importar el componente Table
 import './../../../app/globals.css';
 
 const AssignStudents: React.FC = () => {
@@ -122,6 +123,15 @@ const AssignStudents: React.FC = () => {
     }
   };
 
+  // Configuración de columnas y filas para la tabla de estudiantes no asignados
+  const columns = [
+    { label: 'DNI', key: 'dni' }
+  ];
+
+  const rows = unassignedStudents.map(student => ({
+    dni: student.dni
+  }));
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -142,56 +152,50 @@ const AssignStudents: React.FC = () => {
               onClose={() => setError(null)}
             />
           )}
-          <h2 className="text-2xl font-bold mb-6">Asignar Estudiantes a Curso</h2>
-          <div className="mb-4">
-            <FormField
-              id="company"
-              label="Selecciona Empresa"
-              type="select"
-              value={selectedCompany?.toString() || ''}
-              onChange={handleCompanyChange}
-              options={[{ value: '', label: 'Seleccionar Empresa' }, ...companies.map(company => ({ value: company.enterprise_id.toString(), label: company.name }))]}
-            />
-          </div>
-          <div className="mb-4">
-            <FormField
-              id="course"
-              label="Selecciona Curso"
-              type="select"
-              value={courseId?.toString() || ''}
-              onChange={handleCourseChange}
-              options={[{ value: '', label: 'Seleccionar Curso' }, ...courses.map(course => ({ value: course.course_id.toString(), label: course.name }))]}
-            />
-          </div>
-          <ButtonContent
-            buttonLabel="Asignar Estudiantes"
-            backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
-            textColor="text-white"
-            fontSize="text-xs"
-            buttonSize="py-2 px-7"
-            onClick={handleAssignStudents}
-          />
-          {success && <p className="text-green-500 mt-4">{success}</p>}
-          {alreadyAssigned.length > 0 && (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold mb-4">Estudiantes ya asignados</h3>
-              {alreadyAssigned.map((student: User) => (
-                <div key={student.user_id} className="mb-2">
-                  {student.userProfile?.first_name} {student.userProfile?.last_name} ({student.dni})
-                </div>
-              ))}
+          <div className="flex flex-wrap md:flex-nowrap">
+            <div className="w-full md:w-1/3 bg-white p-6 rounded-lg shadow-md mb-4 md:mb-0 flex-shrink-0">
+              <div className="mb-4">
+                <FormField
+                  id="company"
+                  label="Selecciona Empresa"
+                  type="select"
+                  value={selectedCompany?.toString() || ''}
+                  onChange={handleCompanyChange}
+                  options={[{ value: '', label: 'Seleccionar Empresa' }, ...companies.map(company => ({ value: company.enterprise_id.toString(), label: company.name }))]}
+                />
+              </div>
+              <div className="mb-4">
+                <FormField
+                  id="course"
+                  label="Selecciona Curso"
+                  type="select"
+                  value={courseId?.toString() || ''}
+                  onChange={handleCourseChange}
+                  options={[{ value: '', label: 'Seleccionar Curso' }, ...courses.map(course => ({ value: course.course_id.toString(), label: course.name }))]}
+                />
+              </div>
+              <div className="flex justify-center mb-4">
+                <ButtonContent
+                  buttonLabel="Asignar Estudiantes"
+                  backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                  textColor="text-white"
+                  fontSize="text-xs"
+                  buttonSize="py-1 px-2"
+                  onClick={handleAssignStudents}
+                  className="w-full md:w-auto"
+                />
+              </div>
+              {success && <p className="text-green-500 mt-4">{success}</p>}
             </div>
-          )}
-          {unassignedStudents.length > 0 && (
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold mb-4">Estudiantes no asignados</h3>
-              {unassignedStudents.map((student: User) => (
-                <div key={student.user_id} className="mb-2">
-                  {student.userProfile?.first_name} {student.userProfile?.last_name} ({student.dni})
+            <div className="w-full md:flex-grow ml-0 md:ml-4 overflow-auto">
+              {unassignedStudents.length > 0 && (
+                <div className="mt-6 md:mt-0">
+                  <h3 className="text-lg font-semibold mb-4">Estudiantes no asignados</h3>
+                  <Table columns={columns} rows={rows} />
                 </div>
-              ))}
+              )}
             </div>
-          )}
+          </div>
         </main>
       </div>
       {loading && (

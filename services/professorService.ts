@@ -33,9 +33,13 @@ export const getProfessor = async (professor_id: number): Promise<Professor> => 
 };
 
 export const deleteProfessor = async (professor_id: number): Promise<void> => {
-    await axios.delete(`${API_PROFESSORS}/${professor_id}`);
-  };
-
+    try {
+        const response = await axios.delete(`${API_PROFESSORS}/${professor_id}`);
+        return response.data;
+    } catch (error: any) {  // Especifica el tipo de error como `any`
+        throw new Error(error.response?.data?.error || 'Error eliminando profesor');
+    }
+};
   export const updateProfessor = async (professor_id: number, professor: Omit<Professor, 'professor_id' | 'created_at' | 'updated_at'>, imageFile?: File): Promise<void> => {
     const formData = new FormData();
 

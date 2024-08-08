@@ -21,6 +21,11 @@ export const updateModule = async (moduleId: string, moduleData: Partial<Module>
   await axios.put(`${API_MODULES}/${moduleId}`, moduleData);
 };
 
+export const updateModuleStatus = async (moduleId: number, isActive: boolean) => {
+  const response = await axios.put(`${API_MODULES}/${moduleId}/status`, { is_active: isActive });
+  return response.data;
+};
+
 export const deleteModule = async (moduleId: number): Promise<void> => {
   await axios.delete(`${API_MODULES}/${moduleId}`);
 };

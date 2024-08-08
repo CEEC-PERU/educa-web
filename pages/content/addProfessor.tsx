@@ -164,88 +164,84 @@ const AddProfessors: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded w-full">
-              <form onSubmit={handleSubmit}>
-                {showAlert && (
-                  <AlertComponent
-                    type={error ? "danger" : "success"}
-                    message={error || "Profesor agregado exitosamente."}
-                    onClose={() => setShowAlert(false)}
-                  />
-                )}
-                <button
-                  type="button"
-                  onClick={() => router.back()}
-                  className="flex items-center text-purple-600 mb-6"
-                >
-                  <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                  Volver
-                </button>
-                <FormField
-                  id="full_name"
-                  label="Nombre Completo"
-                  type="text"
-                  value={profesor.full_name}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={!profesor.full_name && touchedFields['full_name']}
-                  touched={touchedFields['full_name']}
-                  required
-                />
-                <div className="mb-4">
-                  <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
-                  <MediaUploadPreview
-                    onMediaUpload={handleFileChange}
-                    accept="image/*"
-                    label="Subir Imagen"
-                    inputRef={imageInputRef}
-                    clearMediaPreview={clearMediaPreview}
-                    error={!imageFile && touchedFields['image']}
-                    touched={touchedFields['image']}
-                  />
-                </div>
-                <FormField
-                  id="especialitation"
-                  label="Especialización"
-                  type="text"
-                  value={profesor.especialitation}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={!profesor.especialitation && touchedFields['especialitation']}
-                  touched={touchedFields['especialitation']}
-                  required
-                />
-                <FormField
-                  id="description"
-                  label="Descripción"
-                  type="textarea"
-                  value={profesor.description}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  rows={4}
-                  error={!profesor.description && touchedFields['description']}
-                  touched={touchedFields['description']}
-                  required
-                />
-                <FormField
-                  id="level_id"
-                  label="Nivel"
-                  type="select"
-                  value={profesor.level_id.toString()}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
-                  error={profesor.level_id === 0 && touchedFields['level_id']}
-                  touched={touchedFields['level_id']}
-                  required
-                />
-              </form>
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow">
+            {showAlert && (
+              <AlertComponent
+                type={error ? "danger" : "success"}
+                message={error || "Profesor agregado exitosamente."}
+                onClose={() => setShowAlert(false)}
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center text-purple-600 mb-6"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Volver
+            </button>
+            <FormField
+              id="full_name"
+              label="Nombre Completo"
+              type="text"
+              value={profesor.full_name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!profesor.full_name && touchedFields['full_name']}
+              touched={touchedFields['full_name']}
+              required
+            />
+            <div className="mb-4">
+              <label htmlFor="image" className="block text-blue-400 mb-2">Imagen</label>
+              <MediaUploadPreview
+                onMediaUpload={handleFileChange}
+                accept="image/*"
+                label="Subir Imagen"
+                inputRef={imageInputRef}
+                clearMediaPreview={clearMediaPreview}
+                error={!imageFile && touchedFields['image']}
+                touched={touchedFields['image']}
+              />
             </div>
-            <div className="items-center">
-              <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />
-            </div>
+            <FormField
+              id="especialitation"
+              label="Especialización"
+              type="text"
+              value={profesor.especialitation}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!profesor.especialitation && touchedFields['especialitation']}
+              touched={touchedFields['especialitation']}
+              required
+            />
+            <FormField
+              id="description"
+              label="Descripción"
+              type="textarea"
+              value={profesor.description}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              rows={4}
+              error={!profesor.description && touchedFields['description']}
+              touched={touchedFields['description']}
+              required
+            />
+            <FormField
+              id="level_id"
+              label="Nivel"
+              type="select"
+              value={profesor.level_id.toString()}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={[{ value: '', label: 'Seleccionar Nivel' }, ...levels.map(level => ({ value: level.level_id.toString(), label: level.name }))]}
+              error={profesor.level_id === 0 && touchedFields['level_id']}
+              touched={touchedFields['level_id']}
+              required
+            />
+          </form>
+          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
+            <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} customSize={true} />
           </div>
         </main>
       </div>

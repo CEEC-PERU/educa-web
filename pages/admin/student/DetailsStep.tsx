@@ -46,15 +46,15 @@ const DetailsStep: React.FC<DetailsStepProps> = ({ file, enterpriseId, onBack })
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-center">Detalles Finales</h2>
-        {alert && (
+      {alert && (
           <Alert
             type={alert.type}
             message={alert.message}
             onClose={() => setAlert(null)}
           />
         )}
+      <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
+        <h2 className="text-xl font-bold mb-4 text-center">Detalles Finales</h2>
         <input
           type="text"
           className="mb-4 w-full px-3 py-2 border border-gray-300 rounded-md"

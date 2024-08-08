@@ -85,6 +85,7 @@ const CategoryPage: React.FC = () => {
       }
       setCategories(updatedCategories);
       setCategory(null);
+      setTouchedFields({});
       setTimeout(() => setSuccess(null), 5000);
     } catch (error) {
       console.error('Error saving category:', error);
@@ -97,6 +98,7 @@ const CategoryPage: React.FC = () => {
   const handleEdit = (category: Category) => {
     setCategory(category);
     setIsEditing(true);
+    setTouchedFields({});
   };
 
   const handleDelete = async () => {
@@ -129,7 +131,7 @@ const CategoryPage: React.FC = () => {
   const rows = categories.map(category => ({
     name: <span>{category.name}</span>,
     actions: (
-      <div className="flex space-x-4">
+      <div className="flex justify-center space-x-2">
         <button
           onClick={() => handleEdit(category)}
           className="text-blue-500 py-1 px-2 rounded flex items-center"
@@ -163,7 +165,7 @@ const CategoryPage: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
-          <div className="max-w-6xl p-6 rounded-lg">
+          <div className="max-w-6xl p-6 rounded-lg mx-auto">
             {success && (
               <AlertComponent
                 type={success.includes('actualizada') ? 'info' : success.includes('agregada') ? 'success' : 'danger'}
@@ -175,42 +177,43 @@ const CategoryPage: React.FC = () => {
             <div className="flex justify-center mb-6">
               <div className="p-6 rounded-lg w-full max-w-lg bg-white shadow-lg">
                 <form onSubmit={handleSubmit}>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-                      <FormField
-                        id="name"
-                        label="Nombre de la Categoría"
-                        type="text"
-                        name="name"
-                        value={category?.name || ''}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={!category?.name && touchedFields['name']}
-                        touched={touchedFields['name']}
-                        required
-                      />
-                    </div>
-                    <ButtonContent
-                      buttonLabel={isEditing ? 'Guardar' : '+ Agregar'}
-                      backgroundColor={isEditing ? 'bg-custom-purple' : 'bg-custom-blue'}
-                      textColor="text-white"
-                      fontSize="text-xs"
-                      buttonSize="py-1 px-2"
-                      onClick={handleSubmit}
+                  <div className="flex flex-col space-y-4 mb-4">
+                    <FormField
+                      id="name"
+                      label="Nombre de la Categoría"
+                      type="text"
+                      name="name"
+                      value={category?.name || ''}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      error={!category?.name && touchedFields['name']}
+                      touched={touchedFields['name']}
+                      required
                     />
-                    {isEditing && (
+                    <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                       <ButtonContent
-                        buttonLabel="Cancelar"
-                        backgroundColor="bg-gray-500"
+                        buttonLabel={isEditing ? 'Guardar' : '+ Agregar'}
+                        backgroundColor={isEditing ? 'bg-custom-purple' : 'bg-custom-blue'}
                         textColor="text-white"
                         fontSize="text-xs"
                         buttonSize="py-1 px-2"
-                        onClick={() => {
-                          setCategory({ category_id: 0, name: '' });
-                          setIsEditing(false);
-                        }}
+                        onClick={handleSubmit}
                       />
-                    )}
+                      {isEditing && (
+                        <ButtonContent
+                          buttonLabel="Cancelar"
+                          backgroundColor="bg-gray-500"
+                          textColor="text-white"
+                          fontSize="text-xs"
+                          buttonSize="py-1 px-2"
+                          onClick={() => {
+                            setCategory({ category_id: 0, name: '' });
+                            setIsEditing(false);
+                            setTouchedFields({});
+                          }}
+                        />
+                      )}
+                    </div>
                   </div>
                 </form>
               </div>

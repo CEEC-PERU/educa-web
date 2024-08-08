@@ -98,8 +98,8 @@ const EditSession: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
-          <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl rounded-lg flex-grow mr-4">
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl rounded-lg flex-grow">
             {success && (
               <AlertComponent
                 type="info"
@@ -131,11 +131,12 @@ const EditSession: React.FC = () => {
               onChange={handleChange}
             />
           </form>
-          <div className="ml-4 flex-shrink-0">
+          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
             <ActionButtons
               onSave={handleSaveClick}
               onCancel={() => router.back()}
               isEditing={true} // Para asegurarse de que el botón "Guardar" aparezca
+              customSize={true}
             />
           </div>
         </main>

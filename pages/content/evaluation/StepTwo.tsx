@@ -67,9 +67,10 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
         question_text: question.question_text.trim() === '',
         type_id: question.type_id === 0,
         score: question.score <= 0,
+        image: !question.imageFile, // Validate image field
       };
 
-      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score) {
+      if (newErrors[index].question_text || newErrors[index].type_id || newErrors[index].score || newErrors[index].image) {
         hasErrors = true;
         setTouchedFields(prev => ({
           ...prev,
@@ -77,6 +78,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ nextStep, prevStep, setQuestionsData,
             question_text: true,
             type_id: true,
             score: true,
+            image: true, // Mark image field as touched
           }
         }));
       }

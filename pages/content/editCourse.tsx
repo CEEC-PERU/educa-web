@@ -166,8 +166,8 @@ const EditCourse: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex`}>
-          <div className="max-w-6xl bg-white p-6 rounded-lg w-full">
+        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow">
             {success && (
               <AlertComponent
                 type="info"
@@ -175,121 +175,118 @@ const EditCourse: React.FC = () => {
                 onClose={() => setSuccess(null)}
               />
             )}
+            {error && <p className="text-red-500">{error}</p>}
+            
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-4"
+              className="flex items-center text-purple-600 mb-6"
             >
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
               Volver
             </button>
-            {error && <p className="text-red-500">{error}</p>}
-            
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <FormField
-                  id="name"
-                  label="Nombre del Curso"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
-                <FormField
-                  id="description_short"
-                  label="Descripción Corta"
-                  type="textarea"
-                  value={formData.description_short}
-                  onChange={handleChange}
-                />
-                <FormField
-                  id="description_large"
-                  label="Descripción Larga"
-                  type="textarea"
-                  value={formData.description_large}
-                  onChange={handleChange}
-                />
-                <FormField
-                  id="category_id"
-                  label="Categoría"
-                  type="select"
-                  value={formData.category_id.toString()}
-                  onChange={handleChange}
-                  options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
-                />
-                <div>
-                  <label htmlFor="image" className="block text-sm font-medium mb-4 text-blue-400">
-                    Imagen del Curso
-                  </label>
-                  <MediaUploadPreview
-                    onMediaUpload={handleImageUpload}
-                    accept="image/*"
-                    label="Subir Imagen"
-                    initialPreview={formData.image}
-                  />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <FormField
-                  id="professor_id"
-                  label="Profesor"
-                  type="select"
-                  value={formData.professor_id.toString()}
-                  onChange={handleChange}
-                  options={[{ value: '', label: 'Seleccionar Profesor' }, ...professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))]}
-                />
-                <FormField
-                  id="evaluation_id"
-                  label="Evaluación"
-                  type="select"
-                  value={formData.evaluation_id.toString()}
-                  onChange={handleChange}
-                  options={[{ value: '', label: 'Seleccionar Evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
-                />
-                <FormField
-                  id="duration_video"
-                  label="Duración del Video"
-                  type="text"
-                  value={formData.duration_video}
-                  onChange={handleChange}
-                />
-                <div>
-                  <label htmlFor="intro_video" className="block text-sm font-medium mb-4 text-blue-400">
-                    Video de Introducción
-                  </label>
-                  <MediaUploadPreview
-                    onMediaUpload={handleVideoUpload}
-                    accept="video/*"
-                    label="Subir Video"
-                    initialPreview={formData.intro_video}
-                  />
-                </div>
-                <FormField
-                  id="duration_course"
-                  label="Duración del Curso"
-                  type="text"
-                  value={formData.duration_course}
-                  onChange={handleChange}
-                />
-                <div className="flex items-center mt-6">
-                  <input
-                    type="checkbox"
-                    id="is_active"
-                    checked={formData.is_active}
-                    onChange={handleChange}
-                    className="h-4 w-4 text-blue-600 border-gray-300 rounded"
-                  />
-                  <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
-                    Activo
-                  </label>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div className="ml-4">
+            <FormField
+              id="name"
+              label="Nombre del Curso"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+            />
+            <FormField
+              id="description_short"
+              label="Descripción Corta"
+              type="textarea"
+              value={formData.description_short}
+              onChange={handleChange}
+            />
+            <FormField
+              id="description_large"
+              label="Descripción Larga"
+              type="textarea"
+              value={formData.description_large}
+              onChange={handleChange}
+            />
+            <FormField
+              id="category_id"
+              label="Categoría"
+              type="select"
+              value={formData.category_id.toString()}
+              onChange={handleChange}
+              options={categories.map(category => ({ value: category.category_id.toString(), label: category.name }))}
+            />
+            <div>
+              <label htmlFor="image" className="block text-sm font-medium mb-4 text-blue-400">
+                Imagen del Curso
+              </label>
+              <MediaUploadPreview
+                onMediaUpload={handleImageUpload}
+                accept="image/*"
+                label="Subir Imagen"
+                initialPreview={formData.image}
+              />
+            </div>
+          </form>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow">
+            <FormField
+              id="professor_id"
+              label="Profesor"
+              type="select"
+              value={formData.professor_id.toString()}
+              onChange={handleChange}
+              options={[{ value: '', label: 'Seleccionar Profesor' }, ...professors.map(professor => ({ value: professor.professor_id.toString(), label: professor.full_name }))]}
+            />
+            <FormField
+              id="evaluation_id"
+              label="Evaluación"
+              type="select"
+              value={formData.evaluation_id.toString()}
+              onChange={handleChange}
+              options={[{ value: '', label: 'Seleccionar Evaluación' }, ...evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))]}
+            />
+            <FormField
+              id="duration_video"
+              label="Duración del Video"
+              type="text"
+              value={formData.duration_video}
+              onChange={handleChange}
+            />
+            <div>
+              <label htmlFor="intro_video" className="block text-sm font-medium mb-4 text-blue-400">
+                Video de Introducción
+              </label>
+              <MediaUploadPreview
+                onMediaUpload={handleVideoUpload}
+                accept="video/*"
+                label="Subir Video"
+                initialPreview={formData.intro_video}
+              />
+            </div>
+            <FormField
+              id="duration_course"
+              label="Duración del Curso"
+              type="text"
+              value={formData.duration_course}
+              onChange={handleChange}
+            />
+            <div className="flex items-center mt-6">
+              <input
+                type="checkbox"
+                id="is_active"
+                checked={formData.is_active}
+                onChange={handleChange}
+                className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+              />
+              <label htmlFor="is_active" className="ml-2 block text-sm text-gray-900">
+                Activo
+              </label>
+            </div>
+          </form>
+          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
             <ActionButtons
               onSave={handleSubmit}
               onCancel={() => router.back()}
               isEditing={true}
+              customSize={true}
             />
           </div>
         </main>

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
-import Table from '../../../components/Table';
+import AssignStepTable from '../../../components/Admin/AssignStepTable';
 import { getEnterprises } from '../../../services/enterpriseService';
 import { Enterprise } from '../../../interfaces/Enterprise';
 import Loader from '../../../components/Loader';
@@ -84,7 +84,7 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
             </option>
           ))}
         </select>
-        <Table columns={columns} rows={rows} />
+        <AssignStepTable columns={columns} rows={rows} />
         <div className="flex justify-between mt-4">
           <button
             className="bg-gray-500 text-white py-2 px-4 rounded"

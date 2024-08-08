@@ -128,6 +128,7 @@ const CourseDetail: React.FC = () => {
               <ActionButtons
                 onEdit={handleEdit}
                 onDelete={showModal}
+                customSize={true}
               />
             </div>
           </div>

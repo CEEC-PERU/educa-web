@@ -89,8 +89,6 @@ const CreateEvaluationWizard: React.FC = () => {
           console.error('Question data is incomplete:', question);
         }
       }
-
-      alert('Evaluación creada exitosamente');
       resetForm(); // Reinicia el formulario después de completarlo
     } catch (error) {
       console.error('Error creating evaluation:', error);
