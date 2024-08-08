@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
+import { updateModuleStatus, getModule } from '../../services/moduleService';
 import { getModulesByCourseId } from '../../services/courseService';
 import { deleteModule } from '../../services/moduleService';
 import { deleteSession } from '../../services/sessionService';
@@ -16,7 +17,11 @@ import FloatingButton from '../../components/FloatingButton';
 import { ChevronUpIcon, ChevronDownIcon, PencilIcon, CheckCircleIcon, TrashIcon, ClipboardIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import useModal from '../../hooks/useModal';
-import AlertComponent from '../../components/AlertComponent'; // Importar el componente de alerta
+import AlertComponent from '../../components/AlertComponent';
+import Modal from '../../components/Admin/Modal';
+import AddModuleForm from './addModule';
+import EditModuleForm from './editModule';
+import ReactTooltip from 'react-tooltip';
 
 const ModulesPage: React.FC = () => {
   const router = useRouter();
@@ -28,9 +33,13 @@ const ModulesPage: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<any>(null);
   const [moduleToDelete, setModuleToDelete] = useState<number | null>(null);
   const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
-  const [success, setSuccess] = useState<string | null>(null); // Estado para mensaje de éxito
+  const [moduleToEdit, setModuleToEdit] = useState<number | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const { isVisible: isModuleModalVisible, showModal: showModuleModal, hideModal: hideModuleModal } = useModal();
   const { isVisible: isSessionModalVisible, showModal: showSessionModal, hideModal: hideSessionModal } = useModal();
+  const { isVisible: isAddModuleModalVisible, showModal: showAddModuleModal, hideModal: hideAddModuleModal } = useModal();
+  const { isVisible: isEditModuleModalVisible, showModal: showEditModuleModal, hideModal: hideEditModuleModal } = useModal();
 
   useEffect(() => {
     if (id) {
@@ -50,15 +59,20 @@ const ModulesPage: React.FC = () => {
 
       fetchModulesAndEvaluations();
     }
-  }, [id]);
+
+    if (router.query.success) {
+      setSuccessMessage(router.query.success as string);
+      setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+    }
+  }, [id, router.query.success]);
 
   const handleDeleteModule = async () => {
     if (moduleToDelete !== null) {
       try {
         await deleteModule(moduleToDelete);
         setModules(modules.filter(module => module.module_id !== moduleToDelete));
-        setSuccess('Registro eliminado correctamente');
-        setTimeout(() => setSuccess(null), 5000); // Ocultar la alerta después de 5 segundos
+        setSuccessMessage('Registro eliminado correctamente');
+        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
         setModuleToDelete(null);
         hideModuleModal();
       } catch (error) {
@@ -76,8 +90,8 @@ const ModulesPage: React.FC = () => {
           ...module,
           moduleSessions: module.moduleSessions?.filter(session => session.session_id !== sessionToDelete) || []
         })));
-        setSuccess('Registro eliminado correctamente');
-        setTimeout(() => setSuccess(null), 5000); // Ocultar la alerta después de 5 segundos
+        setSuccessMessage('Registro eliminado correctamente');
+        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
         setSessionToDelete(null);
         hideSessionModal();
       } catch (error) {
@@ -101,22 +115,71 @@ const ModulesPage: React.FC = () => {
     setSelectedSession(null);
   };
 
+  const handleAddModuleSuccess = async () => {
+    hideAddModuleModal();
+    setSuccessMessage('Módulo creado exitosamente.');
+    setTimeout(() => setSuccessMessage(null), 5000);
+    if (id) {
+      try {
+        const modulesData = await getModulesByCourseId(Number(id));
+        setModules(modulesData);
+      } catch (error) {
+        console.error('Error fetching modules:', error);
+        setError('Error fetching modules');
+      }
+    }
+  };
+
+  const handleEditModuleSuccess = async () => {
+    hideEditModuleModal();
+    setSuccessMessage('Módulo actualizado exitosamente.');
+    setTimeout(() => setSuccessMessage(null), 5000);
+    if (id) {
+      try {
+        const modulesData = await getModulesByCourseId(Number(id));
+        setModules(modulesData);
+      } catch (error) {
+        console.error('Error fetching modules:', error);
+        setError('Error fetching modules');
+      }
+    }
+  };
+
+  const handleToggleModuleStatus = async (moduleId: number, currentStatus: boolean) => {
+    try {
+      await updateModuleStatus(moduleId, !currentStatus);
+      setModules(modules.map(module => module.module_id === moduleId ? { ...module, is_active: !currentStatus } : module));
+      setStatusMessage(`Módulo ${!currentStatus ? 'activado' : 'desactivado'}`);
+      setTimeout(() => setStatusMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+    } catch (error) {
+      console.error('Error updating module status:', error);
+      setError('Error updating module status');
+    }
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          {success && (
+          {successMessage && (
             <AlertComponent
-              type={success === 'Registro eliminado correctamente' ? 'danger' : 'success'} // Mostrar alerta roja para eliminación y verde para otros mensajes de éxito
-              message={success}
-              onClose={() => setSuccess(null)}
+              type="success"
+              message={successMessage}
+              onClose={() => setSuccessMessage(null)}
+            />
+          )}
+          {statusMessage && (
+            <AlertComponent
+              type="info" // Azul para información
+              message={statusMessage}
+              onClose={() => setStatusMessage(null)}
             />
           )}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">Módulos</h2>
-            <FloatingButton link={`/content/addModule?courseId=${id}`} label="Añadir Módulo" />
+            <FloatingButton onClick={showAddModuleModal} label="Añadir Módulo" />
           </div>
           {error && <p className="text-red-500">{error}</p>}
           <div className="flex">
@@ -146,20 +209,30 @@ const ModulesPage: React.FC = () => {
                                 buttonSize="py-2 px-7"
                               />
                             </div>
-                            <Link href={`/content/editModule?id=${module.module_id}`}>
+                            <button onClick={() => {
+                              setModuleToEdit(module.module_id);
+                              showEditModuleModal();
+                            }}>
                               <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
-                            </Link>
+                            </button>
                             <button onClick={() => {
                               setModuleToDelete(module.module_id);
                               showModuleModal();
                             }}>
                               <TrashIcon className="w-6 h-5 text-red-500 cursor-pointer" />
                             </button>
-                            {module.is_active ? (
-                              <CheckCircleIcon className="w-7 h-7 text-green-500" />
-                            ) : (
-                              <CheckCircleIcon className="w-7 h-7 text-gray-500" />
-                            )}
+                            <button
+                              onClick={() => handleToggleModuleStatus(module.module_id, module.is_active)}
+                              data-tooltip-id={`statusTooltip-${module.module_id}`}
+                              data-tooltip-content={module.is_active ? 'Desactivar' : 'Activar'}
+                            >
+                              {module.is_active ? (
+                                <CheckCircleIcon className="w-7 h-7 text-green-500 cursor-pointer" />
+                              ) : (
+                                <CheckCircleIcon className="w-7 h-7 text-gray-500 cursor-pointer" />
+                              )}
+                            </button>
+                            <ReactTooltip id={`statusTooltip-${module.module_id}`} place="top" />
                           </div>
                         </Disclosure.Button>
                         <Disclosure.Panel className="text-m text-gray-700 px-6 py-4 rounded-b-lg">
@@ -229,6 +302,22 @@ const ModulesPage: React.FC = () => {
         onClose={hideSessionModal}
         onConfirm={handleDeleteSession}
       />
+      <Modal
+        show={isAddModuleModalVisible}
+        onClose={hideAddModuleModal}
+        title="Añadir Módulo"
+      >
+        <AddModuleForm courseId={Number(id)} onClose={hideAddModuleModal} onSuccess={handleAddModuleSuccess} />
+      </Modal>
+      {moduleToEdit !== null && ( // Asegúrate de que moduleToEdit no sea null
+        <Modal
+          show={isEditModuleModalVisible}
+          onClose={hideEditModuleModal}
+          title="Editar Módulo"
+        >
+          <EditModuleForm moduleId={moduleToEdit.toString()} onClose={hideEditModuleModal} onSuccess={handleEditModuleSuccess} />
+        </Modal>
+      )}
     </div>
   );
 };

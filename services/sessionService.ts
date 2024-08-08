@@ -1,9 +1,15 @@
 import axios from './axios';
 import { Session } from '../interfaces/Session';
+import { Video } from '../interfaces/Video';
 import { API_SESSIONS } from '../utils/Endpoints';
 
 export const getSessions = async (): Promise<Session[]> => {
   const response = await axios.get<Session[]>(API_SESSIONS);
+  return response.data;
+};
+
+export const addSessionWithVideos = async (sessionData: Partial<Session>, videos: Partial<Video>[]): Promise<Session> => {
+  const response = await axios.post(`${API_SESSIONS}/sessions-with-videos`, { sessionData, videos });
   return response.data;
 };
 

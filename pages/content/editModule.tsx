@@ -1,104 +1,106 @@
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
 import { getModule, updateModule } from '../../services/moduleService';
-import { getCourses } from '../../services/courseService';
-import { getEvaluations } from '../../services/evaluationService';
-import { Module } from '../../interfaces/Module';
-import { Course } from '../../interfaces/Course';
+import { getAvailableEvaluations } from '../../services/evaluationService';
 import { Evaluation } from '../../interfaces/Evaluation';
+import { Module } from '../../interfaces/Module';
 import FormField from '../../components/FormField';
-import ActionButtons from '../../components/Content/ActionButtons';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
 
-const EditModule: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query;
-  const [module, setModule] = useState<Omit<Module, 'module_id' | 'created_at' | 'updated_at'>>({
-    course_id: 0,
-    evaluation_id: 0,
-    is_active: true,
-    name: ''
-  });
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [modules, setModules] = useState<Module[]>([]);
+interface EditModuleFormProps {
+  moduleId: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const EditModuleForm: React.FC<EditModuleFormProps> = ({ moduleId, onClose, onSuccess }) => {
+  const [module, setModule] = useState<Module | null>(null); // Cambiar el estado inicial a null
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [availableEvaluations, setAvailableEvaluations] = useState<Evaluation[]>([]);
-  const [showSidebar, setShowSidebar] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Estado de carga
+  const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState<{ [key in keyof Module]?: boolean }>({});
 
   useEffect(() => {
-    if (id) {
-      Promise.all([getModule(id as string), getCourses(), getEvaluations()])
-        .then(([moduleRes, coursesRes, evaluationsRes]) => {
-          setModule(moduleRes);
-          setCourses(coursesRes);
+    const fetchModuleAndEvaluations = async () => {
+      try {
+        const [moduleRes, evaluationsRes] = await Promise.all([
+          getModule(moduleId),
+          getAvailableEvaluations()
+        ]);
+        setModule(moduleRes);
+        setEvaluations(evaluationsRes);
+      } catch (error) {
+        console.error('Error fetching module and evaluations:', error);
+        setError('Error fetching module and evaluations');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          // Filtrar evaluaciones asignadas a otros cursos o módulos
-          const assignedEvaluations = new Set(
-            [...coursesRes.map(course => course.evaluation_id), ...modules.map(mod => mod.evaluation_id)]
-          );
-
-          const filteredEvaluations = evaluationsRes.filter(evaluation => {
-            return evaluation.evaluation_id === moduleRes.evaluation_id || !assignedEvaluations.has(evaluation.evaluation_id);
-          });
-
-          setEvaluations(evaluationsRes);
-          setAvailableEvaluations(filteredEvaluations);
-          setLoading(false); // Finaliza la carga
-        })
-        .catch(error => {
-          console.error('Error fetching module details:', error);
-          setError('Error fetching module details');
-          setLoading(false); // Finaliza la carga en caso de error
-        });
-    }
-  }, [id]);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+    fetchModuleAndEvaluations();
+  }, [moduleId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
     setModule(prevModule => ({
-      ...prevModule,
+      ...prevModule!,
       [id]: type === 'checkbox' ? checked : value
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { id } = e.target;
+    setTouchedFields(prevState => ({
+      ...prevState,
+      [id]: true,
+    }));
+  };
+
+  const requiredFields: (keyof Module)[] = ['name', 'evaluation_id'];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFormLoading(true);
+
+    const newTouchedFields: { [key in keyof Module]?: boolean } = {};
+    requiredFields.forEach(field => {
+      if (!module?.[field]) {
+        newTouchedFields[field] = true;
+      }
+    });
+
+    const hasEmptyFields = requiredFields.some((field) => !module?.[field]);
+
+    if (hasEmptyFields) {
+      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
+      setError('Por favor, complete todos los campos requeridos.');
+      setShowAlert(true);
+      setFormLoading(false);
+      return;
+    }
+
     try {
-      await updateModule(id as string, module);
-      setSuccess('Módulo actualizado exitosamente');
-      setTimeout(() => {
-        setSuccess(null);
-        router.push(`/content/detailModule?id=${module.course_id}`);
-      }, 3000);
+      await updateModule(moduleId, module!);
+      setShowAlert(true);
+      setError(null);
+      setSuccess('Módulo actualizado exitosamente.');
+      onSuccess();
     } catch (error) {
       console.error('Error updating module:', error);
       setError('Error updating module');
+    } finally {
+      setFormLoading(false);
     }
   };
 
-  const handleSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>);
-  };
-
   const handleCancel = () => {
-    router.push(`/content/detailModule?id=${module.course_id}`);
+    onClose();
   };
 
-  if (loading) {
+  if (loading || !module) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader />
@@ -106,62 +108,57 @@ const EditModule: React.FC = () => {
     );
   }
 
-  if (!module) {
-    return <p>Loading...</p>;
-  }
-
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
-          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow">
-            {success && (
-              <AlertComponent
-                type="info"
-                message={success}
-                onClose={() => setSuccess(null)}
-              />
-            )}
-            <FormField
-              id="name"
-              label="Nombre del Módulo"
-              type="text"
-              value={module.name}
-              onChange={handleChange}
-            />
-            <FormField
-              id="evaluation_id"
-              label="Evaluación"
-              type="select"
-              value={module.evaluation_id.toString()}
-              onChange={handleChange}
-              options={availableEvaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
-            />
-            <div className="mb-4">
-              <label htmlFor="is_active" className="block text-gray-700 text-sm font-bold mb-2">Activo</label>
-              <input
-                type="checkbox"
-                id="is_active"
-                checked={module.is_active}
-                onChange={handleChange}
-                className="mr-2 leading-tight"
-              />
-            </div>
-          </form>
-          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-            <ActionButtons
-              onSave={handleSaveClick}
-              onCancel={handleCancel}
-              isEditing={true} // Para asegurarse de que el botón "Guardar" aparezca
-              customSize={true}
-            />
-          </div>
-        </main>
-      </div>
+    <div className="bg-white p-6 w-full max-w-4xl mx-auto">
+      {showAlert && (
+        <AlertComponent
+          type={error ? "danger" : "success"}
+          message={error || success || ''}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            id="name"
+            label="Nombre del Módulo"
+            type="text"
+            value={module.name}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={!module.name && touchedFields['name']}
+            touched={touchedFields['name']}
+            required
+          />
+          <FormField
+            id="evaluation_id"
+            label="Evaluación"
+            type="select"
+            value={module.evaluation_id.toString()}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            options={evaluations.map(evaluation => ({ value: evaluation.evaluation_id.toString(), label: evaluation.name }))}
+            error={module.evaluation_id === 0 && touchedFields['evaluation_id']}
+            touched={touchedFields['evaluation_id']}
+            required
+          />
+        </div>
+        <div className="flex justify-end space-x-4">
+          <button type="button" onClick={handleCancel} className="bg-gray-500 text-white py-2 px-4 rounded">
+            Cancelar
+          </button>
+          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+            Guardar
+          </button>
+        </div>
+      </form>
+      {formLoading && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <Loader />
+        </div>
+      )}
     </div>
   );
 };
 
-export default EditModule;
+export default EditModuleForm;

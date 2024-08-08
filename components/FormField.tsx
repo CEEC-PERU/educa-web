@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 interface FormFieldProps {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file';
+  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file' | 'number';
   name?: string;
   value?: string | boolean | number;
   checked?: boolean;
