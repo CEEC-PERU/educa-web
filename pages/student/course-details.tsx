@@ -77,6 +77,9 @@ const CourseDetails = () => {
         ))}
       </div>
 
+
+
+
       <div className="min-h-screen flex flex-col items-center justify-center bg-brand-100 p-4">
         {courseDetail.map(courseDetails => (
           <div key={courseDetails.courseCategory.name} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
@@ -158,26 +161,33 @@ const CourseDetails = () => {
           </div>
         ))}
 
-         {/* Insert the Genially iframe here */}
-      <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%', height: '0' }}>
-      <iframe 
-        title="Curso Interactivo Básico" 
-        frameBorder="0" 
-        width="800" 
-        height="475" 
-        style={{ position: 'absolute', top: '0', left: '0', width: '100%', height: '100%' }} 
-        src="https://view.genially.com/66acf5ce15a9171d5c0940ae"
-        allow="allow-scripts allow-same-origin allow-popups allow-forms"
-        allowFullScreen
-        scrolling="yes"
-      ></iframe>
+        {/* Nueva sección para el diseño de Canva */}
+        <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%',  paddingTop: '10%', height: '0', overflow: 'hidden' }}>
+
+    <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
+      <iframe
+        loading="lazy"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          borderRadius: '8px',
+          overflow: 'hidden'
+        }}
+        src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGNLzFMK0M&#x2F;GsN6vohskGC2lWaDhvwHVA&#x2F;view?embed"
+         allow="fullscreen"
+      />
     </div>
+ 
+</div>
 
       </div>
 
      
-   
-
+    
       <div className="items-center justify-center bg-gradient-to-r px-4 lg:px-60 from-brand-100 via-brand-200 to-brand-300 pb-20">
         <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
         {courseDetail.map(courseDetails => (
