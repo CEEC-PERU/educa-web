@@ -36,6 +36,19 @@ const CourseDetails = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const npsScore = formData.get('nps-score');
+    const feedback = formData.get('feedback');
+
+    // Handle form submission logic here, such as sending data to an API.
+    console.log({ npsScore, feedback });
+
+    // Reset form after submission
+    e.currentTarget.reset();
+  };
+
   return (
     <div>
       <div className="relative z-10">
@@ -76,9 +89,6 @@ const CourseDetails = () => {
           </div>
         ))}
       </div>
-
-
-
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-brand-100 p-4">
         {courseDetail.map(courseDetails => (
@@ -161,83 +171,119 @@ const CourseDetails = () => {
           </div>
         ))}
 
-        {/* Nueva sección para el diseño de Canva */}
         <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%',  paddingTop: '10%', height: '0', overflow: 'hidden' }}>
+          <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
+            <iframe
+              loading="lazy"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                borderRadius: '8px',
+                overflow: 'hidden'
+              }}
+              src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGNLzFMK0M&#x2F;GsN6vohskGC2lWaDhvwHVA&#x2F;view?embed"
+              allow="fullscreen"
+            />
+          </div>
+        </div>
 
-    <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
-      <iframe
-        loading="lazy"
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          border: 'none',
-          borderRadius: '8px',
-          overflow: 'hidden'
-        }}
-        src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGNLzFMK0M&#x2F;GsN6vohskGC2lWaDhvwHVA&#x2F;view?embed"
-         allow="fullscreen"
-      />
-    </div>
- 
-</div>
-
-      </div>
-
-     
-    
-      <div className="items-center justify-center bg-gradient-to-r px-4 lg:px-60 from-brand-100 via-brand-200 to-brand-300 pb-20">
-        <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
-        {courseDetail.map(courseDetails => (
-          <div key={courseDetails.course_id}>
-            {courseDetails.courseModules.map(module => (
-              <div key={module.module_id} className="items-center justify-center bg-brandazul-600 mb-4 p-4 border border-gray-300 rounded text-white">
-                <div className="flex items-center">
-                  <img
-                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/rp2dudec5uvmkpq2e9rw.png"
-                    className="w-5 h-10 lg:w-5 lg:h-10 mr-2"
-                    alt="Module icon"
-                  />
-                  <p className="text-sm lg:text-base mr-2">Módulo: {module.name}</p>
+        <div className="items-center justify-center bg-gradient-to-r px-4 lg:px-60 from-brand-100 via-brand-200 to-brand-300 pb-20">
+          <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
+          {courseDetail.map(courseDetails => (
+            <div key={courseDetails.course_id}>
+              {courseDetails.courseModules.map(module => (
+                <div key={module.module_id} className="items-center justify-center bg-brandazul-600 mb-4 p-4 border border-gray-300 rounded text-white">
+                  <div className="flex items-center">
+                    <img
+                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/rp2dudec5uvmkpq2e9rw.png"
+                      className="w-5 h-10 lg:w-5 lg:h-10 mr-2"
+                      alt="Module icon"
+                    />
+                    <p className="text-sm lg:text-base mr-2">Módulo: {module.name}</p>
+                  </div>
+                  <div className="ml-8">
+                    {module.moduleSessions.map(session => (
+                      <div key={module.module_id} className="flex items-center mb-2">
+                        <img
+                          src="https://res.cloudinary.com/dk2red18f/image/upload/v1720200323/WEB_EDUCA/ICONOS/pxuankjrczkaks3sei4m.png"
+                          className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
+                          alt="Session icon"
+                        />
+                        <p className="text-sm lg:text-base">Sesión: {session.name}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="ml-8">
-                  {module.moduleSessions.map(session => (
-                    <div key={module.module_id} className="flex items-center mb-2">
-                      <img
-                        src="https://res.cloudinary.com/dk2red18f/image/upload/v1720200323/WEB_EDUCA/ICONOS/pxuankjrczkaks3sei4m.png"
-                        className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
-                        alt="Session icon"
-                      />
-                      <p className="text-sm lg:text-base">Sesión: {session.name}</p>
+              ))}
+            </div>
+          ))}
+
+          <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white">Docente</h1>
+          <div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200 rounded from-brand-100 via-brand-200 to-brand-300 p-4">
+            {courseDetail.map(courseDetails => (
+              <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-1 gap-8 p-4">
+                <div className="text-white">
+                  <div className="flex items-center">
+                    <img src={courseDetails.courseProfessor.image} className='rounded-full w-16 h-16 lg:w-20 lg:h-20 mr-4' alt={courseDetails.courseProfessor.full_name} />
+                    <div>
+                      <p className="text-lg lg:text-xl text-brandrosa-500 font-bold">{courseDetails.courseProfessor.full_name}</p>
+                      <p className="text-xs lg:text-sm">{courseDetails.courseProfessor.description}</p>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        ))}
 
-        <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white">Docente</h1>
-        <div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200 rounded from-brand-100 via-brand-200 to-brand-300 p-4">
-          {courseDetail.map(courseDetails => (
-            <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-1 gap-8 p-4">
-              <div className="text-white">
-                <div className="flex items-center">
-                  <img src={courseDetails.courseProfessor.image} className='rounded-full w-16 h-16 lg:w-20 lg:h-20 mr-4' alt={courseDetails.courseProfessor.full_name} />
-                  <div>
-                    <p className="text-lg lg:text-xl text-brandrosa-500 font-bold">{courseDetails.courseProfessor.full_name}</p>
-                    <p className="text-xs lg:text-sm">{courseDetails.courseProfessor.description}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+         
+
+          {/* NPS Survey Form */}
+          {/* NPS Survey Form */}
+<div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200  pt-20 rounded from-brand-100 via-brand-200 to-brand-300 p-4 mt-8">
+  <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white text-center">Encuesta</h1>
+  <form onSubmit={handleFormSubmit} className="w-full  px-2 pb-10" >
+    <div className="mb-4 w-full">
+      <label className="block w-full text-white text-sm font-bold mb-2" htmlFor="nps-score">
+        ¿Qué tan probable es que recomiendes este curso a un amigo o colega? (0 = Muy improbable, 10 = Muy probable)
+      </label>
+      <input
+        type="number"
+        min="0"
+        max="10"
+        name="nps-score"
+        id="nps-score"
+        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+        required
+      />
+    </div>
+    <div className="mb-4 w-full">
+      <label className="block w-full text-white text-sm font-bold mb-2" htmlFor="feedback">
+        Comentarios adicionales:
+      </label>
+      <textarea
+        name="feedback"
+        id="feedback"
+        rows={4}
+        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+      ></textarea>
+    </div>
+    <button
+      type="submit"
+      className="bg-brandmora-500 text-white px-4 py-2 rounded hover:bg-brandmorado-700 border-4 border-brandborder-400 w-full"
+    >
+      Enviar Encuesta
+    </button>
+  </form>
+</div>
+
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default CourseDetails;
