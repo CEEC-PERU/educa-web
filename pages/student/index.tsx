@@ -9,6 +9,7 @@ import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
+import ScreenSecurity from '../../components/ScreenSecurity'; 
 Modal.setAppElement('#__next');
 
 
@@ -88,6 +89,7 @@ const StudentIndex: React.FC = () => {
 
   return (
     <div>
+        <ScreenSecurity /> 
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"

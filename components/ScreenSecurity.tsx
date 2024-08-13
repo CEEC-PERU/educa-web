@@ -1,32 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const ScreenSecurity = () => {
+const ScreenSecurity: React.FC = () => {
+  const [isScreenBlocked, setIsScreenBlocked] = useState(false);
+
   useEffect(() => {
-    const preventScreenshot = () => {
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'PrintScreen') {
-          e.preventDefault();
-        }
-      });
-      document.addEventListener('keyup', (e) => {
-        if (e.key === 'PrintScreen') {
-          navigator.clipboard.writeText('');
-          alert('Screenshots are disabled on this page.');
-        }
-      });
+    const preventScreenshot = (e: KeyboardEvent) => {
+      if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        setIsScreenBlocked(true);
+        navigator.clipboard.writeText('');
+      }
     };
 
     const preventScreenRecording = () => {
-      // Detiene la grabación de pantalla
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') {
-          alert('Screen recording is disabled.');
-          window.close();
+          setIsScreenBlocked(true);
         }
       });
     };
 
-    preventScreenshot();
+    document.addEventListener('keydown', preventScreenshot);
     preventScreenRecording();
 
     return () => {
@@ -35,7 +29,21 @@ const ScreenSecurity = () => {
     };
   }, []);
 
-  return null;
+  return (
+    isScreenBlocked && (
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'black',
+          zIndex: 9999,
+        }}
+      />
+    )
+  );
 };
 
 export default ScreenSecurity;

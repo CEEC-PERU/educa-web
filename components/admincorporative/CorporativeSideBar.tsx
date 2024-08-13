@@ -10,7 +10,7 @@ interface SidebarCorporateProps {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setShowSidebar }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
@@ -64,50 +64,16 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
           <ul>
           <li>
               <button
-                onClick={() => handleNavigation('/corporate/')}
+                onClick={() => handleNavigation('/admincorporative/')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <BookOpenIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Dashboard</span>}
               </button>
             </li>
-          <li>
-              <button
-                onClick={() => handleNavigation('/corporate/sesion')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <ClockIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Sesiones</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/corporate/courses')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cursos</span>}
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => handleNavigation('/corporate/qualification/progress')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <AcademicCapIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Estudiantes</span>}
-              </button>
-            </li>
+         
            
-            <li>
-              <button
-                onClick={() => handleNavigation('/corporate/addRequeriment')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <ClipboardDocumentCheckIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Nuevo Requerimiento</span>}
-              </button>
-            </li>
+           
             <li>
               <button
                 onClick={logout}
@@ -125,4 +91,4 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
   );
 };
 
-export default SidebarCorporate;
+export default SidebarAdminCorporate;

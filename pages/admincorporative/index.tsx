@@ -1,25 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
+import Sidebar from '../../components/admincorporative/CorporativeSideBar';
 import { useAuth } from '../../context/AuthContext';
+import './../../app/globals.css';
+import { Profile } from '../../interfaces/UserInterfaces';
 import { Bar, Line, Doughnut, Bubble } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement } from 'chart.js';
 import { ChartOptions  } from 'chart.js';
-import './../../app/globals.css';
-import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
-import { Profile } from '../../interfaces/UserInterfaces';
-
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
-
-const CorporateDashboard: React.FC = () => {
+const Admincorporative: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
- // const { donutChartData, isLoading } = useMetricaCorporate();
-  const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
-  const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
 
   let name = '';
   let uri_picture = '';
@@ -53,7 +43,7 @@ const CorporateDashboard: React.FC = () => {
   const barChartOptions = {
     indexAxis: 'y' as 'y', // Especifica el tipo correcto de indexAxis
   };
-//comentario2
+
   const donutChartData = {
     labels: ['Curso A', 'Curso B', 'Curso C', 'Curso D', 'Curso E'],
     datasets: [{
@@ -127,17 +117,17 @@ const CorporateDashboard: React.FC = () => {
     }],
   };
 
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar 
-        bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"
-        borderColor="border border-stone-300"
-        user={user ? { profilePicture: uri_picture } : undefined} 
-      />
+      bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90 "
+      borderColor="border border-stone-300"
+      user={user ? { profilePicture: uri_picture } : undefined} />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="border border-black p-4 h-auto">
+        <div className="border border-black p-4 h-auto">
             <Line data={lineChartData} />
           </div>
           <div className="border border-black p-4 h-auto">
@@ -171,4 +161,4 @@ const CorporateDashboard: React.FC = () => {
   );
 };
 
-export default CorporateDashboard;
+export default Admincorporative;
