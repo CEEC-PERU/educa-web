@@ -72,17 +72,10 @@ const donutChartOptions: ChartOptions<'doughnut'> = {
       position: 'right',
       labels: {
         font: {
-          size: 12,
+          size: 14, // Ajusta el tamaño de la fuente para que quepa más texto
         },
       },
     },
-    tooltip: {
-      callbacks: {
-        label: (tooltipItem) => {
-          return tooltipItem.label.split(' ').join('\n');
-        }
-      }
-    }
   },
 };
 
@@ -114,10 +107,10 @@ const donutChartOptions: ChartOptions<'doughnut'> = {
   };
 
   const lineChartTimeData = {
-    labels: ['Día 1', 'Día 2', 'Día 3', 'Día 4', 'Día 5'],
+    labels: ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes' ,'Sabado '  , 'Domingo' ],
     datasets: [{
       label: 'Tiempo de Conexión (min)',
-      data: [30, 45, 35, 50, 60],
+      data: [30, 45, 35, 50, 60,20,40],
       borderColor: 'rgba(54, 162, 235, 1)',
       fill: false,
     }],
@@ -151,31 +144,33 @@ const donutChartOptions: ChartOptions<'doughnut'> = {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Line data={lineChartData} />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bar data={barChartData} options={barChartOptions}  />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bubble data={bubbleChartData} />
           </div>
-          <div className="border border-black p-4 h-auto">
+         
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bar data={satisfactionChartData} />
           </div>
-          <div className="border border-black p-4 h-auto w-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2" >
+            <h2 className="text-xl text-center font-bold mb-2 text-">Cantidad de Estudiantes</h2>
             <Doughnut data={donutChartData2} options={donutChartOptions} />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bar data={npsChartData} />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Line data={lineChartTimeData} />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bubble data={bubbleChartData} />
           </div>
-          <div className="border border-black p-4 h-auto">
+          <div className="bg-white shadow-lg rounded-lg p-4 border-2">
             <Bar data={horizontalBarChartData} />
           </div>
         </main>
