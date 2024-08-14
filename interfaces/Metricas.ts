@@ -1,7 +1,7 @@
 
   export interface DonutChartData {
     labels: string[];
-    datasets: Dataset[];
+    datasets: Dataset;
   }
   
   export interface Dataset {

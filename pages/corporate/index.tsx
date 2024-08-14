@@ -13,7 +13,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
- // const { donutChartData, isLoading } = useMetricaCorporate();
+ const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,24 +54,38 @@ const CorporateDashboard: React.FC = () => {
     indexAxis: 'y' as 'y', // Especifica el tipo correcto de indexAxis
   };
 //comentario2
-  const donutChartData = {
-    labels: ['Curso A', 'Curso B', 'Curso C', 'Curso D', 'Curso E'],
-    datasets: [{
-      data: [100, 200, 150, 250, 300],
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-      hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
-    }],
-  };
+const donutChartData2 = {
+  labels: donutChartData?.labels,
+  datasets: [{
+    data: donutChartData?.datasets.data,
+    backgroundColor: donutChartData?.datasets.backgroundColor,
+    hoverBackgroundColor: donutChartData?.datasets.hoverBackgroundColor,
+  }],
+};
+
+
   
 
-  const donutChartOptions: ChartOptions<'doughnut'> = {
-    plugins: {
-      legend: {
-        position: 'right', // Asegura que el tipo sea compatible con los valores permitidos
+const donutChartOptions: ChartOptions<'doughnut'> = {
+  plugins: {
+    legend: {
+      position: 'right',
+      labels: {
+        font: {
+          size: 12,
+        },
       },
     },
-  };
-  
+    tooltip: {
+      callbacks: {
+        label: (tooltipItem) => {
+          return tooltipItem.label.split(' ').join('\n');
+        }
+      }
+    }
+  },
+};
+
 
   const bubbleChartData = {
     datasets: [
@@ -146,12 +160,11 @@ const CorporateDashboard: React.FC = () => {
           <div className="border border-black p-4 h-auto">
             <Bubble data={bubbleChartData} />
           </div>
-         
           <div className="border border-black p-4 h-auto">
             <Bar data={satisfactionChartData} />
           </div>
-          <div className="border border-black p-4 h-auto">
-            <Doughnut data={donutChartData} options={donutChartOptions} />
+          <div className="border border-black p-4 h-auto w-auto">
+            <Doughnut data={donutChartData2} options={donutChartOptions} />
           </div>
           <div className="border border-black p-4 h-auto">
             <Bar data={npsChartData} />

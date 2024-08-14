@@ -8,18 +8,26 @@ export const useMetricaCorporate = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number; enterprise_id: number };
 
   useEffect(() => {
     const fetchMetricasCorporate = async () => {
-      if (!token) {
+      if (!token || !user) {
+        setError('User not authenticated');
         return;
       }
+
+      const userInfo = user as { id: number; enterprise_id: number };
+      if (!userInfo?.enterprise_id) {
+        setError('Enterprise ID not available');
+        return;
+      }
+
       setIsLoading(true);
       try {
         const response = await getCountCourseCorporate(token, userInfo.enterprise_id);
+        console.log(response)
         if (response) {
-          setDonutChartData(response); // Assuming response is already a DonutChartData object
+          setDonutChartData(response);
         } else {
           setDonutChartData(null);
         }
@@ -32,7 +40,7 @@ export const useMetricaCorporate = () => {
     };
 
     fetchMetricasCorporate();
-  }, [token, userInfo.enterprise_id]);
+  }, [token, user]);
 
   return {
     donutChartData,
