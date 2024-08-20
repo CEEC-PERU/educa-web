@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Question, ModuleResults, Videos } from '../../interfaces/StudentModule';
 import axios from 'axios';
-import './../../app/globals.css';
-import { useResultModule } from '../../hooks/useResultModule';
-import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
 
-
+import './../../app/globals.css';
+import { Question, ModuleResults, Videos, VideosInteractivo } from '../../interfaces/StudentModule';
+import { useResultModule } from '../../hooks/useResultModule';
+import { useAuth } from '../../context/AuthContext';
 
 interface MainContentProps {
+  sessionVideosInteractivos?: VideosInteractivo[];
   sessionVideos?: Videos[];
   evaluationQuestions?: Question[];
   onFinish?: () => void;
-  onContinue?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
   selectedModuleId?: number | null;
@@ -20,6 +19,7 @@ interface MainContentProps {
 }
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
+  sessionVideosInteractivos,
   sessionVideos,
   evaluationQuestions,
   onFinish,
@@ -28,6 +28,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   selectedModuleId,
   moduleResults
 }) => {
+  // State variables
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -38,13 +39,21 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [showReaction, setShowReaction] = useState(false);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [showGif, setShowGif] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [viewMode, setViewMode] = useState<'video' | 'interactive'>('video');
+  
+  // Refs
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Context
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
+
+  // Router
   const router = useRouter();
 
+  // Side effects
   useEffect(() => {
     setCurrentQuestion(0);
     setSelectedOption(null);
@@ -55,7 +64,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setShowStartMessage(true);
     setCurrentVideoIndex(0);
     setShowGif(false);
-  }, [sessionVideos, evaluationQuestions, selectedModuleId]);
+  }, [sessionVideos, evaluationQuestions, selectedModuleId, sessionVideosInteractivos]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -96,8 +105,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         }
       };
     }
-  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideos]);
+  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideos, sessionVideosInteractivos]);
 
+  // Handlers
   const handleNextQuestion = () => {
     setSelectedOption(null);
     setIsCorrect(null);
@@ -137,7 +147,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     createResultModule(moduloResultado);
     console.log("MODULO_RESULTADO", moduloResultado);
 
-    router.reload();
+    //router.reload();
   };
 
   const handleVideoEnd = () => {
@@ -163,15 +173,54 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   };
 
+  // Derived states
   const moduleResult = moduleResults?.find(result => result.module_id === selectedModuleId);
-
   const isFinalEvaluation = !selectedModuleId;
 
+  // Render
   return (
     <div className="h-full w-full p-4 relative">
       {sessionVideos ? (
         <div className="flex flex-col items-center">
-          {!videoEnded ? (
+          <div className="mb-4">
+            <h1 className=" text-white font-bold">
+            Como deseas aprender la sesión :
+            </h1>
+            <button 
+              onClick={() => setViewMode('interactive')}
+              className={`p-2 m-2 ${viewMode === 'interactive' ? 'bg-fuchsia-700' : 'bg-gray-500'} text-white rounded-lg`}
+            >
+              Video Interactivo
+            </button>
+            <button 
+              onClick={() => setViewMode('video')}
+              className={`p-2 m-2 ${viewMode === 'video' ? 'bg-fuchsia-700' : 'bg-gray-500'} text-white rounded-lg`}
+            >
+              Video
+            </button>
+          </div>
+          {viewMode === 'interactive' ? (
+            <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%', paddingTop: '10%', height: '0', overflow: 'hidden' }}>
+              <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
+                <iframe
+                  loading="lazy"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    borderRadius: '8px',
+                    overflow: 'hidden'
+                  }}
+                  //src={sessionVideosInteractivos?.[currentVideoIndex]?.url_enlace}
+                  src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGNv8aA4fQ&#x2F;cjClaTZiOnpRbEVAuGZcUw&#x2F;view?embed"
+                  allow="fullscreen"
+                />
+              </div>
+            </div>
+          ) : !videoEnded ? (
             <video
               key={sessionVideos[currentVideoIndex]?.video_id}
               controls
@@ -189,7 +238,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               <h3 className="text-white text-center text-3xl pb-7">
                 {sessionVideos[currentVideoIndex]?.question}
               </h3>
-               <img src={sessionVideos[currentVideoIndex]?.image} className="w-auto h-48 mb-6" />
+              <img src={sessionVideos[currentVideoIndex]?.image} className="w-auto h-48 mb-6" />
               <div className="flex justify-between items-center">
                 <ul className="text-white text-center w-1/2">
                   {[sessionVideos[currentVideoIndex]?.correct_answer, ...sessionVideos[currentVideoIndex]?.incorrect_answer].map((option, idx) => (
@@ -203,7 +252,6 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                           maxHeight: 'auto', // La altura será automática dependiendo del contenido
                           padding: '1rem 1.5rem', // Asegura un buen espaciado interno
                           whiteSpace: 'normal', // Permite que el texto se envuelva en múltiples líneas si es necesario
-                        
                         }}
                         onClick={() => handleOptionSelect(idx, option === sessionVideos[currentVideoIndex]?.correct_answer)}
                         disabled={selectedOption !== null}
@@ -227,7 +275,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                           animationDelay: `${Math.random() * 0.5}s`,
                         }}
                       >
-                        {isCorrect ? '😊' : '😢'}
+                          {isCorrect ? '😊' : '😢'}
                       </div>
                     ))}
                   </div>
@@ -256,7 +304,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         moduleResult ? (
           <div className="flex flex-col mt-6 items-center justify-center text-white text-center text-4xl">
-            <img src={"https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png"} alt="Congratulations" className="mb-4 justify-center" />
+            <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
             Puntaje Total: {moduleResult.puntaje}
           </div>
         ) : showStartMessage ? (
@@ -265,7 +313,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? '' : 'hidden'}`}>Para finalizar el Curso incia esto</p>
             <h1 className={`text-5xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Ponte a Prueba</h1>
             <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Para finalizar el Módulo ¡Inicia la Evaluación!</p>
-            <img src={isFinalEvaluation ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png" : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"} alt="Congratulations" className="mb-4" />
+            <img src={isFinalEvaluation ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png" : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"} alt="Evaluation" className="mb-4" />
             <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg border border-brandborder-400 px-4 py-2">
               Comenzar Evaluación
             </button>
@@ -284,13 +332,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                         <button
                           className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
                           style={{
-                            minWidth: '250px', // Establece un ancho mínimo para los botones
-                            minHeight: '50px', // Establece una altura mínima para los botones
-                            maxWidth: '100%',  // Permite que el botón crezca hasta el tamaño del contenedor
-                            maxHeight: 'auto', // La altura será automática dependiendo del contenido
-                            padding: '1rem 1.5rem', // Asegura un buen espaciado interno
-                            whiteSpace: 'normal', // Permite que el texto se envuelva en múltiples líneas si es necesario
-                            textAlign: 'center', // Centra el texto
+                            minWidth: '250px',
+                            minHeight: '50px',
+                            maxWidth: '100%',
+                            maxHeight: 'auto',
+                            padding: '1rem 1.5rem',
+                            whiteSpace: 'normal',
+                            textAlign: 'center',
                           }}
                           onClick={() => handleOptionSelect(idx, option.is_correct)}
                           disabled={selectedOption !== null}
@@ -330,7 +378,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             {selectedOption !== null && !showReaction && !evaluationCompleted && (
               <button
                 className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-                style={{ width: '300px', height: '100px' }}
+                style={{ width: '300px', height: '60px' }}
                 onClick={handleNextQuestion}
               >
                 {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}

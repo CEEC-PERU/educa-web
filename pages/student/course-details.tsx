@@ -171,25 +171,8 @@ const CourseDetails = () => {
           </div>
         ))}
 
-        <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%',  paddingTop: '10%', height: '0', overflow: 'hidden' }}>
-          <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
-            <iframe
-              loading="lazy"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                borderRadius: '8px',
-                overflow: 'hidden'
-              }}
-              src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGNLzFMK0M&#x2F;GsN6vohskGC2lWaDhvwHVA&#x2F;view?embed"
-              allow="fullscreen"
-            />
-          </div>
-        </div>
+
+       
 
         <div className="items-center justify-center bg-gradient-to-r px-4 lg:px-60 from-brand-100 via-brand-200 to-brand-300 pb-20">
           <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
@@ -240,8 +223,6 @@ const CourseDetails = () => {
           </div>
 
          
-
-          {/* NPS Survey Form */}
           {/* NPS Survey Form */}
 <div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200  pt-20 rounded from-brand-100 via-brand-200 to-brand-300 p-4 mt-8">
   <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white text-center">Encuesta</h1>

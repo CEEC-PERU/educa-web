@@ -50,6 +50,13 @@ export interface Videos {
   updated_at: string;
 }
 
+export interface VideosInteractivo{
+  interactivo_id: number;
+  url_enlace: string;
+  session_id: number;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface ModuleSessions {
   session_id: number;
@@ -57,6 +64,7 @@ export interface ModuleSessions {
   duracion_minutos: string;
   usersessionprogress: UserSessionProgress[];
   Videos: Videos[];
+  VideoInteractivos : VideosInteractivo[];
 }
 
 export interface EvaluationResult{
