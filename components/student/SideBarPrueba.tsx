@@ -12,42 +12,44 @@ interface SidebarProps {
   videoProgress?: { [key: string]: number };
 }
 
-const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, moduleEvaluations, onSelect, videoProgress = {} }) => {
+const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation, onSelect, videoProgress = {} }) => {
   const { user } = useAuth();
   const userInfo = user as { id: number };
 
-  const getSessionProgress = (progresses: UserSessionProgress[], videoProgress: number) => {
-    const progress = progresses?.[0]?.progress ?? 0;
-    return Math.max(progress, videoProgress);
+  // Función para obtener el progreso de una sesión
+  const getSessionProgress = (session: UserSessionProgress[], sessionId: number) => {
+    const sessionProgress = session.find(progress => progress.session_id === sessionId && progress.user_id === userInfo.id)?.progress || 0;
+    const videoProg = videoProgress[sessionId] || 0;
+    return Math.max(sessionProgress, videoProg);
   };
 
-  const calculateModuleProgress = (module: CourseModule, videoProgress: { [key: string]: number }) => {
-    const sessions = module.moduleSessions;
-    const totalSessions = sessions.length;
-    const totalProgress = sessions.reduce((acc, session) => {
-      const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.session_id] || 0);
-      return acc + sessionProgress;
+  // Función para calcular el progreso total de un módulo
+  const calculateModuleProgress = (module: CourseModule) => {
+    const totalSessions = module.moduleSessions.length;
+    const totalProgress = module.moduleSessions.reduce((acc, session) => {
+      const progress = getSessionProgress(session.usersessionprogress, session.session_id);
+      return acc + progress;
     }, 0);
 
-    const progressNumber = Math.round(totalSessions > 0 ? totalProgress / totalSessions : 0);
-    const isCompleted = progressNumber === 100;
-
-    return progressNumber;
+    return Math.round(totalSessions > 0 ? totalProgress / totalSessions : 0);
   };
 
-  const allModulesCompleted = courseModules.every(module => module.usermoduleprogress?.[0]?.progress === 100);
+  // Verificar si todos los módulos están completados
+  const allModulesCompleted = courseModules.every(module => calculateModuleProgress(module) === 100);
 
   return (
     <div className="bg-brand-500 text-white divide-y divide-neutral-100 h-full p-4 overflow-y-auto lg:w-96 lg:fixed lg:right-0 lg:top-16 lg:h-full w-full">
       {courseModules.map((module, moduleIndex) => {
-        const moduleProgress = calculateModuleProgress(module, videoProgress);
+        const moduleProgress = calculateModuleProgress(module);
         const roundedModuleProgress = Math.round(moduleProgress);
 
         return (
-          <div key={moduleIndex} className="py-4">
+          <div key={module.module_id} className="py-4">
             <div className="flex items-center">
               <div className="w-10 h-10 mr-4">
-                <CircularProgressbar value={moduleProgress} text={`${roundedModuleProgress}%`} 
+                <CircularProgressbar
+                  value={moduleProgress}
+                  text={`${roundedModuleProgress}%`} 
                   styles={{
                     path: { stroke: "#8204E7" },
                     text: { fill: "#8204E7" },
@@ -57,21 +59,23 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
               <h2 className="font-bold text-lg flex-1">Módulo {moduleIndex + 1}: {module.name}</h2>
             </div>
             {module.moduleSessions.map((session, sessionIndex) => {
-              const sessionProgress = getSessionProgress(session.usersessionprogress, videoProgress[session.session_id] || 0);
+              const sessionProgress = getSessionProgress(session.usersessionprogress, session.session_id);
               const roundedSessionProgress = Math.round(sessionProgress);
 
               return (
                 <div
-                  key={sessionIndex}
+                  key={session.session_id}
                   className="cursor-pointer py-2 flex items-center"
                   onClick={() => onSelect(session.name, undefined, module.module_id)}
                 >
                   <div className="w-8 h-8 mr-2">
-                    <CircularProgressbar value={sessionProgress} text={`${roundedSessionProgress}%`} 
+                    <CircularProgressbar
+                      value={sessionProgress}
+                      text={`${roundedSessionProgress}%`}
                       styles={{
                         path: { stroke: "#8204E7" },
                         text: { fill: "#8204E7" },
-                      }} 
+                      }}
                     />
                   </div>
                   <div className="flex-1">

@@ -3,13 +3,13 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 
 import './../../app/globals.css';
-import { Question, ModuleResults, Videos, VideosInteractivo } from '../../interfaces/StudentModule';
+import { Question, ModuleResults, VideosInteractivo } from '../../interfaces/StudentModule';
 import { useResultModule } from '../../hooks/useResultModule';
 import { useAuth } from '../../context/AuthContext';
 
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
-  sessionVideos?: Videos[];
+  sessionVideo?: string;
   evaluationQuestions?: Question[];
   onFinish?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
@@ -20,7 +20,7 @@ interface MainContentProps {
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
   sessionVideosInteractivos,
-  sessionVideos,
+  sessionVideo,
   evaluationQuestions,
   onFinish,
   onProgress,
@@ -41,7 +41,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [showGif, setShowGif] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [viewMode, setViewMode] = useState<'video' | 'interactive'>('video');
-  
+  const [timeElapsed, setTimeElapsed] = useState(0);
   // Refs
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -64,7 +64,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setShowStartMessage(true);
     setCurrentVideoIndex(0);
     setShowGif(false);
-  }, [sessionVideos, evaluationQuestions, selectedModuleId, sessionVideosInteractivos]);
+  }, [sessionVideo, evaluationQuestions, selectedModuleId, sessionVideosInteractivos]);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -105,7 +105,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         }
       };
     }
-  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideos, sessionVideosInteractivos]);
+  }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideo, sessionVideosInteractivos]);
 
   // Handlers
   const handleNextQuestion = () => {
@@ -163,7 +163,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const handleContinue = () => {
-    if (currentVideoIndex < (sessionVideos?.length || 0) - 1) {
+    if (currentVideoIndex < (sessionVideo?.length || 0) - 1) {
       setCurrentVideoIndex(currentVideoIndex + 1);
       setVideoEnded(false);
       setSelectedOption(null);
@@ -180,7 +180,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   // Render
   return (
     <div className="h-full w-full p-4 relative">
-      {sessionVideos ? (
+      {sessionVideo ? (
         <div className="flex flex-col items-center">
           <div className="mb-4">
             <h1 className=" text-white font-bold">
@@ -200,7 +200,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             </button>
           </div>
           {viewMode === 'interactive' ? (
-            <div style={{ width: '80%', position: 'relative', paddingBottom: '56.25%', paddingTop: '10%', height: '0', overflow: 'hidden' }}>
+            
+            <div style={{ width: '100%', position: 'relative', paddingBottom: '56.25%', paddingTop: '0%', height: '0', overflow: 'hidden' }}>
               <div className="relative" style={{ paddingTop: '56.25%', overflow: 'hidden', borderRadius: '8px' }}>
                 <iframe
                   loading="lazy"
@@ -222,169 +223,129 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             </div>
           ) : !videoEnded ? (
             <video
-              key={sessionVideos[currentVideoIndex]?.video_id}
-              controls
-              className="w-full h-full"
-              style={{ maxWidth: '100%' }}
-              onEnded={handleVideoEnd}
-              ref={videoRef}
-            >
-              <source src={sessionVideos[currentVideoIndex]?.video_enlace} type="video/mp4" />
-            </video>
-          ) : showGif ? (
-            <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721946233/WEB_EDUCA/VIDEOS/oyywqqxqwzwi7szbbmt5.gif" alt="Transition GIF" className="w-full h-full" style={{ maxWidth: '100%' }} />
-          ) : (
+            key={sessionVideo}
+            controls
+            className="w-full h-full"
+            style={{ maxWidth: '100%' }}
+            onEnded={handleVideoEnd}
+            ref={videoRef}
+          >
+            <source src={sessionVideo} type="video/mp4" />
+          </video>
+          )  : (
             <div className="flex flex-col justify-center items-center mt-4">
-              <h3 className="text-white text-center text-3xl pb-7">
-                {sessionVideos[currentVideoIndex]?.question}
-              </h3>
-              <img src={sessionVideos[currentVideoIndex]?.image} className="w-auto h-48 mb-6" />
-              <div className="flex justify-between items-center">
-                <ul className="text-white text-center w-1/2">
-                  {[sessionVideos[currentVideoIndex]?.correct_answer, ...sessionVideos[currentVideoIndex]?.incorrect_answer].map((option, idx) => (
-                    <li key={idx}>
-                      <button
-                        className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                        style={{
-                          minWidth: '250px', // Establece un ancho mínimo para los botones
-                          minHeight: '50px', // Establece una altura mínima para los botones
-                          maxWidth: '100%',  // Permite que el botón crezca hasta el tamaño del contenedor
-                          maxHeight: 'auto', // La altura será automática dependiendo del contenido
-                          padding: '1rem 1.5rem', // Asegura un buen espaciado interno
-                          whiteSpace: 'normal', // Permite que el texto se envuelva en múltiples líneas si es necesario
-                        }}
-                        onClick={() => handleOptionSelect(idx, option === sessionVideos[currentVideoIndex]?.correct_answer)}
-                        disabled={selectedOption !== null}
-                      >
-                        {option}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              {showReaction && (
-                <div className="absolute bottom-0 left-0 w-full h-full flex justify-center items-end">
-                  <div className="relative w-full h-full flex justify-center">
-                    {Array.from({ length: 20 }).map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`absolute text-6xl ${isCorrect ? 'text-green-500' : 'text-red-500'} animate-float`}
-                        style={{
-                          bottom: '0',
-                          left: `${Math.random() * 100}%`,
-                          animationDelay: `${Math.random() * 0.5}s`,
-                        }}
-                      >
-                          {isCorrect ? '😊' : '😢'}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {selectedOption !== null && !showReaction && (
-                <button
-                  className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-                  style={{
-                    minWidth: '200px', // Establece un ancho mínimo para los botones
-                    minHeight: '50px', // Establece una altura mínima para los botones
-                    maxWidth: '100%',  // Permite que el botón crezca hasta el tamaño del contenedor
-                    maxHeight: 'auto', // La altura será automática dependiendo del contenido
-                    padding: '1rem 1.5rem', // Asegura un buen espaciado interno
-                    whiteSpace: 'normal', // Permite que el texto se envuelva en múltiples líneas si es necesario
-                    textAlign: 'center', // Centra el texto
-                  }}
-                  onClick={handleContinue}
-                >
-                  Continuar
-                </button>
-              )}
             </div>
           )}
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         moduleResult ? (
-          <div className="flex flex-col mt-6 items-center justify-center text-white text-center text-4xl">
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
             <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
-            Puntaje Total: {moduleResult.puntaje}
+           <p className='text-white text-4xl'>  Puntaje Total: {moduleResult.puntaje}</p>
           </div>
         ) : showStartMessage ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <h1 className={`text-5xl text-white mb-4 ${isFinalEvaluation ? '' : 'hidden'}`}>EVALUACIÓN FINAL</h1>
-            <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? '' : 'hidden'}`}>Para finalizar el Curso incia esto</p>
-            <h1 className={`text-5xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Ponte a Prueba</h1>
-            <p className={`text-4xl text-white mb-4 ${isFinalEvaluation ? 'hidden' : ''}`}>Para finalizar el Módulo ¡Inicia la Evaluación!</p>
-            <img src={isFinalEvaluation ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png" : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"} alt="Evaluation" className="mb-4" />
-            <button onClick={handleStartEvaluation} className="bg-brandmora-500 text-white rounded-lg border border-brandborder-400 px-4 py-2">
-              Comenzar Evaluación
-            </button>
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
+          <h1 className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${isFinalEvaluation ? '' : 'hidden'}`}>
+            EVALUACIÓN FINAL
+          </h1>
+          <p className={`text-4xl text-white mb-8 ${isFinalEvaluation ? '' : 'hidden'}`}>
+            Para finalizar el curso, inicia esto
+          </p>
+          <h1 className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${isFinalEvaluation ? 'hidden' : ''}`}>
+            ¡Ponte a Prueba!
+          </h1>
+          <p className={`text-4xl text-white mb-8 ${isFinalEvaluation ? 'hidden' : ''}`}>
+            Para finalizar el módulo, ¡Inicia la Evaluación!
+          </p>
+          <img 
+            src={isFinalEvaluation ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png" 
+                : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"} 
+            alt="Evaluation"
+            className="mb-6 w-64 h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
+          />
+          <button 
+            onClick={handleStartEvaluation} 
+            className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
+          >
+            Comenzar Evaluación
+          </button>
+          <div className="mt-4 text-white text-sm">
+            <p className="animate-bounce">¡Buena suerte!</p>
           </div>
+        </div>
         ) : (
-          <div className="flex flex-col justify-center items-center h-full w-full p-4">
-            {!evaluationCompleted ? (
-              <div className="max-w-2xl w-full">
-                <h1 className="text-white text-center text-3xl pb-7">Evaluación</h1>
-                <h3 className="text-white text-center text-3xl pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
-                <p className="text-white text-left text-xl pb-5">Puntaje: {evaluationQuestions[currentQuestion]?.score}</p>
-                <div className="flex justify-between items-center">
-                  <ul className="text-white text-center w-1/2">
-                    {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                      <li key={idx}>
-                        <button
-                          className={`p-3 m-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-brandpurpura-600'} text-white border border-white`}
-                          style={{
-                            minWidth: '250px',
-                            minHeight: '50px',
-                            maxWidth: '100%',
-                            maxHeight: 'auto',
-                            padding: '1rem 1.5rem',
-                            whiteSpace: 'normal',
-                            textAlign: 'center',
-                          }}
-                          onClick={() => handleOptionSelect(idx, option.is_correct)}
-                          disabled={selectedOption !== null}
-                        >
-                          {option.option_text}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                  {evaluationQuestions[currentQuestion]?.image && <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-1/2" />}
-                </div>
-                {showReaction && (
-                  <div className="absolute bottom-0 left-0 w-full h-full flex justify-center items-end">
-                    <div className="relative w-full h-full flex justify-center">
-                      {Array.from({ length: 20 }).map((_, idx) => (
-                        <div
-                          key={idx}
-                          className={`absolute text-6xl ${isCorrect ? 'text-green-500' : 'text-red-500'} animate-float`}
-                          style={{
-                            bottom: '0',
-                            left: `${Math.random() * 100}%`,
-                            animationDelay: `${Math.random() * 0.5}s`,
-                          }}
-                        >
-                          {isCorrect ? '😊' : '😢'}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="mt-6 text-white text-center text-2xl">
-                Puntaje Total: {totalScore}
-              </div>
-            )}
-            {selectedOption !== null && !showReaction && !evaluationCompleted && (
-              <button
-                className="mt-6 p-3 bg-brandmora-500 text-white rounded-lg border border-brandborder-400"
-                style={{ width: '300px', height: '60px' }}
-                onClick={handleNextQuestion}
-              >
-                {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}
-              </button>
-            )}
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-4 md:p-6 rounded-lg shadow-lg">
+          <div className="w-3/4 bg-gray-800 rounded-full h-3 md:h-4 mb-4 md:mb-6 overflow-hidden">
+            <div
+              className="bg-yellow-600 h-3 md:h-4 text-xs font-medium text-white text-center leading-none rounded-full"
+              style={{ width: `${((currentQuestion + 1) / evaluationQuestions.length) * 100}%` }}
+            >
+              {((currentQuestion + 1) / evaluationQuestions.length) * 100}%
+            </div>
           </div>
+        
+          <div className="flex flex-col items-center text-center w-full max-w-4xl mb-4 md:mb-6">
+           {/* <p className="text-white text-lg md:text-xl">Tiempo: {new Date(timeElapsed * 1000).toISOString().substr(11, 8)}</p>*/}
+             <p className="text-white text-3xl  md:text-3xl">Puntaje: {totalScore}</p> 
+          </div>
+        
+          {!evaluationCompleted ? (
+            <div className="flex flex-col items-center text-center w-full max-w-4xl">
+              <h3 className="text-white text-2xl md:text-3xl pb-5 md:pb-7">{evaluationQuestions[currentQuestion]?.question_text}</h3>
+        
+              {evaluationQuestions[currentQuestion]?.image && (
+                <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-2/3 md:w-1/3 rounded-lg shadow-lg pb-5" />
+              )}
+        
+              <ul className="text-white w-full md:w-2/3 space-y-3 md:space-y-4">
+                {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                  <li key={idx}>
+                    <button
+                      className={`w-full p-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-yellow-600'} text-purple-900 border font-bold border-white`}
+                      onClick={() => handleOptionSelect(idx, option.is_correct)}
+                      disabled={selectedOption !== null}
+                    >
+                      {option.option_text}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+        
+              {showReaction && (
+                <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
+                  {Array.from({ length: 20 }).map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`absolute text-4xl md:text-6xl ${isCorrect ? 'text-green-500' : 'text-red-500'} animate-float`}
+                      style={{
+                        bottom: '0',
+                        left: `${Math.random() * 100}%`,
+                        animationDelay: `${Math.random() * 0.5}s`,
+                      }}
+                    >
+                      {isCorrect ? '😊' : '😢'}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="mt-6 text-white text-center text-2xl">
+               <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
+            </div>
+          )}
+        
+          {selectedOption !== null && !showReaction && !evaluationCompleted && (
+            <button
+              className="mt-6 p-3 bg-yellow-500 text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
+              onClick={handleNextQuestion}
+            >
+              {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}
+            </button>
+          )}
+        </div>
+        
+           
         )
       ) : (
         <div className="flex justify-center items-center h-full w-full p-4 text-white">

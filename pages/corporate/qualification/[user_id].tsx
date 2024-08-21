@@ -68,7 +68,7 @@ const StudentGrades: React.FC = () => {
           {loading ? (
             <Loader />
           ) : (
-            <div>
+            <div >
               {enterprise && student && (
                 <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-12">
                   <img
