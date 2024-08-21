@@ -222,7 +222,6 @@ const CourseDetails = () => {
             ))}
           </div>
 
-         
           {/* NPS Survey Form */}
 <div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200  pt-20 rounded from-brand-100 via-brand-200 to-brand-300 p-4 mt-8">
   <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white text-center">Encuesta</h1>

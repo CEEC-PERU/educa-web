@@ -15,9 +15,9 @@ export default function Home() {
 
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto px-6">
           <div className="md:w-1/2 relative z-10 px-6 text-left md:mr-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-2">La paltaforma que transforma tu futuro con cada lección</h1>
+            <h1 className="text-4xl md:text-4xl font-bold mb-2">Tu aliado para inspirar la lealtad de tus clintes y hacer crecer tu negocio mediante el conocimiento</h1>
             <p className="text-lg md:text-xl mb-10">
-              Descubre una nueva era de educación personalizada y accesible. Únete a nuestra plataforma y desarrolla tus habilidades con cursos interactivos diseñados para tu éxito.
+              Descubre una nueva era de educación personalizada y accesible.
             </p>
             <div className="flex flex-col md:flex-row gap-4">
               <ButtonComponent buttonLabel="Iniciar sesión" backgroundColor="bg-brand-300" fontSize="px-6 py-2" buttonSize="py-3 px-5 w-auto" textColor="white"></ButtonComponent>

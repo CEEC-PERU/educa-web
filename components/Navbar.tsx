@@ -41,11 +41,11 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
           <div className={`${showMenuButton ? 'ml-2' : ''} flex items-center`}>
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1721667499/WEB_EDUCA/ygxb9ji1xcpxzv23ovje.png"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
               alt="EducaWeb Logo"
-              className="h-12"
+              className="h-10"
             />
-            <h2 className="text-white font-bold">EducaWeb</h2>
+            <h2 className="text-white font-bold">MentorMind</h2>
           </div>
         </div>
         <div className="flex items-center space-x-4">
