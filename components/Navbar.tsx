@@ -7,6 +7,7 @@ interface NavbarProps {
   textColor?: string;
   fontSize?: string;
   fontFamily?: string;
+  paddingtop?:string;
   navbarHeight?: string;
   toggleSidebar?: () => void;
   showMenuButton?: boolean;
@@ -20,6 +21,7 @@ const Navbar: React.FC<NavbarProps> = ({
   textColor = 'text-white',
   fontSize = 'text-2xl',
   fontFamily = 'font-sans',
+  paddingtop= 'pt-0',
   navbarHeight = 'h-16',
   toggleSidebar,
   borderColor,
@@ -29,7 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({
 }) => {
   return (
     <nav className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full items-center z-50 ${borderColor}`}>
-      <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
+      <div className={`container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 ${paddingtop}`}>
         <div className="flex items-center">
           {showMenuButton && toggleSidebar && (
             <button
@@ -72,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({
             </>
           ) : (
             <Link href="/login">
-              <span className={`${textColor} hover:underline cursor-pointer`}>Iniciar Sesión</span>
+              <span className={`${textColor} hover:underline cursor-pointer`}>LOGIN</span>
             </Link>
           )}
         </div>

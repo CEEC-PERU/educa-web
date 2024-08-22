@@ -8,8 +8,8 @@ import Footter from '../components/Footter';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'EduStartup Landing Page',
-  description: 'Landing page for an educational startup',
+  title: 'MentorMind',
+  description: 'MentorMind plataforma educativa',
 };
 
 export default function RootLayout({
@@ -21,13 +21,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         
-        <div className="min-h-screen bg-gradient-to-r from-cyan-500 to-blue-500 relative">
-          <Navbar bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300  " /> 
+        <div >
+          <Navbar bgColor="bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800 " paddingtop='pt-8' /> 
 
         
           <main className="z-1">{children}</main>
         </div>
-        <Footter footerText="2024 EducaWeb. Todos los derechos reservados." />
+        <Footter footerText="2024 MentorMind. Todos los derechos reservados." />
       </body>
     </html>
   );

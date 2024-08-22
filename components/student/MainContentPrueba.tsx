@@ -183,14 +183,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       {sessionVideo ? (
         <div className="flex flex-col items-center">
           <div className="mb-4">
-            <h1 className=" text-white font-bold">
-            Como deseas aprender la sesión :
-            </h1>
             <button 
               onClick={() => setViewMode('interactive')}
               className={`p-2 m-2 ${viewMode === 'interactive' ? 'bg-fuchsia-700' : 'bg-gray-500'} text-white rounded-lg`}
             >
-              Video Interactivo
+              VideoI
             </button>
             <button 
               onClick={() => setViewMode('video')}

@@ -10,6 +10,7 @@ import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity'; 
+import Footter from '../../components/Footter';
 Modal.setAppElement('#__next');
 
 
@@ -98,17 +99,21 @@ const StudentIndex: React.FC = () => {
           toggleSidebar={toggleSidebar}
         />
          <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+         
       </div>
 
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-40 from-brand-100 via-brand-200 to-brand-300 p-4">
-        <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg pb-20">
-          <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
-            <p className="text-4xl lg:text-5xl font-bold mb-4 text-brandrosado-800">Hola, {name}</p>
-            <p className="mb-4 text-4xl lg:text-5xl text-white">¡Qué bueno verte!</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="relative flex items-center text-left w-full  text-white pt-10  px-40">
+          <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10  ">
+            <p className="text-7xl lg:text-7xl font-bold mb-4 text-brandrosado-800">Hola , {name}</p>
+            <p className="mb-4 text-7xl lg:text-7xl text-white font-bold">¡Qué bueno verte!</p>
             <p className="mb-4 text-base lg:text-base text-white py-8">
-              Este es tu portal de aprendizaje, explora tus cursos y potencia tu desarrollo profesional llevándolo al siguiente nivel con Educaweb.
+              Este es tu portal de aprendizaje, explora tus cursos y potencia tu desarrollo profesional llevándolo al siguiente nivel con MentorMind.
             </p>
-            <div className='bg-brandazul-600 border-2 border-white p-4 rounded-lg grid grid-cols-1 md:grid-cols-3 gap-4'>
+           
+          </div>
+          <div className="lg:w-1/2 px-20">
+          <div className='bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                 <div className="flex items-center justify-center">
                   <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
@@ -132,13 +137,6 @@ const StudentIndex: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="lg:w-1/2">
-            <img
-              src='https://res.cloudinary.com/dk2red18f/image/upload/v1724273571/WEB_EDUCA/mfksspcpfbnutg19k2dx.png'
-              className="w-full h-96 max-w-full mx-auto object-cover"
-              alt="Imagen descriptiva"
-            />
-          </div>
         </div>
         <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {courseStudent.map(courseStudent => (
@@ -154,6 +152,7 @@ const StudentIndex: React.FC = () => {
             />
           ))}
         </div>
+     
       </div>
       {selectedCourse && (
         <Modal
@@ -191,6 +190,57 @@ const StudentIndex: React.FC = () => {
           </div>
         </Modal>
       )}
+       
+       <div
+        className="bg-no-repeat bg-cover bg-brand-100"
+        
+        style={{
+          backgroundImage: "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
+          height: '500px',
+        }}
+      >
+        <div className="container mx-auto grid grid-cols-4 gap-4 pt-60 pl-40  text-white">
+          {/* Primera columna: Logo */}
+          <div className="flex justify-center ">
+            <img
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
+              alt="Logo"
+              className="h-30"
+            />
+          </div>
+
+          {/* Segunda columna: Títulos y textos */}
+          <div className='pl-40'>
+            <h3 className="font-semibold text-lg ">PÁGINAS</h3>
+            <ul>
+              <li>INICIO</li>
+              <li>RECURSOS</li>
+              <li>BENEFICIOS</li>
+              <li>SUSCRÍBETE</li>
+            </ul>
+          </div>
+
+          {/* Tercera columna */}
+          <div className='pl-20'>
+            <h3 className="font-semibold text-lg ">LINKS</h3>
+            <ul>
+              <li>TÉRMINOS Y CONDICIONES</li>
+              <li>POLÍTICA DE PRIVACIDAD</li>
+           
+            </ul>
+          </div>
+
+          {/* Cuarta columna */}
+          <div>
+            <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
+            <ul>
+              <li>+51 9912785156</li>
+              <li>administrador.app@ceec.com.pe</li>
+              <li>MAGDALENA DEL MAR - LIMA</li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
