@@ -8,6 +8,7 @@ import Loader from '../../../components/Loader';
 import ProgressBar from '../../../components/Corporate/ProgressBar';
 import './../../../app/globals.css';
 
+
 const CorporateUsers: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;

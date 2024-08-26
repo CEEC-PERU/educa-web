@@ -83,40 +83,40 @@ export default function Home() {
 
     {/* Columna derecha: Formulario */}
     <div className="md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
-      <form className="space-y-4">
+      <form className="space-y-4  m-7">
         {/* Nombres y Apellidos */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <label className="block text-gray-700">Nombres completos</label>
-            <input type="text" className="w-full p-2 border border-gray-300 rounded-md" placeholder="Nombres" />
+        <div className="flex flex-col md:flex-row gap-4 ">
+          <div className="flex-1 pb-3">
+            <label className="block text-gray-700 font-bold pb-2">Nombres completos</label>
+            <input type="text" className="w-full p-2 border  border-gray-300 rounded-full" placeholder="Nombres" />
           </div>
-          <div className="flex-1">
-            <label className="block text-gray-700">Apellidos</label>
-            <input type="text" className="w-full p-2 border border-gray-300 rounded-md" placeholder="Apellidos" />
+          <div className="flex-1 pb-3">
+            <label className="block text-gray-700 font-bold pb-2">Apellidos</label>
+            <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Apellidos" />
           </div>
         </div>
 
         {/* Email */}
-        <div>
-          <label className="block text-gray-700">Email</label>
-          <input type="email" className="w-full p-2 border border-gray-300 rounded-md" placeholder="Email" />
+        <div className='pb-3'>
+          <label className="block text-gray-700 font-bold pb-2">Email</label>
+          <input type="email" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Email" />
         </div>
 
         {/* Número */}
-        <div>
-          <label className="block text-gray-700">Número</label>
-          <input type="text" className="w-full p-2 border border-gray-300 rounded-md" placeholder="Número de teléfono" />
+        <div className='pb-3'>
+          <label className="block text-gray-700 font-bold ">Número</label>
+          <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Número de teléfono" />
         </div>
 
         {/* Preguntas */}
-        <div>
-          <label className="block text-gray-700">Envíanos tus preguntas</label>
-          <textarea className="w-full p-2 border border-gray-300 rounded-md"  placeholder="Escribe tus preguntas aquí"></textarea>
+        <div className='pb-3'>
+          <label className="block text-gray-700 font-bold pb-2">Envíanos tus preguntas</label>
+          <textarea className="w-full p-2 border border-gray-300 rounded-full"  placeholder="Escribe tus preguntas aquí"></textarea>
         </div>
 
         {/* Botón Enviar */}
         <div>
-          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-md">Enviar</button>
+          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-full">Enviar</button>
         </div>
       </form>
     </div>

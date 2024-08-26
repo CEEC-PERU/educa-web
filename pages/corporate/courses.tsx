@@ -37,7 +37,7 @@ const CorporateCourses: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
-          <h2 className="text-2xl font-bold mb-6">Cursos de la Empresa</h2>
+          <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">CURSOS</h2>
           {loading ? (
             <Loader />
           ) : (

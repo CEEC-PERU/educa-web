@@ -60,51 +60,59 @@ const StudentGrades: React.FC = () => {
   
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+    <div className="relative min-h-screen flex flex-col bg-[#F5F8FA] ">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
+        <main className=" flex-grow transition-all duration-300 ease-in-out ml-20">
           {loading ? (
             <Loader />
           ) : (
             <div >
-              {enterprise && student && (
-                <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-12">
+              {enterprise && student && ( 
+                <div className="relative w-full max-w-full   ">
                   <img
                     src={enterprise.image_fondo}
-                    className="w-full h-auto"
+                    className="w-full h-auto   "
                     alt="Imagen de la empresa"
                   />
-                  <div className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center lg:justify-start lg:items-start p-4">
-                    <img
-                      src={student.userProfile?.profile_picture || 'default_profile_picture.png'}
-                      alt="Profile"
-                      className="h-40 w-40 rounded-full border-4 border-white"
-                    />
-                    <h2 className="text-2xl font-bold text-black mt-4">
-                      {student.userProfile?.first_name} {student.userProfile?.last_name}
-                    </h2>
-                  </div>
+                  <div className=" flex items-center border-y-8282FF] bg-[#FFFFFF] ">
+  <div className="flex-shrink-0 ">
+    <img
+      src={student.userProfile?.profile_picture || 'default_profile_picture.png'}
+      alt="Profile"
+      className="h-40 w-40  rounded-full  "
+    />
+  </div>
+  <div className="ml-10">
+    <h2 className="text-2xl font-bold text-blue-600 mb-4">
+      {student.userProfile?.first_name} {student.userProfile?.last_name}
+    </h2>
+    <p className="text-lg text-gray-700">{student.userProfile?.email}</p>
+    <p className="text-md text-gray-500">{student.userProfile?.job_title}</p>
+  </div>
+</div>
+
                 </div>
               )}
-              <div className="mt-24">
-                <h2 className="text-2xl font-bold text-center mb-8">Cursos</h2>
+              <div className="mt-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {courses.map(course => (
                     <StudentCourseCard
-                      key={course.course_id}
-                      course={{
-                        image: course.image,
-                        name: course.name,
-                        description_short: course.description_short,
-                        progress: course.progress ?? 0,
-                        completed: course.completed ?? 0,
-                        approved: course.approved ?? 0,
-                        course_id: course.course_id, // Asegúrate de que el ID del curso esté incluido
-                      }}
-                      onViewGrades={handleViewGrades}
-                    />
+                    key={course.course_id}
+                    course={{
+                      image: course.image,
+                      name: course.name,
+                      description_short: course.description_short,
+                      progress: course.progress ?? 0,
+                      completed: course.completed ?? 0,
+                      approved: course.approved ?? 0,
+                      course_id: course.course_id,
+                    }}
+                    onViewGrades={handleViewGrades}
+                    studentId={student.user_id} // Pass studentId here
+                  />
+                  
                   ))}
                 </div>
                 <button
