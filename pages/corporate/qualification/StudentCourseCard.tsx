@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useRouter } from 'next/router';
 import CircularBar from '../../../components/Corporate/CircularBar';
@@ -39,7 +38,7 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course, onViewGra
     return null;
   }
 
-  return (
+return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6 border-collapse">
       <h3 className="text-xl font-bold mb-4 text-blue-600">{course.name}</h3>
       <div className="flex flex-col md:flex-row">
@@ -60,7 +59,7 @@ const StudentCourseCard: React.FC<StudentCourseCardProps> = ({ course, onViewGra
               <CircularBar percentage={course.approved ?? 0} label="Aprobado" />
             </div>
           </div>
-
+          
           <button
             onClick={() => onViewGrades(course)}
             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"

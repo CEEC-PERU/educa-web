@@ -42,7 +42,6 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
       {courseModules.map((module, moduleIndex) => {
         const moduleProgress = calculateModuleProgress(module);
         const roundedModuleProgress = Math.round(moduleProgress);
-
         return (
           <div key={module.module_id} className="py-4">
             <div className="flex items-center">
@@ -61,7 +60,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
             {module.moduleSessions.map((session, sessionIndex) => {
               const sessionProgress = getSessionProgress(session.usersessionprogress, session.session_id);
               const roundedSessionProgress = Math.round(sessionProgress);
-
+              console.log("SessionProgress" , sessionProgress)
               return (
                 <div
                   key={session.session_id}

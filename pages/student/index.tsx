@@ -7,6 +7,7 @@ import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
+
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity'; 
@@ -17,7 +18,9 @@ Modal.setAppElement('#__next');
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
+  console.log(courseStudent)
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [filters, setFilters] = useState<any>({}); 
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '';
@@ -28,6 +31,12 @@ const StudentIndex: React.FC = () => {
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
   }
+
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+    // You can add more logic here to filter courseStudent based on the filters
+  };
+
 
   const openModal = (course: any) => {
     setSelectedCourse(course);
@@ -138,7 +147,11 @@ const StudentIndex: React.FC = () => {
             </div>
           </div>
         </div>
+        {/* Sidebar */}
+      
+
         <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+         
           {courseStudent.map(courseStudent => (
             <CourseCard
               key={courseStudent.Course.course_id}
@@ -152,8 +165,7 @@ const StudentIndex: React.FC = () => {
             />
           ))}
         </div>
-     
-      </div>
+     </div>
       {selectedCourse && (
         <Modal
           key={selectedCourse.course_id}

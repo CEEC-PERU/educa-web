@@ -1,9 +1,14 @@
-
 export interface CourseProfessor{
   full_name : string;
 }
 export interface CourseCategory{
     name : string;
+    category_id : number;
+
+}
+export interface Content{
+  content_id : number;
+  name  : string;
 }
 
 export interface Course{

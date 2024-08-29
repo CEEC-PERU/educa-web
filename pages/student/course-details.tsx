@@ -222,43 +222,8 @@ const CourseDetails = () => {
             ))}
           </div>
 
-          {/* NPS Survey Form */}
-<div className="items-center justify-center bg-gradient-to-r border-2 border-brandblanco-200  pt-20 rounded from-brand-100 via-brand-200 to-brand-300 p-4 mt-8">
-  <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white text-center">Encuesta</h1>
-  <form onSubmit={handleFormSubmit} className="w-full  px-2 pb-10" >
-    <div className="mb-4 w-full">
-      <label className="block w-full text-white text-sm font-bold mb-2" htmlFor="nps-score">
-        ¿Qué tan probable es que recomiendes este curso a un amigo o colega? (0 = Muy improbable, 10 = Muy probable)
-      </label>
-      <input
-        type="number"
-        min="0"
-        max="10"
-        name="nps-score"
-        id="nps-score"
-        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-        required
-      />
-    </div>
-    <div className="mb-4 w-full">
-      <label className="block w-full text-white text-sm font-bold mb-2" htmlFor="feedback">
-        Comentarios adicionales:
-      </label>
-      <textarea
-        name="feedback"
-        id="feedback"
-        rows={4}
-        className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-      ></textarea>
-    </div>
-    <button
-      type="submit"
-      className="bg-brandmora-500 text-white px-4 py-2 rounded hover:bg-brandmorado-700 border-4 border-brandborder-400 w-full"
-    >
-      Enviar Encuesta
-    </button>
-  </form>
-</div>
+{/* NPS Survey Form */}
+
 
         </div>
       </div>

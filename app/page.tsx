@@ -1,10 +1,16 @@
+'use client';
+import React, { useState } from 'react';
 import CardImage from '../components/student/CardImage';
 import CardCarousel from "../components/student/CardCarousel";
 import Footter from "../components/Footter";
 import ButtonComponent from '@/components/ButtonComponent';
+import CompanyForm from '@/components/FormComponent';
+import IndividualForm from '@/components/IndividualForm';
+
 
 //pagina principal
 export default function Home() {
+  const [formType, setFormType] = useState<'company' | 'individual'>('individual');
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
@@ -72,7 +78,7 @@ export default function Home() {
       
       {/* Sección 4: Sección con fondo brand-500 */}
       <section className="relative flex items-center justify-center w-full p-6 bg-brand-500 text-white pt-40">
-  <div className="absolute inset-0 bg-cover bg-center"></div>
+
   
   <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto">
     
@@ -81,46 +87,30 @@ export default function Home() {
       <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1724357502/yzud3yhtrhdjljdedux1.png" className="w-full max-w-3xl mx-auto" alt="Imagen descriptiva" />
     </div>
 
-    {/* Columna derecha: Formulario */}
-    <div className="md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
-      <form className="space-y-4  m-7">
-        {/* Nombres y Apellidos */}
-        <div className="flex flex-col md:flex-row gap-4 ">
-          <div className="flex-1 pb-3">
-            <label className="block text-gray-700 font-bold pb-2">Nombres completos</label>
-            <input type="text" className="w-full p-2 border  border-gray-300 rounded-full" placeholder="Nombres" />
+
+    <div className="relative z-10 flex flex-col md:flex-row items-center justify-center ">
+          {/* Toggle Buttons */}
+          <div className="mb-6 ">
+            <div className='mb-10 '>
+            <button
+              onClick={() => setFormType('individual')}
+              className={`px-4 py-2 rounded-lg ${formType === 'individual' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+            >
+              Individual
+            </button>
+            <button
+              onClick={() => setFormType('company')}
+              className={`ml-4 px-4 py-2 rounded-lg ${formType === 'company' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-black'}`}
+            >
+              Company
+            </button>
+            </div>
+            {formType === 'individual' ? <IndividualForm /> : <CompanyForm />}
           </div>
-          <div className="flex-1 pb-3">
-            <label className="block text-gray-700 font-bold pb-2">Apellidos</label>
-            <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Apellidos" />
-          </div>
-        </div>
 
-        {/* Email */}
-        <div className='pb-3'>
-          <label className="block text-gray-700 font-bold pb-2">Email</label>
-          <input type="email" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Email" />
+          {/* Form Component */}
+        
         </div>
-
-        {/* Número */}
-        <div className='pb-3'>
-          <label className="block text-gray-700 font-bold ">Número</label>
-          <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Número de teléfono" />
-        </div>
-
-        {/* Preguntas */}
-        <div className='pb-3'>
-          <label className="block text-gray-700 font-bold pb-2">Envíanos tus preguntas</label>
-          <textarea className="w-full p-2 border border-gray-300 rounded-full"  placeholder="Escribe tus preguntas aquí"></textarea>
-        </div>
-
-        {/* Botón Enviar */}
-        <div>
-          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-full">Enviar</button>
-        </div>
-      </form>
-    </div>
-    
   </div>
 </section>
 

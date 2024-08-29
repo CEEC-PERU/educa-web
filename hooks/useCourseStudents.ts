@@ -25,6 +25,7 @@ export const useCourseStudent = () => {
           } else {
             setCourseStudent([response]); 
           }
+         
       } catch (error) {
         console.error('Error fetching course student:', error);
         setError('Error fetching course student. Please try again.');

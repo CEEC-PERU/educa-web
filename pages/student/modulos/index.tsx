@@ -22,10 +22,7 @@ const Home: React.FC = () => {
   const userInfo = user as { id: number };
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
   const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
-  
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
-
-
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
@@ -129,7 +126,7 @@ const Home: React.FC = () => {
       </div>
     <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
      
-      <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
+      <div className="flex flex-grow pt-16 flex-col lg:flex-row relative bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
             sessionVideo={selectedSession.video}
@@ -153,3 +150,7 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+
+
+
+

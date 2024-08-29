@@ -28,24 +28,24 @@ const ScreenSecurity: React.FC = () => {
       });
     };
 
-    document.addEventListener('keydown', preventScreenshot);
-    document.addEventListener('contextmenu', preventContextMenu);
-    preventScreenRecording();
+    //document.addEventListener('keydown', preventScreenshot);
+    //document.addEventListener('contextmenu', preventContextMenu);
+    //preventScreenRecording();
 
     // Remueve la capa si hay interacción
     const handleInteraction = () => {
       setIsScreenBlocked(false);
     };
 
-    document.addEventListener('mousemove', handleInteraction);
-    document.addEventListener('keydown', handleInteraction);
+   // document.addEventListener('mousemove', handleInteraction);
+   // document.addEventListener('keydown', handleInteraction);
 
     return () => {
-      document.removeEventListener('keydown', preventScreenshot);
-      document.removeEventListener('contextmenu', preventContextMenu);
-      document.removeEventListener('visibilitychange', preventScreenRecording);
-      document.removeEventListener('mousemove', handleInteraction);
-      document.removeEventListener('keydown', handleInteraction);
+     // document.removeEventListener('keydown', preventScreenshot);
+      //document.removeEventListener('contextmenu', preventContextMenu);
+      //document.removeEventListener('visibilitychange', preventScreenRecording);
+      //document.removeEventListener('mousemove', handleInteraction);
+     // document.removeEventListener('keydown', handleInteraction);
     };
   }, []);
 
