@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 
-
 import './../../app/globals.css';
 import { Question, ModuleResults, VideosInteractivo } from '../../interfaces/StudentModule';
 import { useResultModule } from '../../hooks/useResultModule';
@@ -31,8 +30,8 @@ const NPSForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSubmit }) 
 
   return (
     <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
-      <h2 className="text-white text-3xl mb-4 mx-8">¿Qué tan satisfecho estás con el curso?</h2>
-      <div className="flex justify-around w-full mb-4 ">
+      <h2 className="text-white text-3xl mb-4">¿Qué tan satisfecho estás con el curso?</h2>
+      <div className="flex justify-around w-full mb-4">
         {emojis.map((emoji, idx) => (
           <button
             key={idx}
@@ -43,7 +42,18 @@ const NPSForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSubmit }) 
           </button>
         ))}
       </div>
-     
+      <h2 className="text-white text-3xl mb-4">¿Qué tan satisfecho estás con el curso?</h2>
+      <div className="flex justify-around w-full mb-4">
+        {emojis.map((emoji, idx) => (
+          <button
+            key={idx}
+            className={`text-5xl ${selectedScore === idx + 1 ? 'text-yellow-400' : 'text-white'} transition-transform transform hover:scale-110`}
+            onClick={() => setSelectedScore(idx + 1)}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
       <button
         onClick={handleSubmit}
         className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
@@ -192,8 +202,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
   const handleNPSSubmit = (score: number) => {
     console.log(`NPS Score: ${score}`);
+    setShowNPSForm(false); // Ocultar formulario NPS
+
     setShowStartMessage(false);
   };
+
+  
 
   const handleContinue = () => {
     if (currentVideoIndex < (sessionVideo?.length || 0) - 1) {
@@ -232,6 +246,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
             <p className='text-white text-4xl'> Puntaje Total: {moduleResult.puntaje}</p>
             <p className='text-white text-2xl'> Preguntas correctas: {correctAnswers}/{evaluationQuestions.length}</p>
+            <button 
+              onClick={handleStartEvaluation} 
+              className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
+            >
+              Volver a Intentar
+            </button>
           </div>
         ) : showStartMessage ? (
           <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
@@ -316,6 +336,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             ) : (
               <div className="mt-6 text-white text-center text-2xl">
                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
+                 <button 
+              onClick={handleStartEvaluation} 
+              className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
+            >
+              Volver a Intentar
+            </button>
+
               </div>
             )}
             {selectedOption !== null && !showReaction && !evaluationCompleted && (

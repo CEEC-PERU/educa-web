@@ -37,9 +37,6 @@ export interface UserModuleProgress {
   user_id: number;
 }
 
-
-
-
 export interface VideosInteractivo{
   interactivo_id: number;
   url_enlace: string;

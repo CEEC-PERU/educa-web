@@ -63,8 +63,8 @@ const CourseDetails = () => {
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
         {courseDetail.map(courseDetails => (
-          <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 p-4">
-            <div className="text-white">
+          <div key={courseDetails.course_id} className="max-w-screen-lg mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8  p-4 ">
+            <div className="text-white ">
               <h1 className="text-3xl lg:text-5xl font-bold mb-8">{courseDetails.name}</h1>
               <p className="text-sm lg:text-base mb-4">{courseDetails.description_short}</p>
               <div className="flex items-center">
