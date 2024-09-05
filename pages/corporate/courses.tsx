@@ -31,6 +31,15 @@ const CorporateCourses: React.FC = () => {
     }
   }, [enterpriseId]);
 
+  // Datos de ejemplo para la tabla
+  const studentData = [
+    { name: 'Juan Pérez', module1: 'Introducción a React', module2: 'React Avanzado', finalGrade: 'A', status: 'Completado' },
+    { name: 'Ana Gómez', module1: 'Fundamentos de JavaScript', module2: 'JavaScript ES6', finalGrade: 'B', status: 'En progreso' },
+    { name: 'Luis Martínez', module1: 'HTML & CSS Básico', module2: 'HTML & CSS Avanzado', finalGrade: 'C', status: 'Completado' },
+    { name: 'Laura Sánchez', module1: 'Programación en Python', module2: 'Data Science con Python', finalGrade: 'B', status: 'Completado' },
+    { name: 'Carlos Ramírez', module1: 'Bases de Datos SQL', module2: 'Bases de Datos NoSQL', finalGrade: 'A', status: 'No iniciado' }
+  ];
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -45,6 +54,29 @@ const CorporateCourses: React.FC = () => {
               {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />
               ))}
+              {/* Tabla de datos de estudiantes */}
+              <table className="min-w-full bg-white border border-gray-300">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 border-b">Nombre del Estudiante</th>
+                    <th className="py-2 px-4 border-b">Módulo 1</th>
+                    <th className="py-2 px-4 border-b">Módulo 2</th>
+                    <th className="py-2 px-4 border-b">Nota Final</th>
+                    <th className="py-2 px-4 border-b">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentData.map((student, index) => (
+                    <tr key={index}>
+                      <td className="py-2 px-4 border-b">{student.name}</td>
+                      <td className="py-2 px-4 border-b">{student.module1}</td>
+                      <td className="py-2 px-4 border-b">{student.module2}</td>
+                      <td className="py-2 px-4 border-b">{student.finalGrade}</td>
+                      <td className="py-2 px-4 border-b">{student.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
         </main>
