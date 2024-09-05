@@ -8,6 +8,7 @@ export interface UserSessionProgress {
   updated_at: string;
 }
 
+
 export interface Option {
   option_id: number;
   option_text: string;

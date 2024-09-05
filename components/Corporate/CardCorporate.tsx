@@ -1,6 +1,5 @@
 import React from 'react';
 import CircularBar from '../../components/Corporate/CircularBar';
-import { useRouter } from 'next/router';
 
 interface Student {
   profile_picture: string;
@@ -8,7 +7,6 @@ interface Student {
 }
 
 interface Course {
-  course_id: number;
   image: string;
   name: string;
   description_short: string;
@@ -23,9 +21,7 @@ interface CourseCardProps {
   course: Course;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
-  const router = useRouter();
-
+const CardCorporate: React.FC<CourseCardProps> = ({ course }) => {
   const getStatusButton = (progress: number) => {
     if (progress === 100) {
       return <div className="bg-green-500 text-white px-3 py-1 rounded-full mt-4 text-center">Finalizado</div>;
@@ -38,13 +34,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   if (!course) {
     return null;
   }
-
-  const handleDetailsClick = (courseId: number) => {
-    router.push({
-      pathname: 'nota/',
-      query: { course_id: courseId }
-    });
-  };
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
@@ -59,17 +48,11 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
                 <img key={index} src={student.profile_picture} alt={student.name} className="w-10 h-10 rounded-full border-2 border-white" />
               ))}
             </div>
-            <span className="text-gray-600 ml-3 pr-10 text-center">{course.studentCount} estudiantes</span>
+            <span className="text-gray-600 ml-3 text-center">{course.studentCount} estudiantes</span>
           </div>
-          <button
-            className="bg-blue-600 p-4 rounded-md text-white w-full mt-4"
-            onClick={() => handleDetailsClick(course.course_id)}
-          >
-            Detalle de nota
-          </button>
         </div>
-
         <div className="flex-grow">
+          <p className="text-gray-700 mb-4">{course.description_short}</p>
           <div className="flex justify-between items-center">
             <div className="flex justify-center items-center w-1/3">
               <CircularBar percentage={course.progressPercentage} label="Progreso" />
@@ -82,9 +65,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   );
 };
 
-export default CourseCard;
+export default CardCorporate;
