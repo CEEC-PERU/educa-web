@@ -67,23 +67,26 @@ const Home: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const handleVideoProgress = (progress: number, isCompleted: boolean) => {
-    const progressupdate = Math.round(progress);
   
+
+  
+  const handleVideoProgress = (progress: number, isCompleted: boolean) => {
+    const progressUpdate = Math.round(progress); // Redondea el progreso
+
     if (selectedSession.video && selectedSession.session_id) {
       const sessionProgress = {
         session_id: selectedSession.session_id,
-        progress: progressupdate,
+        progress: progressUpdate,
         is_completed: isCompleted,
         user_id: userInfo.id
       };
-  
-      socket.emit('session', sessionProgress);
-      console.log("datos", sessionProgress);
-  
+
+      socket.emit('session', sessionProgress); // Enviar datos de progreso por socket
+
+      // *** Actualización del estado `videoProgress` para la sesión actual ***
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
-        [selectedSession.video!]: progress, // Aquí puedes ajustar para manejar múltiples videos
+        [selectedSession.session_id!]: progressUpdate,  // Se utiliza el `session_id` como clave para el progreso
       }));
     }
   };

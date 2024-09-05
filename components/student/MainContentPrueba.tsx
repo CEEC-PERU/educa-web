@@ -3,8 +3,9 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 
 import './../../app/globals.css';
-import { Question, ModuleResults, VideosInteractivo } from '../../interfaces/StudentModule';
+import { Question, ModuleResults, VideosInteractivo , CourseEvaluation ,ModuleEvaluation} from '../../interfaces/StudentModule';
 import { useResultModule } from '../../hooks/useResultModule';
+import { useResultCourse } from '../../hooks/useCourseResults';
 import { useAuth } from '../../context/AuthContext';
 
 interface MainContentProps {
@@ -16,6 +17,8 @@ interface MainContentProps {
   videoProgress?: number;
   selectedModuleId?: number | null;
   moduleResults?: ModuleResults[];
+  courseEvaluation?: CourseEvaluation[];
+  moduleEvaluation?: ModuleEvaluation[];
 }
 
 const NPSForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSubmit }) => {
@@ -42,18 +45,7 @@ const NPSForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSubmit }) 
           </button>
         ))}
       </div>
-      <h2 className="text-white text-3xl mb-4">¿Qué tan satisfecho estás con el curso?</h2>
-      <div className="flex justify-around w-full mb-4">
-        {emojis.map((emoji, idx) => (
-          <button
-            key={idx}
-            className={`text-5xl ${selectedScore === idx + 1 ? 'text-yellow-400' : 'text-white'} transition-transform transform hover:scale-110`}
-            onClick={() => setSelectedScore(idx + 1)}
-          >
-            {emoji}
-          </button>
-        ))}
-      </div>
+      
       <button
         onClick={handleSubmit}
         className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
@@ -73,7 +65,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   onProgress,
   videoProgress = 0,
   selectedModuleId,
-  moduleResults
+  moduleResults,
+  courseEvaluation,
+  moduleEvaluation
 }) => {
   // State variables
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -96,6 +90,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
+  const { createResultCourse } = useResultCourse();
   const router = useRouter();
 
   useEffect(() => {
@@ -174,15 +169,35 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const handleFinish = () => {
     setEvaluationCompleted(true);
     if (onFinish) onFinish();
-    const moduloResultado = {
-      user_id: userInfo.id,
-      evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
-      puntaje: totalScore,
-      module_id: selectedModuleId
-    };
-    createResultModule(moduloResultado);
-    console.log("MODULO_RESULTADO", moduloResultado);
+  
+    if (selectedModuleId) {
+      // Si hay un selectedModuleId, es una evaluación de módulo
+      const moduloResultado = {
+        user_id: userInfo.id,
+        evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
+        puntaje: totalScore,
+        module_id: selectedModuleId
+      };
+      createResultModule(moduloResultado);
+      console.log("MODULO_RESULTADO", moduloResultado);
+    } else {
+      // Si no hay selectedModuleId, es la evaluación final del curso
+      const courseId = Array.isArray(router.query.course_id) 
+      ? parseInt(router.query.course_id[0], 10) 
+      : parseInt(router.query.course_id as string, 10);
+
+      const cursoResultado = {
+        course_id:courseId ,// Usar el course_id del router o contexto
+        evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
+        puntaje: totalScore,
+        user_id: userInfo.id,
+        second_chance: false,
+      };
+      createResultCourse(cursoResultado);
+      console.log("CURSO_RESULTADO", cursoResultado);
+    }
   };
+  
 
   const handleVideoEnd = () => {
     setVideoEnded(true);
@@ -335,13 +350,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               </div>
             ) : (
               <div className="mt-6 text-white text-center text-2xl">
-                 <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721281738/WEB_EDUCA/WEB-IMAGENES/l726pef5kttv73tjzdts.png" alt="Congratulations" className="mb-4 justify-center" />
-                 <button 
-              onClick={handleStartEvaluation} 
-              className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
-            >
-              Volver a Intentar
-            </button>
+               
+                 
 
               </div>
             )}
