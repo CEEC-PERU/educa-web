@@ -14,7 +14,7 @@ import { Enterprise } from '../../interfaces/Enterprise';
 import { useUserCount } from '../../hooks/useUserCount';
 import './../../app/globals.css';
 
-const Usuarios: React.FC = () => {
+const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { usercount, isLoading, error } = useUserCount();
@@ -71,28 +71,7 @@ const Usuarios: React.FC = () => {
   const usersWithProfile = filteredUsers.filter(user => user.userProfile);
   const usersWithoutProfile = filteredUsers.filter(user => !user.userProfile);
 
-  const columnsWithProfile = [
-    { header: '', accessor: 'userProfile.profile_picture' },
-    { header: 'Nombre', accessor: 'userProfile.first_name' },
-    { header: 'Apellido', accessor: 'userProfile.last_name' },
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
-  ];
-
-  const columnsWithoutProfile = [
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
-  ];
-
-  if (roleId && (Number(roleId) === STUDENT_ROLE_ID)) {
-    columnsWithProfile.push({ header: 'Sesiones', accessor: 'session_count' });
-    columnsWithoutProfile.push({ header: 'Sesiones', accessor: 'session_count' });
-  }
-
-  if (roleId && (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)) {
-    columnsWithProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
-    columnsWithoutProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
-  }
+  
 
   const handleActionClick = (row: any) => {
     router.push(`/admin/editUser/${row.user_id}`);
@@ -133,18 +112,13 @@ const Usuarios: React.FC = () => {
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
         <div className='pb-4'>
-            {usercount.map((result: any, resultIndex: number) => (
-                <div>
-                         <h1 className='font-bold text-2xl text-blue-500'> {result.UserCount}  / {result.maxUserCount} </h1>
-                         <h1 className='font-bold text-2xl'> {result.message} </h1>
-                         </div>
-                        ))}
+          
             </div>
           <div className="flex space-x-4 mb-4">
             
             <div>
               <ButtonContent
-                buttonLabel="Agregar Usuario"
+                buttonLabel="Registrar Aula"
                 backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
                 textColor="text-white"
                 fontSize="text-xs"
@@ -156,30 +130,18 @@ const Usuarios: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-            <FormField
-              id="filter"
-              label="Filtrar por nombre, apellido o DNI"
-              type="text"
-              value={filter}
-              onChange={handleFilterChange}
-            />
+            <p>k</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
             <div>
-              <h2 className="text-lg font-semibold mb-2">Datos Actualizados</h2>
-              <TableUser
-                columns={columnsWithProfile}
-                data={usersWithProfile}
-                actionLabel="Editar"
-                onActionClick={handleActionClick}
-              />
+              <h2 className="text-lg font-semibold mb-2">Aulas</h2>
+           <div className='curso'>
+
+           </div>
             </div>
             <div>
-              <h2 className="text-lg font-semibold mb-2">Usuarios sin Perfil</h2>
-              <TableUser
-                columns={columnsWithoutProfile}
-                data={usersWithoutProfile}
-              />
+              <h2 className="text-lg font-semibold mb-2"></h2>
+              
             </div>
           </div>
         </main>
@@ -191,4 +153,4 @@ const Usuarios: React.FC = () => {
   );
 };
 
-export default Usuarios;
+export default Classroom;

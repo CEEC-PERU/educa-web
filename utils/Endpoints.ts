@@ -114,3 +114,4 @@ export const API_GET_COUNT_COURSE_CORPORATE = `${baseURL}/api/metricascorporate/
 
 export const API_GET_NOTAS = `${baseURL}/api/notas/courses`;
 
+export const API_USERCOUNT = `${baseURL}/api/enterprises/count`;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon  , UserGroupIcon} from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
@@ -72,12 +72,23 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
               </button>
             </li>
           <li>
+
+            
               <button
                 onClick={() => handleNavigation('/corporate/sesion')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <ClockIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Sesiones</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/corporate/classroom')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <UserGroupIcon  className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Classroom</span>}
               </button>
             </li>
             <li>
@@ -89,6 +100,16 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
                 {isOpen && <span className="ml-2">Cursos</span>}
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/corporate/usuarios')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+               <UserGroupIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Usuarios</span>}
+              </button>
+            </li>
+            
             <li>
               <button
                 onClick={() => handleNavigation('/corporate/qualification/progress')}

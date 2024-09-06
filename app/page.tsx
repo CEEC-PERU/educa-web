@@ -21,10 +21,8 @@ export default function Home() {
 
   <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto  md:pl-40  ">
     <div className="md:w-1/2 relative z-10  md:px-6 text-left md:mr-10  pt-40 ">
-      <h1 className="text-7xl md:text-6xl  sm:text-6xl font-black mb-3">Tu aliado para inspirar  </h1>
-      <h1 className="text-5xl md:text-4xl sm:text-4xl font-black mb-3">la lealtad de tus clientes </h1>
-      <h1 className="text-4xl md:text-3xl sm:text-2xl font-black mb-3">y hacer crecer tu negocio mediante </h1>
-      <h1 className="text-4xl md:text-3xl sm:text-2xl font-black mb-3">el conocimiento.</h1>
+      <h1 className="text-10xl md:text-6xl  sm:text-6xl font-black mb-3">Tu aliado para inspirar </h1>
+      <h1 className="text-10xl md:text-6xl  sm:text-6xl font-black mb-3"> la lealtad   a tus clientes  </h1>
       <div className="flex flex-col md:flex-row gap-4 pt-6">
         <ButtonComponent buttonLabel="Empezar" backgroundColor="bg-brand-500" fontSize="px-6 py-2" buttonSize="py-3 px-5 w-auto" textColor="white"></ButtonComponent>
       </div>
@@ -34,10 +32,6 @@ export default function Home() {
     </div>
   </div>
 </section>
-
-
-      
-
       {/* Sección 3: Otra sección con fondo de imagen y gradiente */}
       <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}>

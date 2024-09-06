@@ -1,12 +1,32 @@
 // services/userService.ts
 import axios from './axios';
-import { API_USERS, API_USER, API_GET_USERS_BY_ENTERPRISE} from '../utils/Endpoints';
-
+import { API_USERS, API_USER, API_GET_USERS_BY_ENTERPRISE, API_USERCOUNT} from '../utils/Endpoints';
+import { UserCount} from '../interfaces/UserCount';
 interface ImportUsersResponse {
   success: boolean;
   message: string;
 }
 
+
+export const getUserCount = async (userToken: string , enterprise_id : number ): Promise<UserCount| null> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    const response = await axios.get<UserCount>(`${API_USERCOUNT}/${enterprise_id}`, config);
+    if (response.data) {
+      return response.data; 
+    } else {
+      console.warn('No enterprise found for user:', enterprise_id);
+      return null; 
+    }
+  } catch (error) {
+    console.error('Error getting enterprise:', error);
+    throw new Error('Error getting enterprise');
+  }
+};
 export const createIndividualUser = async (userData: any) => {
   const response = await axios.post(`${API_USER}/create`, userData);
   return response.data;
@@ -45,6 +65,8 @@ export const getUsersByCompanyAndRole = async (companyId: number, roleId: number
   const response = await axios.get(`${API_USER}/users/company/${companyId}/role/${roleId}`);
   return response.data;
 };
+
+
 
 export const getUserById = async (userId: number) => {
   const response = await axios.get(`${API_USER}/users/${userId}`);
