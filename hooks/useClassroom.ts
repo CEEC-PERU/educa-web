@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { UserCount } from '../interfaces/UserCount';
-import { getUserCount } from '../services/userService';
+import { Classroom } from '../interfaces/Classroom';
+import { getClassroom } from '../services/classroomService';
 import { useAuth } from '../context/AuthContext';
 
-//useNotas
-export const useUserCount = () => {
-  const [usercount, setUserCount] = useState<UserCount[]>([]);
+export const useClassroom = () => {
+  const [classrooms, setClassroom] = useState<Classroom[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -18,13 +17,13 @@ export const useUserCount = () => {
       }
       setIsLoading(true);
       try {
-        const response = await getUserCount(token, userInfo.enterprise_id );
+        const response = await getClassroom(token, userInfo.enterprise_id );
         if (response === null) {
-          setUserCount([]); 
+          setClassroom([]); 
         } else if (Array.isArray(response)) {
-          setUserCount(response); 
+          setClassroom(response); 
         } else {
-          setUserCount([response]); 
+          setClassroom([response]); 
         }
       } catch (error) {
         console.error('Error fetching course detail:', error);
@@ -37,9 +36,9 @@ export const useUserCount = () => {
 
     fetchCourseDetail();
   }, [token]);
+
   return {
-    usercount,
-    
+    classrooms,
     error,
     isLoading
   };

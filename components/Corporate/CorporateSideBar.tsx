@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon  , UserGroupIcon} from '@heroicons/react/24/outline';
+import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
@@ -62,7 +62,7 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
       >
         <nav className="flex-1">
           <ul>
-          <li>
+            <li>
               <button
                 onClick={() => handleNavigation('/corporate/')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
@@ -71,15 +71,13 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
                 {isOpen && <span className="ml-2">Dashboard</span>}
               </button>
             </li>
-          <li>
-
-            
+            <li>
               <button
-                onClick={() => handleNavigation('/corporate/sesion')}
+                onClick={() => handleNavigation('/corporate/usuarios')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <ClockIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Sesiones</span>}
+                <UserGroupIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Usuarios</span>}
               </button>
             </li>
             <li>
@@ -87,7 +85,7 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
                 onClick={() => handleNavigation('/corporate/classroom')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <UserGroupIcon  className="h-6 w-6" />
+                <UserGroupIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Classroom</span>}
               </button>
             </li>
@@ -102,24 +100,22 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/corporate/usuarios')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-               <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Usuarios</span>}
-              </button>
-            </li>
-            
-            <li>
-              <button
                 onClick={() => handleNavigation('/corporate/qualification/progress')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <AcademicCapIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Estudiantes</span>}
+                {isOpen && <span className="ml-2">Detalle Estudiante</span>}
               </button>
             </li>
-           
+            <li>
+              <button
+                onClick={() => handleNavigation('/corporate/sesion')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <ClockIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Sesiones</span>}
+              </button>
+            </li>
             <li>
               <button
                 onClick={() => handleNavigation('/corporate/addRequeriment')}
@@ -138,7 +134,6 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
                 {isOpen && <span className="ml-2">Cerrar Sesión</span>}
               </button>
             </li>
-            
           </ul>
         </nav>
       </div>

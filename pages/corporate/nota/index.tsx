@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Corporate/CorporateSideBar';
+import { useClassroom } from '../../../hooks/useClassroom';
+import FormField from '../../../components/FormField';
 import { useAuth } from '../../../context/AuthContext';
 import { useNotas } from '../../../hooks/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 
 const NotaCourses: React.FC = () => {
@@ -12,8 +16,28 @@ const NotaCourses: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { course_id } = router.query;
+  
+  const { classrooms } = useClassroom();
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotas(courseIdNumber);
+  
+  const userInfo = user as { id: number , enterprise_id : number};
+  
+  const handleDownload = async () => {
+    try {
+      const response = await axios.get(`${API_GET_NOTAS_EXCEL}/${userInfo.enterprise_id}/${courseIdNumber}`, {
+        responseType: 'blob', // Set response type to blob for file download
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'course_grades.xlsx');
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error descargando el archivo Excel:', error);
+    }
+  };
 
   const getMaxResultsLength = (moduleResults: any[]) => {
     return Math.max(...(moduleResults || []).map((module: any) => module.results.length), 0);
@@ -30,9 +54,28 @@ const NotaCourses: React.FC = () => {
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
           <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">USUARIOS</h2>
-          <button className='text-white bg-blue-600 px-8 mb-10 rounded-lg p-2'>
-            Descargar Información
-          </button>
+          <div className="flex items-center space-x-4 mb-10">
+            
+            <FormField 
+              id="classroom_id" 
+              label="Cod.Aula" 
+              type="select" 
+              value="" // Valor vacío ya que no se envía
+              onChange={() => {}} // No se necesita manejo de cambios
+              options={[{ value: '', label: 'Seleccione un aula' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.code }))]}
+            />
+            <FormField 
+              id="shift_id" 
+              label="Turno" 
+              type="select" 
+              value="" // Valor vacío ya que no se envía
+              onChange={() => {}} // No se necesita manejo de cambios
+              options={[{ value: '', label: 'Seleccione un turno' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.Shift.name }))]}
+            />
+            <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
+              Descargar Información
+            </button>
+          </div>
           {loading ? (
             <Loader />
           ) : (

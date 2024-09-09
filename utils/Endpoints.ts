@@ -113,5 +113,14 @@ export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
 export const API_GET_COUNT_COURSE_CORPORATE = `${baseURL}/api/metricascorporate/corporate`;
 
 export const API_GET_NOTAS = `${baseURL}/api/notas/courses`;
+export const API_GET_NOTAS_EXCEL = `${baseURL}/api/notas/excel`;
 
 export const API_USERCOUNT = `${baseURL}/api/enterprises/count`;
+
+export const API_CLASSROOM = `${baseURL}/api/classrooms/enterprise`;
+
+export const API_CLASSROOM_CREATE = `${baseURL}/api/classrooms`;
+
+export const API_USERS_CREATE = `${baseURL}/api/users/bulk`;
+
+export const API_SHIFTS = `${baseURL}/api/shifts`;
