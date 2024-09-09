@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CourseModule, ModuleEvaluation, Question, UserSessionProgress } from '../../interfaces/StudentModule';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { useAuth } from '../../context/AuthContext';
-
+import { API_SOCKET_URL } from '../../utils/Endpoints';
+import io from 'socket.io-client';
+const socket = io(API_SOCKET_URL);
 interface SidebarProps {
   courseModules: CourseModule[];
   courseEvaluation: ModuleEvaluation;
@@ -16,6 +18,18 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
   const { user } = useAuth();
   const userInfo = user as { id: number };
 
+  useEffect(() => {
+    // Emitir progreso del módulo al servidor cuando cambie
+    courseModules.forEach(module => {
+      const moduleProgress = calculateModuleProgress(module);
+      socket.emit('module', {
+        module_id: module.module_id,
+        progress: moduleProgress,
+        is_completed: moduleProgress === 100,
+        user_id: userInfo.id
+      });
+    });
+  }, [courseModules, userInfo.id]);
   // Función para obtener el progreso de una sesión
   const getSessionProgress = (session: UserSessionProgress[], sessionId: number) => {
     const sessionProgress = session.find(progress => progress.session_id === sessionId && progress.user_id === userInfo.id)?.progress || 0;
