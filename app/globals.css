@@ -140,3 +140,8 @@ body {
   position: absolute;
   bottom: -250%; /* Adjust this value to move the starting position of emojis down */
 }
+
+
+.chart-container {
+  margin-top: 1rem; /* Ajusta este valor según sea necesario */
+}

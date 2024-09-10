@@ -10,46 +10,21 @@ import { useAuth } from '../../context/AuthContext';
 import {  UserGroupIcon} from '@heroicons/react/24/outline';
 
 import { useClassroom} from '../../hooks/useClassroom';
+import { useCourseStudent} from '../../hooks/useCourseStudents';
 import './../../app/globals.css';
+
+
+
 
 const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
-  const { classrooms, isLoading, error } = useClassroom();
+  const { classrooms, isLoading } = useClassroom();
   const { logout, user, profileInfo } = useAuth();
-  const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
-  const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
-
-  const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
-  const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
-  const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
-  const CONTENT_ROLE_ID = 3; // Reemplaza este valor con el ID real del rol de contenido
- const roleId = 1;
-  const buttonColors = [
-    'bg-gradient-purple text-white',
-    'bg-gradient-yellow text-white',
-    'bg-gradient-blue text-white',
-    'bg-gradient-purple text-white',
-    'bg-gradient-yellow text-white',
-    'bg-gradient-blue text-white',
-  ];
-
- 
-
+  const { courseStudent } = useCourseStudent(); // Fetch the courses for the student
   
-
-  const handleActionClick = (row: any) => {
-    router.push(`/admin/editUser/${row.user_id}`);
-  };
-
-  const handleExportCSV = () => {
-    router.push('/admin/student/exportCsv');
-  };
-
   const handleAddUser = () => {
     setIsModalOpen(true);
   };
@@ -69,11 +44,8 @@ const Classroom: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-        <div className='pb-4'>
-          
-            </div>
+          <div className='pb-4'></div>
           <div className="flex space-x-4 mb-4">
-            
             <div>
               <ButtonContent
                 buttonLabel="Registrar Aula"
@@ -84,12 +56,20 @@ const Classroom: React.FC = () => {
                 onClick={handleAddUser}
               />
             </div>
-            
+
+            <div>
+              <ButtonContent
+                buttonLabel="Asignar Estudiante"
+                backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                textColor="text-white"
+                fontSize="text-xs"
+                buttonSize="py-2 px-7"
+                onClick={handleAddUser}
+              />
+            </div>
+
           </div>
-          
-          <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-            <p> </p>
-          </div>
+          <div className='grid grid-cols-2 '>
           <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
             <h2 className="text-lg font-semibold mb-2">Aulas</h2>
             <div className="grid grid-cols-1 gap-6">
@@ -105,17 +85,45 @@ const Classroom: React.FC = () => {
                       <p className="text-gray-600">Turno: {classroom.Shift.name}</p>
                       <p className="text-gray-600">Creado el: {new Date(classroom.created_at).toLocaleDateString()}</p>
                     </div>
+
+                    {/* Courses Section */}
+                   
                   </div>
                 ))
               ) : (
                 <p className="text-gray-600">No hay aulas disponibles</p>
               )}
             </div>
+          
+          </div>
+          <div className=" pl-20  flex-grow  grid-cols-2" >
+            
+                      <h4 className="font-bold text-md">Courses</h4>
+                      {courseStudent.length > 0 ? (
+                        courseStudent.map((course) => (
+                          <div key={course.course_id} className="flex items-center mt-2  border-2 border-e-cyan-800 p-5">
+                            <img
+                              src={course.Course.image || '/default-course-image.jpg'}
+                              alt={course.Course.name}
+                              className="h-12 w-12 mr-4"
+                            />
+                            <p className="text-gray-700">{course.Course.name}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-600">No courses assigned</p>
+                      )}
+                    </div>
+
+                    </div>
+
+          <div>
+         
           </div>
         </main>
       </div>
       <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
-        <ClassroomForm  onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
+        <ClassroomForm onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
       </Modal>
     </div>
   );

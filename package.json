@@ -15,6 +15,7 @@
     "apexcharts": "^3.51.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "i": "^0.3.7",
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
@@ -35,6 +36,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.41",
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.14.2",
     "@types/react": "^18.3.3",

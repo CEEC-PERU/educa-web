@@ -25,6 +25,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.tsx","heroicons.d.ts", "pages/student/course-details.jsx", "pages/student/course-details.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/page.tsx","heroicons.d.ts", "pages/student/course-details.jsx", "pages/student/course-details.jsx", "pages/corporate/index.jsx"],
   "exclude": ["node_modules"]
 }
