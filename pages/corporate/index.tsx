@@ -80,18 +80,13 @@ const barOptions: ChartOptions<'bar'> = {
       ...commonLineAndBarOptions.plugins?.datalabels,
       anchor: 'end',
       align: 'top',
-      padding: {
-        bottom: 45, // Ajusta el valor según sea necesario
-      },
     },
   },
   scales: {
-    
     y1: {
       type: 'linear',
       position: 'left',
       beginAtZero: true,
-      
     },
     y2: {
       type: 'linear',
@@ -116,8 +111,16 @@ const barOptions2: ChartOptions<'bar'> = {
       anchor: 'end',
       align: 'top',
     },
-  }
-  
+  },
+  scales: {
+    yAxisID: {
+      position: 'top',
+      ticks: {
+        padding: 10
+      }
+    },
+    
+  },
 };
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
