@@ -2,387 +2,300 @@ import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
-import { Bar, Line, Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement, ChartData, ChartOptions } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { ResponsiveBar } from '@nivo/bar';
+import { ResponsiveLine } from '@nivo/line';
+import { ResponsivePie } from '@nivo/pie';
 
 import './../../app/globals.css';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
-import { Profile } from '../../interfaces/UserInterfaces';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement, ChartDataLabels);
-
-// Define the options using ChartOptions type
-const commonLineAndBarOptions: ChartOptions<'line'> & ChartOptions<'bar'> = {
-  maintainAspectRatio: false,
-  layout: {
-    padding: {
-      top: 20, // Ajusta el valor según sea necesario
-    },
-  },
-  plugins: {
-    datalabels: {
-      color: 'black',
-      formatter: (value: number) => `${value}`,
-      anchor: 'end',
-      align: 'top',
-    },
-    tooltip: {
-      callbacks: {
-        label: (tooltipItem) => {
-          return `${tooltipItem.dataset.label}: ${tooltipItem.raw}`;
-        }
-      }
-    }
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-    },
-  },
-};
-
-const doughnutOptions: ChartOptions<'doughnut'> = {
-  maintainAspectRatio: false,
-  layout: {
-    padding: {
-      top: 20, // Space between title/label and chart
-      bottom: 20, // Space at the bottom
-    },
-  },
-  plugins: {
-    datalabels: {
-      color: 'black',
-      formatter: (value: number) => `${value}`,
-      anchor: 'end',
-      align: 'top',
-    },
-    tooltip: {
-      callbacks: {
-        label: (tooltipItem) => {
-          return `${tooltipItem.label}: ${tooltipItem.raw}%`;
-        }
-      }
-    }
-  },
-};
-
-const barOptions: ChartOptions<'bar'> = {
-  ...commonLineAndBarOptions,
-  layout: {
-    padding: {
-      top: 20, // Ajusta el valor según sea necesario
-    },
-  },
-  plugins: {
-    ...commonLineAndBarOptions.plugins,
-    datalabels: {
-      ...commonLineAndBarOptions.plugins?.datalabels,
-      anchor: 'end',
-      align: 'top',
-    },
-  },
-  scales: {
-    y1: {
-      type: 'linear',
-      position: 'left',
-      beginAtZero: true,
-    },
-    y2: {
-      type: 'linear',
-      position: 'right',
-      beginAtZero: true,
-    },
-  },
-};
-
-
-const barOptions2: ChartOptions<'bar'> = {
-  ...commonLineAndBarOptions,
-  layout: {
-    padding: {
-      top: 20, // Ajusta el valor según sea necesario
-    },
-  },
-  plugins: {
-    ...commonLineAndBarOptions.plugins,
-    datalabels: {
-      ...commonLineAndBarOptions.plugins?.datalabels,
-      anchor: 'end',
-      align: 'top',
-    },
-  },
-  scales: {
-    yAxisID: {
-      position: 'top',
-      ticks: {
-        padding: 10
-      }
-    },
-    
-  },
-};
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
-  const [students, setStudents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [selectedCourse, setSelectedCourse] = useState('CP Pospago'); 
-  let name = '';
-  let uri_picture = '';
 
-  if (profileInfo) {
-    const profile = profileInfo as Profile;
-    name = profile.first_name;
-    uri_picture = profile.profile_picture!;
-  }
-
-  // Datos de progreso y cantidad de estudiantes
-  const courseProgressData: ChartData<'bar'> = {
-    labels: ['CP Pospago', 'Formación Continua'],
-    datasets: [
-      {
-        label: 'Estudiantes',
-        data: [4, 2],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        yAxisID: 'y1',
-      },
-      {
-        label: 'Progreso (%)',
-        data: [80, 40],
-        backgroundColor: 'rgba(255, 205, 86, 0.6)',
-        borderColor: 'rgba(255, 205, 86, 1)',
-        yAxisID: 'y2',
-      },
-    ],
-  };
-
-  const courseTimeData: ChartData<'bar'> = {
-    labels: ['CP Pospago', 'Formación Continua'],
-    datasets: [
-      {
-        label: 'Tiempo promedio en el curso (minutos)',
-        data: [30, 5],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-      },
-    ],
-  };
-
-  const topAdvisorsData: ChartData<'bar'> = {
-    labels: ['Estrella Zavaleta', 'Erick Zavaleta'],
-    datasets: [
-      {
-        label: 'Calificación de Asesores',
-        data: [15, 10],
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-        borderColor: 'rgba(153, 102, 255, 1)',
-      },
-    ],
-  };
-
-  const npsData: ChartData<'bar'> = {
-    labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-    datasets: [
-      {
-        label: 'NPS (¿Qué tanto recomendarías el curso?)',
-        data: [0, 0, 0, 0, 0, 1, 0, 1, 0, 2],
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-        borderColor: 'rgba(153, 102, 255, 1)',
-      },
-    ],
-  };
-
-  const satisfactionSurveyData: ChartData<'doughnut'> = {
-    labels: ['5 Estrellas', '4 Estrellas', '3 Estrellas', '2 Estrellas', '1 Estrella'],
-    datasets: [
-      {
-        label: 'Encuesta de Satisfacción',
-        data: [2, 2, 1, 1, 0],
-        backgroundColor: [
-          'rgba(255, 205, 86, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(153, 102, 255, 1)',
-        ],
-      },
-    ],
-  };
-
-  const averageTimePerDayData: ChartData<'line'> = {
-    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-    datasets: [
-      {
-        label: 'Tiempo promedio por día en la plataforma (minutos)',
-        data: [46, 20, 35, 30, 25, 27, 36],
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.5)',
-        fill: false,
-      },
-    ],
-  };
-
-  const courseCompletionData: ChartData<'bar'> = {
-    labels: ['CP Pospago', 'Formación Continua'],
-    datasets: [
-      {
-        label: 'Tasa de Finalización (%)',
-        data: [70, 0],
-        backgroundColor: 'rgba(54, 162, 235, 0.6)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-      },
-    ],
-  };
-
-  const dailyParticipationData: ChartData<'line'> = {
-    labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-    datasets: [
-      {
-        label: 'Participación Diaria (estudiantes activos)',
-        data: [2, 2, 3, 1, 2, 1, 1],
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-      },
-    ],
-  };
-
-  const getModuleCompletionData = (course: string): ChartData<'bar'> => {
+  const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
-      return {
-        labels: ['Formación Integral de Representantes de Claro', 'Gestión Integral de Contacto y Tipificación'],
-        datasets: [
-          {
-            label: 'Tasa de Compleción de Módulos (%)',
-            data: [60, 40],
-            backgroundColor: 'rgba(153, 102, 255, 0.6)',
-            borderColor: 'rgba(153, 102, 255, 1)',
-          },
-        ],
-      };
+      return [
+        { rating: '1 Estrellas', value: 0 },
+        { rating: '2 Estrellas', value: 0 },
+        { rating: '3 Estrellas', value: 1 },
+        { rating: '4 Estrellas', value: 2 },
+        { rating: '5 Estrellas', value: 2 },
+      ];
     } else if (course === 'Formación Continua') {
-      return {
-        labels: ['Retenciones 1'],
-        datasets: [
-          {
-            label: 'Tasa de Compleción de Módulos (%)',
-            data: [85],
-            backgroundColor: 'rgba(255, 99, 132, 0.6)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-          },
-        ],
-      };
+      return [
+        { rating: '1 Estrellas', value: 0 },
+        { rating: '2 Estrellas', value: 1 },
+        { rating: '3 Estrellas', value: 1 },
+        { rating: '4 Estrellas', value: 1 },
+        { rating: '5 Estrellas', value: 1 },
+      ];
     }
-    return {
-      labels: [],
-      datasets: [],
-    };
+    return [];
+  };
+
+  const npsData = (course: string) => {
+    if (course === 'CP Pospago') {
+      return [
+        { nps: '1', count: 0 },
+        { nps: '2', count: 0 },
+        { nps: '3', count: 0 },
+        { nps: '4', count: 0 },
+        { nps: '5', count: 1 },
+        { nps: '6', count: 0 },
+        { nps: '7', count: 1 },
+        { nps: '8', count: 0 },
+        { nps: '9', count: 1 },
+        { nps: '10', count: 2 },
+      ];
+    } else if (course === 'Formación Continua') {
+      return [
+        { nps: '1', count: 0 },
+        { nps: '2', count: 1 },
+        { nps: '3', count: 1 },
+        { nps: '4', count: 1 },
+        { nps: '5', count: 0 },
+        { nps: '6', count: 0 },
+        { nps: '7', count: 0 },
+        { nps: '8', count: 1 },
+        { nps: '9', count: 0 },
+        { nps: '10', count: 1 },
+      ];
+    }
+    return [];
+  };
+
+  // Datos de ejemplo
+  const courseProgressData = [
+    { course: 'CP Pospago', Estudiantes: 4, Progreso: 80 },
+    { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
+  ];
+
+  const courseTimeData = [
+    { course: 'CP Pospago', Tiempo: 30 },
+    { course: 'Formación Continua', Tiempo: 5 },
+  ];
+
+  const topAdvisorsData = [
+    { name: 'Estrella Zavaleta', Calificación: 15 },
+    { name: 'Erick Zavaleta', Calificación: 10 },
+  ];
+
+  const averageTimePerDayData = [
+    { day: 'Lunes', time: 46 },
+    { day: 'Martes', time: 20 },
+    { day: 'Miércoles', time: 35 },
+    { day: 'Jueves', time: 30 },
+    { day: 'Viernes', time: 25 },
+    { day: 'Sábado', time: 27 },
+    { day: 'Domingo', time: 36 },
+  ];
+
+  const courseCompletionData = [
+    { course: 'CP Pospago', completion: 70 },
+    { course: 'Formación Continua', completion: 0 },
+  ];
+
+  const dailyParticipationData = [
+    { day: 'Lunes', active: 2 },
+    { day: 'Martes', active: 4 },
+    { day: 'Miércoles', active: 2 },
+    { day: 'Jueves', active: 3 },
+    { day: 'Viernes', active: 2 },
+    { day: 'Sabado', active: 1 },
+    { day: 'Domingo', active: 0 },
+  ];
+
+  const moduleCompletionData = (course: string) => {
+    if (course === 'CP Pospago') {
+      return [
+        { module: 'Formación Integral de Representantes', completion: 60 },
+        { module: 'Gestión Integral de Contacto', completion: 40 },
+      ];
+    } else if (course === 'Formación Continua') {
+      return [{ module: 'Retenciones 1', completion: 85 }];
+    }
+    return [];
   };
 
   return (
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar 
-        bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"
-        borderColor="border border-stone-300"
-        user={user ? { profilePicture: uri_picture } : undefined} 
-      />
-      <div className="flex flex-1 pt-16">
+      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" borderColor="border border-stone-300" />
+      <div className="flex flex-1 pt-16 ">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-          {/* Gráfico de Volumen y % de Progreso por Curso */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Bar
+        <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-40">
+          
+          {/* Gráfico de Barras de Progreso */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Progreso del curso</h2>
+            <ResponsiveBar
               data={courseProgressData}
-              options={barOptions}
+              keys={['Estudiantes', 'Progreso']}
+              indexBy="course"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'set2' }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Curso', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Cantidad', legendPosition: 'middle', legendOffset: -40 }}
             />
           </div>
 
-          {/* Gráfico de Tiempo Promedio por Curso */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Bar
+          {/* Gráfico de Tiempo promedio por curso (minutos) */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Tiempo Promedio por Curso</h2>
+            <ResponsiveBar
               data={courseTimeData}
-              options={barOptions2}
+              keys={['Tiempo']}
+              indexBy="course"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'set2' }}
+              axisBottom={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Curso',
+                legendPosition: 'middle',
+                legendOffset: 32,
+              }}
+              axisLeft={{
+                tickSize: 5,
+                tickPadding: 5,
+                tickRotation: 0,
+                legend: 'Tiempo (minutos)',
+                legendPosition: 'middle',
+                legendOffset: -40,
+              }}
             />
           </div>
 
-          {/* Gráfico de Mejores y Peores Asesores */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Bar
+          {/* Calificaciones de Asesores */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Calificaciones de Asesores</h2>
+            <ResponsiveBar
               data={topAdvisorsData}
-              options={barOptions2}
-            />
-          </div>
- 
-          {/* Gráfico de NPS */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Bar
-              data={npsData}
-              options={barOptions2}
-            />
-          </div>
-          
-          {/* Gráfico de Encuesta de Satisfacción */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Doughnut
-              data={satisfactionSurveyData}
-              options={doughnutOptions}
+              keys={['Calificación']}
+              indexBy="name"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'set2' }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Asesor', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Calificación', legendPosition: 'middle', legendOffset: -40 }}
             />
           </div>
 
-          {/* Gráfico de Tiempo Promedio por Día */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Line
-              data={averageTimePerDayData}
-              options={commonLineAndBarOptions}
+          {/* NPS (Net Promoter Score) */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>NPS (¿Qué tanto recomendarías el curso?)</h2>
+            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
+              <option value="CP Pospago">CP Pospago</option>
+              <option value="Formación Continua">Formación Continua</option>
+            </select>
+            <ResponsiveBar
+              data={npsData(selectedCourse)}
+              keys={['count']}
+              indexBy="nps"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'set2' }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'NPS', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Cantidad', legendPosition: 'middle', legendOffset: -40 }}
             />
           </div>
-          
-          {/* Gráfico de Tasa de Finalización de Cursos */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Bar
+
+          {/* Gráfico de Dona Encuesta de Satisfacción */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Encuesta de Satisfacción</h2>
+            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
+              <option value="CP Pospago">CP Pospago</option>
+              <option value="Formación Continua">Formación Continua</option>
+            </select>
+            <ResponsivePie
+              data={satisfactionSurveyData(selectedCourse).map(item => ({ id: item.rating, value: item.value }))}
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              innerRadius={0.5}
+              padAngle={0.7}
+              cornerRadius={3}
+              colors={{ scheme: 'set1' }}
+              borderWidth={1}
+              borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
+              arcLabelsSkipAngle={10}
+              arcLabelsTextColor="#333333"
+              arcLabelsRadiusOffset={0.5}
+            />
+          </div>
+
+          {/* Gráfico de Líneas de Tiempo Promedio */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Tiempo promedio por día en la plataforma</h2>
+            <ResponsiveLine
+              data={[{
+                id: 'Tiempo promedio por día',
+                data: averageTimePerDayData.map(item => ({ x: item.day, y: item.time }))
+              }]}
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Día', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Tiempo (minutos)', legendPosition: 'middle', legendOffset: -40 }}
+              colors={{ scheme: 'set1' }}
+              pointSize={10}
+              pointBorderWidth={2}
+              useMesh={true}
+            />
+          </div>
+
+          {/* Gráfico de Finalización de Cursos */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Tasa de Finalización de Cursos</h2>
+            <ResponsiveBar
               data={courseCompletionData}
-              options={barOptions2}
+              keys={['completion']}
+              indexBy="course"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'nivo' }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Curso', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Finalización (%)', legendPosition: 'middle', legendOffset: -40 }}
             />
           </div>
 
           {/* Gráfico de Participación Diaria */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64 chart-container">
-            <Line
-              data={dailyParticipationData}
-              options={commonLineAndBarOptions}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <h2>Participación Diaria (estudiantes activos)</h2>
+            <ResponsiveLine
+              data={[{
+                id: 'Participación Diaria',
+                data: dailyParticipationData.map(item => ({ x: item.day, y: item.active }))
+              }]}
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Día', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Estudiantes Activos', legendPosition: 'middle', legendOffset: -40 }}
+              colors={{ scheme: 'set1' }}
+              pointSize={10}
+              pointBorderWidth={2}
+              useMesh={true}
             />
           </div>
 
-          {/* Gráfico de Tasa de Compleción de Módulos */}
-          <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-auto chart-container">
-            <div className="w-full mt-4 h-40">
-              <div className="w-full mt-4">
-                <label htmlFor="courseSelect" className="block text-sm font-medium text-gray-700">
-                  Seleccionar curso:
-                </label>
-                <select
-                  id="courseSelect"
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  className="mt-1 block w-full sm:w-auto pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                >
-                  <option value="CP Pospago">CP Pospago</option>
-                  <option value="Formación Continua">Formación Continua</option>
-                </select>
-              </div>
-              <Bar
-                data={getModuleCompletionData(selectedCourse)}
-                options={barOptions2}
-              />
-            </div>
+          {/* Completar Módulos */}
+          <div className="chart-container h-64 border border-gray-300 p-4 rounded-lg">
+            <label>Seleccionar curso:</label>
+            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
+              <option value="CP Pospago">CP Pospago</option>
+              <option value="Formación Continua">Formación Continua</option>
+            </select>
+            <ResponsiveBar
+              data={moduleCompletionData(selectedCourse)}
+              keys={['completion']}
+              indexBy="module"
+              margin={{ top: 20, right: 50, bottom: 50, left: 60 }}
+              padding={0.3}
+              colors={{ scheme: 'nivo' }}
+              axisBottom={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Módulo', legendPosition: 'middle', legendOffset: 32 }}
+              axisLeft={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: 'Finalización (%)', legendPosition: 'middle', legendOffset: -40 }}
+            />
           </div>
-
         </main>
       </div>
     </div>
