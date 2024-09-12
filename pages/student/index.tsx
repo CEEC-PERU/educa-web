@@ -114,7 +114,7 @@ const StudentIndex: React.FC = () => {
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
         <div className="relative flex items-center text-left w-full  text-white pt-10  px-40">
           <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10  ">
-            <p className="text-7xl lg:text-7xl font-bold mb-4 text-brandrosado-800">Hola , {name}</p>
+            <p className="text-7xl lg:text-7xl font-bold mb-4 text-brandrosado-800">Hola,{name}</p>
             <p className="mb-4 text-7xl lg:text-7xl text-white font-bold">¡Qué bueno verte!</p>
             <p className="mb-4 text-base lg:text-base text-white py-8">
               Este es tu portal de aprendizaje, explora tus cursos y potencia tu desarrollo profesional llevándolo al siguiente nivel con MentorMind.
