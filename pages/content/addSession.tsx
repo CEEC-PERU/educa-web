@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
+import MediaUploadPreview from '../../components/MediaUploadPreview';
 import { addSession } from '../../services/sessionService';
+import { uploadVideo } from '../../services/videoService';
 import { Session } from '../../interfaces/Session';
 import FormField from '../../components/FormField';
 import ActionButtons from '../../components/Content/ActionButtons';
@@ -14,18 +16,21 @@ import Loader from '../../components/Loader';
 const AddSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [session, setSession] = useState<Omit<Session, 'session_id'>>({
+    video_enlace: '',
     duracion_minutos: 0,
     name: '',
     module_id: 0
   });
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false); 
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [clearMediaPreview, setClearMediaPreview] = useState(false); 
   const [loading, setLoading] = useState(true); 
   const [formLoading, setFormLoading] = useState(false); 
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
   const { moduleId } = router.query; 
+  const videoInputRef = useRef<{ clear: () => void }>(null);
 
   useEffect(() => {
     if (moduleId) {
@@ -53,11 +58,15 @@ const AddSession: React.FC = () => {
     setTouchedFields(prev => ({ ...prev, [id]: true }));
   };
 
+  const handleVideoUpload = (file: File) => {
+    setVideoFile(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
 
-    const requiredFields = ['name', 'duracion_minutos'];
+    const requiredFields = ['name', 'duracion_minutos', 'video_enlace'];
     const newTouchedFields: { [key: string]: boolean } = {};
     requiredFields.forEach(field => {
       if (!session[field as keyof typeof session]) {
@@ -76,27 +85,39 @@ const AddSession: React.FC = () => {
     }
 
     try {
-      await addSession({ ...session, module_id: Number(moduleId) });
-      setSuccess('Sesión agregada exitosamente.');
-      setError(null);
-      setShowAlert(true);
-      setSession({ duracion_minutos: 0, name: '', module_id: Number(moduleId) });
-      setTouchedFields({});
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 3000);
+      if (videoFile) {
+        const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
+        await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
+        setShowAlert(true); 
+        setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
+        setVideoFile(null);
+        setClearMediaPreview(true);
+        if (videoInputRef.current) {
+          videoInputRef.current.clear();
+        }
+        setTimeout(() => setClearMediaPreview(false), 500);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
+      } else {
+        setError('Video file is required');
+      }
     } catch (error) {
       console.error('Error adding session:', error);
       setError('Error adding session');
-      setShowAlert(true);
     } finally {
       setFormLoading(false);
     }
   };
 
   const handleCancel = () => {
-    setSession({ duracion_minutos: 0, name: '', module_id: Number(moduleId) });
-    setTouchedFields({});
+    setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
+    setVideoFile(null);
+    setClearMediaPreview(true);
+    if (videoInputRef.current) {
+      videoInputRef.current.clear();
+    }
+    setTimeout(() => setClearMediaPreview(false), 500);
   };
 
   if (loading) {
@@ -112,12 +133,12 @@ const AddSession: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
-          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow">
+        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''} flex`}>
+          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4">
             {showAlert && (
               <AlertComponent
-                type={error ? "danger" : "success"}
-                message={error || success || ''}
+                type="danger"
+                message={error || "Sesión agregada exitosamente."}
                 onClose={() => setShowAlert(false)}
               />
             )}
@@ -153,9 +174,13 @@ const AddSession: React.FC = () => {
               touched={touchedFields['duracion_minutos']}
               required
             />
+            <div className="mb-4">
+              <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>
+              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} clearMediaPreview={clearMediaPreview} />
+            </div>
           </form>
-          <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-            <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} customSize={true}/>
+          <div className="ml-4 flex-shrink-0">
+            <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />
           </div>
         </main>
       </div>
