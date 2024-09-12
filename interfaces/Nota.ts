@@ -34,5 +34,6 @@ export interface UserProfile {
     userProfile: UserProfile;
     CourseResults: CourseResult[];
     ModuleResults: ModuleResult[];
+    totalSessions :number;
   }
   

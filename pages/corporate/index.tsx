@@ -64,8 +64,8 @@ const CorporateDashboard: React.FC = () => {
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
-        { module: 'Formación Integral de Representantes', completion: 60 },
-        { module: 'Gestión Integral de Contacto', completion: 40 },
+        { module: 'Formación Integral ', completion: 60 },
+        { module: 'Gestión Integral ', completion: 40 },
       ];
     } else if (course === 'Formación Continua') {
       return [{ module: 'Retenciones 1', completion: 85 }];
