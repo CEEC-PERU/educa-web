@@ -45,12 +45,10 @@ const NotaCourses: React.FC = () => {
 
   // Datos estáticos
   const users = [
-    { name: 'Camila Fernandez', module1: [8, 9], module2: [7, 10], finalGrade: 9 },
-    { name: 'Maria Gutierrez', module1: [7, 8], module2: [9, 9], finalGrade: 8.5 },
-    { name: 'Alvaro Garcia', module1: [10, 10], module2: [8, 9], finalGrade: 9.5 },
+    { name: 'Camila Fernandez', module1: [16], module2: [7, 10], finalGrade: 9 },
+    { name: 'Maria Gutierrez', module1: [17], module2: [9, 9], finalGrade: 8.5 },
+    { name: 'Alvaro Garcia', module1: [14], module2: [8, 9], finalGrade: 9.5 },
     { name: 'Raul Rodriguez', module1: [6, 7], module2: [8, 8], finalGrade: 7.5 },
-    { name: 'Rosa Fuentes', module1: [9, 9], module2: [7, 7], finalGrade: 8 },
-    { name: 'Fiorella Peralta', module1: [8, 8], module2: [9, 9], finalGrade: 8.5 },
   ];
 
   const handleClassroomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
