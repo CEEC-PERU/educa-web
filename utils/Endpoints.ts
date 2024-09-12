@@ -127,3 +127,5 @@ export const API_CLASSROOM_CREATE = `${baseURL}/api/classrooms`;
 export const API_USERS_CREATE = `${baseURL}/api/users/bulk`;
 
 export const API_SHIFTS = `${baseURL}/api/shifts`;
+
+export const API_COURSESTUDENT = `${baseURL}/api/courseenterprise/course/user`;
