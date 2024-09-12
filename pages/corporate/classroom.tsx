@@ -14,8 +14,6 @@ import { useCourseStudent} from '../../hooks/useCourseStudents';
 import './../../app/globals.css';
 
 
-
-
 const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
@@ -49,7 +47,7 @@ const Classroom: React.FC = () => {
             <div>
               <ButtonContent
                 buttonLabel="Registrar Aula"
-                backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                backgroundColor="bg-yellow-500"
                 textColor="text-white"
                 fontSize="text-xs"
                 buttonSize="py-2 px-7"
@@ -60,7 +58,7 @@ const Classroom: React.FC = () => {
             <div>
               <ButtonContent
                 buttonLabel="Asignar Estudiante"
-                backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                backgroundColor="bg-yellow-500"
                 textColor="text-white"
                 fontSize="text-xs"
                 buttonSize="py-2 px-7"

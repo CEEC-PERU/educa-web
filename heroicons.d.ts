@@ -21,5 +21,6 @@ declare module '@heroicons/react/24/solid' {
   export const ChevronRightIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const LockClosedIcon : ComponentType<SVGProps<SVGSVGElement>>;
   export const PuzzlePieceIcon : ComponentType<SVGProps<SVGSVGElement>>;
-
+  export const DocumentIcon : ComponentType<SVGProps<SVGSVGElement>>;
+  export const DocumentArrowUpIcon : ComponentType<SVGProps<SVGSVGElement>>;
 }

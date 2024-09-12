@@ -110,7 +110,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
       <div className="mt-6 flex justify-center">
         <button
           onClick={handleRegister}
-          className="bg-green-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition duration-300"
+          className="bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition duration-300"
         >
           Registrar
         </button>

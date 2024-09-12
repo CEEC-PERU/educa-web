@@ -153,7 +153,7 @@ const Usuarios: React.FC = () => {
             <div>
               <ButtonContent
                 buttonLabel="Agregar Usuario"
-                backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                backgroundColor="bg-yellow-500"
                 textColor="text-white"
                 fontSize="text-xs"
                 buttonSize="py-2 px-7"

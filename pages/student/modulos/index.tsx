@@ -15,7 +15,6 @@ import LoadingIndicator from '../../../components/student/LoadingIndicator';
 const socket = io(API_SOCKET_URL);
 
 
-
 const Home: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();

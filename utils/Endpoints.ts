@@ -1,6 +1,6 @@
-export const baseURL = `https://educa-web-api.onrender.com`;
+//export const baseURL = `https://educa-web-api.onrender.com`;
 
-//export const baseURL = `http://localhost:4100`;
+export const baseURL = `http://localhost:4100`;
 // authentication
 export const API_AUTH = `${baseURL}/api/auth/signin`;
 
@@ -41,7 +41,7 @@ export const API_VIDEOS = `${baseURL}/api/videos`;
 export const API_IMAGES = `${baseURL}/api/images`;
 
 //socket
-export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
+export const API_SOCKET_URL = `http://localhost:4100`;
 
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
@@ -113,6 +113,9 @@ export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
 export const API_GET_COUNT_COURSE_CORPORATE = `${baseURL}/api/metricascorporate/corporate`;
 
 export const API_GET_NOTAS = `${baseURL}/api/notas/courses`;
+
+export const API_GET_NOTAS_USER_ID = `${baseURL}/api/notas/course`;
+
 export const API_GET_NOTAS_EXCEL = `${baseURL}/api/notas/excel`;
 
 export const API_USERCOUNT = `${baseURL}/api/enterprises/count`;

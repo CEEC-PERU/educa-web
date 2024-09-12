@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { HomeIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon, PuzzlePieceIcon } from '@heroicons/react/24/solid';
+import { HomeIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon, PuzzlePieceIcon , DocumentIcon , DocumentArrowUpIcon } from '@heroicons/react/24/solid';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 
@@ -37,7 +37,16 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => v
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/student')}
+                onClick={() => handleNavigation('/student/profile')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <img src={uri_picture} alt="Profile" className="h-6 w-6 rounded-full" />
+                {isDrawerOpen && <span className="ml-2">{name}</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/student/cursos')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <ComputerDesktopIcon className="h-6 w-6" />
@@ -46,22 +55,23 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => v
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/student/diplomas')}
+                onClick={() => handleNavigation('/student/notas')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <HomeIcon className="h-6 w-6" />
-                {isDrawerOpen && <span className="ml-2">Mis Diplomas</span>}
+                <DocumentIcon className="h-6 w-6" />
+                {isDrawerOpen && <span className="ml-2">Notas</span>}
               </button>
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/student/profile')}
+                onClick={() => handleNavigation('/student/diplomas')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <img src={uri_picture} alt="Profile" className="h-6 w-6 rounded-full" />
-                {isDrawerOpen && <span className="ml-2">{name}</span>}
+                <DocumentArrowUpIcon className="h-6 w-6" />
+                {isDrawerOpen && <span className="ml-2">Mis Diplomas</span>}
               </button>
             </li>
+            
             <li>
               <button
                 onClick={() => handleNavigation('/student/juegos')}
