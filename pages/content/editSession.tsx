@@ -18,7 +18,8 @@ const EditSession: React.FC = () => {
   const [session, setSession] = useState<Omit<Session, 'session_id'>>({
     duracion_minutos: 0,
     name: '',
-    module_id: 0
+    module_id: 0,
+    video_enlace: ''
   });
   const [modules, setModules] = useState<Module[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +38,7 @@ const EditSession: React.FC = () => {
         setSession({
           duracion_minutos: sessionRes.duracion_minutos,
           name: sessionRes.name,
+          video_enlace : sessionRes.video_enlace,
           module_id: sessionRes.module_id
         });
         setModules(modulesRes);

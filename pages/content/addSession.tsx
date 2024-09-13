@@ -74,10 +74,9 @@ const AddSession: React.FC = () => {
       }
     });
 
-    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]);
+    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]) || !videoFile;
 
     if (hasEmptyFields) {
-      setTouchedFields(prev => ({ ...prev, ...newTouchedFields }));
       setError('Por favor, complete todos los campos requeridos.');
       setShowAlert(true);
       setFormLoading(false);
