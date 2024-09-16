@@ -65,49 +65,25 @@ const AddSession: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
-
-    const requiredFields = ['name', 'duracion_minutos', 'video_enlace'];
-    const newTouchedFields: { [key: string]: boolean } = {};
-    requiredFields.forEach(field => {
-      if (!session[field as keyof typeof session]) {
-        newTouchedFields[field] = true;
-      }
-    });
-
-    const hasEmptyFields = requiredFields.some((field) => !session[field as keyof typeof session]) || !videoFile;
-
-    if (hasEmptyFields) {
-      setError('Por favor, complete todos los campos requeridos.');
-      setShowAlert(true);
-      setFormLoading(false);
-      return;
-    }
-
+    
     try {
       if (videoFile) {
-        const videoUrl = await uploadVideo(videoFile, 'Sesiones'); 
-        await addSession({ ...session, video_enlace: videoUrl, module_id: Number(moduleId) });
-        setShowAlert(true); 
-        setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
-        setVideoFile(null);
-        setClearMediaPreview(true);
-        if (videoInputRef.current) {
-          videoInputRef.current.clear();
-        }
-        setTimeout(() => setClearMediaPreview(false), 500);
-        setTimeout(() => {
-          setShowAlert(false);
-        }, 3000);
-      } else {
-        setError('Video file is required');
+        const videoUrl = await uploadVideo(videoFile, 'Sesiones');
+        await addSession({ ...session, video_enlace: videoUrl });
+        setShowAlert(true);
+        setError(null);
       }
-    } catch (error) {
-      console.error('Error adding session:', error);
-      setError('Error adding session');
+    } catch (error: any) {
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        setError('A session with this ID already exists. Please try again with a different session.');
+      } else {
+        setError('An error occurred while creating the session.');
+      }
     } finally {
       setFormLoading(false);
     }
   };
+  
 
   const handleCancel = () => {
     setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
