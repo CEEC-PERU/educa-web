@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start ",
+    "start": "next start -p 8080",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,6 +17,8 @@
     "@nivo/line": "^0.87.0",
     "@nivo/pie": "^0.87.0",
     "axios": "^1.7.2",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "i": "^0.3.7",
     "js-file-download": "^0.4.12",
     "lodash": "^4.17.21",
