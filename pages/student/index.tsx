@@ -194,7 +194,7 @@ const StudentIndex: React.FC = () => {
     <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
 
     {/* Video para capturar la foto */}
-    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
+    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 "></video>
 
     {/* Botón para capturar la foto */}
     <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">
