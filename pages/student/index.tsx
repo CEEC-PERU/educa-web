@@ -161,45 +161,65 @@ const StudentIndex: React.FC = () => {
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
       <Modal
-        isOpen={isSignatureModalOpen}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      >
-        <div className="bg-white rounded-lg p-4 shadow-lg relative max-h-screen w-full max-w-md overflow-y-auto">
-          <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
-          <canvas
-            ref={canvasRef}
-            className="border border-gray-500 mb-4 w-full h-40"
-            onMouseDown={startDrawing}
-            onTouchStart={startDrawing}
-          ></canvas>
-          <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">Borrar</button>
+  isOpen={isSignatureModalOpen}
+  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+>
+  <div className="bg-white rounded-lg p-4 shadow-lg relative w-full max-w-md max-h-[90vh] overflow-auto">
+    {/* Título del modal */}
+    <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
+    
+    {/* Lienzo para la firma digital */}
+    <canvas
+      ref={canvasRef}
+      className="border border-gray-500 mb-4 w-full h-40"
+      onMouseDown={startDrawing}
+      onTouchStart={startDrawing}
+    ></canvas>
 
-          <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
-          <img 
-            src='https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg' 
-            alt='Formato para la foto' 
-            className="w-full h-auto object-cover mb-4" /* Se hace responsiva la imagen */
-          />
-          <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
-          <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
-          <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">Capturar Foto</button>
+    {/* Botón para borrar el lienzo */}
+    <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">
+      Borrar
+    </button>
 
-          {photo && (
-            <div>
-              <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-              <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
-            </div>
-          )}
+    {/* Captura de foto */}
+    <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
 
-          <button 
-            onClick={saveSignature} 
-            className="bg-green-500 text-white p-2 rounded mt-4 w-full"
-            disabled={!photo || !canvasRef.current?.toDataURL()}
-          >
-            Guardar Firma
-          </button>
-        </div>
-      </Modal>
+    {/* Imagen de referencia para tomar la foto, responsiva */}
+    <img 
+      src='https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg' 
+      alt='Formato para la foto' 
+      className="w-full h-auto object-cover mb-4" 
+    />
+
+    <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
+
+    {/* Video para capturar la foto */}
+    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
+
+    {/* Botón para capturar la foto */}
+    <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">
+      Capturar Foto
+    </button>
+
+    {/* Mostrar la foto capturada si existe */}
+    {photo && (
+      <div>
+        <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
+        <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
+      </div>
+    )}
+
+    {/* Botón para guardar la firma */}
+    <button 
+      onClick={saveSignature} 
+      className="bg-green-500 text-white p-2 rounded mt-4 w-full"
+      disabled={!photo || !canvasRef.current?.toDataURL()}
+    >
+      Guardar Firma
+    </button>
+  </div>
+</Modal>
+
 
       
       {/* El resto del contenido */}
