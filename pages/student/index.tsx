@@ -96,12 +96,15 @@ const StudentIndex: React.FC = () => {
     setIsSignatureModalOpen(false);
   };
 
+ 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Solicita acceso a la cámara
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
       setCameraStream(stream);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.play(); // Asegura que el video comience a reproducirse
       }
     } catch (error) {
       console.error('Error accessing camera:', error);
@@ -194,7 +197,12 @@ const StudentIndex: React.FC = () => {
     <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
 
     {/* Video para capturar la foto */}
-    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 "></video>
+    <video
+  ref={videoRef}
+  autoPlay
+  playsInline
+  className="border border-gray-500 mb-4 w-full"
+/>
 
     {/* Botón para capturar la foto */}
     <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">
