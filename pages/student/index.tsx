@@ -107,10 +107,26 @@ const StudentIndex: React.FC = () => {
         videoRef.current.play(); // Asegura que el video comience a reproducirse
       }
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      alert('No se puede acceder a la cámara. Por favor permite el acceso a la cámara para continuar.');
+      // Verifica si el error es una instancia de Error
+      if (error instanceof Error) {
+        console.error('Error accessing camera:', error.message);
+  
+        // Maneja el error si no se puede acceder a la cámara o no hay cámara disponible
+        if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
+          alert('No se ha detectado ninguna cámara en tu dispositivo. Conéctate desde un dispositivo móvil con cámara.');
+        } else if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+          alert('Por favor, permite el acceso a la cámara para continuar.');
+        } else {
+          alert('Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.');
+        }
+      } else {
+        // Si el error no es una instancia de Error, maneja como un caso desconocido
+        console.error('Unknown error accessing camera:', error);
+        alert('Error desconocido al acceder a la cámara.');
+      }
     }
   };
+  
 
   const capturePhoto = () => {
     const canvas = document.createElement('canvas');
