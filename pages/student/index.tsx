@@ -195,7 +195,6 @@ const StudentIndex: React.FC = () => {
     pdf.addImage(imgDataSignature, 'JPEG', 10, 210, 190, 50); // Ajusta la posición y el tamaño según sea necesario
   
     // Descargar el PDF
-    pdf.save('firma_y_foto.pdf');
     pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
   };
   return (
