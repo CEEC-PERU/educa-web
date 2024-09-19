@@ -221,7 +221,8 @@ const StudentIndex: React.FC = () => {
 />
 
     {/* Botón para capturar la foto */}
-    <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">
+    <button onClick={capturePhoto}   disabled={!cameraStream} 
+    className={`bg-blue-500 text-white p-2 rounded ${!cameraStream ? 'opacity-50 cursor-not-allowed' : ''}`} >
       Capturar Foto
     </button>
 
