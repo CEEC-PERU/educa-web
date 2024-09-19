@@ -6,11 +6,13 @@ import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
-import { XCircleIcon, ChevronRightIcon, CameraIcon } from '@heroicons/react/24/solid';
+import { XCircleIcon, ChevronRightIcon, CameraIcon , TrashIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity';
 import Footter from '../../components/Footter';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 Modal.setAppElement('#__next');
 
 
@@ -174,7 +176,25 @@ const StudentIndex: React.FC = () => {
     console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
-
+  const generatePDF = async () => {
+    if (!photo || !signature) {
+      alert('Debes tomar una foto y firmar antes de guardar.');
+      return;
+    }
+  
+    const pdf = new jsPDF();
+  
+    // Agregar la foto
+    const imgDataPhoto = photo; // La foto capturada
+    pdf.addImage(imgDataPhoto, 'JPEG', 10, 10, 190, 190); // Ajusta la posición y el tamaño según sea necesario
+  
+    // Agregar la firma
+    const imgDataSignature = signature; // La firma capturada
+    pdf.addImage(imgDataSignature, 'JPEG', 10, 210, 190, 50); // Ajusta la posición y el tamaño según sea necesario
+  
+    // Descargar el PDF
+    pdf.save('firma_y_foto.pdf');
+  };
   return (
     <div>
       <ScreenSecurity />
@@ -183,46 +203,86 @@ const StudentIndex: React.FC = () => {
   isOpen={isSignatureModalOpen}
   className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
 >
-  <div className="bg-white rounded-lg p-4 shadow-lg relative w-full max-w-md max-h-[90vh] overflow-auto">
+  <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">
     {/* Título del modal */}
-    <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
-    
+    <h2 className="text-xl font-semibold mb-4 text-center">Firma Digital</h2>
+
     {/* Lienzo para la firma digital */}
     <canvas
       ref={canvasRef}
-      className="border border-gray-500 mb-4 w-full h-40"
+      className="border border-gray-300 mb-4 w-full h-40 rounded-md"
       onMouseDown={startDrawing}
       onTouchStart={startDrawing}
     ></canvas>
 
-    {/* Botón para borrar el lienzo */}
-    <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">
-      Borrar
-    </button>
+    {/* Botones de acciones */}
+    <div className="flex space-x-2 justify-between">
+      <button
+        onClick={clearCanvas}
+        className="flex items-center bg-gray-300 text-gray-700 p-2 rounded-lg hover:bg-gray-400 transition-colors"
+      >
+        <TrashIcon className="w-5 h-5 mr-2" />
+        Borrar
+      </button>
+
+      {/* Captura de la firma */}
+      <button
+        onClick={() => {
+          const dataURL = canvasRef.current?.toDataURL();
+          if (dataURL) {
+            setSignature(dataURL);
+          }
+        }}
+        className="flex items-center bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
+      >
+        <CameraIcon className="w-5 h-5 mr-2" />
+        Capturar Firma
+      </button>
+    </div>
+
+    {/* Mostrar la firma capturada si existe */}
+    {signature && (
+      <div className="mt-4">
+        <h2 className="text-lg font-bold">Firma Capturada:</h2>
+        <img
+          src={signature}
+          alt="Firma Capturada"
+          className="border border-gray-500 mt-2 rounded-md"
+        />
+      </div>
+    )}
 
     {/* Captura de foto */}
-    <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
+    <h2 className="text-lg font-bold mt-6 mb-2">Captura de Foto</h2>
 
-    {/* Imagen de referencia para tomar la foto, responsiva */}
-    <img 
-      src='https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg' 
-      alt='Formato para la foto' 
-      className="w-full h-auto object-cover mb-4" 
+    {/* Imagen de referencia */}
+    <img
+      src="https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg"
+      alt="Formato para la foto"
+      className="w-full h-auto object-cover mb-4 rounded-md"
     />
 
-    <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
+    <p className="text-sm text-gray-600 mb-4">
+      Asegúrate de tomar la foto en este formato
+    </p>
 
     {/* Video para capturar la foto */}
     <video
-  ref={videoRef}
-  autoPlay
-  playsInline
-  className="border border-gray-500 mb-4 w-full"
-/>
+      ref={videoRef}
+      autoPlay
+      playsInline
+      className="border border-gray-300 mb-4 w-full rounded-md"
+    />
 
     {/* Botón para capturar la foto */}
-    <button onClick={capturePhoto}   disabled={!cameraStream} 
-    className={`bg-blue-500 text-white p-2 rounded ${!cameraStream ? 'opacity-50 cursor-not-allowed' : ''}`} >
+    <button
+      onClick={capturePhoto}
+      disabled={!cameraStream}
+      className={`flex items-center justify-center w-full bg-blue-500 text-white p-2 rounded-lg transition-colors ${
+        !cameraStream ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'
+      }`}
+    >
+      <CameraIcon className="w-5 h-5 mr-2" />
       Capturar Foto
     </button>
 
@@ -230,21 +290,26 @@ const StudentIndex: React.FC = () => {
     {photo && (
       <div>
         <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-        <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
+        <img
+          src={photo}
+          alt="Foto capturada"
+          className="w-full h-auto object-cover rounded-md"
+        />
       </div>
     )}
 
-    {/* Botón para guardar la firma */}
-    <button 
-      onClick={saveSignature} 
-      className="bg-green-500 text-white p-2 rounded mt-4 w-full"
-      disabled={!photo || !canvasRef.current?.toDataURL()}
-    >
-      Guardar Firma
-    </button>
+    {/* Botón para guardar  */}
+    <button
+  onClick={generatePDF}
+  className={`w-full bg-green-500 text-white p-2 rounded-lg mt-4 transition-colors ${
+    !photo || !signature ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'
+  }`}
+  disabled={!photo || !signature}
+>
+  Guardar y Descargar PDF
+</button>
   </div>
 </Modal>
-
 
       
       {/* El resto del contenido */}
