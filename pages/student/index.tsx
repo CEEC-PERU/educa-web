@@ -158,41 +158,40 @@ const StudentIndex: React.FC = () => {
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
       <Modal
-        isOpen={isSignatureModalOpen}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-      >
-        <div className="bg-white rounded-lg p-6 shadow-lg relative">
-          <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
-          <canvas
-            ref={canvasRef}
-            className="border border-gray-500 mb-4"
-            width="400"
-            height="200"
-            onMouseDown={startDrawing}
-            onTouchStart={startDrawing}
-          ></canvas>
-          <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">Borrar</button>
+  isOpen={isSignatureModalOpen}
+  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+>
+  <div className="bg-white rounded-lg p-4 shadow-lg relative max-h-screen w-full max-w-md overflow-y-auto">
+    <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
+    <canvas
+      ref={canvasRef}
+      className="border border-gray-500 mb-4 w-full h-40"
+      onMouseDown={startDrawing}
+      onTouchStart={startDrawing}
+    ></canvas>
+    <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">Borrar</button>
 
-          <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
-          <video ref={videoRef} autoPlay className="border border-gray-500 mb-4"></video>
-          <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">Capturar Foto</button>
+    <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
+    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
+    <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">Capturar Foto</button>
 
-          {photo && (
-            <div>
-              <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-              <img src={photo} alt="Foto capturada" className="w-40 h-40 object-cover" />
-            </div>
-          )}
+    {photo && (
+      <div>
+        <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
+        <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
+      </div>
+    )}
 
-          <button 
-            onClick={saveSignature} 
-            className="bg-green-500 text-white p-2 rounded mt-4"
-            disabled={!photo || !canvasRef.current?.toDataURL()}
-          >
-            Guardar Firma
-          </button>
-        </div>
-      </Modal>
+    <button 
+      onClick={saveSignature} 
+      className="bg-green-500 text-white p-2 rounded mt-4 w-full"
+      disabled={!photo || !canvasRef.current?.toDataURL()}
+    >
+      Guardar Firma
+    </button>
+  </div>
+</Modal>
+
       
       {/* El resto del contenido */}
       <div className="relative z-10">
@@ -215,23 +214,31 @@ const StudentIndex: React.FC = () => {
             </p>
           </div>
           <div className="lg:w-1/2 px-20">
-            <div className="bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className='bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">11</p>
-                <p className="text-white p-3">Cursos Inscritos</p>
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">11</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
+                <p className="text-white p-3">Curso inscritos</p>
               </div>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
-                <p className="text-white p-3">Curso Completado</p>
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
+                <p className="text-white p-3">Curso completado</p>
               </div>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png" className="h-12 w-12 ml-2" alt="Icon" />
+                </div>
                 <p className="text-white p-3">Diploma Obtenido</p>
               </div>
             </div>
           </div>
         </div>
-
         {/* Courses */}
         <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {courseStudent.map(courseStudent => (
