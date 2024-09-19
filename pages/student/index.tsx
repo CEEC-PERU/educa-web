@@ -32,10 +32,12 @@ const StudentIndex: React.FC = () => {
 
   let name = '';
   let uri_picture = '';
+  let lastName  = '';
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
     name = profile.first_name;
+    lastName = profile.last_name;
     uri_picture = profile.profile_picture!;
   }
 
@@ -194,6 +196,7 @@ const StudentIndex: React.FC = () => {
   
     // Descargar el PDF
     pdf.save('firma_y_foto.pdf');
+    pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
   };
   return (
     <div>
@@ -306,8 +309,9 @@ const StudentIndex: React.FC = () => {
   }`}
   disabled={!photo || !signature}
 >
-  Guardar y Descargar PDF
+  Guardar
 </button>
+
   </div>
 </Modal>
 
