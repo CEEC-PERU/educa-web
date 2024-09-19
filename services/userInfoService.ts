@@ -1,0 +1,22 @@
+import axios from 'axios';
+import { UserInfoData } from '../interfaces/UserInfo';
+import {API_SHIFTS} from '../utils/Endpoints';
+export const createUserInfo = async (data: UserInfoData) => {
+    const formData = new FormData();
+    formData.append('user_id', String(data.user_id));
+    formData.append('foto_image', data.foto_image);
+    formData.append('firma_image', data.firma_image);
+    formData.append('documento_pdf', data.documento_pdf);
+  
+    try {
+      const response = await axios.post('/api/user-info/create', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error creating user info:', error);
+      throw error;
+    }
+  };

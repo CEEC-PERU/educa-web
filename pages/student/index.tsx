@@ -13,6 +13,9 @@ import ScreenSecurity from '../../components/ScreenSecurity';
 import Footter from '../../components/Footter';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { useUserInfo } from '../../hooks/useUserInfo';
+import { UserInfoData } from '../../interfaces/UserInfo';
+import { userInfo } from 'os';
 Modal.setAppElement('#__next');
 
 
@@ -29,7 +32,8 @@ const StudentIndex: React.FC = () => {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
-
+  const { submitUserInfo, loading, error } = useUserInfo();
+  const userInfor = user as { id: number };
   let name = '';
   let uri_picture = '';
   let lastName  = '';
@@ -178,6 +182,24 @@ const StudentIndex: React.FC = () => {
     console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
+  const dataURLToFile = (dataUrl: string, fileName: string): File => {
+    const arr = dataUrl.split(',');
+    const mime = arr[0].match(/:(.*?);/)?.[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], fileName, { type: mime });
+  };
+  
+  const pdfToFile = (pdf: jsPDF, fileName: string): File => {
+    const pdfBlob = pdf.output('blob');
+    return new File([pdfBlob], fileName, { type: 'application/pdf' });
+  };
+  
+
   const generatePDF = async () => {
     if (!photo || !signature) {
       alert('Debes tomar una foto y firmar antes de guardar.');
@@ -196,14 +218,40 @@ const StudentIndex: React.FC = () => {
   
     // Descargar el PDF
     pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
-  };
+
+    if (!photo || !signature || !user) {
+      alert('Debes tomar una foto, firmar, y estar autenticado para guardar.');
+      return;
+    }
+
+     // Convertir la foto, firma y PDF en archivos
+  const photoFile = dataURLToFile(photo, `${name}_${lastName}_photo.jpg`);
+  const signatureFile = dataURLToFile(signature, `${name}_${lastName}_signature.jpg`);
+  const pdfFile = pdfToFile(pdf, `${name}_${lastName}.pdf`);
+  
+  try {
+    const userInfo: UserInfoData = {
+      user_id: userInfor.id,
+      foto_image: photoFile,
+      firma_image: signatureFile,
+      documento_pdf: pdfFile,
+    };
+
+    await submitUserInfo(userInfo);
+    alert('Datos enviados exitosamente');
+  } catch (error) {
+    alert('Hubo un error al enviar los datos.');
+  }
+};
   return (
     <div>
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
       <Modal
   isOpen={isSignatureModalOpen}
-  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+
+  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-index"
+  overlayClassName="fixed inset-0 z-50"
 >
   <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">
     {/* Título del modal */}
