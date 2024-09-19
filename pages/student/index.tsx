@@ -64,22 +64,25 @@ const StudentIndex: React.FC = () => {
     canvas.addEventListener('touchend', stopDrawing);
   };
 
-  // Dibujo sobre el lienzo
-  const draw = (e: MouseEvent | TouchEvent, ctx: CanvasRenderingContext2D, rect: DOMRect) => {
-    const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
-    ctx.lineTo(x, y);
-    ctx.stroke();
-  };
-
-  // Borrar el lienzo
-  const clearCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  };
+ 
+    // Dibujo sobre el lienzo
+    const draw = (e: MouseEvent | TouchEvent, ctx: CanvasRenderingContext2D, rect: DOMRect) => {
+      const x = 'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
+      const y = 'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+    };
+  
+    // Borrar el lienzo y resetear contexto
+    const clearCanvas = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Reiniciar el estado del contexto
+      ctx.beginPath();
+    };
 
   // Guardar la firma solo si hay foto y firma
   const saveSignature = () => {
@@ -158,39 +161,45 @@ const StudentIndex: React.FC = () => {
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
       <Modal
-  isOpen={isSignatureModalOpen}
-  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
->
-  <div className="bg-white rounded-lg p-4 shadow-lg relative max-h-screen w-full max-w-md overflow-y-auto">
-    <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
-    <canvas
-      ref={canvasRef}
-      className="border border-gray-500 mb-4 w-full h-40"
-      onMouseDown={startDrawing}
-      onTouchStart={startDrawing}
-    ></canvas>
-    <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">Borrar</button>
+        isOpen={isSignatureModalOpen}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      >
+        <div className="bg-white rounded-lg p-4 shadow-lg relative max-h-screen w-full max-w-md overflow-y-auto">
+          <h2 className="text-lg font-bold mb-4">Firma Digital</h2>
+          <canvas
+            ref={canvasRef}
+            className="border border-gray-500 mb-4 w-full h-40"
+            onMouseDown={startDrawing}
+            onTouchStart={startDrawing}
+          ></canvas>
+          <button onClick={clearCanvas} className="bg-gray-300 p-2 rounded mr-2">Borrar</button>
 
-    <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
-    <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
-    <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">Capturar Foto</button>
+          <h2 className="text-lg font-bold mt-4 mb-2">Captura de Foto</h2>
+          <img 
+            src='https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg' 
+            alt='Formato para la foto' 
+            className="w-full h-auto object-cover mb-4" /* Se hace responsiva la imagen */
+          />
+          <p className="text-lg font-bold mb-4">Tomar la foto en este formato</p>
+          <video ref={videoRef} autoPlay className="border border-gray-500 mb-4 w-full h-40"></video>
+          <button onClick={capturePhoto} className="bg-blue-500 text-white p-2 rounded">Capturar Foto</button>
 
-    {photo && (
-      <div>
-        <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-        <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
-      </div>
-    )}
+          {photo && (
+            <div>
+              <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
+              <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover" />
+            </div>
+          )}
 
-    <button 
-      onClick={saveSignature} 
-      className="bg-green-500 text-white p-2 rounded mt-4 w-full"
-      disabled={!photo || !canvasRef.current?.toDataURL()}
-    >
-      Guardar Firma
-    </button>
-  </div>
-</Modal>
+          <button 
+            onClick={saveSignature} 
+            className="bg-green-500 text-white p-2 rounded mt-4 w-full"
+            disabled={!photo || !canvasRef.current?.toDataURL()}
+          >
+            Guardar Firma
+          </button>
+        </div>
+      </Modal>
 
       
       {/* El resto del contenido */}
