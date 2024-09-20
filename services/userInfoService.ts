@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { UserInfoData } from '../interfaces/UserInfo';
-import {API_SHIFTS} from '../utils/Endpoints';
+import {API_USER_INFO} from '../utils/Endpoints';
 export const createUserInfo = async (data: UserInfoData) => {
     const formData = new FormData();
     formData.append('user_id', String(data.user_id));
@@ -9,7 +9,7 @@ export const createUserInfo = async (data: UserInfoData) => {
     formData.append('documento_pdf', data.documento_pdf);
   
     try {
-      const response = await axios.post('/api/user-info/create', formData, {
+      const response = await axios.post(API_USER_INFO, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
