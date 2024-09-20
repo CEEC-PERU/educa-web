@@ -18,9 +18,21 @@ import { UserInfoData } from '../../interfaces/UserInfo';
 import { userInfo } from 'os';
 Modal.setAppElement('#__next');
 
+const LoadingSpinner = () => (
+  
+<div className="text-center">
+    <div role="status">
+        <svg aria-hidden="true" className="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+        <span className="sr-only">Loading...</span>
+    </div>
+</div>
+);
 
 const StudentIndex: React.FC = () => {
-  const { logout, user, profileInfo } = useAuth();
+  const { logout, user, profileInfo , token} = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
@@ -32,11 +44,39 @@ const StudentIndex: React.FC = () => {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false); // Estado para mostrar mensaje de éxito
   const { submitUserInfo, loading, error } = useUserInfo();
   const userInfor = user as { id: number };
   let name = '';
   let uri_picture = '';
   let lastName  = '';
+
+
+  useEffect(() => {
+    const checkModalStatus = async () => {
+      try {
+        const response = await fetch('http://localhost:4100/api/userinfo/modals', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // Use the token from the context
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.showModal) {
+          setIsSignatureModalOpen(true);
+        }
+      } catch (error) {
+        console.error('Error checking modal status:', error);
+      }
+    };
+
+    if (token) {
+      checkModalStatus();
+    }
+  }, [token]); 
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -237,8 +277,13 @@ const StudentIndex: React.FC = () => {
       documento_pdf: pdfFile,
     };
 
+    console.log(userInfo);
     await submitUserInfo(userInfo);
+
+    // Oculta el loading spinner antes de mostrar el alert
+    setIsSignatureModalOpen(false);
     alert('Datos enviados exitosamente');
+  
   } catch (error) {
     alert('Hubo un error al enviar los datos.');
   }
@@ -247,120 +292,73 @@ const StudentIndex: React.FC = () => {
     <div>
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
-      <Modal
-  isOpen={isSignatureModalOpen}
+      {/* Modal de Firma y Cámara */}
+      <Modal isOpen={isSignatureModalOpen} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-index" overlayClassName="fixed inset-0 z-50">
+        <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">
+          
+          {/* Spinner mientras se envían los datos */}
+          {loading ? <LoadingSpinner /> : null} {/* Muestra el spinner mientras se está enviando */}
 
-  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-index"
-  overlayClassName="fixed inset-0 z-50"
->
-  <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">
-    {/* Título del modal */}
-    <h2 className="text-xl font-semibold mb-4 text-center">Firma Digital</h2>
+          {/* Botones de acciones */}
+          {!loading && (
+            <>
+            <h2 className="text-xl font-semibold mb-4 text-center">Firma Digital</h2>
 
-    {/* Lienzo para la firma digital */}
-    <canvas
-      ref={canvasRef}
-      className="border border-gray-300 mb-4 w-full h-40 rounded-md"
-      onMouseDown={startDrawing}
-      onTouchStart={startDrawing}
-    ></canvas>
+{/* Lienzo para la firma digital */}
+<canvas ref={canvasRef} className="border border-gray-300 mb-4 w-full h-40 rounded-md" onMouseDown={startDrawing} onTouchStart={startDrawing}></canvas>
 
-    {/* Botones de acciones */}
-    <div className="flex space-x-2 justify-between">
-      <button
-        onClick={clearCanvas}
-        className="flex items-center bg-gray-300 text-gray-700 p-2 rounded-lg hover:bg-gray-400 transition-colors"
-      >
-        <TrashIcon className="w-5 h-5 mr-2" />
-        Borrar
-      </button>
+              <div className="flex space-x-2 justify-between">
+                <button onClick={clearCanvas} className="flex items-center bg-gray-300 text-gray-700 p-2 rounded-lg hover:bg-gray-400 transition-colors">
+                  <TrashIcon className="w-5 h-5 mr-2" />
+                  Borrar
+                </button>
+                <button
+                  onClick={() => {
+                    const dataURL = canvasRef.current?.toDataURL();
+                    if (dataURL) {
+                      setSignature(dataURL);
+                    }
+                  }}
+                  className="flex items-center bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <CameraIcon className="w-5 h-5 mr-2" />
+                  Capturar Firma
+                </button>
+              </div>
 
-      {/* Captura de la firma */}
-      <button
-        onClick={() => {
-          const dataURL = canvasRef.current?.toDataURL();
-          if (dataURL) {
-            setSignature(dataURL);
-          }
-        }}
-        className="flex items-center bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        <CameraIcon className="w-5 h-5 mr-2" />
-        Capturar Firma
-      </button>
-    </div>
+              {/* Mostrar la firma capturada si existe */}
+              {signature && (
+                <div className="mt-4">
+                  <h2 className="text-lg font-bold">Firma Capturada:</h2>
+                  <img src={signature} alt="Firma Capturada" className="border border-gray-500 mt-2 rounded-md" />
+                </div>
+              )}
 
-    {/* Mostrar la firma capturada si existe */}
-    {signature && (
-      <div className="mt-4">
-        <h2 className="text-lg font-bold">Firma Capturada:</h2>
-        <img
-          src={signature}
-          alt="Firma Capturada"
-          className="border border-gray-500 mt-2 rounded-md"
-        />
-      </div>
-    )}
+              {/* Captura de foto */}
+              <h2 className="text-lg font-bold mt-6 mb-2">Captura de Foto</h2>
+              <img src="https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg" alt="Formato para la foto" className="w-full h-auto object-cover mb-4 rounded-md" />
+              <video ref={videoRef} autoPlay playsInline className="border border-gray-300 mb-4 w-full rounded-md" />
 
-    {/* Captura de foto */}
-    <h2 className="text-lg font-bold mt-6 mb-2">Captura de Foto</h2>
+              <button onClick={capturePhoto} disabled={!cameraStream} className={`flex items-center justify-center w-full bg-blue-500 text-white p-2 rounded-lg transition-colors ${!cameraStream ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}>
+                <CameraIcon className="w-5 h-5 mr-2" />
+                Capturar Foto
+              </button>
 
-    {/* Imagen de referencia */}
-    <img
-      src="https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg"
-      alt="Formato para la foto"
-      className="w-full h-auto object-cover mb-4 rounded-md"
-    />
+              {photo && (
+                <div>
+                  <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
+                  <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover rounded-md" />
+                </div>
+              )}
 
-    <p className="text-sm text-gray-600 mb-4">
-      Asegúrate de tomar la foto en este formato
-    </p>
-
-    {/* Video para capturar la foto */}
-    <video
-      ref={videoRef}
-      autoPlay
-      playsInline
-      className="border border-gray-300 mb-4 w-full rounded-md"
-    />
-
-    {/* Botón para capturar la foto */}
-    <button
-      onClick={capturePhoto}
-      disabled={!cameraStream}
-      className={`flex items-center justify-center w-full bg-blue-500 text-white p-2 rounded-lg transition-colors ${
-        !cameraStream ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'
-      }`}
-    >
-      <CameraIcon className="w-5 h-5 mr-2" />
-      Capturar Foto
-    </button>
-
-    {/* Mostrar la foto capturada si existe */}
-    {photo && (
-      <div>
-        <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-        <img
-          src={photo}
-          alt="Foto capturada"
-          className="w-full h-auto object-cover rounded-md"
-        />
-      </div>
-    )}
-
-    {/* Botón para guardar  */}
-    <button
-  onClick={generatePDF}
-  className={`w-full bg-green-500 text-white p-2 rounded-lg mt-4 transition-colors ${
-    !photo || !signature ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'
-  }`}
-  disabled={!photo || !signature}
->
-  Guardar
-</button>
-
-  </div>
-</Modal>
+              {/* Botón para guardar */}
+              <button onClick={generatePDF} className={`w-full bg-green-500 text-white p-2 rounded-lg mt-4 transition-colors ${!photo || !signature ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}`} disabled={!photo || !signature}>
+                Guardar
+              </button>
+            </>
+          )}
+        </div>
+      </Modal>
 
       
       {/* El resto del contenido */}
