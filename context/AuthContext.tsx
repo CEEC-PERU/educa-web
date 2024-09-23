@@ -137,6 +137,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         case 5:
         router.push('/admincorporative');
         break;
+        case 6:
+        router.push('/supervisor');
+        break;
       default:
         router.push('/');
     }

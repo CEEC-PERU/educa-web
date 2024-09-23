@@ -27,6 +27,7 @@ export const getUserCount = async (userToken: string , enterprise_id : number ):
     throw new Error('Error getting enterprise');
   }
 };
+
 export const createIndividualUser = async (userData: any) => {
   const response = await axios.post(`${API_USER}/create`, userData);
   return response.data;
@@ -65,6 +66,12 @@ export const getUsersByCompanyAndRole = async (companyId: number, roleId: number
   const response = await axios.get(`${API_USER}/users/company/${companyId}/role/${roleId}`);
   return response.data;
 };
+
+export const getUsersByClassroom = async (userId: number, companyId: number) => {
+  const response = await axios.get(`${API_USER}/classrooms/users/${userId}/companyId/${companyId}`);
+  return response.data;
+};
+
 
 
 

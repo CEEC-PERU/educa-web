@@ -24,4 +24,13 @@ export interface Role {
     name: string;
     description: string;
 }
+
+export interface Classroom{
+    classroom_code : number;
+}
+
+export interface UsersSupervisor{
+  supervisor: number;
+  classroom_id: Classroom[]
   
+}
