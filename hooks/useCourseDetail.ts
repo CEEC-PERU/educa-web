@@ -8,7 +8,7 @@ export const useCourseDetail = (course_id: number) => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number };
+  const userInfo = user as { id: number  };
 
   useEffect(() => {
     const fetchCourseDetail = async () => {

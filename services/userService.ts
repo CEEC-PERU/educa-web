@@ -68,7 +68,7 @@ export const getUsersByCompanyAndRole = async (companyId: number, roleId: number
 };
 
 export const getUsersByClassroom = async (userId: number, companyId: number) => {
-  const response = await axios.get(`${API_USER}/classrooms/users/${userId}/companyId/${companyId}`);
+  const response = await axios.get(`${API_USER}/classrooms/users/${userId}/company/${companyId}`);
   return response.data;
 };
 

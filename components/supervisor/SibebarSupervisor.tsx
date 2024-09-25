@@ -80,7 +80,24 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
                 {isOpen && <span className="ml-2">Usuarios</span>}
               </button>
             </li>
-           
+            <li>
+              <button
+                onClick={() => handleNavigation('/supervisor/classrooms')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <UserGroupIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Classroom</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/supervisor/courses')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <BookOpenIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Cursos</span>}
+              </button>
+            </li>
            
             <li>
               <button

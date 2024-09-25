@@ -36,7 +36,9 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
                   <td key={column.accessor} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                     {column.accessor === 'userProfile.profile_picture' ? (
                       <img src={value} alt="Profile" className="w-10 h-10 rounded-full" />
-                    ) : column.accessor === 'password' ? (
+                    ) : column.accessor === 'User.userProfile.profile_picture' ? (
+                      <img src={value} alt="Profile" className="w-10 h-10 rounded-full" />
+                    )  : column.accessor === 'password' ? (
                       '**** ****'
                     ) : (
                       value
