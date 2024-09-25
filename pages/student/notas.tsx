@@ -47,7 +47,7 @@ const NotasIndex: React.FC = () => {
   };
 
   const renderNotas = () => {
-    if (!courseNota || courseNota.length === 0) {
+    if (!courseNota || courseNota.length === 0 ) {
       return <p>No hay notas disponibles</p>;
     }
 
@@ -160,6 +160,5 @@ const NotasIndex: React.FC = () => {
     </div>
   );
 };
-
 
 export default NotasIndex;

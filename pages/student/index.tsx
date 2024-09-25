@@ -16,6 +16,7 @@ import html2canvas from 'html2canvas';
 import { useUserInfo } from '../../hooks/useUserInfo';
 import { UserInfoData } from '../../interfaces/UserInfo';
 import { userInfo } from 'os';
+import { API_USER_INFO_SHOWMODAL } from '../../utils/Endpoints';
 Modal.setAppElement('#__next');
 
 const LoadingSpinner = () => (
@@ -52,22 +53,23 @@ const StudentIndex: React.FC = () => {
   let lastName  = '';
 
 
+
+
   useEffect(() => {
     const checkModalStatus = async () => {
       try {
-        const response = await fetch('http://localhost:4100/api/userinfo/modals', {
+        const response = await fetch(`${API_USER_INFO_SHOWMODAL}/${userInfor.id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Use the token from the context
+            'Authorization': `Bearer ${token}`, // Usar el token del contexto
           },
         });
 
         const data = await response.json();
 
-        if (data.showModal) {
-          setIsSignatureModalOpen(true);
-        }
+        // Actualizar el estado basado en la respuesta
+        setIsSignatureModalOpen(data.showModal); // Si es true, abrir modal, si es false, cerrar modal
       } catch (error) {
         console.error('Error checking modal status:', error);
       }
@@ -291,7 +293,6 @@ const StudentIndex: React.FC = () => {
   return (
     <div>
       <ScreenSecurity />
-      {/* Modal de Firma y Cámara */}
       {/* Modal de Firma y Cámara */}
       <Modal isOpen={isSignatureModalOpen} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-index" overlayClassName="fixed inset-0 z-50">
         <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">

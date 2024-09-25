@@ -131,3 +131,5 @@ export const API_SHIFTS = `${baseURL}/api/shifts`;
 export const API_COURSESTUDENT = `${baseURL}/api/courseenterprise/course/user`;
 
 export const API_USER_INFO = `${baseURL}/api/userinfo/create`;
+
+export const API_USER_INFO_SHOWMODAL = `${baseURL}/api/userinfo/modals`;
