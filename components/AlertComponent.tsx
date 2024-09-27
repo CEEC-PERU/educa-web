@@ -8,6 +8,7 @@ interface AlertProps {
   onClose: () => void;
 }
 
+
 const alertStyles: { [key in AlertProps['type']]: string } = {
   info: 'text-blue-800 border-blue-300 bg-blue-50 dark:text-blue-400 dark:bg-gray-800 dark:border-blue-800',
   danger: 'text-red-800 border-red-300 bg-red-50 dark:text-red-400 dark:bg-gray-800 dark:border-red-800',

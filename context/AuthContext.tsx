@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { getProfile } from '../services/profile';
 import { signin } from '../services/authService';
@@ -9,7 +8,7 @@ import { API_SOCKET_URL } from '../utils/Endpoints';
 import { LoginResponse, Profile, UserInfo } from '../interfaces/UserInterfaces';
 import { validateToken } from '../helpers/helper-token';
 import { io } from 'socket.io-client';
-
+import axios, { AxiosError } from 'axios';
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
 
@@ -18,6 +17,9 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+
+  
+
   const [user, setUser] = useState<{
     id: number;
     role: number;
@@ -61,9 +63,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         setError(response.msg ?? 'Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.');
       }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      setError('Login failed. Please check your credentials and try again.');
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error.response && error.response.status === 401) {
+          setError('Error al iniciar sesión, datos ingresados incorrectos.');
+        } else {
+          setError('Ocurrió un error al iniciar sesión. Inténtalo nuevamente.');
+        }
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Ocurrió un error inesperado.');
+      }
     } finally {
       setIsLoading(false);
     }

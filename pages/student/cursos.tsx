@@ -18,6 +18,7 @@ import Footter from '../../components/Footter';
 Modal.setAppElement('#__next');
 
 
+
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
