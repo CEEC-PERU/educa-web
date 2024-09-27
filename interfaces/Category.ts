@@ -4,3 +4,10 @@ export interface Category {
     newCategory?: string;
   }
   
+  export interface CategoryL {
+    category_id: number;
+    name: string;
+   logo:string;
+  }
+  
+  

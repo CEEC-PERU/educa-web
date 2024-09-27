@@ -23,6 +23,26 @@ export const getCourseStudent = async (userToken: string, userId: number): Promi
   }
 };
 
+export const getCourseStudentCategory = async (userToken: string, userId: number , categoryId : number): Promise<CourseStudent | null> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    const response = await axios.get<CourseStudent>(`${API_GET_COURSESTUDENT}/${userId}/category/${categoryId}`, config);
+    if (response.data) {
+      return response.data; 
+    } else {
+      console.warn('No enterprise found for user:', userId);
+      return null; 
+    }
+  } catch (error) {
+    console.error('Error getting enterprise:', error);
+    throw new Error('Error getting enterprise');
+  }
+};
+
 export const getModulesByCourseId2 = async (courseId: number, userId: number) => {
   const response = await axios.get(`${API_GET_COURSEMODULE}/${courseId}/${userId}`);
   return response.data;

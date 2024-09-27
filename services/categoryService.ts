@@ -1,6 +1,12 @@
 import axios from './axios';
-import { Category } from '../interfaces/Category';
+import { Category , CategoryL} from '../interfaces/Category';
 import { API_CATEGORIES } from '../utils/Endpoints';
+
+export const getCategoriesCategory = async (): Promise<CategoryL[]> => {
+  const response = await axios.get<CategoryL[]>(API_CATEGORIES);
+  return response.data;
+};
+
 
 export const getCategories = async (): Promise<Category[]> => {
   const response = await axios.get<Category[]>(API_CATEGORIES);

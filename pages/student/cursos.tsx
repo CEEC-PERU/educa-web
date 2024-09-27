@@ -5,6 +5,9 @@ import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
+
+import { useCourseStudentCategory } from '../../hooks/useCourseStudents';
+import { useCategoriesl } from '../../hooks/useCategories';
 import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
@@ -18,6 +21,8 @@ Modal.setAppElement('#__next');
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number >();
+  const { categories } = useCategoriesl();
   console.log(courseStudent)
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({}); 
@@ -32,6 +37,9 @@ const StudentIndex: React.FC = () => {
     uri_picture = profile.profile_picture!;
   }
 
+
+  
+   
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
     // You can add more logic here to filter courseStudent based on the filters
@@ -91,6 +99,17 @@ const StudentIndex: React.FC = () => {
     console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
+
+  // Handle category selection
+
+
+  const handleCategorySelect = (categoryId: number | undefined) => {
+    console.log('Category selected:', categoryId);  // Log for debugging
+    setSelectedCategoryId(categoryId);
+  };
+  
+  console.log('Selected Category ID:', selectedCategoryId);
+  const { courseStudentCategory, error: categoryError, isLoading: categoryLoading } = useCourseStudentCategory(selectedCategoryId!);
   
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
@@ -99,7 +118,7 @@ const StudentIndex: React.FC = () => {
 
   return (
     <div>
-        <ScreenSecurity /> 
+      <ScreenSecurity /> 
       <div className="relative z-10">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
@@ -107,31 +126,62 @@ const StudentIndex: React.FC = () => {
           user={user ? { profilePicture: uri_picture } : undefined}
           toggleSidebar={toggleSidebar}
         />
-         <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
-         
+        <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
       </div>
 
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-20 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
-       
-        {/* Sidebar */}
-      
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-10 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+      <div className="w-full max-w-screen-lg mt-8 flex gap-4 overflow-x-auto scrollbar-hide">
+  <button
+    className="text-white whitespace-nowrap p-4 rounded-lg flex-shrink-0 cursor-pointer"
+    onClick={() => handleCategorySelect(undefined)}  // Mostrar todos los cursos cuando se hace clic en "TODOS"
+  >
+    Todos
+  </button>
+
+  {categories.map((category) => (
+    <div key={category.category_id} className="flex items-center space-x-2">
+      {/* Mostrar el logo junto con el nombre de la categoría */}
+      <img src={category.logo} alt={category.name} className="h-6 w-6" />
+      <button
+        className="text-white whitespace-nowrap pr-8 rounded-lg flex-shrink-0 cursor-pointer"
+        onClick={() => handleCategorySelect(category.category_id)} // Filtrar cursos por categoría
+      >
+        {category.name}
+      </button>
+    </div>
+  ))}
+</div>
+
 
         <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-         
-          {courseStudent.map(courseStudent => (
-            <CourseCard
-              key={courseStudent.Course.course_id}
-              name={courseStudent.Course.name}
-              description={courseStudent.Course.description_short}
-              image={courseStudent.Course.image}
-              profesor={courseStudent.Course.courseProfessor.full_name}
-              categoria={courseStudent.Course.courseCategory.name}
-              course_id={courseStudent.Course.course_id}
-              onClick={() => openModal(courseStudent.Course)}
-            />
-          ))}
+          {selectedCategoryId
+            ? courseStudentCategory?.map(courseStudent => (
+              <CourseCard
+                key={courseStudent.Course?.course_id}
+                name={courseStudent.Course?.name}
+                description={courseStudent.Course?.description_short}
+                image={courseStudent.Course?.image}
+                profesor={courseStudent.Course?.courseProfessor?.full_name}
+                categoria={courseStudent.Course?.courseCategory?.name}
+                course_id={courseStudent.Course?.course_id}
+                onClick={() => openModal(courseStudent.Course)}
+              />
+            ))
+            : courseStudent?.map(courseStudent => (
+              <CourseCard
+                key={courseStudent.Course?.course_id}
+                name={courseStudent.Course?.name}
+                description={courseStudent.Course?.description_short}
+                image={courseStudent.Course?.image}
+                profesor={courseStudent.Course?.courseProfessor?.full_name}
+                categoria={courseStudent.Course?.courseCategory?.name}
+                course_id={courseStudent.Course?.course_id}
+                onClick={() => openModal(courseStudent.Course)}
+              />
+            ))}
         </div>
-     </div>
+      </div>
+
       {selectedCourse && (
         <Modal
           key={selectedCourse.course_id}
@@ -168,17 +218,16 @@ const StudentIndex: React.FC = () => {
           </div>
         </Modal>
       )}
-       
-       <div
+
+      {/* Footer Section */}
+      <div
         className="bg-no-repeat bg-cover bg-brand-100"
-        
         style={{
           backgroundImage: "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
           height: '500px',
         }}
       >
-        <div className="container mx-auto grid grid-cols-4 gap-4 pt-60 pl-40  text-white">
-          {/* Primera columna: Logo */}
+        <div className="container mx-auto grid grid-cols-4 gap-4 pt-60 pl-40 text-white">
           <div className="flex justify-center ">
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
@@ -186,8 +235,6 @@ const StudentIndex: React.FC = () => {
               className="h-30"
             />
           </div>
-
-          {/* Segunda columna: Títulos y textos */}
           <div className='pl-40'>
             <h3 className="font-semibold text-lg ">PÁGINAS</h3>
             <ul>
@@ -197,18 +244,13 @@ const StudentIndex: React.FC = () => {
               <li>SUSCRÍBETE</li>
             </ul>
           </div>
-
-          {/* Tercera columna */}
           <div className='pl-20'>
             <h3 className="font-semibold text-lg ">LINKS</h3>
             <ul>
               <li>TÉRMINOS Y CONDICIONES</li>
               <li>POLÍTICA DE PRIVACIDAD</li>
-           
             </ul>
           </div>
-
-          {/* Cuarta columna */}
           <div>
             <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
             <ul>
