@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-
-
 import './../../app/globals.css';
 import { Question, ModuleResults, VideosInteractivo , CourseEvaluation ,ModuleEvaluation} from '../../interfaces/StudentModule';
 import { useResultModule } from '../../hooks/useResultModule';
 import { useResultCourse } from '../../hooks/useCourseResults';
 import { useAuth } from '../../context/AuthContext';
+import NPSForm from './../../components/student/NPSForm';
 
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
@@ -22,40 +21,7 @@ interface MainContentProps {
   moduleEvaluation?: ModuleEvaluation[];
 }
 
-const NPSForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSubmit }) => {
-  const [selectedScore, setSelectedScore] = useState<number | null>(null);
-  const emojis = ["😡", "😞", "😐", "🙂", "😃"]; // Emojis representing the NPS scale
 
-  const handleSubmit = () => {
-    if (selectedScore !== null) {
-      onSubmit(selectedScore);
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
-      <h2 className="text-white text-3xl mb-4">¿Qué tan satisfecho estás con el curso?</h2>
-      <div className="flex justify-around w-full mb-4">
-        {emojis.map((emoji, idx) => (
-          <button
-            key={idx}
-            className={`text-5xl ${selectedScore === idx + 1 ? 'text-yellow-400' : 'text-white'} transition-transform transform hover:scale-110`}
-            onClick={() => setSelectedScore(idx + 1)}
-          >
-            {emoji}
-          </button>
-        ))}
-      </div>
-      
-      <button
-        onClick={handleSubmit}
-        className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
-      >
-        Enviar
-      </button>
-    </div>
-  );
-};
 
 
 const MainContentPrueba: React.FC<MainContentProps> = ({
@@ -85,6 +51,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [currentTime, setCurrentTime] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [showNPSForm, setShowNPSForm] = useState(false); // State to show NPS form
+  const [textAnswer, setTextAnswer] = useState(''); // For open-ended questions
+  const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
+    // Nuevo estado para guardar todas las respuestas seleccionadas
+    const [answers, setAnswers] = useState<{ question_id: number; response: string | number | number[] ; response2: string | number | string[] ; isCorret : boolean | string ; isCorrect2 : boolean[] | boolean | string}[]>([]);
+  const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   // Context
@@ -143,21 +115,49 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   }, [onProgress, currentTime, videoProgress, videoEnded, sessionVideo, sessionVideosInteractivos]);
 
-  const handleNextQuestion = () => {
-    setSelectedOption(null);
-    setIsCorrect(null);
-    setShowReaction(false);
-    if (currentQuestion < (evaluationQuestions?.length || 0) - 1) {
-      setCurrentQuestion(prev => prev + 1);
+  // Lógica para el textarea
+  useEffect(() => {
+    if (evaluationQuestions?.[currentQuestion]?.type_id === 3 && textAnswer.trim() !== '') {
+      setShowContinueButton(true);  // Mostrar el botón continuar si el textarea no está vacío
     } else {
-      handleFinish();
+      setShowContinueButton(false); // Ocultar el botón continuar si está vacío
+    }
+  }, [textAnswer, currentQuestion]);
+
+  const handleNextQuestion = () => {
+    if (evaluationQuestions?.[currentQuestion]?.type_id === 3 && textAnswer.trim() === '') {
+      alert('Por favor, responde la pregunta.');
+      return;
+    }
+    if (currentQuestion >= (evaluationQuestions?.length || 0) - 1) {
+      handleFinish(); // Llamar a handleFinish si es la última pregunta
+      return;
+    } else {
+      setCurrentQuestion(prev => prev + 1);
+      setSelectedOption(null);
+      setSelectedOptions([]);
+      setTextAnswer('');
+      setIsCorrect(null);
     }
   };
 
-  const handleOptionSelect = (optionIndex: number, isCorrect: boolean) => {
-    setSelectedOption(optionIndex);
+  const handleOptionSelect = (optionId: number, optionText: string   , isCorrect: boolean) => {
+    setSelectedOption(optionId);
     setIsCorrect(isCorrect);
     setShowReaction(true);
+     // Obtener el question_id de la pregunta actual
+  // Obtener el question_id de la pregunta actual
+  const questionId = evaluationQuestions?.[currentQuestion]?.question_id;
+
+  // Guardar la respuesta seleccionada en el estado answers
+  if (questionId !== undefined) {
+    setAnswers(prevAnswers => {
+      const updatedAnswers = prevAnswers.filter(answer => answer.question_id !== questionId);
+      return [...updatedAnswers, { question_id: questionId, response: optionId , response2 : optionText , isCorret : isCorrect , isCorrect2 : ""}];
+    });
+  }
+
+
     if (isCorrect) {
       setTotalScore(prev => prev + (evaluationQuestions?.[currentQuestion]?.score || 0));
       setCorrectAnswers(prev => prev + 1); // Increment correct answers count
@@ -167,17 +167,92 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }, 2000);
   };
 
+
+  const handleTextAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setTextAnswer(value);
+  
+    // Obtener el question_id de la pregunta actual
+    const questionId = evaluationQuestions?.[currentQuestion]?.question_id;
+  
+    // Verificar si el questionId es válido
+    if (questionId !== undefined) {
+      setAnswers(prevAnswers => {
+        // Filtrar respuestas anteriores y agregar la nueva o actualizarla
+        const updatedAnswers = prevAnswers.filter(answer => answer.question_id !== questionId);
+        return [...updatedAnswers, { question_id: questionId, response: value , response2 : "" , isCorret : "", isCorrect2 : ""}];
+      });
+    }
+  
+    // Mostrar botón continuar si hay texto en el textarea
+    setShowContinueButton(value.trim() !== '');
+  };
+
+  const handleMultipleSelect = (optionId: number, optionText: string, isCorrect: boolean) => {
+    let newSelectedOptions = [...selectedOptions];
+    let newOptionTexts = answers.find(answer => answer.question_id === evaluationQuestions?.[currentQuestion]?.question_id)?.response2 as string[] || [];
+    let OptionCorrect = answers.find(answer => answer.question_id === evaluationQuestions?.[currentQuestion]?.question_id)?.isCorrect2 as boolean[] || [];
+    // Verificar si la opción ya está seleccionada
+    if (selectedOptions.includes(optionId)) {
+        newSelectedOptions = newSelectedOptions.filter(opt => opt !== optionId);
+        newOptionTexts = newOptionTexts.filter(text => text !== optionText );  //Remover el texto de la opción
+        OptionCorrect = OptionCorrect.filter(text => text !== isCorrect );  //Remover el texto de la opción
+    } else {
+        newSelectedOptions.push(optionId);
+        newOptionTexts.push(optionText);  // Agregar el texto de la opción
+        OptionCorrect.push(isCorrect);  // Agregar el texto de la opción
+    }
+
+    setSelectedOptions(newSelectedOptions);
+    
+    // Obtener el question_id de la pregunta actual
+    const questionId = evaluationQuestions?.[currentQuestion]?.question_id;
+
+    // Verificar si el questionId es válido
+    if (questionId !== undefined) {
+        setAnswers(prevAnswers => {
+            // Filtrar respuestas anteriores y agregar la nueva o actualizarla
+            const updatedAnswers = prevAnswers.filter(answer => answer.question_id !== questionId);
+            return [...updatedAnswers, { 
+                question_id: questionId, 
+                response: newSelectedOptions,  
+                response2: newOptionTexts,  // Almacenar múltiples textos seleccionados
+                isCorret: newSelectedOptions.every(optId => evaluationQuestions?.[currentQuestion]?.options.find(opt => opt.option_id === optId)?.is_correct) && 
+                          newSelectedOptions.length === evaluationQuestions?.[currentQuestion]?.options.filter(opt => opt.is_correct).length,
+               isCorrect2 :  OptionCorrect
+            }];
+        });
+    }
+
+    // Mostrar botón continuar si hay al menos una opción seleccionada
+    setShowContinueButton(newSelectedOptions.length > 0);
+};
+  
   const handleFinish = () => {
     setEvaluationCompleted(true);
+        // Mostrar las respuestas por consola
+        console.log("Respuestas seleccionadas:", answers);
+        // Calcular y mostrar el puntaje total
+        const totalScore = answers.reduce((score, answer) => {
+          const question = evaluationQuestions?.find(q => q.question_id === answer.question_id);
+          if (question?.type_id !== 3 && answer.isCorret) {  // No contar preguntas type_id === 3
+              return score + (question?.score || 0);
+          }
+          return score;
+      }, 0);
+  
+      console.log("Puntaje total:", totalScore);
+      setTotalScore(totalScore)
     if (onFinish) onFinish();
   
     if (selectedModuleId) {
       // Si hay un selectedModuleId, es una evaluación de módulo
       const moduloResultado = {
         user_id: userInfo.id,
-        evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
         puntaje: totalScore,
-        module_id: selectedModuleId
+        module_id: selectedModuleId,
+        evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
+        answers : answers
       };
       createResultModule(moduloResultado);
       console.log("MODULO_RESULTADO", moduloResultado);
@@ -236,6 +311,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   };
 
+  
   const moduleResult = moduleResults?.find(result => result.module_id === selectedModuleId);
   const isFinalEvaluation = !selectedModuleId;
 
@@ -318,19 +394,59 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 {evaluationQuestions[currentQuestion]?.image && (
                   <img src={evaluationQuestions[currentQuestion]?.image} alt="Question related" className="w-2/3 md:w-1/3 rounded-lg shadow-lg pb-5" />
                 )}
-                <ul className="text-white w-full md:w-2/3 space-y-3 md:space-y-4">
-                  {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                    <li key={idx}>
-                      <button
-                        className={`w-full p-3 rounded-lg ${selectedOption === idx ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-yellow-600'} text-purple-900 border font-bold border-white`}
-                        onClick={() => handleOptionSelect(idx, option.is_correct)}
-                        disabled={selectedOption !== null}
-                      >
-                        {option.option_text}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                  
+                  {evaluationQuestions[currentQuestion]?.type_id === 1 && (
+        <ul className="space-y-3">
+          {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+            <li key={idx}>
+              <input
+                type="checkbox"
+                checked={selectedOptions.includes(option.option_id)}
+                onChange={() => handleMultipleSelect(option.option_id ,option.option_text, option.is_correct)}
+              />
+              <label>{option.option_text}</label>
+            </li>
+          ))}
+        </ul>
+      )}
+
+
+{evaluationQuestions[currentQuestion]?.type_id === 3 && (
+        <textarea
+          value={textAnswer}
+          onChange={handleTextAnswerChange}
+          className="w-full h-40 p-2 border rounded"
+          placeholder="Escribe tu respuesta aquí..."
+        />
+      )}
+
+
+          {evaluationQuestions[currentQuestion]?.type_id === 4 && (
+            <ul className="space-y-3">
+              {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                <li key={idx}>
+                  <button
+                    className={`p-2 rounded-lg ${selectedOption === option.option_id ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-yellow-600'}`}
+                    onClick={() => handleOptionSelect(option.option_id, option.option_text,  option.is_correct)}
+                    disabled={selectedOption !== null}
+                  >
+                    {option.option_text}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {/* Mostrar botón continuar solo si está habilitado */}
+      {showContinueButton && (
+        <button
+          className="mt-6 p-3 bg-yellow-500 text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
+          onClick={handleNextQuestion}
+        >
+          {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? 'Siguiente' : 'Finalizar'}
+        </button>
+      )}
+
                 {showReaction && (
                   <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
                     {Array.from({ length: 20 }).map((_, idx) => (
