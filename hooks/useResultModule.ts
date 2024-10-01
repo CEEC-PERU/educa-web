@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {ResultModule} from '../interfaces/ResultModule';
+import {ResultModule , RequestResultModule} from '../interfaces/ResultModule';
 import { createModuleResult} from '../services/moduleResult';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,7 +9,7 @@ export const useResultModule = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
  // const userInfo = user as { id: number };
-  const createResultModule = async (ResultModuleData: ResultModule) => {
+  const createResultModule = async (ResultModuleData: RequestResultModule) => {
     setIsLoading(true);
     try {
       if (!token) {
@@ -20,8 +20,8 @@ export const useResultModule = () => {
      console.log(response)
      //setResultModule(response.data);
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setError('Error updating profile. Please try again.');
+      console.error('Error actualizar useResultModule:', error);
+      setError('Error updating module. Please try again.');
     } finally {
       setIsLoading(false);
     }

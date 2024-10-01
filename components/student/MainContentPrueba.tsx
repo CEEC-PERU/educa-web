@@ -54,7 +54,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [textAnswer, setTextAnswer] = useState(''); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
     // Nuevo estado para guardar todas las respuestas seleccionadas
-    const [answers, setAnswers] = useState<{ question_id: number; response: string | number | number[] ; response2: string | number | string[] ; isCorret : boolean | string ; isCorrect2 : boolean[] | boolean | string}[]>([]);
+  const [answers, setAnswers] = useState<{ question_id: number; response: string | number | number[] ; response2: string | number | string[] ; isCorret : boolean | string ; isCorrect2 : boolean[] | boolean | string ; score : number | null }[]>([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -141,7 +141,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   };
 
-  const handleOptionSelect = (optionId: number, optionText: string   , isCorrect: boolean) => {
+  const handleOptionSelect = (optionId: number, optionText: string   , isCorrect: boolean , score:number) => {
     setSelectedOption(optionId);
     setIsCorrect(isCorrect);
     setShowReaction(true);
@@ -153,7 +153,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   if (questionId !== undefined) {
     setAnswers(prevAnswers => {
       const updatedAnswers = prevAnswers.filter(answer => answer.question_id !== questionId);
-      return [...updatedAnswers, { question_id: questionId, response: optionId , response2 : optionText , isCorret : isCorrect , isCorrect2 : ""}];
+      return [...updatedAnswers, { question_id: questionId, response: optionId , response2 : optionText , isCorret : isCorrect , isCorrect2 : "" , score: score}];
     });
   }
 
@@ -180,7 +180,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setAnswers(prevAnswers => {
         // Filtrar respuestas anteriores y agregar la nueva o actualizarla
         const updatedAnswers = prevAnswers.filter(answer => answer.question_id !== questionId);
-        return [...updatedAnswers, { question_id: questionId, response: value , response2 : "" , isCorret : "", isCorrect2 : ""}];
+        return [...updatedAnswers, { question_id: questionId, response: "" , response2 : value , isCorret : "", isCorrect2 : "" , score : evaluationQuestions?.[currentQuestion]?.score || 0}];
       });
     }
   
@@ -188,7 +188,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setShowContinueButton(value.trim() !== '');
   };
 
-  const handleMultipleSelect = (optionId: number, optionText: string, isCorrect: boolean) => {
+  const handleMultipleSelect = (optionId: number, optionText: string, isCorrect: boolean , score : number) => {
     let newSelectedOptions = [...selectedOptions];
     let newOptionTexts = answers.find(answer => answer.question_id === evaluationQuestions?.[currentQuestion]?.question_id)?.response2 as string[] || [];
     let OptionCorrect = answers.find(answer => answer.question_id === evaluationQuestions?.[currentQuestion]?.question_id)?.isCorrect2 as boolean[] || [];
@@ -219,7 +219,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 response2: newOptionTexts,  // Almacenar múltiples textos seleccionados
                 isCorret: newSelectedOptions.every(optId => evaluationQuestions?.[currentQuestion]?.options.find(opt => opt.option_id === optId)?.is_correct) && 
                           newSelectedOptions.length === evaluationQuestions?.[currentQuestion]?.options.filter(opt => opt.is_correct).length,
-               isCorrect2 :  OptionCorrect
+               isCorrect2 :  OptionCorrect,
+               score:score
             }];
         });
     }
@@ -247,13 +248,22 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   
     if (selectedModuleId) {
       // Si hay un selectedModuleId, es una evaluación de módulo
+      
+
       const moduloResultado = {
         user_id: userInfo.id,
         puntaje: totalScore,
         module_id: selectedModuleId,
         evaluation_id: evaluationQuestions?.[0]?.evaluation_id || 0,
-        answers : answers
-      };
+        answers: answers.map((answer) => ({
+            question_id: answer.question_id,
+            response: answer.response || null,  // Este campo está correcto
+            response2: answer.response2,  // Este campo está correcto
+            isCorrect:  answer.isCorret || false,  // Aquí debes asegurarte que uses 'isCorrect'
+            isCorrect2: answer.isCorrect2 || null,  // Este campo está correcto también
+            score : answer.score
+        }))
+    };
       createResultModule(moduloResultado);
       console.log("MODULO_RESULTADO", moduloResultado);
     } else {
@@ -268,9 +278,19 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         puntaje: totalScore,
         user_id: userInfo.id,
         second_chance: false,
+        answers: answers.map((answer) => ({
+          question_id: answer.question_id,
+          response: answer.response || null,  // Este campo está correcto
+          response2: answer.response2,  // Este campo está correcto
+          isCorrect:  answer.isCorret || false ,  // Aquí debes asegurarte que uses 'isCorrect'
+          isCorrect2: answer.isCorrect2 || null,  // Este campo está correcto también
+          score : answer.score
+      }))
       };
       createResultCourse(cursoResultado);
       console.log("CURSO_RESULTADO", cursoResultado);
+
+
     }
   };
   
@@ -402,7 +422,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               <input
                 type="checkbox"
                 checked={selectedOptions.includes(option.option_id)}
-                onChange={() => handleMultipleSelect(option.option_id ,option.option_text, option.is_correct)}
+                onChange={() => handleMultipleSelect(option.option_id ,option.option_text, option.is_correct , evaluationQuestions?.[currentQuestion]?.score || 0)}
               />
               <label>{option.option_text}</label>
             </li>
@@ -427,7 +447,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 <li key={idx}>
                   <button
                     className={`p-2 rounded-lg ${selectedOption === option.option_id ? (isCorrect ? 'bg-green-500' : 'bg-red-500') : 'bg-yellow-600'}`}
-                    onClick={() => handleOptionSelect(option.option_id, option.option_text,  option.is_correct)}
+                    onClick={() => handleOptionSelect(option.option_id, option.option_text,  option.is_correct ,  evaluationQuestions?.[currentQuestion]?.score || 0 )}
                     disabled={selectedOption !== null}
                   >
                     {option.option_text}

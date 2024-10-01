@@ -3,6 +3,7 @@ import {RequestCourseResult} from '../interfaces/CourseResult';
 import { createCourseResult} from '../services/courseResultService';
 import { useAuth } from '../context/AuthContext';
 
+
 export const useResultCourse = () => {
   const [resultcourse, setResultCourse] = useState<RequestCourseResult | null>(null);
   const [error, setError] = useState<string | null>(null);
