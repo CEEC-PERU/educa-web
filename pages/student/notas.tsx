@@ -79,7 +79,7 @@ const NotasIndex: React.FC = () => {
             <h3 className="text-xl font-semibold text-gray-800 mb-4">Resultado Final del Curso</h3>
             {userNota.CourseResults.map((courseResult: any) => (
               <div key={courseResult.course_result_id} className="bg-white p-4 rounded-lg shadow-md">
-                <h4 className="text-lg font-bold text-brand-500 mb-2">Curso: {courseResult.Course.name}</h4>
+                {/* <h4 className="text-lg font-bold text-brand-500 mb-2">Curso: {courseResult.Course.name}</h4>*/} 
                 <div className="flex justify-between border-b border-gray-200 py-2">
                   <span className="text-gray-700">Puntaje:</span>
                   <span className="font-medium text-gray-900">{courseResult.puntaje}</span>
@@ -152,8 +152,14 @@ const NotasIndex: React.FC = () => {
             </button>
             <div className="px-6 py-4">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Notas del curso: {selectedCourse.name}</h2>
-              {renderNotas()}
+              {/* Agregar un contenedor con scroll */}
+  <div className="max-h-96 overflow-y-auto">
+    {renderNotas()}
+  </div>
             </div>
+
+        
+
           </div>
         </Modal>
       )}
