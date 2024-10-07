@@ -8,6 +8,7 @@ import {
   VideosInteractivo,
   CourseEvaluation,
   ModuleEvaluation,
+  CourseResults
 } from "../../interfaces/StudentModule";
 import { useResultModule } from "../../hooks/useResultModule";
 import { useResultCourse } from "../../hooks/useCourseResults";
@@ -23,6 +24,7 @@ interface MainContentProps {
   videoProgress?: number;
   selectedModuleId?: number | null;
   moduleResults?: ModuleResults[];
+  courseResults?: CourseResults[];
   courseEvaluation?: CourseEvaluation[];
   moduleEvaluation?: ModuleEvaluation[];
 }
@@ -36,6 +38,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   videoProgress = 0,
   selectedModuleId,
   moduleResults,
+  courseResults,
   courseEvaluation,
   moduleEvaluation,
 }) => {
@@ -56,7 +59,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [showNPSForm, setShowNPSForm] = useState(false); // State to show NPS form
   const [textAnswer, setTextAnswer] = useState(""); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
+  const [evamodulecount, setEvaModCount] = useState(0);
   // Nuevo estado para guardar todas las respuestas seleccionadas
+
   const [answers, setAnswers] = useState<
     {
       question_id: number;
@@ -83,7 +88,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     if (moduleResults && moduleResults.length > 0) {
       console.log("Resultados del módulo actualizados", moduleResults);
     }
-  }, [moduleResults]); // Se actualizará cada vez que cambien los resultados del módulo
+
+     // Actualización automática sin recargar cuando cambia el estado
+     if (courseResults && courseResults.length > 0) {
+      console.log("Resultados del cursos actualizados", courseResults);
+    }
+
+  }, [moduleResults , courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
 
   useEffect(() => {
     setCurrentQuestion(0);
@@ -364,6 +375,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         })),
       };
       createResultModule(moduloResultado);
+      router.reload();
       console.log("MODULO_RESULTADO", moduloResultado);
     } else {
       // Si no hay selectedModuleId, es la evaluación final del curso
@@ -388,6 +400,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       };
       createResultCourse(cursoResultado);
       console.log("CURSO_RESULTADO", cursoResultado);
+      router.reload();
+    // Recargar la página actual
+     
+
     }
   };
 
@@ -398,6 +414,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setShowGif(false);
     }, 3000); // Show GIF for 3 seconds before the question
   };
+
   //evaluacion general
   const handleStartEvaluation = () => {
     setCurrentQuestion(0);
@@ -445,18 +462,86 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     (result) => result.module_id === selectedModuleId
   );
   console.log(moduleResult)
+
   const hasTwoAttempts =
     moduleResults &&
     moduleResults.filter((result) => result.module_id === selectedModuleId)
       .length >= 2;
+
+
 console.log(hasTwoAttempts)
   const attemptCount =
     moduleResults?.filter((result) => result.module_id === selectedModuleId)
       .length || 0;
-
   console.log(`Número de intentos: ${attemptCount}`);
 
   const isFinalEvaluation = !selectedModuleId;
+
+
+//CURSO RESULTADOS VERIFICAR
+ // Si no hay selectedModuleId, es la evaluación final del curso
+ const courseId = Array.isArray(router.query.course_id)
+ ? parseInt(router.query.course_id[0], 10)
+ : parseInt(router.query.course_id as string, 10);
+
+//si el estudiante tiene mayor a 16 en todo sus modules result primer intento(created_at) puede obtener un segundo intento en el examen final,
+//es decir el second_chance debe estar activado en el coruse_results
+
+//obtener la nota del primer created_at(la fecha de creacion que se creo primero) por cada evalation_id 
+const hasTwoEvaCourse = moduleResults&& moduleResults.filter((result )=> result.puntaje >= 16 && result.evaluation_id == result.evaluation_id );
+
+//reutilizar el anterior y validar si en todos los modulos se obtiene la nota mayor a 16
+//si tiene mayor a 16 habilitar segundo intento / caso contrario solo tendra un intento a courseresults //actualización de que finalizo el curso.
+
+
+
+  // Función para obtener el primer resultado de evaluación por evaluation_id
+const getFirstCreatedAtResults = (moduleResults?: ModuleResults[]) => {
+  if (!moduleResults) return [];
+
+  // Ordenar por fecha de creación y filtrar el primer resultado por evaluation_id
+  const uniqueResults = moduleResults.reduce((acc, result) => {
+    const existing = acc.find(r => r.evaluation_id === result.evaluation_id);
+    if (!existing || new Date(result.created_at) < new Date(existing.created_at)) {
+      return [...acc.filter(r => r.evaluation_id !== result.evaluation_id), result];
+    }
+    return acc;
+  }, [] as ModuleResults[]);
+
+  return uniqueResults;
+};
+
+// Obtener la nota del primer intento de evaluación en cada evaluation_id
+const firstResults = getFirstCreatedAtResults(moduleResults);
+console.log("PRIMER RESULTADOS DE LOS MODULOS",firstResults)
+
+// Filtrar módulos con puntaje mayor o igual a 16
+const modulesWithHighScores = firstResults.filter(result => result.puntaje >= 16);
+
+// Verificar si todos los módulos tienen un puntaje mayor o igual a 16
+const allModulesPassed = modulesWithHighScores.length === firstResults.length;
+console.log("VERIFICAR SI TODOS LOS MODULOS TIENE MAYOR A 16",allModulesPassed)
+
+// Habilitar segundo intento si todos los módulos tienen puntaje mayor o igual a 16
+const enableSecondAttempt = allModulesPassed;
+
+// Si no pasa en todos los módulos, solo tiene un intento
+if (enableSecondAttempt) {
+  console.log("Se habilita el segundo intento.");
+} else {
+  console.log("Solo tiene un intento.");
+}
+
+
+// Asegúrate de que courseId tiene el valor correcto del curso que estás filtrando
+
+const attemptCountCourse = courseResults && courseResults?.filter((result) => result.course_id === courseId).length || 0;
+
+console.log(`Número de intentos para el curso con ID ${courseId}: ${attemptCountCourse}`);
+
+
+console.log("Resultados del curso", courseResults);
+console.log("Resultados del módulo", moduleResults);
 
   return (
     <div className="h-full w-full p-4 relative">
@@ -500,11 +585,19 @@ console.log(hasTwoAttempts)
               ¡Ponte a Prueba!
             </h1>
             <p
-              className={`text-4xl text-white mb-8 ${
+              className={`text-4xl text-white mb-8  text-center ${
                 isFinalEvaluation ? "hidden" : ""
               }`}
             >
-              Para finalizar el módulo, ¡Inicia la Evaluación!
+              Para finalizar el módulo, ¡Inicia la Evaluación! 
+            </p>
+            <p
+              className={`text-xl text-white mb-8 text-center ${
+                isFinalEvaluation ? "hidden" : ""
+              }`}
+            >
+               ¡Tienes 2 Intentos Disponibles!
+                Si obtienes mayor a 16 en el primer intento tienes un segundo intento en el examen final
             </p>
             {/*Imagen dependiendo de evaluación del modulo y evaluación final*/}
             <img
@@ -516,28 +609,65 @@ console.log(hasTwoAttempts)
               alt="Evaluation"
               className="mb-6 w-64 h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
             />
+             <div>
+                {enableSecondAttempt === false && attemptCountCourse === 1? (
+                  <p className={`text-white text-xl mt-4 ${
+                    isFinalEvaluation ?   "" : "hidden"
+                  }`}>
+                    Completaste todos los intentos disponibles
+                  </p>
+                ) : enableSecondAttempt === true && attemptCountCourse === 1 ? (
+                  <button
+                    onClick={handleStartEvaluation}
+                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                      isFinalEvaluation ?  "" : "hidden"
+                    }`}>
+                    Volver a Intentar
+                  </button>
+                ) : enableSecondAttempt === true && attemptCountCourse === 2 ? (
+                  <p className={`text-white text-xl mt-4 ${
+                    isFinalEvaluation ?   "" : "hidden"
+                  }`}>
+                    Completaste todos los intentos disponibles
+                  </p>
+                ) : (
+                  <button
+                    onClick={handleStartEvaluation}
+                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                      isFinalEvaluation ?   "" : "hidden"
+                    }`}>
+                    Comenzar Evaluación Final
+                  </button>
+                )}
+              </div>
             <div>
+           
               <div>
                 {attemptCount >= 2 ? (
-                  <p className="text-white text-xl mt-4">
-                    Completaste todos los intentos disponibles
+                  <p className={`text-white text-xl mt-4 ${
+                    isFinalEvaluation ? "hidden" :  ""
+                  }`}>
+                     Completaste todos los intentos disponibles
                   </p>
                 ) : attemptCount === 1 ? (
                   <button
                     onClick={handleStartEvaluation}
-                    className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
-                  >
+                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                      isFinalEvaluation ?  "hidden" : ""
+                    }`}>
                     Volver a Intentar
                   </button>
                 ) : (
                   <button
                     onClick={handleStartEvaluation}
-                    className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
-                  >
+                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                      isFinalEvaluation ?  "hidden" : ""
+                    }`}>
                     Comenzar Evaluación
                   </button>
                 )}
               </div>
+             
             </div>
 
             <div className="mt-4 text-white text-sm">
@@ -548,7 +678,7 @@ console.log(hasTwoAttempts)
           <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-4 md:p-6 rounded-lg shadow-lg">
             {/*Evaluación inicio*/}
             <div className="w-3/4 bg-gray-800 rounded-full h-3 md:h-4 mb-4 md:mb-6 overflow-hidden">
-              {/*Porcentaje actual del progresod e evaluación y hasta cuando termine la evlauación*/}
+              {/*Porcentaje actual del progreso de evaluación y hasta cuando termine la evlauación*/}
               <div
                 className="bg-yellow-600 h-3 md:h-4 text-xs font-medium text-white text-center leading-none rounded-full"
                 style={{
@@ -679,6 +809,8 @@ console.log(hasTwoAttempts)
                 )}
               </div>
             ) : (
+              <div>
+                  {/*Finalizar Evalauación los botones ya nos e muestra 
               <div className="mt-6 text-white text-center text-2xl">
                  {attemptCount >= 2 ? (
                   <p className="text-white text-xl mt-4">
@@ -700,7 +832,11 @@ console.log(hasTwoAttempts)
                   </button>
                 )}
               </div>
+              */}
+                </div>
+            
             )}
+
             {/*Botones para evaluacion final */}
             {selectedOption !== null &&
               !showReaction &&

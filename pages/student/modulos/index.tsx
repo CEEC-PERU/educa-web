@@ -137,6 +137,7 @@ const Home: React.FC = () => {
             onProgress={handleVideoProgress}
             selectedModuleId={selectedModuleId}
             moduleResults={courseData[0].courseModules.flatMap(module => module.ModuleResults)}
+            courseResults={courseData[0].CourseResults}
           />
         </div>
         <SidebarPrueba

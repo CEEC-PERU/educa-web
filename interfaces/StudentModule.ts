@@ -77,6 +77,7 @@ export interface ModuleResults{
   puntaje : number,
   user_id : number
   evaluation_id : number,
+  created_at : Date,
   Evaluation : EvaluationResult
 }
 
