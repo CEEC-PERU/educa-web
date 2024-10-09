@@ -134,3 +134,4 @@ export const API_USER_INFO = `${baseURL}/api/userinfo/create`;
 
 export const API_USER_INFO_SHOWMODAL = `${baseURL}/api/userinfo/modals`;
 
+export const API_USER_CUESTIONARIO = `${baseURL}/api/cuestionarioresults`;

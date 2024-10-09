@@ -11,9 +11,11 @@ import {
   CourseResults
 } from "../../interfaces/StudentModule";
 import { useResultModule } from "../../hooks/useResultModule";
+import { useCuestionarioStar ,useCuestionarioNPS, useCreateCuestionario } from "../../hooks/useCuestionario";
 import { useResultCourse } from "../../hooks/useCourseResults";
 import { useAuth } from "../../context/AuthContext";
 import NPSForm from "./../../components/student/NPSForm";
+import StarForm from "./../../components/student/StarForm";
 
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
@@ -56,7 +58,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [showGif, setShowGif] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [showNPSForm, setShowNPSForm] = useState(false); // State to show NPS form
+  const [showNPSForm, setShowNPSForm] = useState(false);
+  const [showStarForm, setShowStarForm] = useState(false);
   const [textAnswer, setTextAnswer] = useState(""); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
   const [evamodulecount, setEvaModCount] = useState(0);
@@ -81,19 +84,26 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const userInfo = user as { id: number };
   const { createResultModule } = useResultModule();
   const { createResultCourse } = useResultCourse();
+
   const router = useRouter();
+  const courseId = Array.isArray(router.query.course_id)
+  ? parseInt(router.query.course_id[0], 10)
+  : parseInt(router.query.course_id as string, 10);
+
+  const { createCuestionarioResult } = useCreateCuestionario();
+  const {  cuestionariostar  } = useCuestionarioStar(courseId);
+  const {  cuestionariosnps} = useCuestionarioNPS(courseId);
+ 
 
   useEffect(() => {
     // Actualización automática sin recargar cuando cambia el estado
     if (moduleResults && moduleResults.length > 0) {
       console.log("Resultados del módulo actualizados", moduleResults);
     }
-
      // Actualización automática sin recargar cuando cambia el estado
      if (courseResults && courseResults.length > 0) {
       console.log("Resultados del cursos actualizados", courseResults);
     }
-
   }, [moduleResults , courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
 
   useEffect(() => {
@@ -427,6 +437,22 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
     if (isFinalEvaluation) {
       setShowNPSForm(true); // Show NPS form before final evaluation
+       // Verificar si los cuestionarios de NPS y Star tienen resultados
+    if (cuestionariosnps && cuestionariostar) {
+      // Mostrar NPSForm si no hay resultados en NPS
+      if (cuestionariosnps.length === 0) {
+        setShowNPSForm(true);
+      } else {
+        setShowNPSForm(false); // Ocultar NPS si ya tiene resultados
+      }
+
+      // Mostrar StarForm si no hay resultados en Star
+      if (cuestionariostar.length === 0) {
+        setShowStarForm(true);
+      } else {
+        setShowStarForm(false); // Ocultar StarForm si ya tiene resultados
+      }
+    }
     } else {
       setShowStartMessage(false);
     }
@@ -441,10 +467,30 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const handleNPSSubmit = (score: number) => {
+    const npscreate = {
+      user_id: userInfo.id, // Usar el course_id del router o contexto
+      score: score,
+      course_id: courseId,
+      cuestype_id:1
+    };
+    createCuestionarioResult(npscreate)
     console.log(`NPS Score: ${score}`);
     setShowNPSForm(false); // Ocultar formulario NPS
+    setShowStarForm(true);  // Mostrar formulario de estrellas
+  };
 
-    setShowStartMessage(false);
+
+  const handleStarSubmit = (score: number) => {
+    const starcreate = {
+      user_id: userInfo.id, // Usar el course_id del router o contexto
+      score: score,
+      course_id: courseId,
+      cuestype_id:2
+    };
+    createCuestionarioResult(starcreate)
+    console.log(`Star Score: ${score}`);
+    setShowStarForm(false); // Ocultar formulario de estrellas
+    setShowStartMessage(false); 
   };
 
   const handleContinue = () => {
@@ -461,28 +507,24 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const moduleResult = moduleResults?.find(
     (result) => result.module_id === selectedModuleId
   );
-  console.log(moduleResult)
-
+//numero de intentos
   const hasTwoAttempts =
     moduleResults &&
     moduleResults.filter((result) => result.module_id === selectedModuleId)
       .length >= 2;
 
-
-console.log(hasTwoAttempts)
   const attemptCount =
     moduleResults?.filter((result) => result.module_id === selectedModuleId)
       .length || 0;
-  console.log(`Número de intentos: ${attemptCount}`);
 
   const isFinalEvaluation = !selectedModuleId;
 
 
 //CURSO RESULTADOS VERIFICAR
  // Si no hay selectedModuleId, es la evaluación final del curso
- const courseId = Array.isArray(router.query.course_id)
- ? parseInt(router.query.course_id[0], 10)
- : parseInt(router.query.course_id as string, 10);
+ //const courseId = Array.isArray(router.query.course_id)
+ //? parseInt(router.query.course_id[0], 10)
+// : parseInt(router.query.course_id as string, 10);
 
 //si el estudiante tiene mayor a 16 en todo sus modules result primer intento(created_at) puede obtener un segundo intento en el examen final,
 //es decir el second_chance debe estar activado en el coruse_results
@@ -513,18 +555,12 @@ const getFirstCreatedAtResults = (moduleResults?: ModuleResults[]) => {
 
 // Obtener la nota del primer intento de evaluación en cada evaluation_id
 const firstResults = getFirstCreatedAtResults(moduleResults);
-console.log("PRIMER RESULTADOS DE LOS MODULOS",firstResults)
-
 // Filtrar módulos con puntaje mayor o igual a 16
 const modulesWithHighScores = firstResults.filter(result => result.puntaje >= 16);
-
 // Verificar si todos los módulos tienen un puntaje mayor o igual a 16
 const allModulesPassed = modulesWithHighScores.length === firstResults.length;
-console.log("VERIFICAR SI TODOS LOS MODULOS TIENE MAYOR A 16",allModulesPassed)
-
 // Habilitar segundo intento si todos los módulos tienen puntaje mayor o igual a 16
 const enableSecondAttempt = allModulesPassed;
-
 // Si no pasa en todos los módulos, solo tiene un intento
 if (enableSecondAttempt) {
   console.log("Se habilita el segundo intento.");
@@ -534,20 +570,17 @@ if (enableSecondAttempt) {
 
 
 // Asegúrate de que courseId tiene el valor correcto del curso que estás filtrando
-
 const attemptCountCourse = courseResults && courseResults?.filter((result) => result.course_id === courseId).length || 0;
 
-console.log(`Número de intentos para el curso con ID ${courseId}: ${attemptCountCourse}`);
 
-
-console.log("Resultados del curso", courseResults);
-console.log("Resultados del módulo", moduleResults);
 
   return (
     <div className="h-full w-full p-4 relative">
-      {showNPSForm ? (
+       {showNPSForm ? (
         <NPSForm onSubmit={handleNPSSubmit} />
-      ) : sessionVideo ? (
+      ) :  showStarForm ? (
+        <StarForm onSubmit={handleStarSubmit} />
+      )  : sessionVideo ? (
         <div className="flex flex-col items-center">
           <video
             key={sessionVideo}
