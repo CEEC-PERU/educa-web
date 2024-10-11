@@ -28,12 +28,11 @@ const JuegosIndex: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  const navigateToCourseDetails = () => {
+  const navigateToCourseDetails = (courseid : number) => {
     router.push({
-      pathname: '/student/juegos/flashcard',
+      pathname: '/student/juegos/modulos',
+      query: { courseid }
     });
-    console.log("selectedCourse:", selectedCourse);
-    console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
   return (
@@ -56,7 +55,7 @@ const JuegosIndex: React.FC = () => {
             className="w-350 h-48 object-cover"
           />
         </div>
-        <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 gap-4">
+        <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {courseStudent.map(courseStudent => (
             <CourseCard
               key={courseStudent.Course.course_id}
@@ -66,8 +65,8 @@ const JuegosIndex: React.FC = () => {
               profesor={courseStudent.Course.courseProfessor.full_name}
               categoria={courseStudent.Course.courseCategory.name}
               course_id={courseStudent.Course.course_id}
-              onClick={() => navigateToCourseDetails()}
-              isJuegosIndex={true}
+              onClick={() => navigateToCourseDetails(courseStudent.Course.course_id)}
+              isJuegosIndex={false}
             />
           ))}
         </div>

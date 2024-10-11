@@ -1,22 +1,13 @@
 // types.ts
-export interface Option {
-    option_id: number;
-    option_text: string;
-    is_correct: boolean;
-  }
-  
-  export interface Question {
-    question_id: number;
-    question_text: string;
-    options: Option[];
-  }
-  
-  export interface FlashcardData {
-    flashcard_id: number;
-    name: string;
-    description: string;
-    questions: Question[];
-  }
-  
 
+  
+ export interface Flashcard {
+    flashcard_id: number; 
+    question: string; 
+    correct_answer: string[]; 
+    incorrect_answer: string[]; 
+    module_id: number; 
+    created_at: string; 
+    updated_at: string; 
+  }
   

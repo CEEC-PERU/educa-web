@@ -363,6 +363,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       return score;
     }, 0);
 
+    
     console.log("Puntaje total:", totalScore);
     setTotalScore(totalScore);
     if (onFinish) onFinish();
