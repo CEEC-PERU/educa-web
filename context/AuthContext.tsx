@@ -13,6 +13,7 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
 
 export const useAuth = () => {
+  
   return useContext(AuthContext);
 };
 
@@ -31,6 +32,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [error, setError] = useState<string | null>(null);
   const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(null);
   const router = useRouter();
+
+// AuthContext.tsx
+const refreshProfile = async (token: string, userId: number) => {
+  try {
+    const profile = await getProfile(token, userId);
+    if (profile) {
+      localStorage.setItem('profileInfo', JSON.stringify(profile));
+      setProfileInfo(profile);
+    }
+  } catch (error) {
+    console.error('Error refreshing profile:', error);
+  }
+};
 
   const login = async (dni: string, password: string) => {
     setIsLoading(true);
@@ -169,7 +183,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     logout,
     profileInfo,
     redirectToDashboard,
-  }), [user, token, isLoading, error, profileInfo]);
+    refreshProfile,
+  }), [user, token, isLoading, error, profileInfo, ]);
 
   return (
     <AuthContext.Provider value={value}>

@@ -2,24 +2,30 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../hooks/useProfile';
 import { useRouter } from 'next/router';
+import {  Profile, UserInfo } from '../interfaces/UserInterfaces';
+import Loader from '@/components/Loader';
 import './../app/globals.css';
 
+
 const ProfilePage: React.FC = () => {
+  
+  const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(null);
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [selectedProfilePicture, setSelectedProfilePicture] = useState<string>("https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg");
-  const { user } = useAuth();
+  const { user , token , refreshProfile } = useAuth();
   const { updateProfile, error, isLoading } = useProfile();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado de carga
   const router = useRouter();
   
   //verificar
   if (!user || typeof user !== 'object' || !('role' in user)) return;
 
-  const { role } = user as { role: number };
-
+  const { role } = user as { role: number  };
+  const { id } = user as { id: number  };
   
   const handleProfileUpdate = async (event: React.FormEvent) => {
 
@@ -44,6 +50,7 @@ const ProfilePage: React.FC = () => {
 
 
     event.preventDefault();
+    setIsSubmitting(true);
     if (!user) return;
 
     const profileData = {
@@ -55,11 +62,18 @@ const ProfilePage: React.FC = () => {
     };
 
     try {
+     
       await updateProfile(profileData);
+      // Guardar el perfil actualizado en el localStorage
+      // Obtener los datos del perfil actualizado desde el backend
+   
+      await refreshProfile(token as string,id); // Refrescamos los datos del perfil
       redirectToDashboard(role); // Redirigir al perfil correspondiente después de la actualización
     } catch (error) {
       console.error('Error updating profile:', error);
       setErrorMessage('Error al actualizar el perfil, por favor intente nuevamente.');
+    } finally {
+      setIsSubmitting(false); // Finaliza el estado de envío
     }
   };
 
@@ -113,8 +127,9 @@ const ProfilePage: React.FC = () => {
               {errorMessage}
             </div>
           )}
-          <div>
-            <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Continuar</button>
+          <div className='text-center '>
+           
+            {isSubmitting ? <Loader /> :  <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">Continuar</button>}
           </div>
         </form>
       </div>

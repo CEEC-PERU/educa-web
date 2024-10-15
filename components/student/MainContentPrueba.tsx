@@ -587,6 +587,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             key={sessionVideo}
             controls
             className="w-full h-full"
+            controlsList="nodownload"
             style={{ maxWidth: "100%" }}
             onEnded={handleVideoEnd}
             ref={videoRef}

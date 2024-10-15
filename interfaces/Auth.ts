@@ -12,7 +12,9 @@ import { Profile, UserInfo } from "./UserInterfaces";
     logout: () => void;
     isLoading?: boolean;
     error?: string | null;
-    profileInfo?: Profile | null | UserInfo
+    profileInfo?: Profile | null | UserInfo;
+    refreshProfile: (token: string, userId: number) => Promise<void>; // Añadido aquí
+
   }
   
   export interface AuthProviderProps {

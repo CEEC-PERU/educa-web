@@ -11,6 +11,7 @@ const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);  // Estado para controlar la alerta
 
+  
   // Muestra la alerta si hay un error
   useEffect(() => {
     if (error) {
