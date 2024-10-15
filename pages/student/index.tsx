@@ -14,6 +14,7 @@ import Footter from '../../components/Footter';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useUserInfo } from '../../hooks/useUserInfo';
+import { useCoursesCount } from '../../hooks/useUserCourses';
 import { UserInfoData } from '../../interfaces/UserInfo';
 import { userInfo } from 'os';
 import { API_USER_INFO_SHOWMODAL } from '../../utils/Endpoints';
@@ -35,6 +36,7 @@ const LoadingSpinner = () => (
 const StudentIndex: React.FC = () => {
   const { logout, user, profileInfo , token} = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
+  const {coursescount } = useCoursesCount();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
   const router = useRouter();
@@ -386,14 +388,14 @@ const StudentIndex: React.FC = () => {
           <div className='bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4'>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                 <div className="flex items-center justify-center">
-                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">11</p>
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">{coursescount?.data?.totalCourses}</p>
                   <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png" className="h-12 w-12 ml-2" alt="Icon" />
                 </div>
                 <p className="text-white p-3">Curso inscritos</p>
               </div>
               <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                 <div className="flex items-center justify-center">
-                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">{coursescount?.data?.completedCourses}</p>
                   <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png" className="h-12 w-12 ml-2" alt="Icon" />
                 </div>
                 <p className="text-white p-3">Curso completado</p>

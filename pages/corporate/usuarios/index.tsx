@@ -1,18 +1,19 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
-import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
-import FormField from '../../components/FormField';
-import TableUser from '../../components/TableUser';
-import ButtonContent from '../../components/Content/ButtonContent';
-import UserForm from '../../components/Corporate/UserForm';
-import Modal from '../../components/Admin/Modal';
-import { useAuth } from '../../context/AuthContext';
-import { User } from '../../interfaces/UserAdmin';
-import { Enterprise } from '../../interfaces/Enterprise';
-import { useUserCount } from '../../hooks/useUserCount';
-import './../../app/globals.css';
+import Navbar from '../../../components/Navbar';
+import Sidebar from '../../../components/Corporate/CorporateSideBar';
+import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../../services/userService';
+import FormField from '../../../components/FormField';
+import TableUser from '../../../components/TableUser';
+import ButtonContent from '../../../components/Content/ButtonContent';
+import UserForm from '../../../components/Corporate/UserForm';
+import Modal from '../../../components/Admin/Modal';
+import { useAuth } from '../../../context/AuthContext';
+import { User } from '../../../interfaces/UserAdmin';
+import { Enterprise } from '../../../interfaces/Enterprise';
+import { useUserCount } from '../../../hooks/useUserCount';
+import './../../../app/globals.css';
+
 
 const Usuarios: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);

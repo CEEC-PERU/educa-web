@@ -4,3 +4,12 @@ export interface UserCount {
     UserCount : number;
     mesage : string;
 }
+
+
+export interface GetCoursesByUserResponse {
+    success: boolean;
+    data: {
+      totalCourses: number;
+      completedCourses: number;
+    };
+  }
