@@ -15,7 +15,6 @@ import { useUserCount } from '../../../hooks/useUserCount';
 import './../../../app/globals.css';
 
 
-
 const Usuarios: React.FC = () => {
   
   const [showSidebar, setShowSidebar] = useState(true);
