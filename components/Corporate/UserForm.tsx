@@ -2,47 +2,51 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { API_USERS_CREATE } from '../../utils/Endpoints';
 import AlertComponent from '../../components/AlertComponent';
+import * as XLSX from 'xlsx';
 
 const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () => void; maxUsersAllowed: number }> = ({ roleId, onClose, onSuccess, maxUsersAllowed }) => {
-  const [userCount, setUserCount] = useState<number>(0);
   const [users, setUsers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const { user, token } = useAuth();
   const userInfo = user as { id: number, enterprise_id: number };
 
-  const handleUserCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserCount(Number(e.target.value));
-  };
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const generateDNI = () => {
-    return Math.floor(10000000 + Math.random() * 90000000).toString();
-  };
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target?.result as ArrayBuffer);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-  const generateUsers = () => {
-    if (userCount > maxUsersAllowed) {
-      setError(`Excede de los usuarios designados. Solo puede registrar ${maxUsersAllowed} usuarios o menos.`);
-      return;
-    }
-    const newUsers = [];
-    for (let i = 0; i < userCount; i++) {
-      const dni = generateDNI();
-      newUsers.push({
-        dni,
-        password: dni,
+      const newUsers = jsonData.slice(1).map((row) => ({
+        dni: row[0]?.toString(),
+        password: row[0]?.toString(),
         is_active: true,
-        role_id: 1,
+        role_id: roleId,
         enterprise_id: userInfo.enterprise_id,
-      });
-    }
-    setUsers(newUsers);
-    setError(null);  // Clear error message if users are generated successfully
+      }));
+
+      if (newUsers.length > maxUsersAllowed) {
+        setError(`Excede el límite permitido. Solo puede registrar ${maxUsersAllowed} usuarios.`);
+        return;
+      }
+
+      setUsers(newUsers);
+      setError(null); // Limpiar errores si la carga es exitosa
+    };
+
+    reader.readAsArrayBuffer(file);
   };
 
   const handleRegister = async () => {
     try {
-      if (userCount > maxUsersAllowed) {
-        setError(`Excede de los usuarios designados. Solo puede registrar ${maxUsersAllowed} usuarios o menos.`);
+      if (users.length > maxUsersAllowed) {
+        setError(`Excede el límite permitido. Solo puede registrar ${maxUsersAllowed} usuarios.`);
         return;
       }
 
@@ -50,13 +54,13 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`, // Add authorization header if needed
+          'Authorization': `Bearer ${token}`, // Añadir el token de autenticación
         },
         body: JSON.stringify(users),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to register users');
+        throw new Error('Error al registrar usuarios');
       }
 
       setSuccess('Usuarios registrados correctamente');
@@ -69,20 +73,14 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <h1 className="font-bold text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
+
       <div className="mb-4 flex items-center justify-center">
         <input
-          type="number"
-          className="w-48 p-2 border rounded-lg shadow-sm focus:ring focus:outline-none focus:border-blue-500"
-          value={userCount}
-          onChange={handleUserCountChange}
-          placeholder={`Número de usuarios (máximo ${maxUsersAllowed})`}
+          type="file"
+          accept=".xlsx, .xls"
+          className="w-48 p-2 border rounded-lg shadow-sm"
+          onChange={handleFileUpload}
         />
-        <button
-          onClick={generateUsers}
-          className="ml-4 bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
-        >
-          Generar Usuarios
-        </button>
       </div>
 
       {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
@@ -92,7 +90,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Ususario</th>
+              <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Usuario</th>
               <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Contraseña</th>
             </tr>
           </thead>

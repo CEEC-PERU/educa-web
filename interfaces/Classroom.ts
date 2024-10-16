@@ -14,20 +14,32 @@ export interface Enterprise {
     created_at: string;
     updated_at: string;
   }
+ 
+  export interface Profile{
+    first_name: string;
+    last_name: string;
+  }
+  export interface User{
+    user_id: number;
+    userProfile: Profile;
+  }
   export interface Classroom {
     classroom_id: number;
     code: string;
+    user_id :number;
     enterprise_id: number;
     shift_id: number;
     created_at: string;
     updated_at: string;
     Enterprise: Enterprise;
     Shift : Shift
+    User : User;
   }
 
   export interface ClassroomRequest {
     code: string;
     enterprise_id: number;
     shift_id: number;
+    user_id : number;
   }
   
