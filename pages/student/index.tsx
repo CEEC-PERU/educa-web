@@ -17,6 +17,7 @@ import { useUserInfo } from '../../hooks/useUserInfo';
 import { useCoursesCount } from '../../hooks/useUserCourses';
 import { UserInfoData } from '../../interfaces/UserInfo';
 import { userInfo } from 'os';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { API_USER_INFO_SHOWMODAL } from '../../utils/Endpoints';
 Modal.setAppElement('#__next');
 
@@ -293,6 +294,7 @@ const StudentIndex: React.FC = () => {
   }
 };
   return (
+    <ProtectedRoute>
     <div>
       <ScreenSecurity />
       {/* Modal de Firma y Cámara */}
@@ -513,6 +515,7 @@ const StudentIndex: React.FC = () => {
         </div>
       </div>
     </div>
+     </ProtectedRoute>
   );
 };
 

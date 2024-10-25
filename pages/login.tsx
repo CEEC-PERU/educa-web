@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './../app/globals.css'; // Asegúrate de importar tus estilos globales
 
+
 const LoginPage: React.FC = () => {
   const [dni, setDni] = useState('');
   const [password, setPassword] = useState('');

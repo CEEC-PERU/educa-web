@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { UserGroupIcon } from '@heroicons/react/24/outline';
 import { useProfesor } from '../../hooks/useProfesores';
 import { useClassroom } from '../../hooks/useClassroom';
+import FloatingButton from '../../components/FloatingButton';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import './../../app/globals.css';
 
@@ -47,14 +48,7 @@ const Classroom: React.FC = () => {
 
           {/* Botones para añadir aula o asignar estudiante */}
           <div className="flex space-x-4 mb-4">
-            <ButtonContent
-              buttonLabel="Registrar Aula"
-              backgroundColor="bg-yellow-500"
-              textColor="text-white"
-              fontSize="text-xs"
-              buttonSize="py-2 px-7"
-              onClick={handleAddUser}
-            />
+           
             <ButtonContent
               buttonLabel="Asignar Estudiante"
               backgroundColor="bg-yellow-500"
@@ -68,7 +62,10 @@ const Classroom: React.FC = () => {
           {/* Contenedor Responsivo de Profesores */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div>
-              <h4 className="font-bold text-md">Profesores</h4>
+            <div className="flex justify-left items-center mb-6">
+              <FloatingButton onClick={handleAddUser} label="AñadirProfesor" />
+            <h2 className="text-xl font-bold ml-3">Profesores</h2>
+          </div>
               {users.length > 0 ? (
                 users.map((user) => (
                   <div key={user.user_id} className="flex items-center mt-2 border-2 border-e-cyan-800 p-5">
@@ -87,7 +84,10 @@ const Classroom: React.FC = () => {
 
             {/* Contenedor Responsivo de Aulas */}
             <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-              <h2 className="text-lg font-semibold mb-2">Aulas</h2>
+            <div className="flex justify-left items-center mb-6">
+              <FloatingButton onClick={handleAddUser} label="AñadirProfesor" />
+            <h2 className="text-xl font-bold ml-3">Aulas</h2>
+          </div>
               <div className="grid grid-cols-1 gap-6">
                 {!isLoading && classrooms && classrooms.length > 0 ? (
                   classrooms.map((classroom) => (

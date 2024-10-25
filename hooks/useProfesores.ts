@@ -10,12 +10,12 @@ export const useProfesor = () => {
   const { user } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
 
-  // Función para obtener los usuarios
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const usersData = await getUsersByCompanyAndRole(userInfo.enterprise_id,6);
+      const usersData = await getUsersByCompanyAndRole(userInfo.enterprise_id, 6);
       setUsers(usersData);
+      console.log("profesores", usersData);
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Error al obtener usuarios');
@@ -24,13 +24,14 @@ export const useProfesor = () => {
     }
   };
 
+  // Ejecuta fetchUsers cuando se monta el componente
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-
-  // Retornar valores y funciones que otros componentes puedan usar
   return {
-    users,          // Lista de usuarios
-    error,          // Error si ocurrió
-    isLoading,      // Estado de carga
-    refetch: () => fetchUsers(),  // Refetching para recargar datos manualmente
+    users,
+    error,
+    isLoading,
   };
 };
