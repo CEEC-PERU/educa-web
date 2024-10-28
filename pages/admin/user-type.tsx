@@ -209,7 +209,7 @@ const RoleDetail: React.FC = () => {
           </div>
         </main>
       </div>
-      
+
       <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
         <UserForm roleId={Number(roleId)} onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
       </Modal>

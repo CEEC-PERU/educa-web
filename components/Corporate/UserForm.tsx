@@ -4,7 +4,9 @@ import { API_USERS_CREATE } from '../../utils/Endpoints';
 import AlertComponent from '../../components/AlertComponent';
 import * as XLSX from 'xlsx';
 
+//usuarios formulario para registrar
 const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () => void; maxUsersAllowed: number }> = ({ roleId, onClose, onSuccess, maxUsersAllowed }) => {
+  
   const [users, setUsers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
