@@ -11,6 +11,7 @@ import { useProfesor } from '../../hooks/useProfesores';
 import { useClassroom } from '../../hooks/useClassroom';
 import FloatingButton from '../../components/FloatingButton';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
 const Classroom: React.FC = () => {
@@ -36,6 +37,7 @@ const Classroom: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       
@@ -136,6 +138,7 @@ const Classroom: React.FC = () => {
         <ClassroomForm onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
       </Modal>
     </div>
+   </ProtectedRoute>
   );
 };
 

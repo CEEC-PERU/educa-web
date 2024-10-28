@@ -13,6 +13,8 @@ import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent'; 
 import Loader from '../../components/Loader'; 
 
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
+
 const AddSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [session, setSession] = useState<Omit<Session, 'session_id'>>({
@@ -104,6 +106,7 @@ const AddSession: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
@@ -165,6 +168,7 @@ const AddSession: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

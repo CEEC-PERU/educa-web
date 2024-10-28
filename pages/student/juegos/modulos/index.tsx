@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import './../../../../app/globals.css';
 import { Module } from '../../../../interfaces/Module';
 import { getModulesByCourseId } from '../../../../services/courseService';
-
+import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
 const ModuleIndex: React.FC = () => {
   const router = useRouter();
   const { courseid } = router.query;
@@ -54,6 +54,7 @@ const ModuleIndex: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       {/* Navbar and Sidebar */}
       <div className="relative z-10">
@@ -100,6 +101,7 @@ const ModuleIndex: React.FC = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

@@ -8,7 +8,7 @@ import TableUser from '../../components/TableUser';
 import ButtonContent from '../../components/Content/ButtonContent';
 import UserForm from '../../components/Admin/UserForm';
 import Modal from '../../components/Admin/Modal';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { User } from '../../interfaces/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
@@ -137,6 +137,7 @@ const RoleDetail: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -208,10 +209,12 @@ const RoleDetail: React.FC = () => {
           </div>
         </main>
       </div>
+      
       <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
         <UserForm roleId={Number(roleId)} onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
       </Modal>
     </div>
+    </ProtectedRoute>
   );
 };
 

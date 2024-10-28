@@ -7,6 +7,7 @@ import { getUserById } from '../../../services/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Loader from '../../../components/Loader';
 import StudentCourseCard from './StudentCourseCard';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import GradesModal from './Modal';
 import './../../../app/globals.css';
 
@@ -60,6 +61,7 @@ const StudentGrades: React.FC = () => {
   
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-[#F5F8FA] ">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -136,6 +138,7 @@ const StudentGrades: React.FC = () => {
         />
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

@@ -6,6 +6,7 @@ import { Module } from '../../interfaces/Module';
 import FormField from '../../components/FormField';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
 interface AddModuleFormProps {
   courseId: number;
@@ -105,6 +106,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({ courseId, onClose, onSucc
   }
 
   return (
+    <ProtectedRoute>
     <div className="bg-white p-6 w-full max-w-4xl mx-auto">
       {error && (
         <AlertComponent
@@ -154,6 +156,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({ courseId, onClose, onSucc
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

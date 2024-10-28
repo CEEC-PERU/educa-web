@@ -4,6 +4,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 
 // Dynamically import Chart with no SSR
@@ -92,6 +93,7 @@ const CorporateDashboard: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" borderColor="border border-stone-300" />
       <div className="flex flex-1 pt-16 ">
@@ -273,6 +275,7 @@ const CorporateDashboard: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

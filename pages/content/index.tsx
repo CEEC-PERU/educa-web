@@ -10,7 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 import { useRouter } from 'next/router';
 import Loader from '../../components/Loader'; // Importar el componente Loader
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const Home: React.FC = () => {
   const { logout } = useAuth();
   const [showSidebar, setShowSidebar] = useState(true);
@@ -62,6 +62,7 @@ const Home: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
@@ -97,6 +98,7 @@ const Home: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

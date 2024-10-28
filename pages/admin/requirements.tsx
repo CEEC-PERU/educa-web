@@ -9,6 +9,7 @@ import RequirementCard from '../../components/Admin/RequirementCard';
 import ButtonContent from '../../components/Content/ButtonContent';
 import { getAllRequirements } from '../../services/requirementService';
 import { Requirement } from '../../interfaces/Requirement';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
 const RequirementsPage: React.FC = () => {
@@ -65,6 +66,7 @@ const RequirementsPage: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -105,6 +107,7 @@ const RequirementsPage: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

@@ -6,6 +6,7 @@ import MediaUploadPreview from '../../components/MediaUploadPreview';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import Alert from '../../components/AlertComponent';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
 interface EnterpriseFormProps {
   enterprise?: Enterprise;
@@ -104,6 +105,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
   };
 
   return (
+    <ProtectedRoute>
     <div className="bg-white p-6 w-full max-w-4xl mx-auto">
       {loading && <Loader />}
       {success && <Alert type="success" message={success} onClose={() => setSuccess(null)} />}
@@ -153,6 +155,7 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
         </div>
       </form>
     </div>
+    </ProtectedRoute>
   );
 };
 

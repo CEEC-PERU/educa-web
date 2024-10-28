@@ -9,6 +9,7 @@ import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
 import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
+
 import './../../app/globals.css';
 
 Modal.setAppElement('#__next'); 
@@ -51,6 +52,7 @@ const Diplomas: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="relative z-10">
         <Navbar
@@ -92,6 +94,7 @@ const Diplomas: React.FC = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

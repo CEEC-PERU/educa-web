@@ -11,6 +11,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
 const AddProfessors: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -160,6 +161,7 @@ const AddProfessors: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
@@ -251,6 +253,7 @@ const AddProfessors: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

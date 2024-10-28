@@ -6,7 +6,7 @@ import { Module } from '../../interfaces/Module';
 import FormField from '../../components/FormField';
 import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 interface EditModuleFormProps {
   moduleId: string;
   onClose: () => void;
@@ -109,6 +109,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ moduleId, onClose, onSu
   }
 
   return (
+    <ProtectedRoute>
     <div className="bg-white p-6 w-full max-w-4xl mx-auto">
       {showAlert && (
         <AlertComponent
@@ -158,6 +159,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({ moduleId, onClose, onSu
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

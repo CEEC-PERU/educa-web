@@ -15,6 +15,8 @@ import { Evaluation } from '../../interfaces/Evaluation';
 import { Course } from '../../interfaces/Course';
 import Loader from '../../components/Loader';
 import './../../app/globals.css';
+
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../components/AlertComponent';
 
@@ -217,6 +219,7 @@ const AddCourse: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -382,6 +385,7 @@ const AddCourse: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

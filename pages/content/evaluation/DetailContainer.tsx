@@ -4,7 +4,7 @@ import ActionButtons from '../../../components/Content/ActionButtons';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import './../../../app/globals.css';
-
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 interface DetailContainerProps {
   evaluation: Evaluation | null;
   isEditing: boolean;
@@ -17,6 +17,7 @@ const DetailContainer: React.FC<DetailContainerProps> = ({ evaluation, isEditing
   const router = useRouter();
 
   return (
+    <ProtectedRoute>
     <div className="flex flex-col items-start space-y-4 w-full max-w-md">
       <div className="w-full p-4 bg-white rounded-md shadow-md border-2 border-purple-200">
         <div className="flex justify-between items-center mb-4">
@@ -62,6 +63,7 @@ const DetailContainer: React.FC<DetailContainerProps> = ({ evaluation, isEditing
         />
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

@@ -3,6 +3,7 @@ import { Evaluation } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import './../../../app/globals.css';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 
 interface StepOneProps {
   nextStep: () => void;
@@ -56,6 +57,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
   };
 
   return (
+    <ProtectedRoute>
     <WizardStepContainer>
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">Nombre de la Evaluación</label>
@@ -84,6 +86,7 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, setEvaluationData, evaluati
         Siguiente
       </button>
     </WizardStepContainer>
+  </ProtectedRoute>
   );
 };
 

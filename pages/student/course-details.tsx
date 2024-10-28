@@ -50,6 +50,7 @@ const CourseDetails = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="relative z-10">
         <Navbar
@@ -228,6 +229,7 @@ const CourseDetails = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

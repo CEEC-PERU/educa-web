@@ -5,7 +5,7 @@ import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useCourseStudentCategory } from '../../hooks/useCourseStudents';
 import { useCategoriesl } from '../../hooks/useCategories';
 import CourseCard from '../../components/student/CourseCard';
@@ -118,6 +118,7 @@ const StudentIndex: React.FC = () => {
 
 
   return (
+    <ProtectedRoute>
     <div>
       <ScreenSecurity /> 
       <div className="relative z-10">
@@ -263,6 +264,7 @@ const StudentIndex: React.FC = () => {
         </div>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

@@ -7,6 +7,7 @@ import { useCourseStudent } from '../../../hooks/useCourseStudents';
 import CourseCard from '../../../components/student/CourseCard';
 import FlashcardGame from '../../../components/student/FlashcardGame';
 import { useRouter } from 'next/router';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 
 const JuegosIndex: React.FC = () => {
@@ -36,6 +37,7 @@ const JuegosIndex: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="relative z-10">
         <Navbar
@@ -74,6 +76,7 @@ const JuegosIndex: React.FC = () => {
 
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

@@ -5,6 +5,7 @@ import DetailContainer from './DetailContainer';
 import QuestionsContainer from './QuestionsContainer';
 import { getEvaluationById, updateEvaluation, deleteEvaluation, getQuestionTypes } from '../../../services/evaluationService';
 import { Evaluation, Question, QuestionType, Option } from '../../../interfaces/Evaluation';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import { useRouter } from 'next/router';
 import './../../../app/globals.css';
 
@@ -88,6 +89,7 @@ const EvaluationDetail: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
@@ -113,6 +115,7 @@ const EvaluationDetail: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

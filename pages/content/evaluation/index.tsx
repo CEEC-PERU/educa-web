@@ -9,6 +9,7 @@ import Wizard from '../../../components/Wizard';
 import { addEvaluation, addQuestion, addOption, getEvaluations } from '../../../services/evaluationService';
 import { uploadImage } from '../../../services/imageService';
 import { Evaluation, Question, Option } from '../../../interfaces/Evaluation';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 
 const CreateEvaluationWizard: React.FC = () => {
@@ -96,6 +97,7 @@ const CreateEvaluationWizard: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -126,6 +128,7 @@ const CreateEvaluationWizard: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

@@ -6,6 +6,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { getStudentsByEnterprise } from '../../../services/courseStudent';
 import Loader from '../../../components/Loader';
 import ProgressBar from '../../../components/Corporate/ProgressBar';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 
 const CorporateUsers: React.FC = () => {
@@ -43,6 +44,7 @@ const CorporateUsers: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -86,6 +88,7 @@ const CorporateUsers: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

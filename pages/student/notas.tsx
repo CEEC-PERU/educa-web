@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity'; 
 import Footter from '../../components/Footter';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 Modal.setAppElement('#__next');
 
 const NotasIndex: React.FC = () => {
@@ -54,6 +54,7 @@ const NotasIndex: React.FC = () => {
     const userNota = courseNota[0];
 
     return (
+   
       <div className="space-y-4">
         {/* Display module results */}
         {userNota.ModuleResults?.length > 0 && (
@@ -101,6 +102,7 @@ const NotasIndex: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <ScreenSecurity />
       <div className="relative z-10">
@@ -164,6 +166,7 @@ const NotasIndex: React.FC = () => {
         </Modal>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

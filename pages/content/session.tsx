@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Table from '../../components/Table';
 import FloatingButton from '../../components/FloatingButton';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
 const SessionPage: React.FC = () => {
@@ -72,6 +73,7 @@ const SessionPage: React.FC = () => {
   }));
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1">
@@ -90,6 +92,7 @@ const SessionPage: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

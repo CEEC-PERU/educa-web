@@ -8,6 +8,8 @@ import { Profile } from '../../../interfaces/UserInterfaces';
 import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
+
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
@@ -117,6 +119,7 @@ const Home: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="relative z-10">
         <Navbar
@@ -150,6 +153,7 @@ const Home: React.FC = () => {
       </div>
     </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

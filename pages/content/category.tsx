@@ -12,7 +12,7 @@ import AlertComponent from '../../components/AlertComponent';
 import Loader from '../../components/Loader';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import useModal from '../../hooks/useModal';
-
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const CategoryPage: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [category, setCategory] = useState<Category | null>(null);
@@ -160,6 +160,7 @@ const CategoryPage: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
       <div className="flex flex-1 pt-16">
@@ -235,6 +236,7 @@ const CategoryPage: React.FC = () => {
         onConfirm={handleDelete}
       />
     </div>
+    </ProtectedRoute>
   );
 };
 

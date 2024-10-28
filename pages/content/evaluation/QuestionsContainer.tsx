@@ -3,6 +3,7 @@ import { Question, Option, QuestionType } from '../../../interfaces/Evaluation';
 import { uploadImage } from '../../../services/imageService';
 import MediaUploadPreview from '../../../components/MediaUploadPreview';
 import { PlusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 
 interface QuestionsContainerProps {
@@ -81,6 +82,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({ questions, isEd
   }
 
   return (
+    <ProtectedRoute>
     <div className="w-full max-w-5xl">
       {questions.map((question, questionIndex) => (
         <div key={questionIndex} className="mb-6 pb-4 border-b p-4 rounded-md bg-gray-50">
@@ -218,6 +220,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({ questions, isEd
         </button>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

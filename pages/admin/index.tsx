@@ -7,6 +7,7 @@ import { getUsersActivityCount } from '../../services/appSessionService';
 import { getEnterprises } from '../../services/enterpriseService';
 import { Enterprise } from '../../interfaces/Enterprise';
 import AlertComponent from '../../components/AlertComponent';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
 const AdminPage: React.FC = () => {
@@ -90,6 +91,7 @@ const AdminPage: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -161,6 +163,7 @@ const AdminPage: React.FC = () => {
         </main>
       </div>
     </div>
+ </ProtectedRoute>
   );
 };
 

@@ -9,8 +9,10 @@ import { useNotas } from '../../../hooks/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import ProgressBar from '../../../components/Corporate/ProgressBar';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
+import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 // Importar react-apexcharts dinámicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -123,6 +125,7 @@ const NotaCourses: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -293,6 +296,7 @@ const NotaCourses: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

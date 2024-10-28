@@ -7,6 +7,7 @@ import Loader from '../../components/Loader';
 import TopStudentsChart from '../../components/Corporate/TopStudent';
 import './../../app/globals.css';
 import { Profile } from '../../interfaces/UserInterfaces';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const CorporateUsers: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
@@ -69,6 +70,7 @@ const CorporateUsers: React.FC = () => {
   }, [enterpriseId, startDate, endDate]);
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar 
       bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90 "
@@ -134,6 +136,7 @@ const CorporateUsers: React.FC = () => {
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 

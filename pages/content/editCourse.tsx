@@ -18,6 +18,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import ActionButtons from '../../components/Content/ActionButtons';
 import './../../app/globals.css';
 import AlertComponent from '../../components/AlertComponent';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import Loader from '../../components/Loader';
 
 const EditCourse: React.FC = () => {
@@ -162,6 +163,7 @@ const EditCourse: React.FC = () => {
   }
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -297,6 +299,7 @@ const EditCourse: React.FC = () => {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 

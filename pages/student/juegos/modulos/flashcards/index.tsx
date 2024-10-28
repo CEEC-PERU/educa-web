@@ -6,6 +6,7 @@ import { Profile } from '../../../../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../../../../hooks/useCourseStudents';
 import CourseCard from '../../../../../components/student/CourseCard';
 import FlashcardGame from '../../../../../components/student/FlashcardGame';
+import ProtectedRoute from '../../../../../components/Auth/ProtectedRoute';
 import { useRouter } from 'next/router';
 import './../../../../../app/globals.css';
 
@@ -38,6 +39,7 @@ const Flashcard: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div>
       <div className="relative z-10">
         <Navbar
@@ -58,6 +60,7 @@ const Flashcard: React.FC = () => {
 
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
 

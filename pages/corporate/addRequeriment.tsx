@@ -6,6 +6,8 @@ import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import { useAuth } from '../../context/AuthContext';
+
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
 const RequirementForm: React.FC = () => {
@@ -131,6 +133,7 @@ const RequirementForm: React.FC = () => {
     };
 
     return (
+        <ProtectedRoute>
         <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
             <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
             <div className="flex flex-1 pt-16">
@@ -205,6 +208,7 @@ const RequirementForm: React.FC = () => {
                 </main>
             </div>
         </div>
+        </ProtectedRoute>
     );
 };
 

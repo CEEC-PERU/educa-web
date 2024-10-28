@@ -22,6 +22,7 @@ import Modal from '../../components/Admin/Modal';
 import AddModuleForm from './addModule';
 import EditModuleForm from './editModule';
 import ReactTooltip from 'react-tooltip';
+import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
 const ModulesPage: React.FC = () => {
   const router = useRouter();
@@ -158,6 +159,7 @@ const ModulesPage: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute>
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
@@ -319,6 +321,7 @@ const ModulesPage: React.FC = () => {
         </Modal>
       )}
     </div>
+    </ProtectedRoute>
   );
 };
 
