@@ -15,6 +15,7 @@ import { useUserCount } from '../../../hooks/useUserCount';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 
+
 const Usuarios: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
