@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
+import { useCourseStudent } from '../../hooks/useCourseStudents';
 
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -15,6 +16,7 @@ const CorporateDashboard: React.FC = () => {
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
   const [selectedCourse, setSelectedCourse] = useState('CP Pospago');
+  const { courseStudent } = useCourseStudent();
 
   // Datos de ejemplo
   const courseProgressData = [
@@ -93,16 +95,39 @@ const CorporateDashboard: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
+ 
     <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" borderColor="border border-stone-300" />
       <div className="flex flex-1 pt-16 ">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
 
+
+          {/* Dropdown Selector for Courses */}
+          <div className="mr-2 col-span-full">
+  <select 
+    value={selectedCourse} 
+    onChange={(e) => setSelectedCourse(e.target.value)} 
+    className="block border-4 p-2 mr-4"
+  >
+    {courseStudent.length > 0 ? (
+      courseStudent.map((course) => (
+        <option key={course.course_id} value={course.Course.name} className="text-gray-700">
+          {course.Course.name}
+        </option>
+      ))
+    ) : (
+      <option disabled className="text-gray-600">No hay cursos asignados</option>
+    )}
+  </select>
+</div>
+
 {/* Gráfico de Barras de Progreso */}
 <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+
+ 
 <h2 className="text-lg font-semibold mb-2">Progreso del curso</h2>
+
             <Chart
               type="bar"
               series={[{ name: 'Estudiantes', data: courseProgressData.map(item => item.Estudiantes) }, { name: 'Progreso', data: courseProgressData.map(item => item.Progreso) }]}
@@ -233,10 +258,7 @@ const CorporateDashboard: React.FC = () => {
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
           <h2 className="text-lg font-semibold mb-2">Encuesta de Satisfacción</h2>
-            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
-              <option value="CP Pospago">CP Pospago</option>
-              <option value="Formación Continua">Formación Continua</option>
-            </select>
+            
             <Chart
               type="donut"
               series={satisfactionSurveyData(selectedCourse)}
@@ -254,10 +276,7 @@ const CorporateDashboard: React.FC = () => {
           {/* Gráfico de NPS */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
           <h2 className="text-lg font-semibold mb-2">Del 1 al 10 ¿Què tanto recomendarías este curso?</h2>
-            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
-              <option value="CP Pospago">CP Pospago</option>
-              <option value="Formación Continua">Formación Continua</option>
-            </select>
+            
             <Chart
               type="bar"
               series={[{ name: 'NPS', data: npsData(selectedCourse) }]}
@@ -275,7 +294,6 @@ const CorporateDashboard: React.FC = () => {
         </main>
       </div>
     </div>
-    </ProtectedRoute>
   );
 };
 
