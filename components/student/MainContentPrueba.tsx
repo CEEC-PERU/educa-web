@@ -126,31 +126,35 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
   useEffect(() => {
     if (videoRef.current) {
-      // Maneja la actualización del tiempo actual del video y el progreso
-      const manejarActualizacionTiempo = () => {
-        const tiempoActual = videoRef.current!.currentTime;
-        const duracion = videoRef.current!.duration;
-        const progreso = (tiempoActual / duracion) * 100;
-        if (onProgress) onProgress(progreso, false);
-        setCurrentTime(tiempoActual);
+      const handleTimeUpdate = () => {
+        const currentTime = videoRef.current!.currentTime;
+        const duration = videoRef.current!.duration;
+        const progress = (currentTime / duration) * 100;
+        if (onProgress) onProgress(progress, false);
+        setCurrentTime(currentTime);
       };
 
-      // Ya no se necesita manejar restricciones de avance o retroceso
-      videoRef.current.addEventListener("timeupdate", manejarActualizacionTiempo);
+      const handleSeeking = () => {
+        if (videoRef.current!.currentTime > currentTime) {
+          videoRef.current!.currentTime = currentTime;
+        }
+      };
 
-      // Establece el progreso del video si ya hay un avance guardado y el video no ha finalizado
+      videoRef.current.addEventListener("timeupdate", handleTimeUpdate);
+      videoRef.current.addEventListener("seeking", handleSeeking);
+
       if (videoProgress > 0 && !videoEnded) {
-        const duracion = videoRef.current!.duration;
-        const tiempoObjetivo = (videoProgress / 100) * duracion;
-        if (tiempoObjetivo > 0 && tiempoObjetivo < duracion) {
-          videoRef.current.currentTime = tiempoObjetivo;
+        const duration = videoRef.current!.duration;
+        const targetTime = (videoProgress / 100) * duration;
+        if (targetTime > 0 && targetTime < duration) {
+          videoRef.current.currentTime = targetTime;
         }
       }
 
-      // Limpia los eventos cuando el componente se desmonta
       return () => {
         if (videoRef.current) {
-          videoRef.current.removeEventListener("timeupdate", manejarActualizacionTiempo);
+          videoRef.current.removeEventListener("timeupdate", handleTimeUpdate);
+          videoRef.current.removeEventListener("seeking", handleSeeking);
         }
       };
     }
