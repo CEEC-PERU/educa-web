@@ -8,6 +8,7 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 
+
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -17,6 +18,16 @@ const CorporateDashboard: React.FC = () => {
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
   const [selectedCourse, setSelectedCourse] = useState('CP Pospago');
   const { courseStudent } = useCourseStudent();
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
+    startDate: false,
+    endDate: false,
+    selectedEnterprise: false,
+  });
 
   // Datos de ejemplo
   const courseProgressData = [
@@ -120,6 +131,36 @@ const CorporateDashboard: React.FC = () => {
       <option disabled className="text-gray-600">No hay cursos asignados</option>
     )}
   </select>
+
+  <form className="flex items-center space-x-4 mb-4" >
+              <div>
+                <label className="block text-gray-700 text-sm font-bold mb-2">Filtrar por:</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  onBlur={() => setTouchedFields((prev) => ({ ...prev, startDate: true }))}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
+                />
+              </div>
+              <div>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  onBlur={() => setTouchedFields((prev) => ({ ...prev, endDate: true }))}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-6 ${touchedFields.endDate && !endDate ? 'border-red-500' : ''}`}
+                />
+              </div>
+              <div>
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6"
+                >
+                  Filtrar
+                </button>
+              </div>
+            </form>
 </div>
 
 {/* Gráfico de Barras de Progreso */}
