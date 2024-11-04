@@ -76,9 +76,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }[]
   >([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
+ 
+    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006874/CEEC/PREQUIZZ/qvch55jhsig6tyyozvsg.png';
+    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006907/CEEC/PREQUIZZ/ccgewx1znph4pxibnmaz.png';
 
   const videoRef = useRef<HTMLVideoElement>(null);
-
+  const optionColors = ["bg-blue-500", "bg-orange-500", "bg-purple-500", "bg-cyan-500"];
   // Context
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
@@ -386,7 +389,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         })),
       };
       createResultModule(moduloResultado);
-      router.reload();
+    
       console.log("MODULO_RESULTADO", moduloResultado);
     } else {
       // Si no hay selectedModuleId, es la evaluación final del curso
@@ -413,8 +416,6 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       console.log("CURSO_RESULTADO", cursoResultado);
       router.reload();
     // Recargar la página actual
-     
-
     }
   };
 
@@ -710,95 +711,104 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-4 md:p-6 rounded-lg shadow-lg">
-            {/*Evaluación inicio*/}
-            <div className="w-3/4 bg-gray-800 rounded-full h-3 md:h-4 mb-4 md:mb-6 overflow-hidden">
-              {/*Porcentaje actual del progreso de evaluación y hasta cuando termine la evlauación*/}
-              <div
-                className="bg-yellow-600 h-3 md:h-4 text-xs font-medium text-white text-center leading-none rounded-full"
-                style={{
-                  width: `${
-                    ((currentQuestion + 1) / evaluationQuestions.length) * 100
-                  }%`,
-                }}
-              >
-                {((currentQuestion + 1) / evaluationQuestions.length) * 100}%
-              </div>
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-purple-900 to-fuchsia-700 p-4 md:p-6 rounded-lg shadow-xl space-y-6">
+         {/* Puntaje actual */}
+         <div className="w-full text-center text-white text-2xl md:text-4xl font-bold">
+            Puntaje: {totalScore}
+          </div>
+        
+         
+          {/* Progreso de evaluación */}
+          <div className="w-full max-w-2xl bg-gray-800 rounded-full h-4 md:h-5 mb-6 overflow-hidden shadow-lg">
+            <div
+              className="bg-yellow-600 h-4 md:h-5 text-xs font-medium text-white text-center leading-none rounded-full transition-all duration-300 ease-in-out"
+              style={{
+                width: `${((currentQuestion + 1) / evaluationQuestions.length) * 100}%`,
+              }}
+            >
+              {((currentQuestion + 1) / evaluationQuestions.length) * 100}%
             </div>
-            {/*Puntaje actual mientras esta respondiendo las preguntas */}
-            <div className="flex flex-col items-center text-center w-full max-w-4xl mb-4 md:mb-6">
-              <p className="text-white text-3xl  md:text-3xl">
-                Puntaje: {totalScore}
-              </p>
-            </div>
-           
-            {!evaluationCompleted ? (
-              <div className="flex flex-col items-center text-center w-full max-w-4xl">
-                <h3 className="text-white text-2xl md:text-3xl pb-5 md:pb-7">
-                  {evaluationQuestions[currentQuestion]?.question_text}
-                </h3>
-                {evaluationQuestions[currentQuestion]?.image && (
-                  <img
-                    src={evaluationQuestions[currentQuestion]?.image}
-                    alt="Question related"
-                    className="w-2/3 md:w-1/3 rounded-lg shadow-lg pb-5"
-                  />
-                )}
-                {/*Pregunta de tipo opciones multiple(varias respuestas correctas) */}
-                {evaluationQuestions[currentQuestion]?.type_id === 1 && (
-                  <ul className="space-y-3">
-                    {evaluationQuestions[currentQuestion]?.options.map(
-                      (option, idx) => (
-                        <li key={idx}>
+          </div>
+        
+       
+        
+          {!evaluationCompleted ? (
+            <div className="flex flex-col items-center text-center w-full max-w-4xl space-y-6">
+                 <h3 className="text-white text-5xl md:text-5xl pb-5 md:pb-7 font-extrabold leading-tight mb-6 mt-6">
+                    {evaluationQuestions[currentQuestion]?.question_text}
+                  </h3>
+              <div className="flex w-full space-x-8">
+                
+                {/* Pregunta e imagen */}
+                <div className="w-1/2">
+               
+                  {evaluationQuestions[currentQuestion]?.image && (
+                    <img
+                      src={evaluationQuestions[currentQuestion]?.image}
+                      alt="Imagen relacionada con la pregunta"
+                      className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-full"
+                    />
+                  )}
+                </div>
+        
+                {/* Opciones de respuesta */}
+                <div className="w-1/2 space-y-4">
+                  {/* Pregunta de opción múltiple */}
+                  {evaluationQuestions[currentQuestion]?.type_id === 1 && (
+                    <ul className="space-y-3">
+                      {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                        <li key={idx} className="flex items-center space-x-3">
                           <input
                             type="checkbox"
+                            className="w-5 h-5 text-yellow-500 rounded focus:ring focus:ring-purple-700"
                             checked={selectedOptions.includes(option.option_id)}
                             onChange={() =>
                               handleMultipleSelect(
                                 option.option_id,
                                 option.option_text,
                                 option.is_correct,
-                                evaluationQuestions?.[currentQuestion]?.score ||
-                                  0
+                                evaluationQuestions?.[currentQuestion]?.score || 0
                               )
                             }
                           />
-                          <label>{option.option_text}</label>
+                          <label className="text-white text-xl">{option.option_text}</label>
                         </li>
-                      )
-                    )}
-                  </ul>
-                )}
-                {/*Pregunta de tipo abierto */}
-                {evaluationQuestions[currentQuestion]?.type_id === 3 && (
-                  <textarea
-                    value={textAnswer}
-                    onChange={handleTextAnswerChange}
-                    className="w-full h-40 p-2 border rounded"
-                    placeholder="Escribe tu respuesta aquí..."
-                  />
-                )}
-                {/*Pregunta de tipo opciones (seleccionar) */}
-                {evaluationQuestions[currentQuestion]?.type_id === 4 && (
-                  <ul className="space-y-3">
-                    {evaluationQuestions[currentQuestion]?.options.map(
-                      (option, idx) => (
+                      ))}
+                    </ul>
+                  )}
+        
+                  {/* Pregunta abierta */}
+                  {evaluationQuestions[currentQuestion]?.type_id === 3 && (
+                    <textarea
+                      value={textAnswer}
+                      onChange={handleTextAnswerChange}
+                      className="w-full h-40 p-4 text-white bg-gray-700 rounded-lg border border-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      placeholder="Escribe tu respuesta aquí..."
+                    />
+                  )}
+        
+                  {/* Pregunta de opción única */}
+                  {evaluationQuestions[currentQuestion]?.type_id === 4 && (
+                    
+                    <ul className="space-y-3">
+                      
+                      {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
+                        
                         <li key={idx}>
                           <button
-                            className={`p-2 rounded-lg ${
+                            className={`p-4 text-2xl font-bold rounded-xl w-full border-4 transition-all duration-300 ${
                               selectedOption === option.option_id
                                 ? isCorrect
-                                  ? "bg-green-500"
-                                  : "bg-red-500"
-                                : "bg-yellow-600"
+                                  ? "bg-green-500 border-green-600"
+                                  : "bg-red-500 border-red-600"
+                                : "bg-brand-100 border-yellow-600 text-white hover:bg-yellow-500 hover:border-yellow-500"
                             }`}
                             onClick={() =>
                               handleOptionSelect(
                                 option.option_id,
                                 option.option_text,
                                 option.is_correct,
-                                evaluationQuestions?.[currentQuestion]?.score ||
-                                  0
+                                evaluationQuestions?.[currentQuestion]?.score || 0
                               )
                             }
                             disabled={selectedOption !== null}
@@ -806,22 +816,21 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                             {option.option_text}
                           </button>
                         </li>
-                      )
-                    )}
-                  </ul>
-                )}
-
-                {/* Mostrar botón continuar solo si está habilitado para evalauciones de modulo */}
-                {showContinueButton && (
-                  <button
-                    className="mt-6 p-3 bg-yellow-500 text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
-                    onClick={handleNextQuestion}
-                  >
-                    {currentQuestion < (evaluationQuestions?.length || 0) - 1
-                      ? "Siguiente"
-                      : "Finalizar"}
-                  </button>
-                )}
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+        
+              {/* Mostrar botón continuar */}
+              {showContinueButton && (
+                <button
+                  className="mt-6 p-3 bg-yellow-500 text-purple-900 text-2xl font-bold rounded-lg shadow-lg w-full md:w-1/3 transition-transform transform hover:scale-105"
+                  onClick={handleNextQuestion}
+                >
+                  {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}
+                </button>
+              )}
                 {/*Reacciones para repsuesta incorrecta e incorrecta */}
                 {showReaction && (
                   <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
@@ -843,10 +852,73 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                   </div>
                 )}
               </div>
+             
+              
             ) : (
               <div>
-                  {/*Finalizar Evalauación los botones ya nos e muestra 
-              <div className="mt-6 text-white text-center text-2xl">
+                 
+                 <div className="mt-6 text-white text-center text-2xl">
+  {totalScore >= 16 ? (
+    <>
+      <div className="relative inline-block">
+        {/* Imagen del Rey del Saber */}
+        <img
+          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png"
+          alt="Rey del saber"
+          className="mb-4 mx-auto w-60 h-100 rounded-full"
+        />
+
+        {/* Estrellas alrededor de la imagen */}
+        <div className="absolute inset-0 flex justify-center items-center -top-6">
+          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
+          <img src={estrella_llena} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
+          <img src={estrella_llena} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold">¡Eres realmente el rey del saber!</p>
+    </>
+  ) : totalScore >= 13 ? (
+    <>
+      <div className="relative inline-block">
+        {/* Imagen "Nada Mal" */}
+        <img
+          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
+          alt="Nada mal"
+          className="mb-4 mx-auto w-60 h-100 rounded-full"
+        />
+
+        {/* Estrellas alrededor de la imagen */}
+        <div className="absolute inset-0 flex justify-center items-center -top-6">
+          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
+          <img src={estrella_llena} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
+          <img src={estrella_vacia} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold">¡Nada mal, pero puedes mejorar!</p>
+    </>
+  ) : (
+    <>
+      <div className="relative inline-block">
+        {/* Imagen "Necesitas Repasar" */}
+        <img
+          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
+          alt="Necesitas repasar"
+          className="mb-4 mx-auto w-60 h-100 rounded-full"
+        />
+
+        {/* Estrellas alrededor de la imagen */}
+        <div className="absolute inset-0 flex justify-center items-center -top-6">
+          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
+          <img src={estrella_vacia} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
+          <img src={estrella_vacia} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
+        </div>
+      </div>
+      <p className="text-3xl font-bold">¡Necesitas repasar las sesiones!</p>
+    </>
+  )}
+
+                
+                 {/*Finalizar Evalauación los botones ya nos e muestra 
                  {attemptCount >= 2 ? (
                   <p className="text-white text-xl mt-4">
                     Completaste todos los intentos disponibles
@@ -866,26 +938,23 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                     Comenzar Evaluación
                   </button>
                 )}
+                    */}
               </div>
-              */}
+            
                 </div>
             
             )}
 
-            {/*Botones para evaluacion final */}
-            {selectedOption !== null &&
-              !showReaction &&
-              !evaluationCompleted && (
-                <button
-                  className="mt-6 p-3 bg-yellow-500 text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
-                  onClick={handleNextQuestion}
-                >
-                  {currentQuestion < (evaluationQuestions?.length || 0) - 1
-                    ? "Siguiente"
-                    : "Finalizar"}
-                </button>
-              )}
-          </div>
+            {/* Botones para evaluación final */}
+  {selectedOption !== null && !showReaction && !evaluationCompleted && (
+    <button
+      className="mt-10 p-3 bg-yellow-500 text-2xl text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
+      onClick={handleNextQuestion}
+    >
+      {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}
+    </button>
+  )}
+</div>
         )
       ) : (
         <div className="flex justify-center items-center h-full w-full p-4 text-white">

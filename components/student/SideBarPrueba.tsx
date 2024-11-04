@@ -52,7 +52,7 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
   const allModulesCompleted = courseModules.every(module => calculateModuleProgress(module) === 100);
 
   return (
-    <div className="bg-brand-500 text-white divide-y divide-neutral-100 h-full p-4 overflow-y-auto lg:w-96 lg:fixed lg:right-0 lg:top-16 lg:h-full w-full">
+    <div className="bg-brand-500 text-white divide-y divide-neutral-100 h-full p-4 overflow-y-auto lg:w-96 lg:fixed lg:right-0 lg:top-16  pb-16 lg:h-full w-full">
       {courseModules.map((module, moduleIndex) => {
         const moduleProgress = calculateModuleProgress(module);
         const roundedModuleProgress = Math.round(moduleProgress);
