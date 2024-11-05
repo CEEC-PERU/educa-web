@@ -63,6 +63,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [textAnswer, setTextAnswer] = useState(""); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
   const [evamodulecount, setEvaModCount] = useState(0);
+    const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
+
   // Nuevo estado para guardar todas las respuestas seleccionadas
 
   const [answers, setAnswers] = useState<
@@ -77,8 +79,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   >([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
  
-    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006874/CEEC/PREQUIZZ/qvch55jhsig6tyyozvsg.png';
-    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006907/CEEC/PREQUIZZ/ccgewx1znph4pxibnmaz.png';
+    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730823789/CEEC/PREQUIZZ/sxworivg6t3x1ccvpskx.png';
+    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730823789/CEEC/PREQUIZZ/fyksx6vikutcyxgweceo.png';
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const optionColors = ["bg-blue-500", "bg-orange-500", "bg-purple-500", "bg-cyan-500"];
@@ -96,7 +98,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const { createCuestionarioResult } = useCreateCuestionario();
   const {  cuestionariostar  } = useCuestionarioStar(courseId);
   const {  cuestionariosnps} = useCuestionarioNPS(courseId);
- 
+  const [finalTime, setFinalTime] = useState<number | null>(null); // Nuevo estado para el tiempo final
+  
 
   useEffect(() => {
     // Actualización automática sin recargar cuando cambia el estado
@@ -201,6 +204,16 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setIsCorrect(null);
     }
   };
+
+  useEffect(() => {
+    // Timer to track duration of the evaluation
+    const startTime = Date.now();
+    const timer = setInterval(() => {
+      setTimeElapsed(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const handleOptionSelect = (
     optionId: number,
@@ -351,9 +364,16 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const handleFinish = () => {
+   
     setEvaluationCompleted(true);
-    // Mostrar las respuestas por consola
-    console.log("Respuestas seleccionadas:", answers);
+      
+    // Guardar el tiempo final y detener el temporizador
+    setFinalTime(timeElapsed);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+   
     // Calcular y mostrar el puntaje total
     const totalScore = answers.reduce((score, answer) => {
       const question = evaluationQuestions?.find(
@@ -370,7 +390,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     console.log("Puntaje total:", totalScore);
     setTotalScore(totalScore);
     if (onFinish) onFinish();
-
+ 
     if (selectedModuleId) {
       // Si hay un selectedModuleId, es una evaluación de módulo
 
@@ -711,22 +731,23 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-purple-900 to-fuchsia-700 p-4 md:p-6 rounded-lg shadow-xl space-y-6">
-         {/* Puntaje actual */}
-         <div className="w-full text-center text-white text-2xl md:text-4xl font-bold">
+          
+          <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4 md:p-6 rounded-lg shadow-xl space-y-6">
+         {/* Puntaje actual   , arriba para cambiar el fondo*/}
+         <div className="w-full text-center text-brandm-500 text-2xl md:text-4xl font-bold">
             Puntaje: {totalScore}
           </div>
         
          
           {/* Progreso de evaluación */}
-          <div className="w-full max-w-2xl bg-gray-800 rounded-full h-4 md:h-5 mb-6 overflow-hidden shadow-lg">
+          <div className="w-full max-w-6xl bg-brandmc-100 rounded-full h-10 md:h-10 mb-6 overflow-hidden shadow-lg">
             <div
-              className="bg-yellow-600 h-4 md:h-5 text-xs font-medium text-white text-center leading-none rounded-full transition-all duration-300 ease-in-out"
+              className="bg-brandmo-800 h-10 md:h-10 text-xs font-medium text-white text-center leading-none rounded-full transition-all duration-300 ease-in-out"
               style={{
                 width: `${((currentQuestion + 1) / evaluationQuestions.length) * 100}%`,
               }}
             >
-              {((currentQuestion + 1) / evaluationQuestions.length) * 100}%
+            <p className="text-white text-xl pt-3 font-bold">{((currentQuestion + 1) / evaluationQuestions.length) * 100}%</p>  
             </div>
           </div>
         
@@ -734,7 +755,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
         
           {!evaluationCompleted ? (
             <div className="flex flex-col items-center text-center w-full max-w-4xl space-y-6">
-                 <h3 className="text-white text-5xl md:text-5xl pb-5 md:pb-7 font-extrabold leading-tight mb-6 mt-6">
+                 <h3 className="text-brandmc-100 text4xl md:text-5xl pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-6 mt-6 ">
                     {evaluationQuestions[currentQuestion]?.question_text}
                   </h3>
               <div className="flex w-full space-x-8">
@@ -746,7 +767,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                     <img
                       src={evaluationQuestions[currentQuestion]?.image}
                       alt="Imagen relacionada con la pregunta"
-                      className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-full"
+                      className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-100 pt-10"
                     />
                   )}
                 </div>
@@ -796,12 +817,12 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                         
                         <li key={idx}>
                           <button
-                            className={`p-4 text-2xl font-bold rounded-xl w-full border-4 transition-all duration-300 ${
+                            className={`p-6 text-xl font-bold rounded-r-lg w-full  transition-all duration-300 px-10  ${
                               selectedOption === option.option_id
                                 ? isCorrect
                                   ? "bg-green-500 border-green-600"
                                   : "bg-red-500 border-red-600"
-                                : "bg-brand-100 border-yellow-600 text-white hover:bg-yellow-500 hover:border-yellow-500"
+                                : "bg-brandm-500  text-white hover:bg-yellow-400 "
                             }`}
                             onClick={() =>
                               handleOptionSelect(
@@ -825,7 +846,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
               {/* Mostrar botón continuar */}
               {showContinueButton && (
                 <button
-                  className="mt-6 p-3 bg-yellow-500 text-purple-900 text-2xl font-bold rounded-lg shadow-lg w-full md:w-1/3 transition-transform transform hover:scale-105"
+                  className="mt-6 p-3 bg-brandm-400 text-white text-2xl font-bold rounded-lg shadow-lg w-full md:w-1/3 transition-transform transform hover:scale-105"
                   onClick={handleNextQuestion}
                 >
                   {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}
@@ -852,72 +873,80 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                   </div>
                 )}
               </div>
-             
-              
             ) : (
-              <div>
-                 
-                 <div className="mt-6 text-white text-center text-2xl">
-  {totalScore >= 16 ? (
-    <>
-      <div className="relative inline-block">
-        {/* Imagen del Rey del Saber */}
-        <img
-          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png"
-          alt="Rey del saber"
-          className="mb-4 mx-auto w-60 h-100 rounded-full"
-        />
-
-        {/* Estrellas alrededor de la imagen */}
-        <div className="absolute inset-0 flex justify-center items-center -top-6">
-          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
-          <img src={estrella_llena} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
-          <img src={estrella_llena} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
-        </div>
+              <div className="flex justify-center items-center w-full h-full p-6 bg-gradient-to-b from-purple-800 to-purple-900">
+  <div className="bg-gradient-to-r from-indigo-800 via-purple-700 to-indigo-800 rounded-lg shadow-lg w-full max-w-3xl text-center text-white p-8 space-y-6">
+    {/* Título del resultado */}
+    <h2 className="text-4xl font-extrabold text-yellow-400 mb-4">
+      {totalScore >= 16 ? "¡Rey del Saber!" : totalScore >= 13 ? "¡Nada Mal!" : "Necesitas Repasar"}
+    </h2>
+    
+    {/* Imagen central con estrellas */}
+    <div className="relative flex justify-center mb-6">
+      <img
+        src={
+          totalScore >= 16
+            ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png"
+            : totalScore >= 13
+            ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
+            : "https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
+        }
+        alt={totalScore >= 16 ? "Rey del Saber" : totalScore >= 13 ? "Nada Mal" : "Necesitas Repasar"}
+        className="w-48 h-48 rounded-full border-4 border-yellow-500 shadow-md"
+      />
+      {/* Estrellas alrededor de la imagen */}
+      <div className="absolute flex justify-center space-x-2 -top-6">
+        <img src={estrella_llena} alt="Estrella 1" className="w-6 h-6" />
+        {totalScore >= 13 && <img src={estrella_llena} alt="Estrella 2" className="w-6 h-6" />}
+        {totalScore >= 16 && <img src={estrella_llena} alt="Estrella 3" className="w-6 h-6" />}
       </div>
-      <p className="text-3xl font-bold">¡Eres realmente el rey del saber!</p>
-    </>
-  ) : totalScore >= 13 ? (
-    <>
-      <div className="relative inline-block">
-        {/* Imagen "Nada Mal" */}
-        <img
-          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
-          alt="Nada mal"
-          className="mb-4 mx-auto w-60 h-100 rounded-full"
-        />
+    </div>
 
-        {/* Estrellas alrededor de la imagen */}
-        <div className="absolute inset-0 flex justify-center items-center -top-6">
-          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
-          <img src={estrella_llena} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
-          <img src={estrella_vacia} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
-        </div>
+    {/* Mensaje final */}
+    <p className="text-lg font-semibold mb-4">
+      {totalScore >= 16
+        ? "¡Eres realmente el rey del saber!"
+        : totalScore >= 13
+        ? "¡Nada mal, pero puedes mejorar!"
+        : "¡Necesitas repasar las sesiones!"}
+    </p>
+
+    {/* Resumen de resultados */}
+    <div className="grid grid-cols-3 gap-6 bg-gray-900 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
+      <div className="col-span-1 flex flex-col items-center">
+        <span>Duración</span>
+        <span>{finalTime !== null ? Math.floor(finalTime / 60) : 0} min {finalTime !== null ? finalTime % 60 : 0} s</span>
       </div>
-      <p className="text-3xl font-bold">¡Nada mal, pero puedes mejorar!</p>
-    </>
-  ) : (
-    <>
-      <div className="relative inline-block">
-        {/* Imagen "Necesitas Repasar" */}
-        <img
-          src="https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
-          alt="Necesitas repasar"
-          className="mb-4 mx-auto w-60 h-100 rounded-full"
-        />
-
-        {/* Estrellas alrededor de la imagen */}
-        <div className="absolute inset-0 flex justify-center items-center -top-6">
-          <img src={estrella_llena} alt="Estrella 1" className="absolute top-0 left-12 w-12 h-12" />
-          <img src={estrella_vacia} alt="Estrella 2" className="absolute top-0 left-1/2 w-12 h-12 transform -translate-x-1/2" />
-          <img src={estrella_vacia} alt="Estrella 3" className="absolute top-0 right-12 w-12 h-12" />
-        </div>
+      <div className="col-span-1 flex flex-col items-center">
+        <span>Correctas</span>
+        <span>{correctAnswers}</span>
       </div>
-      <p className="text-3xl font-bold">¡Necesitas repasar las sesiones!</p>
-    </>
-  )}
+      <div className="col-span-1 flex flex-col items-center">
+        <span>Total</span>
+        <span>{evaluationQuestions?.length || 0}</span>
+      </div>
+    </div>
 
-                
+    {/* Botón de acción */}
+    <div className="pt-4">
+      {attemptCount >= 2 ? (
+        <p className="text-lg text-gray-400 font-semibold">Completaste todos los intentos disponibles</p>
+      ) : (
+        <button
+          onClick={handleStartEvaluation}
+          className={`w-full py-3 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105 ${
+            totalScore >= 16
+              ? "bg-yellow-500 text-purple-900"
+              : "bg-red-500 text-white"
+          }`}
+        >
+          {attemptCount === 1 ? "Volver a Intentar" : "Comenzar Evaluación"}
+        </button>
+      )}
+    </div>
+   
+            
+
                  {/*Finalizar Evalauación los botones ya nos e muestra 
                  {attemptCount >= 2 ? (
                   <p className="text-white text-xl mt-4">
@@ -948,7 +977,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             {/* Botones para evaluación final */}
   {selectedOption !== null && !showReaction && !evaluationCompleted && (
     <button
-      className="mt-10 p-3 bg-yellow-500 text-2xl text-purple-900 font-bold rounded-lg shadow-lg w-full md:w-1/3"
+      className="mt-10 p-3  text-2xl bg-brandmo-800 text-white font-bold rounded-lg shadow-lg w-full md:w-1/3"
       onClick={handleNextQuestion}
     >
       {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}

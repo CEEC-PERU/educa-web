@@ -14,6 +14,7 @@ import './../../../app/globals.css';
 import ScreenSecurity from '../../../components/ScreenSecurity'; 
 import Footter from '../../../components/Footter';
 
+
 Modal.setAppElement('#__next');
 
 // Corrección del tipo para courseNota que es un array de UserNota

@@ -28,11 +28,18 @@ const config: Config = {
         "brandazul-200" : "#00168B",
         "brand-morado-500" : "#170744",
         "brand-mor-600" : "#4B0582",
-        "brandmora-400": "#33025A"
+        "brandmora-400": "#33025A",
+        "brandm-400": "#BFB5FF",
+         "brandmc-100": "#8C52FF",
+          "brandmo-800": "#351C99",
+           "brandm-500": "#5E17EB"
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
       },
     },
   },
