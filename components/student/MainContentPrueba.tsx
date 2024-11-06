@@ -592,6 +592,7 @@ const getFirstCreatedAtResults = (moduleResults?: ModuleResults[]) => {
   return uniqueResults;
 };
 
+
 // Obtener la nota del primer intento de evaluación en cada evaluation_id
 const firstResults = getFirstCreatedAtResults(moduleResults);
 // Filtrar módulos con puntaje mayor o igual a 16
@@ -670,7 +671,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
               }`}
             >
                ¡Tienes 2 Intentos Disponibles!
-                Si obtienes mayor a 16 en el primer intento tienes un segundo intento en el examen final
+                Si obtienes mayor a 16 en el primer intento de los examenes modulares tienes un segundo intento en el examen final
             </p>
             {/*Imagen dependiendo de evaluación del modulo y evaluación final*/}
             <img
