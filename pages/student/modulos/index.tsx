@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   const { course_id } = router.query;
   const userInfo = user as { id: number };
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
-  const { courseData, isLoading, error } = useModuleDetail(courseIdNumber);
+  const { courseData, isLoading, error , refetch } = useModuleDetail(courseIdNumber);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -117,7 +117,9 @@ const Home: React.FC = () => {
   if (!courseData || courseData.length === 0) {
     return <LoadingIndicator />;
   }
-
+  const handleEvaluationFinish = () => {
+    refetch(); 
+  };
   return (
     <ProtectedRoute>
     <div>
@@ -141,6 +143,7 @@ const Home: React.FC = () => {
             selectedModuleId={selectedModuleId}
             moduleResults={courseData[0].courseModules.flatMap(module => module.ModuleResults)}
             courseResults={courseData[0].CourseResults}
+            onUpdated={handleEvaluationFinish} 
           />
         </div>
         <SidebarPrueba

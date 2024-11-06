@@ -22,6 +22,7 @@ interface MainContentProps {
   sessionVideo?: string;
   evaluationQuestions?: Question[];
   onFinish?: () => void;
+  onUpdated?: () => void;
   onProgress?: (progress: number, isCompleted: boolean) => void;
   videoProgress?: number;
   selectedModuleId?: number | null;
@@ -36,6 +37,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   sessionVideo,
   evaluationQuestions,
   onFinish,
+  onUpdated,
   onProgress,
   videoProgress = 0,
   selectedModuleId,
@@ -65,7 +67,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [evamodulecount, setEvaModCount] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
 
-  // Nuevo estado para guardar todas las respuestas seleccionadas
+// Nuevo estado para guardar todas las respuestas seleccionadas
 
   const [answers, setAnswers] = useState<
     {
@@ -79,8 +81,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   >([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
  
-    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730823789/CEEC/PREQUIZZ/sxworivg6t3x1ccvpskx.png';
-    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730823789/CEEC/PREQUIZZ/fyksx6vikutcyxgweceo.png';
+    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png';
+    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png';
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const optionColors = ["bg-blue-500", "bg-orange-500", "bg-purple-500", "bg-cyan-500"];
@@ -411,6 +413,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       createResultModule(moduloResultado);
     
       console.log("MODULO_RESULTADO", moduloResultado);
+      
+
     } else {
       // Si no hay selectedModuleId, es la evaluación final del curso
       const courseId = Array.isArray(router.query.course_id)
@@ -434,8 +438,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       };
       createResultCourse(cursoResultado);
       console.log("CURSO_RESULTADO", cursoResultado);
-      router.reload();
-    // Recargar la página actual
+    
     }
   };
 
@@ -456,7 +459,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     setCorrectAnswers(0);
     setEvaluationCompleted(false);
     setShowStartMessage(false);
-
+ 
     if (isFinalEvaluation) {
       setShowNPSForm(true); // Show NPS form before final evaluation
        // Verificar si los cuestionarios de NPS y Star tienen resultados
@@ -479,6 +482,20 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setShowStartMessage(false);
     }
   };
+
+  const handleReintentarEvaluation = () => {
+    setCurrentQuestion(0);
+    setSelectedOption(null);
+    setIsCorrect(null);
+    setTotalScore(0);
+    setCorrectAnswers(0);
+    setEvaluationCompleted(false);
+    setShowStartMessage(false);
+    if (onUpdated) onUpdated();
+  
+  };
+
+
 
   const handleReloadEvaluation = () => {
     if (isFinalEvaluation) {
@@ -618,7 +635,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
         </div>
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         showStartMessage ? (
-          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-purple-900 to-fuchsia-700 p-6 rounded-lg shadow-lg">
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-6 rounded-lg shadow-lg">
             <h1
               className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
                 isFinalEvaluation ? "" : "hidden"
@@ -732,7 +749,7 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
           </div>
         ) : (
           
-          <div className="flex flex-col items-center justify-center min-h-screen bg-white p-4 md:p-6 rounded-lg shadow-xl space-y-6">
+          <div className="flex flex-col items-center justify-center h-full bg-white p-4 md:p-6 rounded-lg shadow-xl space-y-6">
          {/* Puntaje actual   , arriba para cambiar el fondo*/}
          <div className="w-full text-center text-brandm-500 text-2xl md:text-4xl font-bold">
             Puntaje: {totalScore}
@@ -874,12 +891,9 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                 )}
               </div>
             ) : (
-              <div className="flex justify-center items-center w-full h-full p-6 bg-gradient-to-b from-purple-800 to-purple-900">
-  <div className="bg-gradient-to-r from-indigo-800 via-purple-700 to-indigo-800 rounded-lg shadow-lg w-full max-w-3xl text-center text-white p-8 space-y-6">
-    {/* Título del resultado */}
-    <h2 className="text-4xl font-extrabold text-yellow-400 mb-4">
-      {totalScore >= 16 ? "¡Rey del Saber!" : totalScore >= 13 ? "¡Nada Mal!" : "Necesitas Repasar"}
-    </h2>
+              <div className="flex justify-center items-center w-full h-full  bg-white">
+  <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl text-center text-white p-8 space-y-6">
+    
     
     {/* Imagen central con estrellas */}
     <div className="relative flex justify-center mb-6">
@@ -891,19 +905,19 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
             : "https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
         }
-        alt={totalScore >= 16 ? "Rey del Saber" : totalScore >= 13 ? "Nada Mal" : "Necesitas Repasar"}
-        className="w-48 h-48 rounded-full border-4 border-yellow-500 shadow-md"
+      
+        className="w-60 h-60 rounded-full border-4 border-brandmc-100 shadow-md"
       />
       {/* Estrellas alrededor de la imagen */}
-      <div className="absolute flex justify-center space-x-2 -top-6">
-        <img src={estrella_llena} alt="Estrella 1" className="w-6 h-6" />
-        {totalScore >= 13 && <img src={estrella_llena} alt="Estrella 2" className="w-6 h-6" />}
-        {totalScore >= 16 && <img src={estrella_llena} alt="Estrella 3" className="w-6 h-6" />}
+      <div className="absolute flex justify-center space-x-2 -top-12 pb-20">
+        <img src={estrella_llena} alt="Estrella 1" className="w-12 h-12" />
+        {totalScore >= 13 && <img src={estrella_llena} alt="Estrella 2" className="w-12 h-12" />}
+        {totalScore >= 16 && <img src={estrella_llena} alt="Estrella 3" className="w-12 h-12" />}
       </div>
     </div>
 
     {/* Mensaje final */}
-    <p className="text-lg font-semibold mb-4">
+    <p className="text-2xl font-semibold mb-4 text-brandm-500">
       {totalScore >= 16
         ? "¡Eres realmente el rey del saber!"
         : totalScore >= 13
@@ -911,38 +925,44 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
         : "¡Necesitas repasar las sesiones!"}
     </p>
 
+   
     {/* Resumen de resultados */}
-    <div className="grid grid-cols-3 gap-6 bg-gray-900 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
-      <div className="col-span-1 flex flex-col items-center">
-        <span>Duración</span>
-        <span>{finalTime !== null ? Math.floor(finalTime / 60) : 0} min {finalTime !== null ? finalTime % 60 : 0} s</span>
-      </div>
-      <div className="col-span-1 flex flex-col items-center">
-        <span>Correctas</span>
-        <span>{correctAnswers}</span>
-      </div>
-      <div className="col-span-1 flex flex-col items-center">
-        <span>Total</span>
-        <span>{evaluationQuestions?.length || 0}</span>
-      </div>
-    </div>
+<div className="grid grid-cols-3 gap-6 bg-brandmc-100 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
+  <div className="col-span-1 flex flex-col items-center">
+    <span className="text-xl">Duración</span>
+    {/* Add the image below the label */}
+    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/ect4ksc3nxzzu7jsu5jw.png" alt="Duración icon" className="w-18 h-18 my-2" />
+    <span className="text-xl">{finalTime !== null ? Math.floor(finalTime / 60) : 0} min {finalTime !== null ? finalTime % 60 : 0} s</span>
+  </div>
+  <div className="col-span-1 flex flex-col items-center">
+    <span className="text-xl">Respuestas Correctas</span>
+    {/* Add the image below the label */}
+    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/b4a0n1srq6zwexb837d3.png" alt="Correctas icon" className="w-18 h-18 my-2" />
+    <span className="text-xl">{correctAnswers}</span>
+  </div>
+  <div className="col-span-1 flex flex-col items-center">
+    <span className="text-xl">Total de Preguntas</span>
+    {/* Add the image below the label */}
+    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/aogv21pxjfi2civsg7a9.png" alt="Total icon" className="w-18 h-18 my-2" />
+    <span className="text-xl">{evaluationQuestions?.length || 0}</span>
+  </div>
+</div>
+
 
     {/* Botón de acción */}
     <div className="pt-4">
-      {attemptCount >= 2 ? (
-        <p className="text-lg text-gray-400 font-semibold">Completaste todos los intentos disponibles</p>
-      ) : (
+      
         <button
-          onClick={handleStartEvaluation}
+          onClick={handleReintentarEvaluation}
           className={`w-full py-3 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105 ${
             totalScore >= 16
-              ? "bg-yellow-500 text-purple-900"
-              : "bg-red-500 text-white"
+              ? "bg-brandm-500 text-white"
+              : "bg-brandm-500 text-white"
           }`}
         >
-          {attemptCount === 1 ? "Volver a Intentar" : "Comenzar Evaluación"}
+         Regresar
         </button>
-      )}
+    
     </div>
    
             
