@@ -95,7 +95,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         return;
       }
   
-      // Crear el cuerpo de la solicitud para enviar al backend
+      // Crear el cuerpo de la solicitud para enviar al backend del courseuserinfo
       const requestBody = {
         users,
         course_id: selectedCourses, // Enviar el `course_id` seleccionado
