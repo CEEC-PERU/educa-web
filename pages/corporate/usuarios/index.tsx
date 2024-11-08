@@ -193,7 +193,7 @@ const Usuarios: React.FC = () => {
           </div>
         </main>
       </div>
-      <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
+      <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario"  >
         {userCountResult && (
           <UserForm
             roleId={Number(roleId)}

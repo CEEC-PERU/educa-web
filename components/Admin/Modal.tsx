@@ -11,7 +11,7 @@ const Modal: React.FC<ModalProps> = ({ show, onClose, title, children }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-800 bg-opacity-75">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-gray-800 bg-opacity-75 modal-small">
       <div className="relative w-full max-w-4xl mx-4 md:mx-0 rounded-lg shadow-lg bg-white">
         <div className="flex justify-between items-center border-b p-6">
           <h2 className="text-lg font-medium">{title}</h2>
