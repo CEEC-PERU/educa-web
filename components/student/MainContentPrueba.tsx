@@ -765,7 +765,10 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                 width: `${((currentQuestion + 1) / evaluationQuestions.length) * 100}%`,
               }}
             >
-            <p className="text-white text-xl pt-3 font-bold">{((currentQuestion + 1) / evaluationQuestions.length) * 100}%</p>  
+             <p className="text-white text-xl pt-3 font-bold">
+  {Math.round(((currentQuestion + 1) / evaluationQuestions.length) * 100)}%
+</p>
+
             </div>
           </div>
         
