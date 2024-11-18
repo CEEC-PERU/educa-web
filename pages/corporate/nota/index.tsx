@@ -37,15 +37,7 @@ const NotaCourses: React.FC = () => {
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const [selectedShift, setSelectedShift] = useState('');
 
-  // Datos estáticos
-  const users = [
-    { name: 'Camila Fernandez', module1: [8, 9], module2: [7, 10], finalGrade: 9 },
-    { name: 'Maria Gutierrez', module1: [7, 8], module2: [9, 9], finalGrade: 8.5 },
-    { name: 'Alvaro Garcia', module1: [10, 10], module2: [8, 9], finalGrade: 9.5 },
-    { name: 'Raul Rodriguez', module1: [6, 7], module2: [8, 8], finalGrade: 7.5 },
-    { name: 'Rosa Fuentes', module1: [9, 9], module2: [7, 7], finalGrade: 8 },
-    { name: 'Fiorella Peralta', module1: [8, 8], module2: [9, 9], finalGrade: 8.5 },
-  ];
+  
 
   const handleClassroomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setSelectedClassroom(e.target.value);
@@ -158,68 +150,111 @@ const NotaCourses: React.FC = () => {
             <Loader />
           ) : (
             <div className="grid gap-6 shadow-lg rounded-lg overflow-hidden">
-              {courseNota && (
-                <>
-                  <table className="min-w-full bg-white border border-blue-300 shadow-md">
-                    <thead className="bg-blue-500 text-white">
-                      <tr>
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300">Nombre del Estudiante</th>
-                        {courseNota[0]?.ModuleResults?.map((module: any, index: number) => (
-                          <th key={`module-${index}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
-                            Módulo: {module.module_name}
-                          </th>
-                        ))}
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300" colSpan={getMaxExamResultsLength(courseNota[0]?.CourseResults || [])}>
-                          Examen Final
-                        </th>
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300">Estado</th>
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300">Fecha Inicio</th>
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300">Fecha Fin</th>
-                        <th className="py-2 px-4 border-b border-l-4 border-blue-300">Sesiones</th>
-                      </tr>
-                    </thead>
+  {courseNota && (
+    <>
+      <table className="min-w-full bg-white border border-blue-300 shadow-md">
+        <thead className="bg-blue-500 text-white">
+          <tr>
+            <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Nombre del Estudiante</th>
+            {courseNota[0]?.ModuleResults?.map((module: any, index: number) => (
+              <th key={`module-${index}`} rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">
+                Módulo: {module?.module_name || "-"}
+              </th>
+            ))}
+            <th colSpan={3} className="py-2 px-4 border-b border-l-4 border-blue-300">Examen Final</th>
+            <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Estado</th>
+            <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Fecha Inicio</th>
+            <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Fecha Fin</th>
+            <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Sesiones</th>
+          </tr>
+          <tr>
+            <th className="py-2 px-4 border-b border-l-4 border-blue-300">Nota 1</th>
+            <th className="py-2 px-4 border-b border-l-4 border-blue-300">Nota 2</th>
+            <th className="py-2 px-4 border-b border-l-4 border-blue-300">Nota Final</th>
+          </tr>
+        </thead>
 
-                    <tbody>
-                      {courseNota.map((user: any, userIndex: number) => (
-                        <tr key={userIndex} className="hover:bg-gray-100 transition-colors">
-                          <td className="py-2 px-4 border-b border-l-4 border-blue-300">{user.userProfile.first_name} {user.userProfile.last_name}</td>
-                          {courseNota[0]?.ModuleResults?.map((module: any, moduleIndex: number) => {
-                            const moduleResult = user.ModuleResults.find((mod: any) => mod.module_name === module.module_name);
-                            if (moduleResult) {
-                              const highestScore = Math.max(...moduleResult.results.map((result: any) => result.puntaje));
-                              return (
-                                <td key={`module-highest-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
-                                  {highestScore}
-                                </td>
-                              );
-                            } else {
-                              return (
-                                <td key={`empty-module-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
-                              );
-                            }
-                          })}
-                          {user.CourseResults?.map((result: any, resultIndex: number) => (
-                            <td key={`exam-${userIndex}-${resultIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
-                              {result.puntaje}
-                            </td>
-                          ))}
-                          <td className="py-2 px-4 border-b border-l-4 border-blue-300">{getStatus(user.CourseResults?.[0]?.puntaje || 0)}</td>
-                          {randomDates[userIndex] ? (
-                            <>
-                              <td className="py-2 px-4 border-b border-l-4 border-blue-300">{formatDate(randomDates[userIndex].startDate)}</td>
-                              <td className="py-2 px-4 border-b border-l-4 border-blue-300">{formatDate(randomDates[userIndex].endDate)}</td>
-                            </>
-                          ) : (
-                            <>
-                              <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
-                              <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
-                            </>
-                          )}
-                          <td className="py-2 px-4 border-b border-l-4 border-blue-300">{randomSessions[userIndex]}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+        <tbody>
+          {courseNota.map((user: any, userIndex: number) => (
+            <tr key={userIndex} className="hover:bg-gray-100 transition-colors">
+              {/* Nombre del estudiante */}
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+                {user?.userProfile?.first_name || "-"} {user?.userProfile?.last_name || "-"}
+              </td>
+              {/* Notas de los módulos */}
+              {courseNota[0]?.ModuleResults?.map((module: any, moduleIndex: number) => {
+                const moduleResult = user.ModuleResults?.find((mod: any) => mod.module_name === module.module_name);
+                if (moduleResult) {
+                  const highestScore = Math.max(...moduleResult.results.map((result: any) => result.puntaje));
+                  return (
+                    <td key={`module-highest-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
+                      {highestScore || "-"}
+                    </td>
+                  );
+                } else {
+                  return (
+                    <td key={`empty-module-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
+                  );
+                }
+              })}
+              {/* Resultados del examen final */}
+              {["Nota 1", "Nota 2"].map((label, examIndex) => {
+                const result = user.CourseResults?.[examIndex]?.puntaje || "-";
+                return (
+                  <td key={`exam-${userIndex}-${examIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
+                    {result}
+                  </td>
+                );
+              })}
+              {/* Nota Final */}
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+                {Math.max(
+                  user.CourseResults?.[0]?.puntaje || 0,
+                  user.CourseResults?.[1]?.puntaje || 0
+                ) || "-"}
+              </td>
+              {/* Columna de estado */}
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+  {user.CourseResults?.length > 0
+    ? getStatus(
+        Math.max(
+          user.CourseResults?.[0]?.puntaje || 0,
+          user.CourseResults?.[1]?.puntaje || 0
+        )
+      )
+    : "En Proceso"}
+</td>
+
+              {/* Fechas */}
+              {randomDates[userIndex] ? (
+                <>
+                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+                    {formatDate(randomDates[userIndex]?.startDate) || "-"}
+                  </td>
+                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+                    {formatDate(randomDates[userIndex]?.endDate) || "-"}
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
+                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
+                </>
+              )}
+              {/* Sesiones */}
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+                {randomSessions[userIndex] || "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    
+ 
+             
+          
+           
+          
 
                   {/* Gráfico 1: Reporte de aprobados y desaprobados */}
                   <div className="mt-10">
