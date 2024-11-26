@@ -7,17 +7,19 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, isLoading, token } = useAuth();
+  const { isLoading } = useAuth(); // Se usa solo para mostrar "Cargando..."
   const router = useRouter();
 
   useEffect(() => {
+    const userToken = localStorage.getItem('userToken'); // Obtiene el token directamente de localStorage
+
     if (!isLoading) {
-      // Si el usuario no tiene token o sesión, redirige al login
-      if (!user || !token) {
+      // Redirige al login si el token no está presente
+      if (!userToken) {
         router.push('/login');
       }
     }
-  }, [user, isLoading, token, router]);
+  }, [isLoading, router]);
 
   if (isLoading) {
     return <p>Cargando...</p>; // Mostrar una pantalla de carga mientras se verifica la autenticación
