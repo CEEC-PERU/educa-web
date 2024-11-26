@@ -110,6 +110,40 @@ const refreshProfile = async (token: string, userId: number) => {
     router.push('/');
   };
 
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      setIsLoading(true); // Inicia cargando mientras verifica el token
+      try {
+        const storedUserToken = localStorage.getItem('userToken');
+        const storedUserInfo = localStorage.getItem('userInfo');
+        const isValid = storedUserToken ? await validateToken(storedUserToken) : false;
+  
+        if (storedUserInfo && isValid) {
+          const storedProfileInfo = localStorage.getItem('profileInfo');
+          if (storedProfileInfo) {
+            setProfileInfo(JSON.parse(storedProfileInfo));
+          }
+  
+          const { id, role, dni, enterprise_id } = JSON.parse(storedUserInfo);
+          setToken(storedUserToken);
+          setUser({ id, role, dni, enterprise_id });
+          axios.defaults.headers.common['Authorization'] = `Bearer ${storedUserToken}`;
+        } else {
+          logout(); // Si el token no es válido, limpia todo
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        logout();
+      } finally {
+        setIsLoading(false); // Finaliza la carga
+      }
+    };
+  
+    initializeAuth();
+  }, []); // Solo se ejecuta al cargar la aplicación
+
+  
   useEffect(() => {
     try {
       const storedUserToken = localStorage.getItem('userToken');

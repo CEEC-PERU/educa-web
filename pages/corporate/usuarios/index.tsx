@@ -20,7 +20,7 @@ const Usuarios: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { usercount, isLoading, error  } = useUserCount();
-  const { logout, user, profileInfo} = useAuth();
+  const { logout, user, profileInfo, token} = useAuth();
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [filter, setFilter] = useState('');
