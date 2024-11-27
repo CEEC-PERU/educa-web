@@ -8,12 +8,19 @@ export const useProfesor = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useAuth();
-  const userInfo = user as { id: number; enterprise_id: number };
+
 
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const usersData = await getUsersByCompanyAndRole(userInfo.enterprise_id, 6);
+       // Obtener datos del localStorage
+       const storedUserInfo = localStorage.getItem('userInfo');
+       if (!storedUserInfo) {
+         throw new Error('No se encontró información del usuario en el localStorage.');
+       }
+ 
+      const { enterprise_id } = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+      const usersData = await getUsersByCompanyAndRole(enterprise_id, 6);
       setUsers(usersData);
       console.log("profesores", usersData);
     } catch (error) {
@@ -33,5 +40,6 @@ export const useProfesor = () => {
     users,
     error,
     isLoading,
+    
   };
 };

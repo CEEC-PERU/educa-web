@@ -8,42 +8,53 @@ export const useClassroom = () => {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number , enterprise_id : number};
-//useEffect
-  useEffect(() => {
-    const fetchCourseDetail = async () => {
-      if (!token) {
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const response = await getClassroom(token, userInfo.enterprise_id );
-        if (response === null) {
-          setClassroom([]); 
-        } else if (Array.isArray(response)) {
-          setClassroom(response); 
-        } else {
-          setClassroom([response]); 
-        }
-      } catch (error) {
-        console.error('Error fetching course detail:', error);
-        setError('Error fetching course detail. Please try again.');
-      } finally {
-        setIsLoading(false);
-        //carga 
-      }
-    };
 
-    fetchCourseDetail();
-  }, [token]);
+  const fetchClassrooms = async () => {
+    setIsLoading(true);
+    try {
+      // Obtener datos del localStorage
+      const storedUserInfo = localStorage.getItem('userInfo');
+      if (!storedUserInfo) {
+        throw new Error('No se encontró información del usuario en el localStorage.');
+      }
+
+      const { enterprise_id } = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+      const token = localStorage.getItem('userToken');
+
+      if (!token) {
+        throw new Error('No se encontró el token del usuario en el localStorage.');
+      }
+
+      // Llamada al servicio para obtener los classrooms
+      const response = await getClassroom(token, enterprise_id);
+
+      if (response === null) {
+        setClassroom([]);
+      } else if (Array.isArray(response)) {
+        setClassroom(response);
+      } else {
+        setClassroom([response]);
+      }
+    } catch (error) {
+      console.error('Error fetching classrooms:', error);
+      setError('Error al obtener los classrooms.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Ejecuta fetchClassrooms cuando se monta el componente
+  useEffect(() => {
+    fetchClassrooms();
+  }, []);
 
   return {
     classrooms,
     error,
-    isLoading
+    isLoading,
+    fetchClassrooms, 
   };
 };
-
 
 
 export const useClassroomUserSupervisor = () => {

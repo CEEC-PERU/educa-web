@@ -67,7 +67,7 @@ const SupervisorForm: React.FC<UserFormProps> = ({ roleId, initialEnterpriseId, 
         if (createdUser && createdUser.user_id) {
           onSuccess(createdUser.user_id);
         }
-      }, 4000);
+      }, 700);
     } catch (error) {
       console.error('Error creating user:', error);
       setError('Error creando usuario');

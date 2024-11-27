@@ -110,7 +110,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
     { value: '', label: 'Seleccione un profesor' }, 
     ...users.map(user => ({
       value: user.user_id?.toString() || '',  // Verifica si user_id es undefined y usa cadena vacía
-      label: user.userProfile?.first_name || 'Sin nombre'  // Proporciona un valor predeterminado
+      label: `${user.userProfile?.first_name || 'Sin nombre'} ${user.userProfile?.last_name || ''}`.trim()
     }))
   ]}
 />

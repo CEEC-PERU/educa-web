@@ -21,7 +21,7 @@ const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'supervisor' | 'classroom' | 'profile' | null>(null);
-  const { classrooms, isLoading } = useClassroom();
+  const { classrooms, isLoading  , fetchClassrooms} = useClassroom();
   const { users } = useProfesor();
   const router = useRouter();
   const { user, profileInfo } = useAuth();
@@ -37,12 +37,14 @@ const Classroom: React.FC = () => {
   const handleAddClassroom = () => {
     setModalType('classroom');
     setIsModalOpen(true);
+   
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setModalType(null);
     setNewUserId(null); // Reinicia el estado del user_id
+    fetchClassrooms();
   };
 
   const handleUserCreateSuccess = (createdUserId: number) => {
@@ -51,6 +53,7 @@ const Classroom: React.FC = () => {
     setModalType('profile'); // Cambia el modal para mostrar el formulario de perfil
   };
 
+  
   return (
       <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useProfile2 } from '../../hooks/useProfile';
 import Loader from '@/components/Loader';
 import { useRouter } from 'next/router';
+
+import Alert from '../../components/AlertComponent';
 interface ProfileFormProps {
   userId: number;
   onSuccess: () => void;
@@ -16,7 +18,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userId, onSuccess }) => {
   const [selectedProfilePicture, setSelectedProfilePicture] = useState<string>('https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg');
   const { updateProfile2, isLoading, error } = useProfile2(userId);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [showAlert, setShowAlert] = useState(false); 
   const handleProfileUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Profile",userId)
@@ -42,7 +44,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userId, onSuccess }) => {
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Completa tu Perfil</h2>
+       {showAlert && (
+        <Alert
+          type="warning"
+          message="Debe completar su perfil antes de cerrar."
+          onClose={() => setShowAlert(false)}
+        />
+      )}
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Completa el Perfil</h2>
       <form onSubmit={handleProfileUpdate} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-700">Nombres</label>
