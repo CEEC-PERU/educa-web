@@ -101,7 +101,10 @@ const SidebarPrueba: React.FC<SidebarProps> = ({ courseModules, courseEvaluation
               className={`mt-2 cursor-pointer font-bold text-sm ${moduleProgress === 100 ? '' : 'text-gray-400'}`}
               onClick={() => moduleProgress === 100 && onSelect('', module.moduleEvaluation.questions, module.module_id)}
             >
-              Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}
+              {module.moduleEvaluation && (
+  <div>Evaluación del Módulo {moduleIndex + 1}: {module.moduleEvaluation.name}</div>
+)}
+
             </div>
           </div>
         );
