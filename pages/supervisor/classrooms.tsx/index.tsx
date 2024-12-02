@@ -55,16 +55,6 @@ const Classroom: React.FC = () => {
               />
             </div>
 
-            <div>
-              <ButtonContent
-                buttonLabel="Asignar Estudiante"
-                backgroundColor="bg-yellow-500"
-                textColor="text-white"
-                fontSize="text-xs"
-                buttonSize="py-2 px-7"
-                onClick={handleAddUser}
-              />
-            </div>
 
           </div>
           <div className='grid grid-cols-2 '>

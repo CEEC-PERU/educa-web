@@ -1,5 +1,5 @@
 import React from 'react';
-import { PencilIcon } from '@heroicons/react/24/outline';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface Column {
   header: string;
@@ -11,9 +11,12 @@ interface TableProps {
   data: any[];
   actionLabel?: string;
   onActionClick?: (row: any) => void;
+  onDeleteClick?: (row: any) => void;
 }
 
-const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionClick }) => {
+
+
+const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionClick , onDeleteClick }) => {
   return (
     <div className="overflow-x-auto mt-4">
       <table className="min-w-full bg-white">
@@ -46,13 +49,24 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
                   </td>
                 );
               })}
-              {onActionClick && (
+              
+              {(onActionClick || onDeleteClick) && (
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
-                  <button className="text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
-                    <PencilIcon className="h-5 w-5" />
-                  </button>
+                  {onActionClick && (
+                    <button className="text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
+                      <PencilIcon className="h-5 w-5" />
+                    </button>
+                  )}
+                  {onDeleteClick && (
+                    <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => onDeleteClick(row)}>
+                      <TrashIcon className="h-5 w-5" />
+                    </button>
+                  )}
                 </td>
               )}
+
+              
+              
             </tr>
           ))}
         </tbody>

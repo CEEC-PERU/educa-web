@@ -1,6 +1,6 @@
 // services/userService.ts
 import axios from './axios';
-import { API_USERS, API_USER, API_GET_USERS_BY_ENTERPRISE, API_USERCOUNT, API_USERS_COURSES} from '../utils/Endpoints';
+import { API_USERS, API_USER, API_GET_USERS_BY_ENTERPRISE, API_USERCOUNT, API_USERS_COURSES, API_USERU} from '../utils/Endpoints';
 import { UserCount} from '../interfaces/UserCount';
 interface ImportUsersResponse {
   success: boolean;
@@ -73,11 +73,18 @@ export const getUsersByClassroom = async (userId: number, companyId: number) => 
 };
 
 
-
-
 export const getUserById = async (userId: number) => {
   const response = await axios.get(`${API_USER}/users/${userId}`);
   return response.data;
+};
+
+export const deleteUserById = async (userId: number) => {
+  try {
+    const response = await axios.delete(`${API_USERU}/users/${userId}`);
+    return response.data; // Se puede devolver una respuesta personalizada o un mensaje de éxito
+  } catch (error) {
+    throw error; // Propagamos el error para que se pueda manejar más tarde
+  }
 };
 
 export const getCoursesByUser= async (userId: number) => {

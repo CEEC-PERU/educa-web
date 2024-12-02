@@ -12,10 +12,12 @@ import {StudentData} from '../../../interfaces/UsuariosSupervisor';
 import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../interfaces/UserAdmin';
 import { useUserCount } from '../../../hooks/useUserCount';
+import { useDeleteUser } from '../../../hooks/useDeleteUser';
 import './../../../app/globals.css';
 
 
 const Usuarios: React.FC = () => {
+  const { deleteUser } = useDeleteUser(); 
   const { usercount, isLoading, error  } = useUserCount();
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
@@ -32,7 +34,14 @@ const Usuarios: React.FC = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const data: StudentData = await getUsersByClassroom(userInfor.id , userInfor.enterprise_id); // Supongamos que esto devuelve el objeto con supervisor, classrooms y students
+
+        const storedUserInfo = localStorage.getItem('userInfo');
+        if (!storedUserInfo) {
+          throw new Error('No se encontró información del usuario en el localStorage.');
+        }
+  
+       const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+        const data: StudentData = await getUsersByClassroom(id, enterprise_id); // Supongamos que esto devuelve el objeto con supervisor, classrooms y students
         setStudentsData(data);
       } catch (error) {
         console.error('Error al obtener los datos:', error);
@@ -46,10 +55,8 @@ const Usuarios: React.FC = () => {
     setFilter(e.target.value);
   };
 
-  const handleExportCSV = () => {
-    router.push('/supervisor/usuarios/exportCsv');
-  };
 
+  
   useEffect(() => {
     if (usercount.length > 0) {
       setUserCountResult(usercount[0]);
@@ -81,6 +88,22 @@ const Usuarios: React.FC = () => {
     }
   };
 
+  const handleDeleteClick = async (row: any) => {
+    const confirmDelete = window.confirm(`¿Estás seguro de que deseas eliminar al usuario ?`);
+    if (confirmDelete) {
+      try {
+        await deleteUser(row.user_id);
+        console.log('Usuario eliminado:', row.user_id);
+        alert('Usuario eliminado correctamente.');
+       router.reload();
+        setUsers(users.filter(user => user.user_id !== row.user_id)); // Actualizar la lista local de usuarios
+      } catch (error) {
+        alert('Error al eliminar el usuario.');
+      }
+    }
+  };
+
+  
   // Usuarios con perfil
   const studentsWithProfile = filteredStudents.filter(student => student.User.userProfile);
 
@@ -151,18 +174,21 @@ const Usuarios: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
             <div>
               <h2 className="text-lg font-semibold mb-2">Usuarios con Perfil</h2>
-              <TableUser
-                columns={columnsWithProfile}
-                data={studentsWithProfile}
-                actionLabel="Editar"
-                onActionClick={handleActionClick}
-              />
+            <TableUser
+            columns={columnsWithProfile}
+            data={studentsWithProfile}
+            actionLabel="Editar"
+            onActionClick={handleActionClick}
+            onDeleteClick={handleDeleteClick}
+            />
+
             </div>
             <div>
               <h2 className="text-lg font-semibold mb-2">Usuarios sin Perfil</h2>
               <TableUser
                 columns={columnsWithoutProfile}
                 data={studentsWithoutProfile}
+                onDeleteClick={handleDeleteClick}
               />
             </div>
           </div>

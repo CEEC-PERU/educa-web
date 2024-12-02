@@ -15,8 +15,8 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
   const { user, token } = useAuth();
   const userInfo = user as { id: number, enterprise_id: number };
 
-  const [showCourses, setShowCourses] = useState(true);
-  const [showClassroomAndCourses, setShowClassroomAndCourses] = useState(false);
+  const [showCourses, setShowCourses] = useState(false);
+  const [showClassroomAndCourses, setShowClassroomAndCourses] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState<number | null>(null);
   const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
   
@@ -135,12 +135,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
           className="w-48 p-2 border rounded-lg shadow-sm"
           onChange={handleFileUpload}
         />
-       <button
-          onClick={() => { setShowCourses(true); setShowClassroomAndCourses(false); }}
-          className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition duration-300"
-        >
-          Asignar Cursos
-        </button>
+     
 
         <button
           onClick={() => { setShowClassroomAndCourses(true); setShowCourses(false); }}
