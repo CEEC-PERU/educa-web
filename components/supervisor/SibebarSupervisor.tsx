@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
+
 interface SidebarSupervisorProps {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
@@ -98,7 +99,24 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
                 {isOpen && <span className="ml-2">Cursos</span>}
               </button>
             </li>
-           
+            <li>
+              <button
+                onClick={() => handleNavigation('/supervisor/sesion')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <ClockIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Sesiones</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/supervisor/addRequeriment')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <ClipboardDocumentCheckIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Nuevo Requerimiento</span>}
+              </button>
+            </li>
             <li>
               <button
                 onClick={logout}

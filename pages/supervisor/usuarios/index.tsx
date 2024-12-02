@@ -6,17 +6,17 @@ import { getUsersByCompanyAndRole, getUsersByRole , getUsersByClassroom } from '
 import FormField from '../../../components/FormField';
 import TableUser from '../../../components/TableUser';
 import ButtonContent from '../../../components/Content/ButtonContent';
-import UserForm from '../../../components/supervisor/FormSupervisor';
+import UserForm from '../../../components/supervisor/UserForm';
 import Modal from '../../../components/Admin/Modal';
 import {StudentData} from '../../../interfaces/UsuariosSupervisor';
 import { useAuth } from '../../../context/AuthContext';
-
+import { User } from '../../../interfaces/UserAdmin';
 import { useUserCount } from '../../../hooks/useUserCount';
 import './../../../app/globals.css';
 
 
 const Usuarios: React.FC = () => {
-  
+  const { usercount, isLoading, error  } = useUserCount();
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { logout, user, profileInfo } = useAuth();
@@ -24,6 +24,10 @@ const Usuarios: React.FC = () => {
   const [filter, setFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const userInfor = user as { id: number , enterprise_id :number  , role :number};
+  const roleId = 1;
+  const [userCountResult, setUserCountResult] = useState<any>(null);
+  const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
+  const [users, setUsers] = useState<User[]>([]);
   // Llamada a la API para obtener los datos de estudiantes y aulas
   useEffect(() => {
     const fetchStudents = async () => {
@@ -46,12 +50,36 @@ const Usuarios: React.FC = () => {
     router.push('/supervisor/usuarios/exportCsv');
   };
 
+  useEffect(() => {
+    if (usercount.length > 0) {
+      setUserCountResult(usercount[0]);
+    }
+  }, [usercount]);
+
   // Si studentsData no es null, aplicamos los filtros
   const filteredStudents = studentsData?.students.filter(student =>
     (student.User.userProfile?.first_name?.toLowerCase().includes(filter.toLowerCase()) ||
      student.User.userProfile?.last_name?.toLowerCase().includes(filter.toLowerCase())) ||
     student.User.dni.includes(filter)
   ) || [];
+
+  const handleUserCreateSuccess = () => {
+    setIsModalOpen(false);
+    if (enterpriseId && roleId) {
+      const fetchUsers = async () => {
+        try {
+          const usersData = await getUsersByCompanyAndRole(enterpriseId, Number(roleId));
+          setUsers(usersData);
+          
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+
+      fetchUsers();
+      router.reload();
+    }
+  };
 
   // Usuarios con perfil
   const studentsWithProfile = filteredStudents.filter(student => student.User.userProfile);
@@ -89,6 +117,14 @@ const Usuarios: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
+        <div className='pb-4'>
+            {userCountResult && (
+              <div>
+                <h1 className='font-bold text-2xl text-blue-500'> {userCountResult.UserCount} / {userCountResult.maxUserCount} </h1>
+                <h1 className='font-bold text-2xl'> {userCountResult.message} </h1>
+              </div>
+            )}
+          </div>
         <div className="flex space-x-4 mb-4">
             <div>
               <ButtonContent
@@ -100,16 +136,7 @@ const Usuarios: React.FC = () => {
                 onClick={handleAddUser}
               />
             </div>
-            <div>
-                <ButtonContent
-                  buttonLabel="Exportar CSV"
-                  backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
-                  textColor="text-white"
-                  fontSize="text-xs"
-                  buttonSize="py-2 px-7"
-                  onClick={handleExportCSV}
-                />
-              </div>
+            
           </div>
           <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
             <FormField
@@ -141,9 +168,15 @@ const Usuarios: React.FC = () => {
           </div>
         </main>
       </div>
-      <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
-      //crear nuevo form para subir excel o individual /opcion de eliminar
-          
+      <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario"  >
+        {userCountResult && (
+          <UserForm
+            roleId={Number(roleId)}
+            maxUsersAllowed={userCountResult.maxUserCount - userCountResult.UserCount}
+            onClose={handleModalClose}
+            onSuccess={handleUserCreateSuccess}
+          />
+        )}
       </Modal>
     </div>
   );

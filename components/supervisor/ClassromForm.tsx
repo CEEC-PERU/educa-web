@@ -21,7 +21,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
     code: '',
     enterprise_id: userInfo.enterprise_id,
     shift_id: 0,
-    user_id: 0,
+    user_id: userInfo.id
   });
 
   const [users, setUsers] = useState<User[]>([]);
@@ -99,20 +99,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
           options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name }))]}
         />
 
-<FormField 
-  id="user_id" 
-  label="Profesor" 
-  type="select" 
-  value={formData.user_id?.toString() || ''}  // Garantiza que sea un string o cadena vacía
-  onChange={handleChange} 
-  options={[
-    { value: '', label: 'Seleccione un profesor' }, 
-    ...users.map(user => ({
-      value: user.user_id?.toString() || '',  // Verifica si user_id es undefined y usa cadena vacía
-      label: `${user.userProfile?.first_name || 'Sin nombre'} ${user.userProfile?.last_name || ''}`.trim()
-    }))
-  ]}
-/>
+
 
 
         <div className="flex justify-end space-x-4 mt-8">

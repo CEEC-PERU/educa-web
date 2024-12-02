@@ -4,12 +4,12 @@ import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import {  getUsersByCompanyAndRole} from '../../../services/userService';
 import ButtonContent from '../../../components/Content/ButtonContent';
-import ClassroomForm from '../../../components/Corporate/ClassromForm';
+import ClassroomForm from '../../../components/supervisor/ClassromForm';
 import Modal from '../../../components/Admin/Modal';
 import { useAuth } from '../../../context/AuthContext';
 import {  UserGroupIcon} from '@heroicons/react/24/outline';
 
-import { useClassroomUserSupervisor} from '../../../hooks/useClassroom';
+import { useClassroomBySupervisor} from '../../../hooks/useClassroom';
 import { useCourseStudent} from '../../../hooks/useCourseStudents';
 import './../../../app/globals.css';
 
@@ -17,7 +17,7 @@ import './../../../app/globals.css';
 const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
-  const { classrooms, isLoading } = useClassroomUserSupervisor();
+  const { classrooms, isLoading } = useClassroomBySupervisor();
   const { logout, user, profileInfo } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
