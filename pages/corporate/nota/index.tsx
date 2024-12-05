@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic'; // Para la carga dinámica de react-apexcharts
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Corporate/CorporateSideBar';
-import { useClassroom } from '../../../hooks/useClassroom';
+import { useShifts} from '../../../hooks/useShifts';
+import { useClassroom} from '../../../hooks/useClassroom';
 import FormField from '../../../components/FormField';
 import { useAuth } from '../../../context/AuthContext';
 import { useNotas } from '../../../hooks/useNotas';
@@ -24,6 +25,7 @@ const NotaCourses: React.FC = () => {
   const { course_id } = router.query;
 
   const { classrooms } = useClassroom();
+  const {shifts } = useShifts();
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotas(courseIdNumber);
 
@@ -133,14 +135,17 @@ const NotaCourses: React.FC = () => {
               onChange={handleClassroomChange}
               options={[{ value: '', label: 'Seleccione un aula' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.code }))]}
             />
-            <FormField
-              id="shift_id"
-              label="Turno"
-              type="select"
-              value={selectedShift}
-              onChange={handleShiftChange}
-              options={[{ value: '', label: 'Seleccione un turno' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.Shift.name }))]}
-            />
+          
+
+        <FormField 
+          id="shift_id" 
+          label="Turno" 
+          type="select" 
+          value={selectedShift} 
+          onChange={handleShiftChange} 
+          options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name }))]}
+        />
+
             <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
               Descargar Información
             </button>

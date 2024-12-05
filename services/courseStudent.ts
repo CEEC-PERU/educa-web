@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_GET_COURSEMODULE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED  } from '../utils/Endpoints';
+import { API_GET_COURSESTUDENT, API_GET_COURSESTUDENTS, API_GET_COURSESTUDENT_ENTERPRISE, API_GET_COURSEMODULE, API_POST_COURSESTUDENT, API_GET_COURSESTUDENT_ASSIGNED , API_GET_COURSESTUDENT_SUPERVISOR } from '../utils/Endpoints';
 import { CourseStudent } from '../interfaces/CourseStudent';
 
 export const getCourseStudent = async (userToken: string, userId: number): Promise<CourseStudent | null> => {
@@ -76,8 +76,15 @@ export const getUnassignedStudents = async (course_id: number, enterprise_id: nu
   }
 };
 
+
 export const getCoursesByEnterprise = async (enterpriseId: number) => {
   const response = await axios.get(`${API_GET_COURSESTUDENT_ENTERPRISE}/${enterpriseId}`);
+  return response.data;
+};
+
+
+export const getCoursesBySupervisor = async (userId: number) => {
+  const response = await axios.get(`${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`);
   return response.data;
 };
 

@@ -12,6 +12,7 @@ import axios, { AxiosError } from 'axios';
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
 
+
 export const useAuth = () => {
   
   return useContext(AuthContext);
@@ -112,7 +113,7 @@ const refreshProfile = async (token: string, userId: number) => {
 
   useEffect(() => {
     try {
-      const storedUserToken = localStorage.getItem('userToken');
+      const storedUserToken = localStorage.getItem('userToken');                                      
       const storedUserInfo = localStorage.getItem('userInfo');
       const isValid = storedUserToken ? validateToken(storedUserToken) : false;
 

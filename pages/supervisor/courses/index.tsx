@@ -2,23 +2,34 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../../context/AuthContext';
-import { getCoursesByEnterprise } from '../../../services/courseStudent';
+import { getCoursesBySupervisor } from '../../../services/courseStudent';
 import Loader from '../../../components/Loader';
 import CourseCard from './../../corporate/CourseCard';
 import './../../../app/globals.css';
 
+
+
 const CorporateCourses: React.FC = () => {
   const { user } = useAuth();
-  const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
+  const userId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).id : null;
+
+  
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (enterpriseId) {
+    if (userId) {
       const fetchCourses = async () => {
         setLoading(true);
         try {
-          const response = await getCoursesByEnterprise(enterpriseId);
+          const storedUserInfo = localStorage.getItem('userInfo');
+          if (!storedUserInfo) {
+            throw new Error('No se encontró información del usuario en el localStorage.');
+          }
+    
+         const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+
+          const response = await getCoursesBySupervisor(id);
           console.log('Courses data:', response); // Verify that the data is correct
           setCourses(response);
         } catch (error) {
@@ -29,7 +40,7 @@ const CorporateCourses: React.FC = () => {
       };
       fetchCourses();
     }
-  }, [enterpriseId]);
+  }, [userId]);
 
   // Datos de ejemplo para la tabla
   const studentData = [

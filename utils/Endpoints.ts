@@ -1,6 +1,6 @@
-//export const baseURL = `https://educa-web-api.onrender.com`;
+export const baseURL = `https://educa-web-api.onrender.com`;
 
-export const baseURL = `http://localhost:4100`;
+//export const baseURL = `http://localhost:4100`;
 // authentication
 export const API_AUTH = `${baseURL}/api/auth/signin`;
 
@@ -41,7 +41,7 @@ export const API_VIDEOS = `${baseURL}/api/videos`;
 export const API_IMAGES = `${baseURL}/api/images`;
 
 //socket
-export const API_SOCKET_URL = `http://localhost:4100`;
+export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
 
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
@@ -53,9 +53,9 @@ export const API_APPSESSION = `${baseURL}/api/appsession`;
 //obtener info de usuarios 
 export const API_GET_PROFILE_BY_USER = `${baseURL}/api/profiles/alldata`;
 
-
 //obtener info de empresa por usuario
 export const API_GET_EMPRESA_BY_USER = `${baseURL}/api/users/enterprise`;
+
 
 //actualizar perfil por user_id
 export const API_PUT_PROFILE = `${baseURL}/api/profiles`;
@@ -66,17 +66,19 @@ export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
 export const API_GET_COURSEMODULE= `${baseURL}/api/coursestudents/modules`;
 
 
-//obtener cursos asignados al estudinate
+//obtener cursos asignados al estudiante
 export const API_GET_COURSESTUDENT_ENTERPRISE= `${baseURL}/api/coursestudents/enterprise`;
+
+export const API_GET_COURSESTUDENT_SUPERVISOR= `${baseURL}/api/coursestudents`;
 
 export const API_GET_COURSESTUDENTS= `${baseURL}/api/coursestudents/students`;
 
-export const API_GET_COURSESTUDENT_ASSIGNED= `${baseURL}/api/courseStudents/assigned`;
+export const API_GET_COURSESTUDENT_ASSIGNED= `${baseURL}/api/courseStudents/assigned`; 
 
 export const API_POST_COURSESTUDENT= `${baseURL}/api/coursestudents/assign`;
-//obtener detalle d elos cursos
-export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
+//obtener detalle d elos cursos                    
 
+export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 
 //obtener info de empresas
 export const API_GET_EMPRESA = `${baseURL}/api/enterprises`;
