@@ -14,7 +14,7 @@ import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { useShifts } from '@/hooks/useShifts';
-
+import { useClassroomBySupervisor} from '../../../hooks/useClassroom';
 // Importar react-apexcharts dinámicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -24,7 +24,8 @@ const NotaCourses: React.FC = () => {
   const router = useRouter();
   const { course_id } = router.query;
 
-  const { classrooms } = useClassroom();
+
+  const { classrooms } = useClassroomBySupervisor();
   const { shifts } = useShifts();
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotas(courseIdNumber);
@@ -133,16 +134,9 @@ const NotaCourses: React.FC = () => {
               type="select"
               value={selectedClassroom}
               onChange={handleClassroomChange}
-              options={[{ value: '', label: 'Seleccione un aula' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.code }))]}
+              options={[{ value: '', label: 'Seleccione un aula' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: `${classroom.code} - ${classroom.Shift.name} - (${classroom.User.userProfile.first_name} - ${classroom.User.userProfile.last_name})`}))]}
             />
-            <FormField
-              id="shift_id"
-              label="Turno"
-              type="select"
-              value={selectedShift}
-              onChange={handleShiftChange}
-              options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name}))]}
-            />
+            
             <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
               Descargar Información
             </button>
@@ -226,23 +220,28 @@ const NotaCourses: React.FC = () => {
       )
     : "En Proceso"}
 </td>
-
-              {/* Fechas */}
-              {randomDates[userIndex] ? (
-                <>
-                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
-                    {formatDate(randomDates[userIndex]?.startDate) || "-"}
-                  </td>
-                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
-                    {formatDate(randomDates[userIndex]?.endDate) || "-"}
-                  </td>
-                </>
-              ) : (
-                <>
-                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
-                  <td className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
-                </>
-              )}
+<>
+  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+    {user.CourseStudents?.[0]?.created_at 
+      ? new Date(user.CourseStudents[0].created_at).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+      : "-"
+    }
+  </td>
+  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+    {user.CourseStudents?.[0]?.finished_at
+      ? new Date(user.CourseStudents[0].finished_at).toLocaleDateString('es-ES', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        })
+      : "En progreso"
+    }
+  </td>
+</>
               {/* Sesiones */}
               <td className="py-2 px-4 border-b border-l-4 border-blue-300">
                 {randomSessions[userIndex] || "-"}

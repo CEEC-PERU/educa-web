@@ -9,6 +9,7 @@ import { UserGroupIcon } from '@heroicons/react/24/outline';
 //usuarios formulario para registrar
 const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () => void; maxUsersAllowed: number }> = ({ roleId, onClose, onSuccess, maxUsersAllowed }) => {
   
+  
   const [users, setUsers] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -22,7 +23,13 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
   
   const { classrooms, isLoading: loadingClassrooms } = useClassroomBySupervisor();
   const { courseStudent, isLoading: loadingCourses } = useCourseStudent();
-
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
+    startDate: false,
+    endDate: false,
+    selectedEnterprise: false,
+  });
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,6 +107,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         users,
         course_id: selectedCourses, // Enviar el `course_id` seleccionado
         classroom_id: showClassroomAndCourses ? selectedClassroom : null, // Enviar `classroom_id` si se seleccionó un aula
+        deadline : startDate,
       };
   
       console.log(requestBody)
@@ -137,6 +145,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         />
      
 
+
         <button
           onClick={() => { setShowClassroomAndCourses(true); setShowCourses(false); }}
           className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
@@ -144,7 +153,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
           Asignar Aula / Cursos
         </button>
       </div>
-     
+           
    
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
@@ -188,6 +197,17 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
            
         </div>
       )}
+
+<div className="mb-4 flex items-center justify-center space-x-4 mt-5">
+                <label className="block text-gray-700 text-sm font-bold mb-2">Fecha Limite:</label>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  onBlur={() => setTouchedFields((prev) => ({ ...prev, startDate: true }))}
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
+                />
+              </div>
 
       {(showCourses || showClassroomAndCourses) && (
         <div>

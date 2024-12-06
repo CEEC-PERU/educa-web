@@ -1,3 +1,5 @@
+
+
 export interface UserProfile {
     first_name: string;
     last_name: string;
@@ -26,14 +28,22 @@ export interface UserProfile {
     module_name: string;
     results: ModuleResultDetails[];
   }
+
+  export interface CourseStudents {
+    course_id: number;
+    created_at:Date;
+    finished_date: Date;
+    deadline: Date;
+  }
   
   export interface UserNota {
     user_id: number;
     enterprise_id: number;
     role_id: number;
     userProfile: UserProfile;
+    CourseStudents : CourseStudents[];
     CourseResults: CourseResult[];
     ModuleResults: ModuleResult[];
     totalSessions :number;
   }
-  
+
