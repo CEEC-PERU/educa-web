@@ -13,6 +13,7 @@ import ProgressBar from '../../../components/Corporate/ProgressBar';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
+import { useShifts } from '@/hooks/useShifts';
 
 // Importar react-apexcharts dinámicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -24,6 +25,7 @@ const NotaCourses: React.FC = () => {
   const { course_id } = router.query;
 
   const { classrooms } = useClassroom();
+  const { shifts } = useShifts();
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotas(courseIdNumber);
 
@@ -139,7 +141,7 @@ const NotaCourses: React.FC = () => {
               type="select"
               value={selectedShift}
               onChange={handleShiftChange}
-              options={[{ value: '', label: 'Seleccione un turno' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: classroom.Shift.name }))]}
+              options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name}))]}
             />
             <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
               Descargar Información
