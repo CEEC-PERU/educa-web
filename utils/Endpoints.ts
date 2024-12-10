@@ -122,6 +122,10 @@ export const API_GET_NOTAS_USER_ID = `${baseURL}/api/notas/course`;
 
 export const API_GET_NOTAS_EXCEL = `${baseURL}/api/notas/excel`;
 
+export const API_GET_NOTAS_SUPERVISOR = `${baseURL}/api/notas/supervisor/notas`;
+
+export const API_GET_NOTAS_SUPERVISOR_CLASSROOM = `${baseURL}/api/notas/supervisor/classrooms`;
+
 export const API_USERCOUNT = `${baseURL}/api/enterprises/count`;
 
 export const API_CLASSROOM = `${baseURL}/api/classrooms/enterprise`;

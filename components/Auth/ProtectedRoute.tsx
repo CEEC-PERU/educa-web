@@ -9,7 +9,6 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isLoading } = useAuth(); // Se usa solo para mostrar "Cargando..."
   const router = useRouter();
-
   useEffect(() => {
     const userToken = localStorage.getItem('userToken'); // Obtiene el token directamente de localStorage
 

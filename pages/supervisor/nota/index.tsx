@@ -5,7 +5,7 @@ import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import { useClassroom } from '../../../hooks/useClassroom';
 import FormField from '../../../components/FormField';
 import { useAuth } from '../../../context/AuthContext';
-import { useNotas } from '../../../hooks/useNotas';
+import { useNotasSupervisor , useNotasSupervisorClassroom } from '../../../hooks/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -23,34 +23,32 @@ const NotaCourses: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { course_id } = router.query;
-
-
   const { classrooms } = useClassroomBySupervisor();
   const { shifts } = useShifts();
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '');
-  const { courseNota, isLoading, error } = useNotas(courseIdNumber);
-
+  const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
   const userInfo = user as { id: number; enterprise_id: number };
-
   const [randomSessions, setRandomSessions] = useState<number[]>([]);
   const [randomDates, setRandomDates] = useState<{ startDate: Date; endDate: Date }[]>([]);
-  const [statusCount, setStatusCount] = useState({ notable: 0, aprobado: 0, refuerzo: 0, desaprobado: 0 }); // Para el gráfico 1
-
+  const [statusCount, setStatusCount] = useState({ notable: 0, aprobado: 0, refuerzo: 0, desaprobado: 0 }); // Para el gráfico 
 
   const [selectedClassroom, setSelectedClassroom] = useState('');
+  const classroomId =  Number(selectedClassroom);
+  console.log(classroomId);
+  const { courseNotaClassroom} = useNotasSupervisorClassroom(courseIdNumber , classroomId);
   const [selectedShift, setSelectedShift] = useState('');
 
-  
 
-  const handleClassroomChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setSelectedClassroom(e.target.value);
+  
+  const handleClassroomChange = (value: string) => {
+    // Lógica de manejo de cambio de aula
+    setSelectedClassroom(value);
   };
 
   const handleShiftChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setSelectedShift(e.target.value);
   };
-
-
+//explicame en español lo que entendiste y actualiza el codigo
   // Nueva lógica para obtener el estado según la nota del examen final
   const getStatus = (finalExamGrade: number) => {
     if (finalExamGrade >= 18) {
@@ -80,18 +78,19 @@ const NotaCourses: React.FC = () => {
     }
   };
 
- 
+ //datos enviado 
   const getMaxExamResultsLength = (courseResults: any[]) => {
     return Math.max(...(courseResults || []).map((result: any) => (result.results ? result.results.length : 0)), 0);
   };
-
+//ejecutar de acuerdo a la selección courseNotaClassroom y CourseNota
+  const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
   useEffect(() => {
-    if (courseNota && courseNota.length > 0) {
-      const sessions = courseNota.map(() => Math.floor(Math.random() * 5) + 1); // Random number between 1 and 5
+    if (currentCourseData && currentCourseData.length > 0) {
+      const sessions = currentCourseData.map(() => Math.floor(Math.random() * 5) + 1); // Random number between 1 and 5
       setRandomSessions(sessions);
 
       // Generate random dates for each student
-      const dates = courseNota.map(() => {
+      const dates = currentCourseData.map(() => {
         const startDate = new Date(2024, 8, 11); // Fixed start date (11/09)
         const randomEndOffset = Math.floor(Math.random() * 3); // Random end date between 11/09 and 13/09
         const endDate = new Date(startDate);
@@ -102,7 +101,7 @@ const NotaCourses: React.FC = () => {
 
       // Contar el estado de cada estudiante para el gráfico de estado
       let notable = 0, aprobado = 0, refuerzo = 0, desaprobado = 0;
-      courseNota.forEach(user => {
+      currentCourseData.forEach(user => {
         const examGrade = user.CourseResults?.[0]?.puntaje || 0;
         const status = getStatus(examGrade);
         if (status === 'Notable') notable++;
@@ -113,11 +112,14 @@ const NotaCourses: React.FC = () => {
 
       setStatusCount({ notable, aprobado, refuerzo, desaprobado });
     }
-  }, [courseNota]);
+  }, [currentCourseData]);
 
   const formatDate = (date: Date) => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
+
+
+  
 
   return (
     <ProtectedRoute>
@@ -128,15 +130,26 @@ const NotaCourses: React.FC = () => {
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
           <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">USUARIOS</h2>
           <div className="flex items-center space-x-4 mb-10">
-            <FormField
-              id="classroom_id"
-              label="Cod.Aula"
-              type="select"
-              value={selectedClassroom}
-              onChange={handleClassroomChange}
-              options={[{ value: '', label: 'Seleccione un aula' }, ...classrooms.map(classroom => ({ value: classroom.shift_id.toString(), label: `${classroom.code} - ${classroom.Shift.name} - (${classroom.User.userProfile.first_name} - ${classroom.User.userProfile.last_name})`}))]}
-            />
-            
+          <select
+  id="classroom_id"
+  value={selectedClassroom || ''}
+  onChange={(e) => handleClassroomChange(e.target.value)}
+  className="form-select border rounded px-4 py-2 text-gray-700"
+>
+  <option value="" disabled>
+    Seleccione un aula
+  </option>
+  {classrooms.map((classroom) => (
+    <option
+      key={classroom.shift_id}
+      value={classroom.classroom_id.toString()}
+    >
+      {`${classroom.code} - ${classroom.Shift.name} - (${classroom.User.userProfile.first_name} - ${classroom.User.userProfile.last_name})`}
+    </option>
+  ))}
+</select>
+
+          
             <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
               Descargar Información
             </button>
@@ -146,13 +159,13 @@ const NotaCourses: React.FC = () => {
             <Loader />
           ) : (
             <div className="grid gap-6 shadow-lg rounded-lg overflow-hidden">
-  {courseNota && (
+  {currentCourseData && (
     <>
       <table className="min-w-full bg-white border border-blue-300 shadow-md">
         <thead className="bg-blue-500 text-white">
           <tr>
             <th rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">Nombre del Estudiante</th>
-            {courseNota[0]?.ModuleResults?.map((module: any, index: number) => (
+            {currentCourseData[0]?.ModuleResults?.map((module: any, index: number) => (
               <th key={`module-${index}`} rowSpan={2} className="py-2 px-4 border-b border-l-4 border-blue-300">
                 Módulo: {module?.module_name || "-"}
               </th>
@@ -171,14 +184,14 @@ const NotaCourses: React.FC = () => {
         </thead>
 
         <tbody>
-          {courseNota.map((user: any, userIndex: number) => (
+          {currentCourseData.map((user: any, userIndex: number) => (
             <tr key={userIndex} className="hover:bg-gray-100 transition-colors">
               {/* Nombre del estudiante */}
               <td className="py-2 px-4 border-b border-l-4 border-blue-300">
                 {user?.userProfile?.first_name || "-"} {user?.userProfile?.last_name || "-"}
               </td>
               {/* Notas de los módulos */}
-              {courseNota[0]?.ModuleResults?.map((module: any, moduleIndex: number) => {
+              {currentCourseData[0]?.ModuleResults?.map((module: any, moduleIndex: number) => {
                 const moduleResult = user.ModuleResults?.find((mod: any) => mod.module_name === module.module_name);
                 if (moduleResult) {
                   const highestScore = Math.max(...moduleResult.results.map((result: any) => result.puntaje));
@@ -290,7 +303,7 @@ const NotaCourses: React.FC = () => {
                           id: 'sesiones-alumno-chart'
                         },
                         xaxis: {
-                          categories: courseNota.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
+                          categories: currentCourseData.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
                         }
                       }}
                       series={[
@@ -313,7 +326,7 @@ const NotaCourses: React.FC = () => {
                           id: 'participacion-diaria-chart'
                         },
                         xaxis: {
-                          categories: courseNota.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
+                          categories: currentCourseData.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
                         }
                       }}
                       series={[
