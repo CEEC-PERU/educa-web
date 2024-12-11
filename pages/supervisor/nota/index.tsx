@@ -35,19 +35,21 @@ const NotaCourses: React.FC = () => {
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const classroomId =  Number(selectedClassroom);
   console.log(classroomId);
-  const { courseNotaClassroom} = useNotasSupervisorClassroom(courseIdNumber , classroomId);
+  const { courseNotaClassroom , fetchCourseDetail} = useNotasSupervisorClassroom(courseIdNumber ,classroomId);
   const [selectedShift, setSelectedShift] = useState('');
 
 
-  
-  const handleClassroomChange = (value: string) => {
-    // Lógica de manejo de cambio de aula
-    setSelectedClassroom(value);
+  const handleClassroomChange = async (value: string) => {
+    setSelectedClassroom(value); // Actualizar el estado del aula seleccionada
+    // Esperar a que se actualice el estado antes de llamar a fetchCourseDetail
+    const updatedClassroomId = Number(value); // Asegurarse de usar el valor actualizado
+    await fetchCourseDetail(updatedClassroomId); // Pasar el valor actualizado
   };
 
   const handleShiftChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setSelectedShift(e.target.value);
   };
+
 //explicame en español lo que entendiste y actualiza el codigo
   // Nueva lógica para obtener el estado según la nota del examen final
   const getStatus = (finalExamGrade: number) => {
@@ -78,12 +80,14 @@ const NotaCourses: React.FC = () => {
     }
   };
 
- //datos enviado 
+//datos enviado 
   const getMaxExamResultsLength = (courseResults: any[]) => {
     return Math.max(...(courseResults || []).map((result: any) => (result.results ? result.results.length : 0)), 0);
   };
+
 //ejecutar de acuerdo a la selección courseNotaClassroom y CourseNota
   const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
+
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
       const sessions = currentCourseData.map(() => Math.floor(Math.random() * 5) + 1); // Random number between 1 and 5
@@ -118,8 +122,6 @@ const NotaCourses: React.FC = () => {
     return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-
-  
 
   return (
     <ProtectedRoute>
