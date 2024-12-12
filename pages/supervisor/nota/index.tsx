@@ -132,7 +132,7 @@ const NotaCourses: React.FC = () => {
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
           <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">USUARIOS</h2>
           <div className="flex items-center space-x-4 mb-10">
-          <select
+ <select
   id="classroom_id"
   value={selectedClassroom || ''}
   onChange={(e) => handleClassroomChange(e.target.value)}
@@ -151,8 +151,7 @@ const NotaCourses: React.FC = () => {
   ))}
 </select>
 
-          
-            <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
+          <button className='text-white bg-blue-600 px-8 rounded-lg p-2' onClick={handleDownload}>
               Descargar Información
             </button>
           </div>

@@ -22,6 +22,27 @@ export const getCourseNota = async (userToken: string , enterprise_id : number ,
     throw new Error('Error getting enterprise');
   }
 };
+
+export const getCourseNotabyClassroom = async (userToken: string , enterprise_id : number , courseId: number , classroomId : number ): Promise<UserNota| null> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    const response = await axios.get<UserNota>(`${API_GET_NOTAS}/${enterprise_id}/${courseId}/${classroomId}`, config);
+    if (response.data) {
+      return response.data; 
+    } else {
+      console.warn('No enterprise found for user:', courseId);
+      return null; 
+    }
+  } catch (error) {
+    console.error('Error getting enterprise:', error);
+    throw new Error('Error getting enterprise');
+  }
+};
+
 //Lista de usuarios de todos los salones que pertenece al profesor con sus notas 
 export const getCourseNotaSupervisor = async (userToken: string ,  user_id : number ,  course_id : number ): Promise<UserNota| null> => {
   try {
