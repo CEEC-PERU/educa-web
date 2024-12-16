@@ -38,7 +38,7 @@ export const API_OPTIONS = `${baseURL}/api/options`;
 export const API_VIDEOS = `${baseURL}/api/videos`;
 
 
-// images
+// imagenes
 export const API_IMAGES = `${baseURL}/api/images`;
 
 //socket
@@ -150,3 +150,5 @@ export const API_USER_CUESTIONARIO = `${baseURL}/api/cuestionarioresults`;
 export const API_USER_FLASHCARDS = `${baseURL}/api/flashcards`;
 
 export const API_USERS_COURSES = `${baseURL}/api/users/courses`;
+
+export const API_DASHBOARD = `${baseURL}/api/dashboard`;

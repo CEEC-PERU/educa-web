@@ -7,7 +7,7 @@ import './../../app/globals.css';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
-
+import { useCourseProgress } from '../../hooks/useProgressCurso';
 
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -16,12 +16,15 @@ const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
-  const [selectedCourse, setSelectedCourse] = useState('CP Pospago');
+ // const [selectedCourse, setSelectedCourse] = useState('CP Pospago');
   const { courseStudent } = useCourseStudent();
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [endDate, setEndDate] = useState('');  
+  const [selectedCourse, setSelectedCourse] = useState<number | undefined>(undefined);
+  const { courseProgressData, loading, error } = useCourseProgress(selectedCourse);
+console.log(selectedCourse)
   
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
     startDate: false,
@@ -30,10 +33,10 @@ const CorporateDashboard: React.FC = () => {
   });
 
   // Datos de ejemplo
-  const courseProgressData = [
-    { course: 'CP Pospago', Estudiantes: 4, Progreso: 80 },
-    { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
-  ];
+ // const courseProgressData = [
+ //   { course: 'CP Pospago', Estudiantes: 4, Progreso: 80 },
+  //  { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
+  //];
 
   const courseTimeData = [
     { course: 'CP Pospago', Tiempo: 30 },
@@ -116,7 +119,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Dropdown Selector for Courses */}
           <div className="mr-2 col-span-full">
-  <select 
+  {/*<select 
     value={selectedCourse} 
     onChange={(e) => setSelectedCourse(e.target.value)} 
     className="block border-4 p-2 mr-4"
@@ -130,7 +133,25 @@ const CorporateDashboard: React.FC = () => {
     ) : (
       <option disabled className="text-gray-600">No hay cursos asignados</option>
     )}
-  </select>
+  </select>*/}
+
+
+<select 
+  value={selectedCourse} 
+  onChange={(e) => setSelectedCourse(Number(e.target.value))} 
+  className="block border-4 p-2 mr-4"
+>
+  {courseStudent.length > 0 ? (
+    courseStudent.map((course) => (
+      <option key={course.course_id} value={course.course_id} className="text-gray-700">
+        {course.Course.name}
+      </option>
+    ))
+  ) : (
+    <option disabled className="text-gray-600">No hay cursos asignados</option>
+  )}
+</select>
+
 
   <form className="flex items-center space-x-4 mb-4" >
               <div>
@@ -169,19 +190,22 @@ const CorporateDashboard: React.FC = () => {
  
 <h2 className="text-lg font-semibold mb-2">Progreso del curso</h2>
 
-            <Chart
-              type="bar"
-              series={[{ name: 'Estudiantes', data: courseProgressData.map(item => item.Estudiantes) }, { name: 'Progreso', data: courseProgressData.map(item => item.Progreso) }]}
-              options={{
-                chart: { type: 'bar' },
-                xaxis: { categories: courseProgressData.map(item => item.course) , title: { text: 'Cursos' }},
-                yaxis: { title: { text: 'Cantidad' } },
-                colors: ['#3274C1', '#BCB623'],
-                dataLabels: { enabled: true },
-                legend: { position: 'top' },
-              }}
-              height={300}
-            />
+<Chart
+          type="bar"
+          series={[
+            { name: 'Estudiantes', data: courseProgressData.map((item) => item.Estudiantes) },
+            { name: 'Progreso', data: courseProgressData.map((item) => item.Progreso) },
+          ]}
+          options={{
+            chart: { type: 'bar' },
+            xaxis: { categories: courseProgressData.map((item) => item.course), title: { text: 'Cursos' } },
+            yaxis: { title: { text: 'Cantidad' } },
+            colors: ['#3274C1', '#BCB623'],
+            dataLabels: { enabled: true },
+            legend: { position: 'top' },
+          }}
+          height={300}
+        />
           </div>
 
           {/* Gráfico de Tiempo promedio por curso (minutos) */}
@@ -277,17 +301,17 @@ const CorporateDashboard: React.FC = () => {
             {/* Gráfico de Compleción de Módulos */}
             <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">Compleción de Módulos</h2>
-            <select value={selectedCourse} onChange={(e) => setSelectedCourse(e.target.value)} className="mt-2 block w-full">
+            <select value={selectedCourse} onChange={(e) => setSelectedCourse(Number(e.target.value))} className="mt-2 block w-full">
               <option value="CP Pospago">CP Pospago</option>
               <option value="Formación Continua">Formación Continua</option>
             </select>
             <Chart
               type="bar"
-              series={[{ name: 'Compleción', data: moduleCompletionData(selectedCourse).map(item => item.completion) }]}
+              series={[{ name: 'Compleción', data: moduleCompletionData('CP Pospago').map(item => item.completion) }]}
               options={{
                 chart: { type: 'bar' },
                 yaxis: { title: { text: 'Finalizaciòn (%)' } },
-                xaxis: { categories: moduleCompletionData(selectedCourse).map(item => item.module) , title: { text: 'Curso' }},
+                xaxis: { categories: moduleCompletionData('CP Pospago').map(item => item.module) , title: { text: 'Curso' }},
                 colors: ['#3274C1'],
                 dataLabels: { enabled: true },
               }}
@@ -299,10 +323,10 @@ const CorporateDashboard: React.FC = () => {
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
           <h2 className="text-lg font-semibold mb-2">Encuesta de Satisfacción</h2>
-            
+            {/*  satisfactionSurveyData('CP Pospago') selectedCourse */}
             <Chart
               type="donut"
-              series={satisfactionSurveyData(selectedCourse)}
+              series={satisfactionSurveyData('CP Pospago')} 
               options={{
                 chart: { type: 'donut' },
                 labels: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'],
@@ -320,7 +344,7 @@ const CorporateDashboard: React.FC = () => {
             
             <Chart
               type="bar"
-              series={[{ name: 'NPS', data: npsData(selectedCourse) }]}
+              series={[{ name: 'NPS', data: npsData('CP Pospago') }]}
               options={{
                 chart: { type: 'bar' },
                 xaxis: { categories: Array.from({ length: 10 }, (_, i) => i.toString())  , title: { text: 'Valores' }},
