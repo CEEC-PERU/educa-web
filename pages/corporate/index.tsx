@@ -8,7 +8,7 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useCourseProgress } from '../../hooks/useProgressCurso';
-
+import { useTop , useAverageTime} from '../../hooks/useTopRankingCorporative';
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -24,6 +24,8 @@ const CorporateDashboard: React.FC = () => {
   const [endDate, setEndDate] = useState('');  
   const [selectedCourse, setSelectedCourse] = useState<number | undefined>(undefined);
   const { courseProgressData, loading, error } = useCourseProgress(selectedCourse);
+  const { topRanking } = useTop(selectedCourse);
+  const { averagetime} = useAverageTime();
 console.log(selectedCourse)
   
   const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
@@ -43,14 +45,7 @@ console.log(selectedCourse)
     { course: 'Formación Continua', Tiempo: 5 },
   ];
 
-  const topAdvisorsData = [
-    { name: 'Estrella Zavaleta', Calificación: 20 },
-    { name: 'Erick Zavaleta', Calificación: 20 },
-    { name: 'Estrella Zavaleta', Calificación: 20 },
-    { name: 'Erick Zavaleta', Calificación: 15 },
-    { name: 'Estrella Zavaleta', Calificación: 15 },
-  ];
-
+//averageTimeData
   const averageTimePerDayData = [
     { day: 'Lunes', time: 46 },
     { day: 'Martes', time: 20 },
@@ -61,11 +56,13 @@ console.log(selectedCourse)
     { day: 'Domingo', time: 36 },
   ];
 
+  //Curso completados al 100%
   const courseCompletionData = [
     { course: 'CP Pospago', completion: 70 },
     { course: 'Formación Continua', completion: 0 },
   ];
 
+  //Participantes en la semana 
   const dailyParticipationData = [
     { day: 'Lunes', active: 2 },
     { day: 'Martes', active: 4 },
@@ -77,7 +74,7 @@ console.log(selectedCourse)
   ];
 
   
-
+//Lista de modulos por curso
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
@@ -209,7 +206,7 @@ console.log(selectedCourse)
           </div>
 
           {/* Gráfico de Tiempo promedio por curso (minutos) */}
-          <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+      <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
           <h2 className="text-lg font-semibold mb-2">Tiempo Promedio por Curso</h2>
             <Chart
               type="bar"
@@ -224,17 +221,18 @@ console.log(selectedCourse)
               }}
               height={300}
             />
-          </div>
+        </div>
+        
 
           {/* Calificaciones de Asesores */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
           <h2 className="text-lg font-semibold mb-2">Top 5  de Asesores</h2>
             <Chart
               type="bar"
-              series={[{ name: 'Calificación', data: topAdvisorsData.map(item => item.Calificación) }]}
+              series={[{ name: 'Calificación', data: topRanking.map(item => item.puntaje) }]}
               options={{
                 chart: { type: 'bar' },
-                xaxis: { categories: topAdvisorsData.map(item => item.name) , title: { text: 'Asesores' }},
+                xaxis: { categories: topRanking.map(item => item.name) , title: { text: 'Asesores' }},
                 yaxis: { title: { text: 'Calificaciòn' } },
                 colors: ['#6158D3'],
                 dataLabels: { enabled: true },
@@ -244,26 +242,31 @@ console.log(selectedCourse)
             />
           </div>
 
+          
+
           {/* Gráfico de Tiempo promedio por día */}
-          <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Tiempo promedio por día en la plataforma</h2>
-            <Chart
-              type="line"
-              series={[{ name: 'Tiempo', data: averageTimePerDayData.map(item => item.time) }]}
-              options={{
-                chart: { type: 'line' },
-                yaxis: { title: { text: 'Tiempo(minutos)' } },
-                xaxis: { categories: averageTimePerDayData.map(item => item.day) , title: { text: 'Dìas' }},
-                colors: ['#33b2df'],
-                stroke: { curve: 'smooth' },
-                dataLabels: { enabled: true },
-              }}
-              height={300}
-            />
-          </div>
+<div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+  <h2 className="text-lg font-semibold mb-2">Tiempo promedio por día en la plataforma</h2>
+  <Chart
+    type="line"
+    series={[{ name: 'Tiempo', data: averagetime.map(item => item.time) }]} // Assuming `averagetime` has objects with `time` property
+    options={{
+      chart: { type: 'line' },
+      xaxis: { categories: averagetime.map(item => item.day), title: { text: 'Días' } },
+      yaxis: { title: { text: 'Tiempo (minutos)' } },
+      colors: ['#1D4ED8'], // Set a line color
+      stroke: { curve: 'smooth' },
+      dataLabels: { enabled: true },
+      legend: { position: 'top' },
+    }}
+    height={300}
+  />
+</div>
+
+
 
             {/* Gráfico de Participación Diaria */}
-            <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
+          <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">Participación Diaria (estudiantes activos)</h2>
             <Chart
               type="line"
