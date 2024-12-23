@@ -9,13 +9,13 @@ export const useTop = (selectedCourseId?: number) => {
   const [error, setError] = useState<string | null>(null);
     const { user, token } = useAuth();
     const userInfo = user as { id: number , enterprise_id : number};
-
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchTopRankig(selectedCourseId, userInfo.enterprise_id);
+  
+        const data = await fetchTopRankig(selectedCourseId,userInfo.enterprise_id);
         setTopRanking(data);
       } catch (err) {
         setError('Error al obtener los datos del progreso del curso.');
@@ -37,11 +37,19 @@ export const useAverageTime = () => {
     const [error, setError] = useState<string | null>(null);
     
     useEffect(() => {
+          // Obtener datos del localStorage
+    const storedUserInfo = localStorage.getItem('userInfo');
+    if (!storedUserInfo) {
+      throw new Error('No se encontró información del usuario en el localStorage.');
+    }
+
+    const { enterprise_id } = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+
       const fetchData = async () => {
         setLoading(true);
         setError(null);
         try {
-          const data = await fetchAverageTime();
+          const data = await fetchAverageTime(enterprise_id);
           setAverageTime(data);
         } catch (err) {
           setError('Error al obtener los datos del progreso del curso.');

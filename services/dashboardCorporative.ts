@@ -12,8 +12,8 @@ export const fetchTopRankig = async (courseId?: number, enterpriseId?: number): 
   return response.data;
 };
 
-export const fetchAverageTime = async (): Promise<AverageTime[]> => {
-  const response = await axios.get(`${API_DASHBOARD}/averagetime`);
+export const fetchAverageTime = async ( enterpriseId?: number): Promise<AverageTime[]> => {
+  const response = await axios.get(`${API_DASHBOARD}/averagetime/${enterpriseId}`);
   return response.data;
 };
 
