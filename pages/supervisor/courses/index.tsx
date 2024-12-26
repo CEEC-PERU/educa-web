@@ -17,6 +17,7 @@ const CorporateCourses: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  
   useEffect(() => {
     if (userId) {
       const fetchCourses = async () => {
