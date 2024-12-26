@@ -57,6 +57,7 @@ export const useClassroom = () => {
 };
 
 
+
 export const useClassroomUserSupervisor = () => {
   const [classrooms, setClassroom] = useState<Classroom[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +72,14 @@ export const useClassroomUserSupervisor = () => {
       }
       setIsLoading(true);
       try {
-        const response = await getClassroombySupervisor(token, userInfo.enterprise_id , userInfo.id);
+
+        const storedUserInfo = localStorage.getItem('userInfo');
+        if (!storedUserInfo) {
+          throw new Error('No se encontró información del usuario en el localStorage.');
+        }
+  
+       const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+        const response = await getClassroombySupervisor(token,enterprise_id , userInfo.id);
         if (response === null) {
           setClassroom([]); 
         } else if (Array.isArray(response)) {
@@ -114,7 +122,13 @@ export const useClassroomBySupervisor = () => {
       }
       setIsLoading(true);
       try {
-        const response = await getClassroombySupervisorT(token, userInfo.enterprise_id , userInfo.id);
+        const storedUserInfo = localStorage.getItem('userInfo');
+        if (!storedUserInfo) {
+          throw new Error('No se encontró información del usuario en el localStorage.');
+        }
+  
+       const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+        const response = await getClassroombySupervisorT(token, enterprise_id , userInfo.id);
         if (response === null) {
           setClassroom([]); 
         } else if (Array.isArray(response)) {
