@@ -304,7 +304,7 @@ const NotaCourses: React.FC = () => {
                           id: 'sesiones-alumno-chart'
                         },
                         xaxis: {
-                          categories: currentCourseData.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
+                          categories: currentCourseData.map((user: any) => `${user?.userProfile?.first_name} ${user?.userProfile?.last_name}`)
                         }
                       }}
                       series={[
@@ -327,7 +327,7 @@ const NotaCourses: React.FC = () => {
                           id: 'participacion-diaria-chart'
                         },
                         xaxis: {
-                          categories: currentCourseData.map((user: any) => `${user.userProfile.first_name} ${user.userProfile.last_name}`)
+                          categories: currentCourseData.map((user: any) => `${user?.userProfile?.first_name} ${user?.userProfile?.last_name}`)
                         }
                       }}
                       series={[
