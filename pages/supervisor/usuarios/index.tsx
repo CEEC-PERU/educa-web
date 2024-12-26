@@ -64,7 +64,7 @@ const Usuarios: React.FC = () => {
   }, [usercount]);
 
   // Si studentsData no es null, aplicamos los filtros
-  const filteredStudents = studentsData?.students.filter(student =>
+  const filteredStudents = studentsData?.students?.filter(student =>
     (student.User.userProfile?.first_name?.toLowerCase().includes(filter.toLowerCase()) ||
      student.User.userProfile?.last_name?.toLowerCase().includes(filter.toLowerCase())) ||
     student.User.dni.includes(filter)
