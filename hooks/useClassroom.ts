@@ -79,7 +79,7 @@ export const useClassroomUserSupervisor = () => {
         }
   
        const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
-        const response = await getClassroombySupervisor(token,enterprise_id , userInfo.id);
+        const response = await getClassroombySupervisor(token,enterprise_id , id);
         if (response === null) {
           setClassroom([]); 
         } else if (Array.isArray(response)) {
@@ -128,7 +128,7 @@ export const useClassroomBySupervisor = () => {
         }
   
        const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
-        const response = await getClassroombySupervisorT(token, enterprise_id , userInfo.id);
+        const response = await getClassroombySupervisorT(token, enterprise_id , id);
         if (response === null) {
           setClassroom([]); 
         } else if (Array.isArray(response)) {
