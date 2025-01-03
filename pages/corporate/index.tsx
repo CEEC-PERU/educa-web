@@ -12,6 +12,7 @@ import { useTop , useAverageTime} from '../../hooks/useTopRankingCorporative';
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();

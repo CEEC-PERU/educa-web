@@ -69,6 +69,7 @@ const NotaCourses: React.FC = () => {
       const response = await axios.get(`${API_GET_NOTAS_EXCEL}/${userInfo.enterprise_id}/${courseIdNumber}`, {
         responseType: 'blob', // Set response type to blob for file download
       });
+      
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
