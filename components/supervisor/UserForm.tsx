@@ -134,7 +134,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-h-[500px] overflow-y-auto">
-      <h1 className="font-bold text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
+      <h1 className="font-bold text-black-700 text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
 
       <div className="mb-4 flex items-center justify-center space-x-4 text-black-700 font-bold">
         <input
@@ -159,8 +159,8 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
-              <th className="py-2 px-4 border-b bg-gray-100 text-left text-black-600 font-bold">Usuario</th>
-              <th className="py-2 px-4 border-b bg-gray-100 text-left text-black-600  font-bold">Contraseña</th>
+              <th className="py-2 px-4 border-b bg-gray-100 text-left text-black font-bold">Usuario</th>
+              <th className="py-2 px-4 border-b bg-gray-100 text-left text-black font-bold">Contraseña</th>
             </tr>
           </thead>
           <tbody>
@@ -176,8 +176,8 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
 
 
       {showClassroomAndCourses && (
-        <div className="font-bold text-lg text-black-700 ">
-          <h2 className="font-bold text-lg mt-6 mb-2 text-black-700 ">Seleccionar Aula</h2>
+        <div className="font-bold text-lg text-black ">
+          <h2 className="font-bold text-lg mt-6 mb-2 text-green-600 ">Seleccionar Aula</h2>
           <select
             className="w-full p-2 border-4 border-gray-300 rounded-md "
             onChange={handleClassroomSelect}
