@@ -156,7 +156,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
            
    
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+        <table className="min-w-full bg-white border border-gray-200 text-black">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b bg-gray-100 text-left text-black font-bold">Usuario</th>
@@ -165,9 +165,9 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
           </thead>
           <tbody>
             {users.map((user, index) => (
-              <tr key={index} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">{user.dni}</td>
-                <td className="py-2 px-4">{user.password}</td>
+              <tr key={index} className="border-b text-black font-bold hover:bg-gray-50">
+                <td className="py-2 px-4  text-black font-bold">{user.dni}</td>
+                <td className="py-2 px-4  text-black font-bold">{user.password}</td>
               </tr>
             ))}
           </tbody>
@@ -177,7 +177,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
 
       {showClassroomAndCourses && (
         <div className="font-bold text-lg text-black ">
-          <h2 className="font-bold text-lg mt-6 mb-2 text-green-600 ">Seleccionar Aula</h2>
+          <h2 className="font-bold text-lg mt-6 mb-2 text-blue-700 ">Seleccionar Aula</h2>
           <select
             className="w-full p-2 border-4 border-gray-300 rounded-md "
             onChange={handleClassroomSelect}
@@ -211,14 +211,14 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
 
       {(showCourses || showClassroomAndCourses) && (
         <div>
-          <h4 className="font-bold text-md mt-6">Seleccionar Cursos</h4>
+          <h4 className="font-bold text-md mt-6  text-black ">Seleccionar Cursos</h4>
           {loadingCourses ? (
             <p>Cargando cursos...</p>
           ) : courseStudent.length > 0 ? (
             courseStudent.map((course) => (
               <div
                 key={course.course_id}
-                className={`flex items-center font-bold text-black-700 mt-2 p-5 rounded-sm ${selectedCourses.includes(course.course_id) ? 'bg-green-500' : 'border-2 border-gray-500 '}`}
+                className={`flex items-center font-bold text-black mt-2 p-5 rounded-sm ${selectedCourses.includes(course.course_id) ? 'bg-green-500' : 'border-2 border-gray-500 '}`}
                 onClick={() => handleCourseSelect(course.course_id)}
               >
                 <img

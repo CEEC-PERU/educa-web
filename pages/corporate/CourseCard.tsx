@@ -48,7 +48,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
-      <h3 className="text-xl font-bold mb-4">{course.name}</h3>
+      <h3 className="text-xl font-bold mb-4  text-black " >{course.name}</h3>
       <div className="flex flex-col md:flex-row">
         <div className="mr-4">
           <img src={course.image} alt={course.name} className="w-32 h-32 object-cover" />
@@ -71,7 +71,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
         <div className="flex-grow">
           <div className="flex justify-between items-center">
-            <div className="flex justify-center items-center w-1/3">
+            <div className="flex justify-center items-center w-1/3 ">
               <CircularBar percentage={course.progressPercentage} label="Progreso" />
             </div>
             <div className="flex justify-center items-center w-1/3">

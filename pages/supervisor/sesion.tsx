@@ -79,7 +79,7 @@ const CorporateUsers: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}>
-          <h2 className="text-2xl font-bold mb-6">Usuarios de la Empresa</h2>
+          <h2 className="text-2xl font-bold mb-6  text-black">Usuarios de la Empresa</h2>
           <div className="flex flex-wrap gap-4 mb-4">
             <TopStudentsChart students={students} />
             <div className="flex flex-col gap-4 w-full md:w-auto">
@@ -89,7 +89,7 @@ const CorporateUsers: React.FC = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50  text-black "
                 />
               </div>
               <div>
@@ -98,7 +98,7 @@ const CorporateUsers: React.FC = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50  text-black "
                 />
               </div>
             </div>

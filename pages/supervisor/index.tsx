@@ -142,7 +142,7 @@ const CorporateDashboard: React.FC = () => {
 <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
 
  
-<h2 className="text-lg font-semibold mb-2">Progreso del curso</h2>
+<h2 className="text-lg font-semibold   text-black mb-2  " >Progreso del curso</h2>
 
 <Chart
           type="bar"
@@ -164,7 +164,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Gráfico de Tiempo promedio por curso (minutos) */}
       <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Tiempo Promedio por Curso</h2>
+          <h2 className="text-lg font-semibold   text-black mb-2">Tiempo Promedio por Curso</h2>
             <Chart
               type="bar"
               series={[{ name: 'Tiempo', data: courseTimeData.map(item => item.Tiempo) }]}
@@ -183,7 +183,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Calificaciones de Asesores */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Top 5  de Asesores</h2>
+          <h2 className="text-lg font-semibold   text-black mb-2">Top 5  de Asesores</h2>
             <Chart
               type="bar"
               series={[{ name: 'Calificación', data: topRanking.map(item => item.puntaje) }]}
@@ -203,7 +203,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Gráfico de Tiempo promedio por día */}
 <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-  <h2 className="text-lg font-semibold mb-2">Tiempo promedio por día en la plataforma</h2>
+  <h2 className="text-lg font-semibold   text-black mb-2">Tiempo promedio por día en la plataforma</h2>
   <Chart
     type="line"
     series={[{ name: 'Tiempo', data: averagetime.map(item => item.time) }]} // Assuming `averagetime` has objects with `time` property
@@ -222,7 +222,7 @@ const CorporateDashboard: React.FC = () => {
 
             {/* Gráfico de Participación Diaria */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Participación Diaria (estudiantes activos)</h2>
+            <h2 className="text-lg font-semibold  text-black mb-2">Participación Diaria (estudiantes activos)</h2>
             <Chart
               type="line"
               series={[{ name: 'Tiempo', data: dailyParticipationData.map(item => item.active) }]}
@@ -240,7 +240,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Tasa de Finalización de Cursos */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Tasa de Finalización de Cursos</h2>
+          <h2 className="text-lg font-semibold  text-black mb-2">Tasa de Finalización de Cursos</h2>
             
             <Chart
               type="bar"
@@ -258,7 +258,7 @@ const CorporateDashboard: React.FC = () => {
 
             {/* Gráfico de Compleción de Módulos */}
             <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-            <h2 className="text-lg font-semibold mb-2">Compleción de Módulos</h2>
+            <h2 className="text-lg font-semibold text-black mb-2">Compleción de Módulos</h2>
             <select value={selectedCourse} onChange={(e) => setSelectedCourse(Number(e.target.value))} className="mt-2 block w-full">
               <option value="CP Pospago">CP Pospago</option>
               <option value="Formación Continua">Formación Continua</option>
@@ -280,7 +280,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Encuesta de Satisfacción</h2>
+          <h2 className="text-lg font-semibold mb-2 text-black">Encuesta de Satisfacción</h2>
             {/*  satisfactionSurveyData('CP Pospago') selectedCourse */}
             <Chart
               type="donut"
@@ -298,7 +298,7 @@ const CorporateDashboard: React.FC = () => {
 
           {/* Gráfico de NPS */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-          <h2 className="text-lg font-semibold mb-2">Del 1 al 10 ¿Què tanto recomendarías este curso?</h2>
+          <h2 className="text-lg font-semibold mb-2 text-black">Del 1 al 10 ¿Què tanto recomendarías este curso?</h2>
             
             <Chart
               type="bar"

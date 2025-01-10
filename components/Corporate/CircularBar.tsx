@@ -51,7 +51,7 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
           {percentage}%
         </text>
       </svg>
-      <div className="text-center mt-2">{label}</div>
+      <div className="text-center mt-2  text-black ">{label}</div>
     </div>
   );
 };

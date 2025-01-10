@@ -144,7 +144,7 @@ const Usuarios: React.FC = () => {
             {userCountResult && (
               <div>
                 <h1 className='font-bold text-2xl text-blue-500'> {userCountResult.UserCount} / {userCountResult.maxUserCount} </h1>
-                <h1 className='font-bold text-2xl'> {userCountResult.message} </h1>
+                <h1 className=' text-black font-bold text-2xl'> {userCountResult.message} </h1>
               </div>
             )}
           </div>
@@ -161,19 +161,20 @@ const Usuarios: React.FC = () => {
             </div>
             
           </div>
-          <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
+          <div className="grid grid-cols-1 gap-6 w-full max-w-4xl  text-black font-bold">
             <FormField
               id="filter"
               label="Filtrar por nombre, apellido o DNI"
               type="text"
               value={filter}
+              className=' text-black font-bold'
               onChange={handleFilterChange}
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
             <div>
-              <h2 className="text-lg font-semibold mb-2">Usuarios con Perfil</h2>
+              <h2 className="text-lg  mb-2  text-black font-semibold">Usuarios con Perfil</h2>
             <TableUser
             columns={columnsWithProfile}
             data={studentsWithProfile}
@@ -184,7 +185,7 @@ const Usuarios: React.FC = () => {
 
             </div>
             <div>
-              <h2 className="text-lg font-semibold mb-2">Usuarios sin Perfil</h2>
+              <h2 className="text-lg  text-black font-semibold mb-2">Usuarios sin Perfil</h2>
               <TableUser
                 columns={columnsWithoutProfile}
                 data={studentsWithoutProfile}

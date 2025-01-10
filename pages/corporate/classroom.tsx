@@ -93,7 +93,7 @@ const Classroom: React.FC = () => {
               <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
                 <div className="flex justify-left items-center mb-6">
                   <FloatingButton onClick={handleAddClassroom} label="Añadir Aula" />
-                  <h2 className="text-xl font-bold ml-3">Aulas</h2>
+                  <h2 className="text-xl font-bold ml-3  text-black ">Aulas</h2>
                 </div>
                 <div className="grid grid-cols-1 gap-6">
                   {!isLoading && classrooms && classrooms.length > 0 ? (
@@ -119,7 +119,7 @@ const Classroom: React.FC = () => {
 
               {/* Contenedor de Cursos */}
               <div>
-                <h4 className="font-bold text-md">Cursos</h4>
+                <h4 className="font-bold text-md  text-black ">Cursos</h4>
                 {courseStudent.length > 0 ? (
                   courseStudent.map((course) => (
                     <div key={course.course_id} className="flex items-center mt-2 border-2 border-e-cyan-800 p-5">
