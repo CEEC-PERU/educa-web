@@ -59,7 +59,7 @@ const Classroom: React.FC = () => {
           </div>
           <div className='grid grid-cols-2 '>
           <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-            <h2 className="text-lg font-semibold mb-2">Aulas</h2>
+            <h2 className="text-lg font-semibold mb-2 text-black">Aulas</h2>
             <div className="grid grid-cols-1 gap-6">
               {!isLoading && classrooms && classrooms.length > 0 ? (
                 classrooms.map((classroom) => (
