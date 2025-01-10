@@ -149,6 +149,7 @@ const RequirementForm: React.FC = () => {
                                 label="Fecha Propuesta"
                                 type="date"
                                 key={dateKey}
+                                className='text-black '
                                 value={proposedDate}
                                 onChange={handleInputChange}
                                 onBlur={handleBlur}
@@ -159,6 +160,7 @@ const RequirementForm: React.FC = () => {
                                 id="courseName"
                                 label="Nombre del Curso"
                                 type="text"
+                               className='text-black '
                                 value={courseName}
                                 onChange={handleInputChange}
                                 onBlur={handleBlur}
@@ -170,6 +172,7 @@ const RequirementForm: React.FC = () => {
                                 label="Mensaje"
                                 type="textarea"
                                 value={message}
+                                className='text-black '
                                 onChange={handleInputChange}
                                 onBlur={handleBlur}
                                 error={!message}
@@ -179,6 +182,7 @@ const RequirementForm: React.FC = () => {
                                 id="courseDuration"
                                 label="Duración del Curso"
                                 type="text"
+                                className='text-black '
                                 value={courseDuration}
                                 onChange={handleInputChange}
                                 onBlur={handleBlur}
@@ -189,6 +193,9 @@ const RequirementForm: React.FC = () => {
                                 <div key={index} className="mb-4">
                                     <label className="block text-sm font-medium text-gray-700 mb-4 mt-4">
                                         Materiales {index + 1}
+                                    </label>
+                                    <label className="block text-sm font-medium text-black mb-4 mt-4">
+                                       El material debe ser en formato pdf o imagen
                                     </label>
                                     <input
                                         type="file"
