@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic
+import dynamic from 'next/dynamic'; // Import dynamic 
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../context/AuthContext';
@@ -20,7 +20,6 @@ const CorporateDashboard: React.FC = () => {
   const { courseProgressData, loading, error } = useCourseProgress(selectedCourse);
   const { topRanking } = useTop(selectedCourse);
   const { averagetime} = useAverageTime();
-
 
   const courseTimeData = [
     { course: 'CP Pospago', Tiempo: 30 },
@@ -220,8 +219,6 @@ const CorporateDashboard: React.FC = () => {
     height={300}
   />
 </div>
-
-
 
             {/* Gráfico de Participación Diaria */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
