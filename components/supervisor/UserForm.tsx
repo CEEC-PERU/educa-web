@@ -134,9 +134,9 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-md max-h-[500px] overflow-y-auto">
-      <h1 className="font-bold text-black-700 text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
+      <h1 className="font-bold text-black text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
 
-      <div className="mb-4 flex items-center justify-center space-x-4 text-black-700 font-bold">
+      <div className="mb-4 flex items-center justify-center space-x-4 text-black font-bold">
         <input
           type="file"
           accept=".xlsx, .xls"
@@ -183,12 +183,12 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
             onChange={handleClassroomSelect}
             value={selectedClassroom ?? ''}
           >
-            <option className="font-bold text-lg text-black-700" value="" disabled>Seleccione una aula</option>
+            <option className="font-bold text-lg text-black" value="" disabled>Seleccione una aula</option>
             {loadingClassrooms ? (
-              <option className="font-bold text-lg text-black-700">Cargando aulas...</option>
+              <option className="font-bold text-lg text-black">Cargando aulas...</option>
             ) : (
               classrooms.map((classroom) => (
-                <option className="font-bold text-black-700 " key={classroom.classroom_id} value={classroom.classroom_id}>
+                <option className="font-bold text-black " key={classroom.classroom_id} value={classroom.classroom_id}>
                   {classroom.code} - Empresa: {classroom.Enterprise.name} - Turno: {classroom.Shift.name} - Profesor: {classroom.User.userProfile.first_name} {classroom.User.userProfile.last_name}
                 </option>
               ))
@@ -199,13 +199,13 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
       )}
 
 <div className="mb-4 flex items-center justify-center space-x-4 mt-5">
-                <label className="block text-black-700 text-md font-bold mb-2">Fecha Limite:</label>
+                <label className="block text-black text-md font-bold mb-2">Fecha Limite:</label>
                 <input
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                   onBlur={() => setTouchedFields((prev) => ({ ...prev, startDate: true }))}
-                  className={`border-4 shadow appearance-none  rounded w-full py-2 px-3 text-black-700 font-bold leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
+                  className={`border-4 shadow appearance-none  rounded w-full py-2 px-3 text-black font-bold leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
                 />
               </div>
 
