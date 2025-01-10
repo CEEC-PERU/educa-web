@@ -88,7 +88,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
         {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
         {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
 
-        <FormField id="code" label="Código" type="text" value={formData.code} onChange={handleChange} />
+        <FormField id="code" className='text-black ' label="Código" type="text" value={formData.code} onChange={handleChange} />
 
         <FormField 
           id="shift_id" 
@@ -96,7 +96,9 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
           type="select" 
           value={formData.shift_id} 
           onChange={handleChange} 
+          className='text-black '
           options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name }))]}
+        
         />
 
 

@@ -57,7 +57,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={` text-black block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         >
           {options.map((option) => (
@@ -163,7 +163,7 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>
