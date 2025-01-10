@@ -81,7 +81,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           rows={rows}
-          className={`block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`text-black block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>
@@ -118,7 +118,7 @@ const FormField: React.FC<FormFieldProps> = ({
             value={value as string}
             onChange={onChange}
             onBlur={onBlur}
-            className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+            className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
             required={required}
           />
           <button
@@ -144,7 +144,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           multiple={type === 'file'}
-          className={`block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`block py-3 text-black px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
           required={required}
         />
       </div>
