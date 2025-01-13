@@ -20,7 +20,7 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
   const [showClassroomAndCourses, setShowClassroomAndCourses] = useState(true);
   const [selectedClassroom, setSelectedClassroom] = useState<number | null>(null);
   const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
-  
+  const [isLoading, setIsLoading] = useState<boolean>(false); 
   const { classrooms, isLoading: loadingClassrooms } = useClassroomBySupervisor();
   const { courseStudent, isLoading: loadingCourses } = useCourseStudent();
   const [startDate, setStartDate] = useState('');
@@ -96,12 +96,16 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         setError('Debe cargar un archivo con usuarios.');
         return;
       }
-  
+
+      
+     
+
       if (users.length > maxUsersAllowed) {
         setError(`Excede el límite permitido. Solo puede registrar ${maxUsersAllowed} usuarios.`);
         return;
       }
   
+      setIsLoading(true); // Iniciar el estado de carga
       // Crear el cuerpo de la solicitud para enviar al backend del courseuserinfo
       const requestBody = {
         users,
@@ -120,14 +124,23 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
         body: JSON.stringify(requestBody), // Enviar `requestBody`
       });
   
+    
+
       if (!response.ok) {
-        throw new Error('Error al registrar usuarios');
+        const errorData = await response.json();
+        throw new Error(errorData.message);
       }
   
       setSuccess('Usuarios registrados correctamente');
       onSuccess();
     } catch (error) {
-      setError('Error al registrar usuarios');
+      if (error instanceof Error) {
+        setError(error.message); // Accede al mensaje del error
+      } else {
+        setError('Ocurrió un error inesperado.'); // Manejo genérico para errores no esperados
+      }
+    }finally {
+      setIsLoading(false);
     }
   };
   
@@ -239,11 +252,41 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
       {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
 
       <div className="mt-6 flex justify-center">
+       
         <button
           onClick={handleRegister}
-          className="bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition duration-300"
+          disabled={isLoading} // Deshabilitar mientras está cargando
+          className={`bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg transition duration-300 ${
+            isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'
+          }`}
         >
-          Registrar
+          {isLoading ? (
+            <span className="flex items-center">
+              <svg
+                className="animate-spin h-5 w-5 text-white mr-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              Registrando...
+            </span>
+          ) : (
+            'Registrar'
+          )}
         </button>
       </div>
     </div>
