@@ -122,11 +122,11 @@ const CorporateDashboard: React.FC = () => {
 <select 
   value={selectedCourse} 
   onChange={(e) => setSelectedCourse(Number(e.target.value))} 
-  className="block border-4 p-2 mr-4"
+  className="block border-4 p-2 mr-4 text-black"
 >
   {courseStudent.length > 0 ? (
     courseStudent.map((course) => (
-      <option key={course.course_id} value={course.course_id} className="text-gray-700">
+      <option key={course.course_id} value={course.course_id} className="text-black">
         {course.Course.name}
       </option>
     ))

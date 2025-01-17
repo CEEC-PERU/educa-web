@@ -117,7 +117,7 @@ const CorporateUsers: React.FC = () => {
                       <div className="ml-4">
                        
                        
-                        <p className="font-semibold">
+                        <p className="font-semibold text-black">
   {student.first_name && student.last_name ? `${student.first_name} ${student.last_name}` : student.dni}
 </p>
 
@@ -126,7 +126,7 @@ const CorporateUsers: React.FC = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <p className="text-gray-600">Sesiones iniciadas:</p>
-                      <p className="font-bold">{student.loginCount}</p>
+                      <p className="font-bold text-black">{student.loginCount}</p>
                     </div>
                   </div>
                 ))}

@@ -139,11 +139,11 @@ const RequirementForm: React.FC = () => {
             <div className="flex flex-1 pt-16">
                 <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
                 <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-                    <div className="container mx-auto p-4">
+                    <div className="container mx-auto p-4 text-black">
                         {loading && <Loader />}
                         {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
                         {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className='text-black'>
                             <FormField
                                 id="proposedDate"
                                 label="Fecha Propuesta"

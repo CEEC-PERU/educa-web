@@ -48,7 +48,7 @@ const FormField: React.FC<FormFieldProps> = ({
   if (type === 'select' && options) {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
           {label}
         </label>
         <select
@@ -71,7 +71,7 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'textarea') {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-4">
+        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-4">
           {label}
         </label>
         <textarea
@@ -98,7 +98,7 @@ const FormField: React.FC<FormFieldProps> = ({
           onBlur={onBlur}
           className={`mr-2 leading-tight ${isError ? 'border-red-500' : 'border-gray-300'}`}
         />
-        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300">
+        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300">
           {label}
         </label>
       </div>
@@ -106,7 +106,7 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'password') {
     return (
       <div className="relative z-0 w-full mb-10 group">
-        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300 mb-1">
+        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300 mb-1">
           {label}
         </label>
         <div className="relative">
@@ -134,7 +134,7 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'date' || type === 'file') {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-blue-400 dark:text-gray-300 mb-1">
+        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
           {label}
         </label>
         <input
@@ -152,7 +152,7 @@ const FormField: React.FC<FormFieldProps> = ({
   } else {
     return (
       <div className="relative z-0 w-full mb-10 group">
-        <label htmlFor={id} className="text-blue-400 block text-sm font-medium dark:text-gray-300 mb-1">
+        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300 mb-1">
           {label}
         </label>
         <input

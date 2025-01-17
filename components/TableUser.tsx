@@ -19,18 +19,18 @@ interface TableProps {
 const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionClick , onDeleteClick }) => {
   return (
     <div className="overflow-x-auto mt-4">
-      <table className="min-w-full bg-white">
+      <table className="min-w-full bg-white text-black">
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.accessor} className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-gray-600 uppercase tracking-wider">
+              <th key={column.accessor} className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">
                 {column.header}
               </th>
             ))}
-            {onActionClick && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-gray-600 uppercase tracking-wider">Acciones</th>}
+            {onActionClick && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">Acciones</th>}
           </tr>
         </thead>
-        <tbody>
+        <tbody className='text-black'>
           {data.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {columns.map((column) => {

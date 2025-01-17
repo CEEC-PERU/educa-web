@@ -86,7 +86,7 @@ const Classroom: React.FC = () => {
           </div>
           <div className=" pl-20  flex-grow  grid-cols-2" >
             
-                      <h4 className="font-bold text-md">Courses</h4>
+                      <h4 className="font-bold text-md text-black">Courses</h4>
                       {courseStudent.length > 0 ? (
                         courseStudent.map((course) => (
                           <div key={course.course_id} className="flex items-center mt-2  border-2 border-e-cyan-800 p-5">
