@@ -38,8 +38,8 @@ console.log(selectedCourse)
   //];
 
   const courseTimeData = [
-    { course: 'CP Pospago', Tiempo: 30 },
-    { course: 'Formación Continua', Tiempo: 5 },
+    { course: 'CP Pospago', Tiempo: 20 },
+    { course: 'Consulta Previa Prepago', Tiempo: 5 },
   ];
 
 //averageTimeData
@@ -55,8 +55,8 @@ console.log(selectedCourse)
 
   //Curso completados al 100%
   const courseCompletionData = [
-    { course: 'CP Pospago', completion: 70 },
-    { course: 'Formación Continua', completion: 0 },
+    { course: 'CP Pospago', completion: 1 },
+    { course: 'Consulta Previa Prepago', completion: 0 },
   ];
 
   //Participantes en la semana 
@@ -75,8 +75,9 @@ console.log(selectedCourse)
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
-        { module: 'Formación Integral ', completion: 60 },
-        { module: 'Gestión Integral ', completion: 40 },
+        { module: 'Formación Integral ', completion: 10 },
+        { module: 'Gestión Integral ', completion: 8 },
+        { module: 'Gestión De Contacto ', completion: 5 },
       ];
     } else if (course === 'Formación Continua') {
       return [{ module: 'Retenciones 1', completion: 85 }];
@@ -86,18 +87,18 @@ console.log(selectedCourse)
 
   const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
-      return [0, 0, 0, 1, 2]; // Valores en porcentaje para cada estrella
+      return [0, 0, 0, 1, 0,33]; // Valores en porcentaje para cada estrella
     } else if (course === 'Formación Continua') {
-      return [0, 1, 1, 0, 2];
+      return [0, 0, 0, 1, 0 ,33];
     }
     return [];
   };
 
   const npsData = (course: string) => {
     if (course === 'CP Pospago') {
-      return [0, 0, 0, 0, 0, 0, 1, 2, 0, 3]; // Valores de NPS
+      return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Valores de NPS
     } else if (course === 'Formación Continua') {
-      return [0, 0, 0, 1, 0, 0, 2, 0, 1, 2];
+      return [0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     }
     return [];
   };
@@ -301,7 +302,7 @@ console.log(selectedCourse)
               series={satisfactionSurveyData('CP Pospago')} 
               options={{
                 chart: { type: 'donut' },
-                labels: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'],
+                labels: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐' , 'N/A'],
                 colors: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5'],
                 legend: { position: 'bottom' },
                 dataLabels: { enabled: true },
