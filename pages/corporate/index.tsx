@@ -8,7 +8,7 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useCourseProgress } from '../../hooks/useProgressCurso';
-import { useTop , useAverageTime} from '../../hooks/useTopRankingCorporative';
+import { useTop , useAverageTime , useAUserActive} from '../../hooks/useTopRankingCorporative';
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -26,14 +26,10 @@ const CorporateDashboard: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<number | undefined>(undefined);
   const { courseProgressData, loading, error } = useCourseProgress(selectedCourse);
   const { topRanking } = useTop(selectedCourse);
-  const { averagetime} = useAverageTime();
+  const { averagetime } = useAverageTime();
+  const { activeuser } = useAUserActive();
 console.log(selectedCourse)
   
-  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({
-    startDate: false,
-    endDate: false,
-    selectedEnterprise: false,
-  });
 
   // Datos de ejemplo
  // const courseProgressData = [
@@ -151,35 +147,7 @@ console.log(selectedCourse)
 </select>
 
 
-  <form className="flex items-center space-x-4 mb-4" >
-              <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Filtrar por:</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  onBlur={() => setTouchedFields((prev) => ({ ...prev, startDate: true }))}
-                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${touchedFields.startDate && !startDate ? 'border-red-500' : ''}`}
-                />
-              </div>
-              <div>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  onBlur={() => setTouchedFields((prev) => ({ ...prev, endDate: true }))}
-                  className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-6 ${touchedFields.endDate && !endDate ? 'border-red-500' : ''}`}
-                />
-              </div>
-              <div>
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-6"
-                >
-                  Filtrar
-                </button>
-              </div>
-            </form>
+
 </div>
 
 {/* Gráfico de Barras de Progreso */}
@@ -271,10 +239,10 @@ console.log(selectedCourse)
             <h2 className="text-lg font-semibold mb-2">Participación Diaria (estudiantes activos)</h2>
             <Chart
               type="line"
-              series={[{ name: 'Tiempo', data: dailyParticipationData.map(item => item.active) }]}
+              series={[{ name: 'Cantidad', data: activeuser.map(item => item.active) }]}
               options={{
                 chart: { type: 'line' },
-                xaxis: { categories: dailyParticipationData.map(item => item.day), title: { text: 'Día' } },
+                xaxis: { categories: activeuser.map(item => item.day), title: { text: 'Día' } },
                 yaxis: { title: { text: 'Cantidad Estudiantes' } },
                 colors: ['#33b2df'],
                 stroke: { curve: 'smooth' },

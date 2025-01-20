@@ -13,3 +13,8 @@ export interface CourseProgress {
     day: string;
     time: number;
 }
+
+export interface ActiveUser {
+  day: string;
+  active: number;
+}
