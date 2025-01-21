@@ -71,6 +71,7 @@ console.log(selectedCourse)
   ];
 
   
+  
 //Lista de modulos por curso
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {

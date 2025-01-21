@@ -154,3 +154,5 @@ export const API_USER_FLASHCARDS = `${baseURL}/api/flashcards`;
 export const API_USERS_COURSES = `${baseURL}/api/users/courses`;
 
 export const API_DASHBOARD = `${baseURL}/api/dashboard`;
+
+export const API_TEMPLATE = `${baseURL}/api/template`;

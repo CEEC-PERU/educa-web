@@ -13,12 +13,15 @@ import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../interfaces/UserAdmin';
 import { useUserCount } from '../../../hooks/useUserCount';
 import { useDeleteUser } from '../../../hooks/useDeleteUser';
+import { useTemplates } from '../../../hooks/useTemplate';
 import './../../../app/globals.css';
 
 
 const Usuarios: React.FC = () => {
   const { deleteUser } = useDeleteUser(); 
   const { usercount, isLoading, error  } = useUserCount();
+  const { templates} = useTemplates();
+  console.log(templates)
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { logout, user, profileInfo } = useAuth();

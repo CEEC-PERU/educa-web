@@ -22,7 +22,7 @@ const CorporateDashboard: React.FC = () => {
   const { averagetime} = useAverageTime();
 
   const courseTimeData = [
-    { course: 'CP Pospago', Tiempo: 30 },
+    { course: 'CP Pospago', Tiempo: 20 },
     { course: 'Formación Continua', Tiempo: 5 },
   ];
 
@@ -45,18 +45,18 @@ const CorporateDashboard: React.FC = () => {
   ];
 
   const courseCompletionData = [
-    { course: 'CP Pospago', completion: 70 },
+    { course: 'CP Pospago', completion: 1 },
     { course: 'Formación Continua', completion: 0 },
   ];
 
   const dailyParticipationData = [
-    { day: 'Lunes', active: 2 },
-    { day: 'Martes', active: 4 },
-    { day: 'Miércoles', active: 2 },
-    { day: 'Jueves', active: 3 },
-    { day: 'Viernes', active: 2 },
-    { day: 'Sabado', active: 1 },
-    { day: 'Domingo', active: 0 },
+    { day: 'Lunes', active: 0},
+    { day: 'Martes', active: 0 },
+    { day: 'Miércoles', active: 0 },
+    { day: 'Jueves', active: 0 },
+    { day: 'Viernes', active: 0 },
+    { day: 'Sabado', active: 0 },
+    { day: 'Domingo', active: 0},
   ];
 
   
@@ -64,27 +64,27 @@ const CorporateDashboard: React.FC = () => {
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
-        { module: 'Formación Integral ', completion: 60 },
-        { module: 'Gestión Integral ', completion: 40 },
+        { module: 'Formación Integral ', completion: 0 },
+        { module: 'Gestión Integral ', completion: 0 },
       ];
     } else if (course === 'Formación Continua') {
-      return [{ module: 'Retenciones 1', completion: 85 }];
+      return [{ module: 'Retenciones 1', completion: 0 }];
     }
     return [];
   };
 
   const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
-      return [0, 0, 0, 1, 2]; // Valores en porcentaje para cada estrella
+      return [0, 0, 0, 0, 0,33]; // Valores en porcentaje para cada estrella
     } else if (course === 'Formación Continua') {
-      return [0, 1, 1, 0, 2];
+      return [0, 0, 0, 0, 2];
     }
     return [];
   };
 
   const npsData = (course: string) => {
     if (course === 'CP Pospago') {
-      return [0, 0, 0, 0, 0, 0, 1, 2, 0, 3]; // Valores de NPS
+      return [0, 0, 0, 0, 0, 0, 0, 0, 2, 0]; // Valores de NPS
     } else if (course === 'Formación Continua') {
       return [0, 0, 0, 1, 0, 0, 2, 0, 1, 2];
     }
@@ -287,7 +287,7 @@ const CorporateDashboard: React.FC = () => {
               series={satisfactionSurveyData('CP Pospago')} 
               options={{
                 chart: { type: 'donut' },
-                labels: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'],
+                labels: ['⭐', '⭐⭐', '⭐⭐⭐', '⭐⭐⭐⭐', '⭐⭐⭐⭐⭐' , 'N/A'],
                 colors: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5'],
                 legend: { position: 'bottom' },
                 dataLabels: { enabled: true },
