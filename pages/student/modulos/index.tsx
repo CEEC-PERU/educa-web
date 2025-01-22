@@ -14,6 +14,8 @@ import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import LoadingIndicator from '../../../components/student/LoadingIndicator'; 
+  
+import debounce from 'lodash.debounce';
 const socket = io(API_SOCKET_URL);
 
 
@@ -38,6 +40,7 @@ const Home: React.FC = () => {
     uri_picture = profile.profile_picture!;
   }
 
+  
   const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => {
     setSelectedModuleId(moduleId || null);
 
@@ -68,29 +71,35 @@ const Home: React.FC = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  
 
+
+  // Debounce para limitar las emisiones
+  const debouncedEmit = debounce((data) => {
+    socket.emit('session', data);
+  }, 5000); // 1000 ms de espera entre emisiones
   
   const handleVideoProgress = (progress: number, isCompleted: boolean) => {
-    const progressUpdate = Math.round(progress); // Redondea el progreso
-
+    const progressUpdate = Math.round(progress);
+  
     if (selectedSession.video && selectedSession.session_id) {
       const sessionProgress = {
         session_id: selectedSession.session_id,
         progress: progressUpdate,
         is_completed: isCompleted,
-        user_id: userInfo.id
+        user_id: userInfo.id,
       };
-
-      socket.emit('session', sessionProgress); // Enviar datos de progreso por socket
-
-      // *** Actualización del estado `videoProgress` para la sesión actual ***
+  
+      // Usar el debounce para enviar datos al servidor
+      debouncedEmit(sessionProgress);
+  
+      // Actualizar el estado local para reflejar el progreso
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
-        [selectedSession.session_id!]: progressUpdate,  // Se utiliza el `session_id` como clave para el progreso
+        [selectedSession.session_id!]: progressUpdate,
       }));
     }
   };
+  
 
   useEffect(() => {
     const handleResize = () => {
