@@ -17,6 +17,22 @@ export const createSessionProgress = async ( userToken : string , progressSessio
     }
 };
 
+export const createSessionProgressUser = async ( userToken : string , progressSessionData: SessionProgress) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    // Hacer la solicitud POST al API de UserProgress
+    const response = await axios.post(`${API_POST_SESSION_PROGRESS}/progresstudent`, progressSessionData, config);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating profile:', error);
+    throw new Error('Error creating profile');
+  }
+};
+
 
 export const getProgressSession = async (userToken: string, userId: number, session_id: number): Promise<SessionProgress> => {
   try {

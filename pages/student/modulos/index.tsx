@@ -8,7 +8,7 @@ import { Profile } from '../../../interfaces/UserInterfaces';
 import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../../../interfaces/StudentModule';
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
-
+import { useSesionProgress } from '../../../hooks/useProgressSession';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
@@ -30,7 +30,7 @@ const Home: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<{ video?: string, questions?: Question[], session_id?: number , module_id?: number }>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
-
+  const { createSession_Progress, session_progress } = useSesionProgress();
   let name = '';
   let uri_picture = '';
 
@@ -72,13 +72,10 @@ const Home: React.FC = () => {
   };
 
 
-
-  // Debounce para limitar las emisiones
-  const debouncedEmit = debounce((data) => {
-    socket.emit('session', data);
-  }, 5000); // 1000 ms de espera entre emisiones
   
-  const handleVideoProgress = (progress: number, isCompleted: boolean) => {
+  
+  
+  const handleVideoProgress = async (progress: number, isCompleted: boolean)  => {
     const progressUpdate = Math.round(progress);
   
     if (selectedSession.video && selectedSession.session_id) {
@@ -89,9 +86,9 @@ const Home: React.FC = () => {
         user_id: userInfo.id,
       };
   
-      // Usar el debounce para enviar datos al servidor
-      debouncedEmit(sessionProgress);
-  
+      
+      await createSession_Progress(sessionProgress); // Llamada al hook
+
       // Actualizar el estado local para reflejar el progreso
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
