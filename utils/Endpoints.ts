@@ -156,3 +156,5 @@ export const API_USERS_COURSES = `${baseURL}/api/users/courses`;
 export const API_DASHBOARD = `${baseURL}/api/dashboard`;
 
 export const API_TEMPLATE = `${baseURL}/api/template`;
+
+export const API_COURSETIME = `${baseURL}/api/coursetime`;

@@ -14,7 +14,6 @@ import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import LoadingIndicator from '../../../components/student/LoadingIndicator'; 
-  
 import debounce from 'lodash.debounce';
 const socket = io(API_SOCKET_URL);
 
