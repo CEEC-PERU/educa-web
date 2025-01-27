@@ -86,7 +86,7 @@ const Home: React.FC = () => {
       };
   
       
-      await createSession_Progress(sessionProgress); // Llamada al hook
+     
 
       // Actualizar el estado local para reflejar el progreso
       setVideoProgress((prevProgress) => ({
@@ -95,6 +95,9 @@ const Home: React.FC = () => {
       }));
     }
   };
+
+
+  
   
 
   useEffect(() => {
@@ -143,6 +146,7 @@ const Home: React.FC = () => {
         <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${isDrawerOpen ? 'ml-64' : 'ml-16'}`}>
           <MainContentPrueba
             sessionVideo={selectedSession.video}
+            sessionId={selectedSession.session_id}
             evaluationQuestions={selectedSession.questions}
             onProgress={handleVideoProgress}
             selectedModuleId={selectedModuleId}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import "./../../app/globals.css";
+import { useSesionProgress } from '../../hooks/useProgressSession';
 import {
   Question,
   ModuleResults,
@@ -20,6 +21,7 @@ import StarForm from "./../../components/student/StarForm";
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
   sessionVideo?: string;
+  sessionId?: number;
   evaluationQuestions?: Question[];
   onFinish?: () => void;
   onUpdated?: () => void;
@@ -35,6 +37,7 @@ interface MainContentProps {
 const MainContentPrueba: React.FC<MainContentProps> = ({
   sessionVideosInteractivos,
   sessionVideo,
+  sessionId,
   evaluationQuestions,
   onFinish,
   onUpdated,
@@ -66,7 +69,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
   const [evamodulecount, setEvaModCount] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
-
+  const { createSession_Progress, session_progress } = useSesionProgress();
 // Nuevo estado para guardar todas las respuestas seleccionadas
 
   const [answers, setAnswers] = useState<
@@ -85,6 +88,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png';
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  
   const optionColors = ["bg-blue-500", "bg-orange-500", "bg-purple-500", "bg-cyan-500"];
   // Context
   const { user, token } = useAuth();
@@ -114,6 +118,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
   }, [moduleResults , courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
 
+
   useEffect(() => {
     setCurrentQuestion(0);
     setSelectedOption(null);
@@ -133,15 +138,92 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   ]);
 
   useEffect(() => {
+    let isProgressSent = false; // Flag para evitar envíos duplicados
     if (videoRef.current) {
       const handleTimeUpdate = () => {
         const currentTime = videoRef.current!.currentTime;
         const duration = videoRef.current!.duration;
         const progress = (currentTime / duration) * 100;
         if (onProgress) onProgress(progress, false);
+
+        // Si el progreso llega al 100%, enviar la sesión completada
+      if (progress >= 100) {
+        sendSessionProgress(progress, true); // Indica que se completó
+      }
         setCurrentTime(currentTime);
       };
 
+      
+  const handlePause = () => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      const progress = (currentTime / duration) * 100;
+      // Enviar el progreso actual al pausar
+      sendSessionProgress(progress, false); // No se ha completado, solo se guarda el progreso actual
+    }
+  };
+
+   // Función para manejar cuando el usuario sale de la ventana o pestaña
+   const handleVisibilityChange = () => {
+    if (document.visibilityState === "hidden" && videoRef.current) {
+      videoRef.current.pause(); // Pausa automáticamente el video al salir de la ventana
+    }
+  };
+
+   // Función para manejar cuando el usuario retrocede en el navegador
+   const handlePopState = () => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      const progress = (currentTime / duration) * 100;
+
+      // Envía el progreso antes de retroceder
+      if (!isProgressSent) {
+        sendSessionProgress(progress, false);
+        isProgressSent = true; // Marca que ya se envió el progreso
+      }
+    }
+  };
+
+
+   // Función auxiliar para enviar el progreso de la sesión al servidor
+   const sendSessionProgress = async (progress: number, isCompleted: boolean) => {
+    const progressUpdate = Math.round(progress);
+
+    if (sessionId) {
+      const sessionProgress = {
+        session_id: sessionId,
+        progress: progressUpdate,
+        is_completed: isCompleted,
+        user_id: userInfo.id,
+      };
+
+      // Llamar al hook para enviar los datos al servidor
+      await createSession_Progress(sessionProgress);
+      isProgressSent = true; // Marca que ya se envió el progreso
+    
+    }
+  };
+
+
+
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (videoRef.current) {
+      const currentTime = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      const progress = (currentTime / duration) * 100;
+      if (onProgress) onProgress(progress, false);
+    
+    videoRef.current.pause(); 
+     // Muestra un mensaje de confirmación al usuario (en algunos navegadores)
+     e.preventDefault();
+     e.returnValue = ''; // Obligatorio para algunos navegadores modernos
+
+    }
+  };
+
+   // Evitar que el usuario adelante el video
       const handleSeeking = () => {
         if (videoRef.current!.currentTime > currentTime) {
           videoRef.current!.currentTime = currentTime;
@@ -150,7 +232,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
       videoRef.current.addEventListener("timeupdate", handleTimeUpdate);
       videoRef.current.addEventListener("seeking", handleSeeking);
-
+      videoRef.current.addEventListener("pause", handlePause); // Escucha el evento "pause" (cuando el usuario pausa el video)
+      document.addEventListener("visibilitychange", handleVisibilityChange); // Detecta cambios de ventana o pestaña
+      window.addEventListener("beforeunload", handleBeforeUnload); // Escucha el evento "beforeunload" (cuando el usuario intenta salir o recargar la página)
+      window.addEventListener("popstate", handlePopState); // Detecta retroceso en el historial del navegador
+      
       if (videoProgress > 0 && !videoEnded) {
         const duration = videoRef.current!.duration;
         const targetTime = (videoProgress / 100) * duration;
@@ -163,7 +249,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         if (videoRef.current) {
           videoRef.current.removeEventListener("timeupdate", handleTimeUpdate);
           videoRef.current.removeEventListener("seeking", handleSeeking);
+          videoRef.current.removeEventListener("pause", handlePause); // Elimina el evento "pause"
+          document.addEventListener("visibilitychange", handleVisibilityChange); // Evento para cambiar de pestaña
         }
+        window.removeEventListener("beforeunload", handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
+        window.removeEventListener("popstate", handlePopState); // Elimina el evento de retroceso
       };
     }
   }, [
