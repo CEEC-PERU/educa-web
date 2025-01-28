@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useRef} from 'react';
 import { useRouter } from 'next/router';
 import SidebarPrueba from '../../../components/student/SideBarPrueba';
 import { useAuth } from '../../../context/AuthContext';
@@ -9,6 +9,7 @@ import { Question, ModuleEvaluation, ModuleSessions, ModuleResults } from '../..
 import { useModuleDetail } from '../../../hooks/useModuleDetail';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
 import { useSesionProgress } from '../../../hooks/useProgressSession';
+import { useCourseTime , useCourseTimeEnd } from '../../../hooks/useCourseTime';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import io from 'socket.io-client';
 import { API_SOCKET_URL } from '../../../utils/Endpoints';
@@ -30,6 +31,12 @@ const Home: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>({});
   const { createSession_Progress, session_progress } = useSesionProgress();
+  const { createCourseTimeStart } = useCourseTime();
+  const { createCourseTimeEnd } = useCourseTimeEnd();
+  const startTimeRef = useRef<Date | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [hasEnded, setHasEnded] = useState(false);
   let name = '';
   let uri_picture = '';
 
@@ -39,7 +46,83 @@ const Home: React.FC = () => {
     uri_picture = profile.profile_picture!;
   }
 
+
+
+  useEffect(() => {
+    let timer = 0; // Contador en segundos
+    const startTime = new Date(); // Hora exacta de inicio
   
+    console.log("Inicio del curso:", startTime);
+  
+    let interval: NodeJS.Timeout | null = null;
+    let isPageVisible = true; // Flag para verificar si la página es visible
+  
+    const startTimer = () => {
+      // Incrementar el timer cada segundo
+      interval = setInterval(() => {
+        if (isPageVisible) { // Solo incrementar si la página está visible
+          timer += 1;
+          console.log("Tiempo transcurrido (segundos):", timer);
+        }
+      }, 1000);
+    };
+  
+    const handleEndSession = () => {
+      const endTime = new Date(); // Hora exacta de finalización
+      clearInterval(interval!); // Detener el timer
+  
+      console.log("Fin del curso:", endTime);
+      console.log("Duración total (segundos):", timer);
+  
+      // Llamada al backend para registrar el tiempo de la sesión
+      createCourseTimeStart({
+        course_id: courseIdNumber,
+        user_id: userInfo.id,
+        startTime: startTime,
+        endTime: endTime,
+        duration: timer, // Incluye el tiempo transcurrido
+      }).catch((error: any) => console.error("Error al registrar el tiempo de inicio:", error));
+    };
+  
+    // Cuando la página gana o pierde visibilidad
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        // Si la pestaña pierde visibilidad, no incrementar el tiempo
+        isPageVisible = false;
+      } else {
+        // Si la pestaña gana visibilidad, reanudar el temporizador
+        isPageVisible = true;
+      }
+    };
+  
+    // Detectar cuando el usuario navega hacia atrás o adelante en el historial
+    const handlePopState = () => {
+      handleEndSession(); // Llamar a la función para finalizar la sesión cuando retroceda de página
+    };
+  
+    // Empezar el temporizador
+    startTimer();
+  
+    // Registrar la finalización al cerrar la ventana
+    window.addEventListener("beforeunload", handleEndSession);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("popstate", handlePopState); // Detectar retroceso en el historial
+  
+    // Cleanup para eliminar el intervalo y el listener
+    return () => {
+      clearInterval(interval!); // Limpiar el intervalo
+      window.removeEventListener("beforeunload", handleEndSession);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("popstate", handlePopState); // Eliminar el listener del retroceso
+    };
+  }, [courseIdNumber, userInfo, createCourseTimeStart]);
+  
+  
+
+
+
+
+
   const handleSelect = (sessionName: string, evaluation?: ModuleEvaluation | Question[], moduleId?: number) => {
     setSelectedModuleId(moduleId || null);
 

@@ -59,7 +59,6 @@ export const useSesionProgress = () => {
       setIsLoading(false);
     }
   };
-
   return {
     session_progress,
     error,

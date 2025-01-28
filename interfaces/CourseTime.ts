@@ -2,7 +2,8 @@ export interface CourseTime{
     course_id : number;
     user_id :number;
     startTime : Date;
-    endTime :  Date;
+    endTime :  Date | null;
+    duration : number;
   }
 
   export interface CourseTimeEnd{
