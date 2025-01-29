@@ -42,7 +42,6 @@ export const API_VIDEOS = `${baseURL}/api/videos`;
 export const API_IMAGES = `${baseURL}/api/images`;
        
 
-
 //socket
 export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
 

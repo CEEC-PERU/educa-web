@@ -71,7 +71,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
   const { createSession_Progress, session_progress } = useSesionProgress();
 // Nuevo estado para guardar todas las respuestas seleccionadas
-
+const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en cada render
   const [answers, setAnswers] = useState<
     {
       question_id: number;
@@ -138,24 +138,31 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   ]);
 
   useEffect(() => {
-    let isProgressSent = false; // Flag para evitar envíos duplicados
-    if (videoRef.current) {
+    
+    if (!videoRef.current) return;
+   
+    
+
       const handleTimeUpdate = () => {
         const currentTime = videoRef.current!.currentTime;
         const duration = videoRef.current!.duration;
         const progress = (currentTime / duration) * 100;
+  
         if (onProgress) onProgress(progress, false);
-
-        // Si el progreso llega al 100%, enviar la sesión completada
-      if (progress >= 100) {
-        sendSessionProgress(progress, true); // Indica que se completó
-      }
+  
+        if (progress >= 100 && !isProgressSent.current) {
+          sendSessionProgress(100, true); // Marcar como completado
+          isProgressSent.current = true;
+        }
+  
         setCurrentTime(currentTime);
       };
+  
+      
 
       
   const handlePause = () => {
-    if (videoRef.current) {
+    if (videoRef.current ) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
       const progress = (currentTime / duration) * 100;
@@ -173,16 +180,14 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
    // Función para manejar cuando el usuario retrocede en el navegador
    const handlePopState = () => {
-    if (videoRef.current) {
+    if (videoRef.current ) {
       const currentTime = videoRef.current.currentTime;
       const duration = videoRef.current.duration;
       const progress = (currentTime / duration) * 100;
 
-      // Envía el progreso antes de retroceder
-      if (!isProgressSent) {
+    
         sendSessionProgress(progress, false);
-        isProgressSent = true; // Marca que ya se envió el progreso
-      }
+     
     }
   };
 
@@ -191,18 +196,23 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
    const sendSessionProgress = async (progress: number, isCompleted: boolean) => {
     const progressUpdate = Math.round(progress);
 
-    if (sessionId) {
+  
+
+    if (sessionId && !isProgressSent.current) {
+  
       const sessionProgress = {
         session_id: sessionId,
         progress: progressUpdate,
         is_completed: isCompleted,
         user_id: userInfo.id,
       };
-
-      // Llamar al hook para enviar los datos al servidor
+  
       await createSession_Progress(sessionProgress);
-      isProgressSent = true; // Marca que ya se envió el progreso
-    
+  
+      if (!isCompleted) {
+        // Permitir nuevas actualizaciones si no se ha completado la sesión
+        isProgressSent.current = false;
+      }
     }
   };
 
@@ -255,7 +265,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         window.removeEventListener("beforeunload", handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
         window.removeEventListener("popstate", handlePopState); // Elimina el evento de retroceso
       };
-    }
+    
   }, [
     onProgress,
     currentTime,
