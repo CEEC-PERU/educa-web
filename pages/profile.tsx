@@ -29,28 +29,18 @@ const ProfilePage: React.FC = () => {
   
   const handleProfileUpdate = async (event: React.FormEvent) => {
 
-    const redirectToDashboard = (role: number) => {
-      switch (role) {
-        case 1:
-          router.push('/student');
-          break;
-        case 2:
-          router.push('/corporate');
-          break;
-        case 3:
-          router.push('/content');
-          break;
-        case 4:
-          router.push('/admin');
-          break;
-        default:
-          router.push('/');
-      }
-    };
-
-
     event.preventDefault();
-    setIsSubmitting(true);
+
+
+    // Validate that all fields are filled
+    if (!first_name || !last_name || !email || !phone) {
+      setErrorMessage('Por favor, completa todos los campos.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsSubmitting(true);  
+
     if (!user) return;
 
     const profileData = {
@@ -68,6 +58,25 @@ const ProfilePage: React.FC = () => {
       // Obtener los datos del perfil actualizado desde el backend
    
       await refreshProfile(token as string,id); // Refrescamos los datos del perfil
+
+      const redirectToDashboard = (role: number) => {
+        switch (role) {
+          case 1:
+            router.push('/student');
+            break;
+          case 2:
+            router.push('/corporate');
+            break;
+          case 3:
+            router.push('/content');
+            break;
+          case 4:
+            router.push('/admin');
+            break;
+          default:
+            router.push('/');
+        }
+      };
       redirectToDashboard(role); // Redirigir al perfil correspondiente después de la actualización
     } catch (error) {
       console.error('Error updating profile:', error);
