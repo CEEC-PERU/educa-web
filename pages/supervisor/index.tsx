@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import dynamic from 'next/dynamic'; // Import dynamic 
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/supervisor/SibebarSupervisor';
@@ -7,7 +7,11 @@ import './../../app/globals.css';
 import { useMetricaCorporate } from '../../hooks/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useCourseProgress } from '../../hooks/useProgressCurso';
+import { useAnswerTemplate} from '../../hooks/useAnswerTemplate';
 import { useTop , useAverageTime} from '../../hooks/useTopRankingCorporative';
+
+import { Template , QuestionTemplate } from '../../interfaces/Template';
+import { useTemplates} from '../../hooks/useTemplate';
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -20,6 +24,93 @@ const CorporateDashboard: React.FC = () => {
   const { courseProgressData, loading, error } = useCourseProgress(selectedCourse);
   const { topRanking } = useTop(selectedCourse);
   const { averagetime} = useAverageTime();
+  const { templates} = useTemplates();
+  const [showPopup, setShowPopup] = useState(false);
+  const [responses, setResponses] = useState<{ [key: number]: string }>({});
+  const [error2, setError2] = useState<string | null>(null);
+console.log(templates);
+const { createAnswerTemplateUser } = useAnswerTemplate();
+const [submitSuccess, setSubmitSuccess] = useState(false);  
+ // Filtrar las plantillas activas
+ const activeTemplate = templates.find((template) => template.is_active);
+
+ useEffect(() => {
+   // Ya no abrimos el pop-up automáticamente, solo se abre cuando el ícono es clickeado
+ }, [templates]);
+
+ // Función para manejar el cambio de respuestas
+ const handleResponseChange = (questionId: number, answer: string) => {
+   setResponses((prevResponses) => ({
+     ...prevResponses,
+     [questionId]: answer,
+   }));
+ };
+
+  const userInfo = user as { id: number };
+
+ 
+
+const handleSubmit = async () => {
+  // Ensure all questions are answered
+  const unansweredQuestions = activeTemplate?.QuestionTemplates.filter(
+    (question) => !responses[question.quest_temp_id]
+  );
+
+  if (unansweredQuestions && unansweredQuestions.length > 0) {
+    setError2("Please answer all the questions.");
+    return;
+  }
+
+  // Prepare the answer templates (array of objects)
+  const answerTemplates = activeTemplate?.QuestionTemplates.map((question) => {
+    const response = responses[question.quest_temp_id];
+
+    if (question.type === 'closed') {
+      return {
+        quest_temp_id: question.quest_temp_id,
+        user_id: userInfo.id,
+        selectedOption: response || null,
+        openResponse: null,
+      };
+    } else {
+      return {
+        quest_temp_id: question.quest_temp_id,
+        user_id: userInfo.id,
+        selectedOption: null,
+        openResponse: response || null,
+      };
+    }
+  });
+
+  if (answerTemplates && answerTemplates.length > 0) {
+    try {
+      console.log(answerTemplates)
+      // Send the answer templates to the backend
+      await createAnswerTemplateUser(answerTemplates);
+// Hide the popup and reset the form after submission
+setShowPopup(false); // Close the popup after submission
+setSubmitSuccess(true);
+
+// Reset responses and error messages
+setResponses({}); // Clear form responses
+setError2(null);
+
+// Hide success message after 2 seconds
+setTimeout(() => {
+  setSubmitSuccess(false); // Hide the success message
+}, 2000);
+      
+    } catch (error) {
+      console.error('Error submitting answer template:', error);
+      setError2("An error occurred while submitting your answer.");
+    }
+  }
+};
+
+ // Función que abre el pop-up cuando el ícono de notificación es clickeado
+ const handleIconClick = () => {
+   setShowPopup(true); // Mostrar el pop-up cuando se hace clic en el ícono
+ };
 
   const courseTimeData = [
     { course: 'CP Pospago', Tiempo: 20 },
@@ -98,10 +189,91 @@ const CorporateDashboard: React.FC = () => {
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
 
+ {/* Ícono de notificación para mostrar el cuestionario */}
+ <div className="absolute top-5 right-5 cursor-pointer z-50" onClick={handleIconClick}>
+            <div className="bg-red-500 rounded-full p-3 text-white relative">
+              <span className="text-2xl">🔔</span>
+              {/* Si existe una plantilla activa, mostrar el número "1" encima del ícono */}
+              {activeTemplate && (
+                <div className="absolute top-0 right-0 bg-white text-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                  1
+                </div>
+              )}
+            </div>
+          </div>
 
+          {/* Mostrar el pop-up de encuesta si hay una plantilla activa */}
+          {showPopup && activeTemplate && (
+            <div className="fixed top-0 right-0 bg-white p-8 shadow-lg rounded-lg z-50 w-1/2 max-w-lg animate__animated animate__fadeIn border-2 border-indigo-500">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-semibold text-indigo-700">Formulario de Encuesta</h2>
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  <span className="text-xl">✕</span>
+                </button>
+              </div>
+              <form className="mt-6 max-h-96 overflow-y-auto">
+                {activeTemplate.QuestionTemplates.map((question: QuestionTemplate) => (
+                  <div key={question.quest_temp_id} className="mb-6">
+                    <label className="block text-sm font-medium text-indigo-600 pt-4 mb-3">
+                      {question.question}
+                    </label>
+                    {question.type === 'closed' ? (
+                      <select
+                        value={responses[question.quest_temp_id] || ''}
+                        onChange={(e) => handleResponseChange(question.quest_temp_id, e.target.value)}
+                        className="block w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      >
+                        <option value="" disabled>
+                          Seleccione una opción
+                        </option>
+                        {question.options?.map((option, index) => (
+                          <option key={index} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={responses[question.quest_temp_id] || ''}
+                        onChange={(e) => handleResponseChange(question.quest_temp_id, e.target.value)}
+                        className="block w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Escriba su respuesta"
+                      />
+                    )}
+                  </div>
+                ))}
+                {error2 && <p className="text-red-500 text-sm">{error2}</p>}
+                <div className="flex justify-end mt-6 space-x-4">
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    Enviar
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* Mostrar mensaje de éxito */}
+          {submitSuccess && (
+            <div className="fixed top-0 left-0 right-0 bg-green-500 text-white p-4 text-center z-50">
+              <p>Encuesta enviada satisfactoriamente. ¡Gracias por responder!</p>
+            </div>
+          )}
 
  {/* Dropdown Selector for Courses */}
  <div className="mr-2 col-span-full">
+
+  {/* Resto del contenido */}
+  
+         
+
   {/*<select 
     value={selectedCourse} 
     onChange={(e) => setSelectedCourse(e.target.value)} 
