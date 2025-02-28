@@ -121,7 +121,7 @@ const StudentIndex: React.FC = () => {
     <ProtectedRoute>
     <div>
       <ScreenSecurity /> 
-      <div className="relative z-10">
+      <div className="relative z-10 ">
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
@@ -132,7 +132,9 @@ const StudentIndex: React.FC = () => {
       </div>
 
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-10 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
-      <div className="w-full max-w-screen-lg mt-8 flex gap-4 overflow-x-auto scrollbar-hide">
+      <div className="w-full max-w-screen-lg mt-8 flex gap-4 overflow-x-auto scrollbar-hide overflow-auto">
+
+  
   <button
     className="text-white whitespace-nowrap p-4 rounded-lg flex-shrink-0 cursor-pointer"
     onClick={() => handleCategorySelect(undefined)}  // Mostrar todos los cursos cuando se hace clic en "TODOS"
