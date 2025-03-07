@@ -136,7 +136,11 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     selectedModuleId,
     sessionVideosInteractivos,
   ]);
-
+  //modificacion progreso
+  useEffect(() => {
+    isProgressSent.current = false; // Permitir nuevos envíos de progreso en la nueva sesión
+ }, [sessionId, sessionVideo]);
+ 
   useEffect(() => {
     
     if (!videoRef.current) return;
@@ -216,7 +220,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     }
   };
 
-
+ 
 
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
     if (videoRef.current) {

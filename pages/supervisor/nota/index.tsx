@@ -247,8 +247,8 @@ const NotaCourses: React.FC = () => {
     }
   </td>
   <td className="py-2 px-4 border-b border-l-4 border-blue-300">
-    {user.CourseStudents?.[0]?.finished_at
-      ? new Date(user.CourseStudents[0].finished_at).toLocaleDateString('es-ES', {
+    {user.CourseStudents?.[0]?.finished_date
+      ? new Date(user.CourseStudents[0].finished_date).toLocaleDateString('es-ES', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
