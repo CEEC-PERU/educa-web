@@ -38,8 +38,8 @@ console.log(selectedCourse)
   //];
 
   const courseTimeData = [
-    { course: 'CP Pospago', Tiempo: 20 },
-    { course: 'Consulta Previa Prepago', Tiempo: 5 },
+    { course: 'Contctados', Tiempo: 10 },
+    { course: 'Consulta Previa Prepago', Tiempo: 40 },
   ];
 
 //averageTimeData
@@ -55,8 +55,8 @@ console.log(selectedCourse)
 
   //Curso completados al 100%
   const courseCompletionData = [
-    { course: 'CP Pospago', completion: 1 },
-    { course: 'Consulta Previa Prepago', completion: 0 },
+    { course: 'Contactados', completion: 0 },
+    { course: 'Consulta Previa Prepago', completion: 24 },
   ];
 
   //Participantes en la semana 
@@ -76,9 +76,9 @@ console.log(selectedCourse)
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
-        { module: 'Formación Integral ', completion: 10 },
-        { module: 'Gestión Integral ', completion: 8 },
-        { module: 'Gestión De Contacto ', completion: 5 },
+        { module: 'Formación Integral ', completion: 50 },
+        { module: 'Gestión Integral ', completion: 40 },
+        { module: 'Gestión De Contacto ', completion: 35 },
       ];
     } else if (course === 'Formación Continua') {
       return [{ module: 'Retenciones 1', completion: 85 }];
@@ -96,9 +96,9 @@ console.log(selectedCourse)
   };
 
   const npsData = (course: string) => {
-    if (course === 'CP Pospago') {
-      return [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // Valores de NPS
-    } else if (course === 'Formación Continua') {
+    if (course === 'Consulta Previa Prepago') {
+      return [0, 0, 0, 0, 0,0 , 2, 2, 4, 10]; // Valores de NPS
+    } else if (course === 'Contactados') {
       return [0, 0, 0, 0, 0, 0, 0, 0, 1, 0];
     }
     return [];
@@ -276,8 +276,8 @@ console.log(selectedCourse)
             <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">Compleción de Módulos</h2>
             <select value={selectedCourse} onChange={(e) => setSelectedCourse(Number(e.target.value))} className="mt-2 block w-full">
-              <option value="CP Pospago">CP Pospago</option>
-              <option value="Formación Continua">Formación Continua</option>
+              <option value="CP Pospago">Consulta Previa Prepago</option>
+              <option value="Formación Continua">Contactados</option>
             </select>
             <Chart
               type="bar"
@@ -318,7 +318,7 @@ console.log(selectedCourse)
             
             <Chart
               type="bar"
-              series={[{ name: 'NPS', data: npsData('CP Pospago') }]}
+              series={[{ name: 'NPS', data: npsData('Consulta Previa Prepago') }]}
               options={{
                 chart: { type: 'bar' },
                 xaxis: { categories: Array.from({ length: 10 }, (_, i) => i.toString())  , title: { text: 'Valores' }},
