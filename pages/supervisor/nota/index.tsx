@@ -50,6 +50,15 @@ const NotaCourses: React.FC = () => {
     setSelectedShift(e.target.value);
   };
 
+
+  
+  const handleRowClick = (userId: number) => {
+    // Redirigir a la página de detalles del estudiante (puedes cambiar la ruta como desees)
+    router.push(`/supervisor/notasmodule`);
+  };
+
+
+
 //explicame en español lo que entendiste y actualiza el codigo
   // Nueva lógica para obtener el estado según la nota del examen final
   const getStatus = (finalExamGrade: number) => {
@@ -187,7 +196,7 @@ const NotaCourses: React.FC = () => {
 
         <tbody>
           {currentCourseData.map((user: any, userIndex: number) => (
-            <tr key={userIndex} className="hover:bg-gray-100 transition-colors">
+            <tr key={userIndex} className="hover:bg-gray-100 transition-colors" onClick={() => handleRowClick(user.user_id)}>
               {/* Nombre del estudiante */}
               <td className="py-2 px-4 border-b border-l-4 border-blue-300">
                 {user?.userProfile?.first_name || "-"} {user?.userProfile?.last_name || "-"}

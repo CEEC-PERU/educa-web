@@ -3,8 +3,6 @@ import {AnswerTemplate} from '../interfaces/AnswerTemplate';
 import { createAnswerTemplate} from '../services/answerTemplateService';
 import { useAuth } from '../context/AuthContext';
 
-
-
 export const useAnswerTemplate = () => {
   const [answerTemplate, setAnswerTemplate] = useState<AnswerTemplate | null>(null);
   const [error, setError] = useState<string | null>(null);
