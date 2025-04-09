@@ -82,6 +82,12 @@ export const getCoursesByEnterprise = async (enterpriseId: number) => {
   return response.data;
 };
 
+export const getCoursesByEnterpriseCalidad = async (enterpriseId: number) => {
+  const response = await axios.get(`${API_GET_COURSESTUDENT_ENTERPRISE}/calidad/${enterpriseId}`);
+  return response.data;
+};
+
+
 
 export const getCoursesBySupervisor = async (userId: number) => {
   const response = await axios.get(`${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`);

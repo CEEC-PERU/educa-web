@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 
 interface CircularBarProps {
@@ -19,8 +21,8 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
   }
 
   return (
-    <div className="relative flex flex-col items-center">
-      <svg width="100" height="100">
+    <div className="relative flex flex-col items-center w-full max-w-[120px]">
+      <svg className="w-full h-full" viewBox="0 0 100 100">
         <circle
           stroke="gray"
           fill="transparent"
@@ -51,7 +53,7 @@ const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
           {percentage}%
         </text>
       </svg>
-      <div className="text-center mt-2  text-black ">{label}</div>
+      <div className="text-center mt-2 text-black">{label}</div>
     </div>
   );
 };

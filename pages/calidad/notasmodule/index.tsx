@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
+import Sidebar from '../../../components/calidad/SibebarCalidad';
 import ScreenSecurity from '../../../components/ScreenSecurity';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import { useRouter } from 'next/router';
@@ -37,10 +37,16 @@ const NotasIndex: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [courseData, setCourseData] = useState<Course | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
-  const [auditoriaNota, setAuditoriaNota] = useState<string>(''); // Estado para guardar la nota de auditoría
+  const [observaciones, setObservaciones] = useState<string>(''); // Estado para guardar la nota de auditoría
+  const [codllamada, setCodLlamada] = useState<string>(''); 
+  const [resultado, setResultado] = useState<string>(''); 
+  const [ , ] = useState<string>(''); 
+  const [ , ] = useState<string>(''); 
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null); // Estado para guardar el módulo seleccionado
   const router = useRouter();
-  const { user_id } = router.query;
+  const { user_id , course_id} = router.query;
+
+  console.log("course_id",course_id)
 
   const toggleSidebar = () => setIsDrawerOpen(!isDrawerOpen);
 
@@ -52,7 +58,7 @@ const NotasIndex: React.FC = () => {
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
-        const response = await fetch(`https://educa-web-api.onrender.com/api/resultado/datos/838/75`); // Replace with actual URL
+        const response = await fetch(`http://localhost:4100/api/resultado/datos/838/75`); // Replace with actual URL
         const data = await response.json();
         setCourseData(data[0]); // Assuming the data structure matches
       } catch (error) {
@@ -70,20 +76,28 @@ const NotasIndex: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setAuditoriaNota('');
+    setObservaciones('');
     setSelectedModuleId(null);
   };
 
   const handleSubmitAuditoria = () => {
-    if (auditoriaNota.trim() === '') {
-      alert('Por favor, ingrese una nota');
+    //no validar observaciones , no es obligatorio
+
+    if (codllamada.trim() === '') {
+      alert('Por favor, ingrese el codigo de llamada.');
       return;
     }
 
+    if (resultado.trim() === '') {
+      alert('Por favor, ingrese un resultado .');
+      return;
+    }
     // Aquí iría la lógica para guardar el resultado de auditoría en la base de datos
     // Por ejemplo, hacer una llamada a la API para registrar la nota de auditoría
 
-    console.log(`Registrando nota de auditoría para el módulo ${selectedModuleId}: ${auditoriaNota}`);
+    console.log(`Registrando nota de auditoría para el módulo ${selectedModuleId}: ${observaciones}`);
+
+
 
     // Cerrar el modal después de registrar
     handleCloseModal();
@@ -145,13 +159,29 @@ const NotasIndex: React.FC = () => {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
             <div className="bg-white p-8 rounded-xl shadow-lg w-96">
               <h3 className="text-xl font-bold mb-4">Registrar Resultado Auditoría</h3>
+              
+              <input
+                type="input"
+                value={codllamada}
+                onChange={(e) => setCodLlamada(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded mb-4"
+                placeholder="Cod.Llamada"
+              />
+              <input
+                type="input"
+                value={resultado}
+                onChange={(e) => setResultado(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded mb-4"
+                placeholder="Resultado"
+              />
               <input
                 type="text"
-                value={auditoriaNota}
-                onChange={(e) => setAuditoriaNota(e.target.value)}
+                value={observaciones}
+                onChange={(e) => setObservaciones(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded mb-4"
-                placeholder="Ingrese la nota"
+                placeholder="Observaciones"
               />
+
               <div className="flex justify-end space-x-4">
                 <button
                   className="btn bg-gray-500 hover:bg-gray-600 text-white rounded-lg px-4 py-2"
