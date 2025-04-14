@@ -4,6 +4,7 @@ import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/calidad/SibebarCalidad';
 import ScreenSecurity from '../../../components/ScreenSecurity';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
+import { API_RESPONSE} from "../../../utils/Endpoints";
 import { useRouter } from 'next/router';
 
 interface ModuleResult {
@@ -68,7 +69,7 @@ const NotasIndex: React.FC = () => {
 const fetchCourseData = async () => {
   if (user_id && course_id) {
     try {
-      const response = await fetch(`http://localhost:4100/api/resultado/datos/${user_id}/${course_id}`);
+      const response = await fetch(`${API_RESPONSE}/datos/${user_id}/${course_id}`);
       const data = await response.json();
       setCourseData(data[0]);
       console.log('Course data:', data[0]);
@@ -116,7 +117,7 @@ useEffect(() => {
     };
   
     try {
-      const response = await fetch('http://localhost:4100/api/resultado', {
+      const response = await fetch( `${API_RESPONSE}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,17 +142,18 @@ useEffect(() => {
   };
   
 
+
   return (
     <ProtectedRoute>
       <div className="bg-white min-h-screen">
         <ScreenSecurity />
-        <div className="relative z-10">
+        <div className="relative z-10 pt-16">
           <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
           <Sidebar showSidebar={true} setShowSidebar={() => { }} />
         </div>
 
         <div className="min-h-screen flex flex-col items-center p-20">
-          <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 ">
             {courseData && courseData.courseModules.map((module) => (
               <div key={module.module_id} className="bg-white p-6 rounded-xl shadow-lg transition transform hover:scale-105">
                 <h3 className="text-2xl font-bold text-blue-600 mb-4">{module.name}</h3>

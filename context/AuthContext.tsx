@@ -167,7 +167,7 @@ const refreshProfile = async (token: string, userId: number) => {
         router.push('/supervisor');
         break;
         case 7:
-        router.push('/calidad');
+        router.push('/calidad/cursos');
         break;
       default:
         router.push('/');
