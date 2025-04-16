@@ -24,7 +24,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
   }
-
+//sidebarcalidad
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
@@ -34,7 +34,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
         console.error('Error fetching requirements:', error);
       }
     };
-
+//datos actualziados , prueba , sidebar calidad
     fetchRequirements();
   }, []);
 
