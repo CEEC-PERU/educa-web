@@ -8,7 +8,7 @@ import CourseCard from './cursos/CourseCard';
 import './../../app/globals.css';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 
-const CorporateCourses: React.FC = () => {
+const Calidad: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).enterprise_id : null;
   const [courses, setCourses] = useState<any[]>([]);
@@ -67,4 +67,4 @@ const CorporateCourses: React.FC = () => {
   );
 };
 
-export default CorporateCourses;
+export default Calidad;
