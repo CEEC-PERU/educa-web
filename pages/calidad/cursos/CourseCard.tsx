@@ -50,7 +50,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
   const handleDetailsClick = (courseId: number) => {
     router.push({
-      pathname: 'nota/',
+      pathname: 'calidad/nota',
       query: { course_id: courseId   },
     });
   };

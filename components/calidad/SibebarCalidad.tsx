@@ -67,7 +67,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
           
             <li>
               <button
-                onClick={() => handleNavigation('/calidad/cursos')}
+                onClick={() => handleNavigation('/calidad')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <BookOpenIcon className="h-6 w-6" />
