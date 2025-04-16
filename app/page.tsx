@@ -2,19 +2,29 @@
 import React, { useState } from 'react';
 import CardImage from '../components/student/CardImage';
 import CardCarousel from "../components/student/CardCarousel";
-import Footter from "../components/Footter";
+import Footer from "../components/Footter";
+import Navbar  from "../components/Navbar";
+import Proyectos from "@/components/Proyectos"
+import { proyectosData } from "@/components/CursosData"
 import ButtonComponent from '@/components/ButtonComponent';
 import CompanyForm from '@/components/FormComponent';
 import IndividualForm from '@/components/IndividualForm';
+import './globals.css';
 
+//pagina principal volver responsive 
+// Sección 1: Encabezado con fondo de imagen y gradiente 
 
-//pagina principal
 export default function Home() {
   const [formType, setFormType] = useState<'company' | 'individual'>('individual');
   return (
-    <main className="relative flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <main className="min-h-screen bg-black text-white">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
+     
+
+      <Navbar bgColor="bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800 " paddingtop='pt-8' /> 
+
       <section className="relative flex items-center justify-center w-full text-center text-white  pb-60 bg-brand-500">
+        
   <div className="absolute inset-0 bg-cover bg-center " style={{ backgroundImage: 'url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)' }}>
     <div className="absolute inset-0 bg-gradient-to-r "></div>
   </div>
@@ -33,26 +43,57 @@ export default function Home() {
   </div>
 </section>
       {/* Sección 3: Otra sección con fondo de imagen y gradiente */}
+    
+
       <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}>
-          <div className="absolute inset-0 bg-brand-500"></div>
-        </div>
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto px-6 mt-20 ">
-          <h2 className="text-6xl w-full mb-4 font-extrabold">Cursos de Calidad</h2>
-         
-        </div>
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto mt-8  mb-20 px-60 text-center">
-        <p className='text-white'>Actualizados y elaborados por expertos en cada materia. Con recursos interactivos, lecciones dinámicas y evaluaciones prácticas, te proporcionamos las herramientas para adquirir habilidades y conocimientos de forma efectiva.</p>
-        </div>
-        <div className="container mb-6">
-          <CardCarousel />
-        </div>
-      </section>
+  <div
+    className="absolute inset-0 bg-cover bg-center"
+    style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}
+  >
+    <div className="absolute inset-0 bg-brand-500 "></div>
+  </div>
+
+  <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6 mt-20">
+    <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold w-full mb-4">
+      Cursos de Calidad
+    </h2>
+  </div>
+
+  <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-4xl mx-auto mt-8 mb-12 px-4 sm:px-6 text-center">
+    <p className="text-white text-base sm:text-lg">
+      Actualizados y elaborados por expertos en cada materia. Con recursos interactivos,
+      lecciones dinámicas y evaluaciones prácticas, te proporcionamos las herramientas
+      para adquirir habilidades y conocimientos de forma efectiva.
+    </p>
+  </div>
+
+  <div className="container mb-6 ">
+    <CardCarousel />
+  </div>
+</section>
+
+
 
       {/* Sección 5: Información adicional con otro fondo de imagen y gradiente */}
-      <section className="relative flex items-center justify-center w-full text-center text-white pt-20 pb-0 bg-brand-500">
-       <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1724347350/WEB_EDUCA/es9f3bizbduqbqjaqmlb.png" className=" mx-auto mb-10" alt="Imagen descriptiva" />
-      </section>
+
+
+      <section className="relative w-full py-20 flex items-center justify-center overflow-hidden">
+  {/* Fondo con clip-path */}
+  <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 clip-fancy-shape rounded-[20px]"></div>
+
+  {/* Contenido  */}
+  <div className="relative z-10 max-w-4xl px-4 text-center">
+    <div className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
+      <span className="text-white">“</span> Suma a tu empresa
+    </div>
+    <p className="text-white text-base sm:text-lg font-medium">
+      En un mercado educativo lleno de opciones, tú puedes sobresalir con una plataforma educativa única diseñada a la medida de tu marca. 
+      Atrae miradas, genera emoción y diferencia tu oferta de manera significativa. 
+      No solo atraerás a más usuarios, sino que los mantendrás comprometidos con una experiencia que no olvidarán.
+    </p>
+  </div>
+</section>
+
 
       {/* Sección 2: Sección con fondo brand-500 */}
       <section className="relative flex items-center justify-center w-full p-6 text-center text-white" style={{ backgroundColor: '#7C3AED' }}>
@@ -106,8 +147,11 @@ export default function Home() {
         
         </div>
   </div>
+ 
 </section>
-
+<div>
+    <Footer  />
+  </div>
     </main>
   );
 }

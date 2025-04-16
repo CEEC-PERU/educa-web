@@ -28,7 +28,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   
 
  
-  const buttonClasses = `block w-full select-none rounded-full ${backgroundColor} ${textColor} ${fontSize} ${buttonSize} ${responsiveButtonSize} font-bold uppercase shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-85 focus:shadow-none active:opacity-85 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none`;
+  const buttonClasses = `block w-full select-none rounded-full ${backgroundColor} ${textColor} ${fontSize} ${buttonSize} ${responsiveButtonSize} font-bold uppercase shadow-md shadow-blue-900/10 transition-all hover:shadow-lg hover:shadow-blue-900/20 focus:opacity-85 focus:shadow-none active:opacity-85 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none`;
   
   return (
     <Link href={buttonroute}>
