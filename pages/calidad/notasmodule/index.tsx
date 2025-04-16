@@ -144,7 +144,7 @@ useEffect(() => {
 
 
   return (
-    <ProtectedRoute>
+  
       <div className="bg-white min-h-screen">
         <ScreenSecurity />
         <div className="relative z-10 pt-16">
@@ -247,7 +247,7 @@ useEffect(() => {
           </div>
         )}
       </div>
-    </ProtectedRoute>
+ 
   );
 };
 
