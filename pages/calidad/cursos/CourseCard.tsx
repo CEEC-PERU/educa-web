@@ -55,8 +55,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     });
   };
 
-  
 
+  
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden p-4 mb-6">
       <h3 className="text-xl font-bold mb-4  text-black " >{course.name}</h3>

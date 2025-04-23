@@ -205,14 +205,14 @@ useEffect(() => {
                 type="input"
                 value={codllamada}
                 onChange={(e) => setCodLlamada(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded mb-4"
+                className="w-full p-2 border border-gray-300 rounded mb-4 text-black"
                 placeholder="Cod.Llamada"
               />
             
             <select
   value={resultado}
   onChange={(e) => setResultado(e.target.value)}
-  className="w-full p-2 border border-gray-300 rounded mb-4"
+  className="w-full p-2 border border-gray-300 rounded mb-4  text-black"
 >
   <option value="">Seleccionar Resultado</option>
   <option value="true">Aprobado</option>
@@ -222,7 +222,7 @@ useEffect(() => {
 <textarea
   value={observaciones}
   onChange={(e) => setObservaciones(e.target.value)}
-  className="w-full p-2 border border-gray-300 rounded mb-4"
+  className="w-full p-2 border border-gray-300 rounded mb-4 text-black"
   placeholder="Observaciones (opcional)"
   rows={3}
 />
