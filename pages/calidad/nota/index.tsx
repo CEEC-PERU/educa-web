@@ -17,7 +17,7 @@ import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
 // Importar react-apexcharts dinámicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
-
+//datos enviados para la sgueinte envio
 const NotaCourses: React.FC = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ const NotaCourses: React.FC = () => {
 
 
 
-
+//convalda los han
   const handleShiftChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setSelectedShift(e.target.value);
   };
@@ -204,7 +204,7 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
     
                  <tr key={userIndex} className="hover:bg-gray-100 transition-colors" onClick={() => handleRowClick(user.user_id )}>
               {/* Nombre del estudiante */}
-              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
                 {user?.userProfile?.first_name || "-"} {user?.userProfile?.last_name || "-"}
               </td>
               {/* Notas de los módulos */}
@@ -213,13 +213,13 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
                 if (moduleResult) {
                   const highestScore = Math.max(...moduleResult.results.map((result: any) => result.puntaje));
                   return (
-                    <td key={`module-highest-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
+                    <td key={`module-highest-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
                       {highestScore || "-"}
                     </td>
                   );
                 } else {
                   return (
-                    <td key={`empty-module-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">-</td>
+                    <td key={`empty-module-${userIndex}-${moduleIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300 text-black" >-</td>
                   );
                 }
               })}
@@ -227,20 +227,20 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
               {["Nota 1", "Nota 2"].map((label, examIndex) => {
                 const result = user.CourseResults?.[examIndex]?.puntaje || "-";
                 return (
-                  <td key={`exam-${userIndex}-${examIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300">
+                  <td key={`exam-${userIndex}-${examIndex}`} className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
                     {result}
                   </td>
                 );
               })}
               {/* Nota Final */}
-              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
                 {Math.max(
                   user.CourseResults?.[0]?.puntaje || 0,
                   user.CourseResults?.[1]?.puntaje || 0
                 ) || "-"}
               </td>
               {/* Columna de estado */}
-              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
   {user.CourseResults?.length > 0
     ? getStatus(
         Math.max(
@@ -252,7 +252,7 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
 </td>
        
 <>
-  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+  <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
     {user.CourseStudents?.[0]?.created_at 
       ? new Date(user.CourseStudents[0].created_at).toLocaleDateString('es-ES', {
           day: '2-digit',
@@ -262,7 +262,7 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
       : "-"
     }
   </td>
-  <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+  <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
     {user.CourseStudents?.[0]?.finished_at
       ? new Date(user.CourseStudents[0].finished_at).toLocaleDateString('es-ES', {
           day: '2-digit',
@@ -275,7 +275,7 @@ const currentCourseData = selectedClassroom ? courseNotaClassroom : courseNota;
 </>
 
               {/* Sesiones */}
-              <td className="py-2 px-4 border-b border-l-4 border-blue-300">
+              <td className="py-2 px-4 border-b border-l-4 border-blue-300 text-black">
                 { user.totalSessions || "-"}
               </td>
             </tr>

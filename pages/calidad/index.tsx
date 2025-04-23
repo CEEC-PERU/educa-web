@@ -52,11 +52,10 @@ const Calidad: React.FC = () => {
           {loading ? (
             <Loader />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-black">
               {courses.map((course) => (
                 <CourseCard key={course.id} course={course} />
-               
-              ))}
+             ))}
              
             </div>
           )}
