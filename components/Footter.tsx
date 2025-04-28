@@ -1,69 +1,78 @@
-import React from 'react';
+import Link from "next/link"
+import {  Twitter, Instagram, Linkedin} from 'lucide-react'
 
-interface FooterProps {
-  footerText: string;
-}
-
-const Footer: React.FC<FooterProps> = ({ footerText = '2024 EducaWeb. Todos los derechos reservados.' }) => {
+export default function Footer() {
   return (
-    <footer className="relative bg-brand-500 text-white py-6">
-      {/* Imagen de fondo */}
-      <div
-        className="bg-no-repeat bg-cover"
-        style={{
-          backgroundImage: "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
-          height: '500px',
-        }}
-      >
-        <div className="container mx-auto grid grid-cols-4 gap-4 pt-60 pl-40">
-          {/* Primera columna: Logo */}
-          <div className="flex justify-center ">
-            <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
-              alt="Logo"
-              className="h-30"
-            />
+    <footer className="bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 p-4 py-20">
+      <div className="container mx-auto px-4">
+       
+        
+
+        <div className="flex flex-wrap justify-between">
+          {/* Redes sociales */}
+          <div className="w-full md:w-auto mb-12 md:mb-0">
+            <h3 className="text-sm font-bold mb-6 text-white">Síguenos</h3>
+            <div className="flex space-x-4 mb-8">
+            
+              <Link href="#" className="bg-purple-600 p-3 rounded-full hover:bg-purple-700 transition-colors">
+                <Twitter className="h-5 w-5 text-white" />
+              </Link>
+              <Link href="#" className="bg-purple-600 p-3 rounded-full hover:bg-purple-700 transition-colors">
+                <Instagram className="h-5 w-5 text-white" />
+              </Link>
+              <Link href="https://www.linkedin.com/company/qtech-experience" className="bg-purple-600 p-3 rounded-full hover:bg-purple-700 transition-colors">
+                <Linkedin className="h-5 w-5 text-white" />
+              </Link>
+            </div>
           </div>
 
-          {/* Segunda columna: Títulos y textos */}
-          <div className='pl-40'>
-            <h3 className="font-semibold text-lg ">PÁGINAS</h3>
-            <ul>
-              <li>INICIO</li>
-              <li>RECURSOS</li>
-              <li>BENEFICIOS</li>
-              <li>SUSCRÍBETE</li>
+          {/* Enlaces */}
+          <div className="w-full md:w-auto mb-12 md:mb-0">
+            <h3 className="text-sm font-bold mb-6 text-white">PAGINAS</h3>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li>
+                <Link href="#" className="hover:text-white transition-colors">
+                  Inicio
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white transition-colors">
+               Recursos
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="hover:text-white transition-colors">
+                  Beneficios
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Tercera columna */}
-          <div className='pl-20'>
-            <h3 className="font-semibold text-lg ">LINKS</h3>
-            <ul>
+          {/* Legal */}
+          <div className="w-full md:w-auto mb-12 md:mb-0">
+            <h3 className="text-sm font-bold mb-6 text-white">LINKS</h3>
+            <ul className="space-y-4 text-sm text-gray-400">
               <li>TÉRMINOS Y CONDICIONES</li>
-              <li>POLÍTICA DE PRIVACIDAD</li>
-           
+              <li>POLITICA DE PR</li>
             </ul>
           </div>
 
-          {/* Cuarta columna */}
-          <div>
-            <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
-            <ul>
+          {/* Contacto */}
+          <div className="w-full md:w-auto">
+            <h3 className="text-sm font-bold mb-6 text-white">Contactanos</h3>
+            <ul className="space-y-4 text-sm text-gray-400">
               <li>+51 9912785156</li>
               <li>administrador.app@ceec.com.pe</li>
               <li>MAGDALENA DEL MAR - LIMA</li>
             </ul>
           </div>
         </div>
-      </div>
 
-      {/* Contenedor gris con el texto del footer */}
-      <div className="bg-brand-500 text-white pt-10">
-        <p className="text-center text-sm">&copy; {footerText}</p>
+        {/* Línea divisoria */}
+        <div className="border-t border-gray-800 my-12"></div>
+
+       
       </div>
     </footer>
-  );
-};
-
-export default Footer;
+  )
+}

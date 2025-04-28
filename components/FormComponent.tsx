@@ -1,7 +1,7 @@
 import React from 'react';
 const CompanyForm: React.FC = () => {
   return (
-    <div className="md:w-1/2 bg-white p-6 rounded-lg shadow-lg">
+    <div className="bg-white p-6 shadow-lg rounded-3xl w-70">
       <form className="space-y-4 m-7">
         {/* Company Name */}
         <div className="pb-3">
@@ -29,7 +29,7 @@ const CompanyForm: React.FC = () => {
 
         {/* Submit Button */}
         <div>
-          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-full">Submit</button>
+          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-full">Enviar</button>
         </div>
       </form>
     </div>

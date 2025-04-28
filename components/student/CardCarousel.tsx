@@ -48,10 +48,10 @@ const CardCarousel: React.FC = () => {
       <div className="swiper-wrapper">
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1724343480/uuhx7zsmvbsn91hcdzex.png"
-            title="SOFT SKILLS"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/10_zyty3h.png"
+            title="MARCA PERSONAL"
               background='bg-white'
-            
+            buttonLabel=' Desarrollo Personal'
             usuarios='120 usuarios'
                      description=""
             textColor="text-black"
@@ -59,10 +59,10 @@ const CardCarousel: React.FC = () => {
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721630275/WEB_EDUCA/Cursos/ylaexmxu1it0q1vb8n3j.jpg"
-            title="Gestión del Cambio y Resiliencia"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820424/11_c8ueq9.png"
+            title="RETENCIÓN DE TALENTO"
             background='bg-white'
-         
+          buttonLabel='Recursos Humanos '
             usuarios='30 usuarios'
                      description=""
             textColor="text-black"
@@ -70,10 +70,10 @@ const CardCarousel: React.FC = () => {
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721631666/WEB_EDUCA/Cursos/a9ncpw6jygilnrdz5vji.jpg"
-            title="Gestión del Cambio y Adaptabilidad"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/9_qgwxhr.png"
+            title="HABILIDAD NEGOCIADORA"
             background='bg-white'
-         
+          buttonLabel='Responsabilidad Social Empresarial'
                      description=""
             usuarios='80 usuarios'
             textColor="text-black"
@@ -81,9 +81,10 @@ const CardCarousel: React.FC = () => {
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1724343480/t1mdiispyudjabvyszxg.png"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/14_apiwxt.png"
             usuarios='140 usuarios'
-            title="Líderes Transformacionales de Alto Rendimiento"
+             buttonLabel='Gestión del Tiempo y Productividad'
+            title="PRODUCTIVIDAD ÁGIL"
             background='bg-white'
            
                      description=""
@@ -92,11 +93,23 @@ const CardCarousel: React.FC = () => {
         </div>
         <div className="swiper-slide">
           <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1721631193/WEB_EDUCA/Cursos/tsb2uphnryszdxhfgghi.jpg"
-           
-            title="Ética  Empresarial"
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/12_u9pqjj.png"
+            buttonLabel='Desarrollo Personal'
+            title="CONEXIONES LABORALES"
             background='bg-white'
           
+            usuarios='60 usuarios'
+                     description=""
+            textColor="text-black"
+          />
+        </div>
+        <div className="swiper-slide">
+          <CardImage
+            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/13_tmklth.png"
+           
+            title="GESTIÓN DE TALENTO MILENIAL"
+            background='bg-white'
+           buttonLabel='Recursos Humanos '
             usuarios='60 usuarios'
                      description=""
             textColor="text-black"

@@ -83,6 +83,7 @@ const NotaCourses: React.FC = () => {
 
   const handleDownload = async () => {
     try {
+      console.log( )
       const response = await axios.get(`${API_GET_NOTAS_EXCEL}/calidad/${userInfo.enterprise_id}/${courseIdNumber}`, {
         responseType: 'blob', // Set response type to blob for file download
       });
