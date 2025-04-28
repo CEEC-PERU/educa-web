@@ -103,12 +103,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 </div>
 
 
-        </div>
-
-
         
-    
-    </div>
+        </div>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
   );
 };
 
