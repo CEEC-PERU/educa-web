@@ -8,6 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      
       colors: {
         "brand-100": "#000E57",
         "brand-200": "#1C0955",
@@ -34,6 +35,7 @@ const config: Config = {
           "brandmo-800": "#351C99",
            "brandm-500": "#5E17EB"
       },
+      
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
@@ -41,6 +43,7 @@ const config: Config = {
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],
       },
+      
     },
   },
   plugins: [

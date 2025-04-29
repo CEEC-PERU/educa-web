@@ -9,13 +9,31 @@ import { proyectosData } from "@/components/CursosData"
 import ButtonComponent from '@/components/ButtonComponent';
 import CompanyForm from '@/components/FormComponent';
 import IndividualForm from '@/components/IndividualForm';
+import { useEffect } from 'react';
+import SplashScreen from '@/components/SplashScreen'; // ajusta la ruta si es necesario
+
 import './globals.css';
 
 //pagina principal volver responsive 
 // Sección 1: Encabezado con fondo de imagen y gradiente 
 
 export default function Home() {
+
   const [formType, setFormType] = useState<'company' | 'individual'>('individual');
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000); // Mostrar splash durante 2.5 segundos
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
   return (
     <main className="min-h-screen bg-black text-white">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
@@ -23,35 +41,47 @@ export default function Home() {
 
       <Navbar bgColor="bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800 " paddingtop='pt-8' /> 
 
-      <section className="relative flex items-center justify-center w-full text-center text-white  pb-60 bg-brand-500">
-        
-  <div className="absolute inset-0 bg-cover bg-center " style={{ backgroundImage: 'url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)' }}>
-    <div className="absolute inset-0 bg-gradient-to-r "></div>
+      <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-60 bg-brand-500 overflow-hidden">
+  {/* Fondo con animación de desvanecimiento */}
+  <div className="hero-bg absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)' }}>
+    <div className="absolute inset-0 bg-gradient-to-r"></div>
   </div>
 
-  <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto  md:pl-40  ">
-    <div className="md:w-1/2 relative z-10  md:px-6 text-left md:mr-10  pt-40 ">
-    
-      <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight">
-  Tu aliado para inspirar
-</h1>
-<h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight">
-  la lealtad a tus clientes
-</h1>
+  <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto md:pl-40">
+    {/* Texto y botón */}
+    <div className="hero-text md:w-1/2 relative z-10 md:px-6 text-left md:mr-10 pt-40">
+      <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight animate-text-1">
+        Tu aliado para inspirar
+      </h1>
+      <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight animate-text-2">
+        la lealtad a tus clientes
+      </h1>
 
-      <div className="flex flex-col md:flex-row gap-4 pt-6">
-        <ButtonComponent buttonLabel="Empezar" backgroundColor="bg-brand-500" fontSize="px-6 py-2" buttonSize="py-3 px-5 w-auto" textColor="white"></ButtonComponent>
+      <div className="hero-button flex flex-col md:flex-row gap-4 pt-6 animate-button">
+        <ButtonComponent 
+          buttonLabel="Empezar" 
+          backgroundColor="bg-brand-500" 
+          fontSize="px-6 py-2" 
+          buttonSize="py-3 px-5 w-auto" 
+          textColor="white"
+        />
       </div>
     </div>
-    <div className="md:w-1/2 relative z-10 px-6  ">
-      <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1724337541/WEB_EDUCA/WEB-IMAGENES/nnejbmnffrzbibtpm4vq.png" className="w-full max-w-5xl mx-auto" alt="Imagen descriptiva" />
+
+    {/* Imagen con animación escalada */}
+    <div className="hero-image md:w-1/2 relative z-10 px-6 animate-image">
+      <img 
+        src="https://res.cloudinary.com/dk2red18f/image/upload/v1724337541/WEB_EDUCA/WEB-IMAGENES/nnejbmnffrzbibtpm4vq.png" 
+        className="w-full max-w-5xl mx-auto" 
+        alt="Imagen descriptiva" 
+      />
     </div>
   </div>
 </section>
       {/* Sección 3: Otra sección con fondo de imagen y gradiente */}
     
 
-      <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20">
+      <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20 ">
   <div
     className="absolute inset-0 bg-cover bg-center"
     style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}
@@ -106,7 +136,7 @@ export default function Home() {
 </section>
 
 
-<section className="relative w-full py-20 flex items-center justify-center overflow-hidden bg-[#070f41]">
+<section className="relative w-full py-20 flex items-center justify-center overflow-hidden bg-[#070f41] ">
   
   <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300  "></div>
 
@@ -149,8 +179,7 @@ export default function Home() {
 
 
       {/* Sección 2: Sección con fondo brand-500 */}
-      
-      <section className="relative flex items-center justify-center w-full p-6 text-center text-white" style={{ backgroundColor: '#7C3AED' }}>
+       <section className="relative flex items-center justify-center w-full p-6 text-center text-white" style={{ backgroundColor: '#7C3AED' }}>
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(https://source.unsplash.com/random/1600x900)' }}>
           <div className="absolute inset-0 bg-brand-500"></div>
         </div>
