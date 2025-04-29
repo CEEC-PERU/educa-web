@@ -35,6 +35,7 @@ export default function Home() {
   }
 
   return (
+    
     <main className="min-h-screen bg-black text-white">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
      
