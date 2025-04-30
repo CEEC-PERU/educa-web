@@ -119,6 +119,15 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/supervisor/materials')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <ClipboardDocumentCheckIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Material</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={logout}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >

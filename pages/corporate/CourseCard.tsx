@@ -26,6 +26,7 @@ interface CourseCardProps {
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const router = useRouter();
 
+  
   const getStatusButton = (progress: number) => {
     if (progress === 100) {
       return <div className="bg-green-500 text-white px-3 py-1 rounded-full mt-4 text-center">Finalizado</div>;
