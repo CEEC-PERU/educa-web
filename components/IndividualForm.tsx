@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const IndividualForm: React.FC = () => {
   return (
     <div className="bg-white p-6 shadow-lg rounded-3xl w-70">

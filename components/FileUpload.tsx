@@ -50,7 +50,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
                 d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
               />
             </svg>
-            <strong className="font-bold">Archivo subido y con el nombre cambiado a "{fileName}".</strong>
+            <strong className="font-bold text-center align-center">Archivo seleccionado y con el nombre cambiado a "{fileName}".</strong>
             <span className="block sm:inline"> {fileSize} KB</span>
             <button
               className="mt-4 bg-red-500 text-white py-2 px-4 rounded"
