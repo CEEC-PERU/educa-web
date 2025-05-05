@@ -161,3 +161,6 @@ export const API_COURSETIME = `${baseURL}/api/coursetime`;
 export const API_ANSWER_TEMPLATE = `${baseURL}/api/answertemplate`;
 
 export const API_RESPONSE = `${baseURL}/api/resultado`;
+
+//materiales
+export const API_MATERIALS = `${baseURL}/api/coursematerials`;

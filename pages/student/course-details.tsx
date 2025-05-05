@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
+import CourseMaterials from '../../components/student/CourseMaterials';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
@@ -173,10 +174,14 @@ const CourseDetails = () => {
           </div>
         ))}
 
+<div className="min-h-screen flex flex-col items-center justify-center bg-brand-100 p-4">
 
-       
+<CourseMaterials />
 
-        <div className="items-center justify-center bg-gradient-to-r px-4 lg:px-60 from-brand-100 via-brand-200 to-brand-300 pb-20">
+ 
+</div>
+
+        <div className="items-center justify-center bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 pb-20 px-4 lg:px-60">
           <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
           {courseDetail.map(courseDetails => (
             <div key={courseDetails.course_id}>

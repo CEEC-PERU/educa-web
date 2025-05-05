@@ -25,16 +25,19 @@ interface Course {
   students: Student[];
 }
 
+
 const CorporateCourses: React.FC = () => {
+
   const { user } = useAuth();
-  const userId = user ? (user as { id: number; role: number; dni: string; enterprise_id: number }).id : null;
+  const userId = user ? (user as { id: number }).id : null;
 
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [showModal, setShowModal] = useState(false);
 
+  
   useEffect(() => {
     if (userId) {
       const fetchCourses = async () => {
@@ -64,17 +67,43 @@ const CorporateCourses: React.FC = () => {
   const closeModal = () => {
     setShowModal(false);
     setSelectedCourse(null);
-    setSelectedFile(null);
+    setSelectedFiles([]);
   };
 
-  const handleFileChange = (file: File | null) => {
-    setSelectedFile(file);
+  const handleFilesChange = (files: File[]) => {
+    setSelectedFiles((prev) => [...prev, ...files]);
   };
 
-  const handleFileRemove = () => {
-    setSelectedFile(null);
+  const handleFileRemove = (index: number) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleUpload = async () => {
+    if (!selectedCourse || selectedFiles.length === 0) return;
+  
+    const formData = new FormData();
+    selectedFiles.forEach((file) => {
+      formData.append('materials', file); // múltiples archivos
+    });
+  
+    formData.append('course_id', selectedCourse.course_id.toString());
+  
+    
+    try {
+      console.log("form-data", formData)
+      const response = await fetch('http://localhost:4100/api/coursematerials', {
+        method: 'POST',
+        body: formData,
+      });
+  
+      if (!response.ok) throw new Error('Error al subir archivos');
+  
+      console.log('Archivos subidos correctamente');
+      closeModal();
+    } catch (error) {
+      console.error('Error al subir archivos:', error);
+    }
+  };
   
 
   return (
@@ -93,12 +122,11 @@ const CorporateCourses: React.FC = () => {
                   <img src={course.image} alt={course.name} className="w-full h-40 object-cover" />
                   <div className="p-4">
                     <h3 className="text-lg font-bold text-[#1E1E1E]">{course.name}</h3>
-                    
                     <button
                       className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 mt-4"
                       onClick={() => openModal(course)}
                     >
-                      Subir Archivo
+                      Subir Archivos
                     </button>
                   </div>
                 </div>
@@ -119,30 +147,25 @@ const CorporateCourses: React.FC = () => {
               &times;
             </button>
             <h2 className="text-2xl font-semibold text-center text-[#0010F7] mb-4">
-              Subir archivo para: {selectedCourse.name}
+              Subir archivos para: {selectedCourse.name}
             </h2>
-            <p className="text-center mb-4 text-gray-600">
-              Asegúrate de que el archivo esté listo para importarse.
-            </p>
             <FileUpload
-              onFileChange={handleFileChange}
+              onFilesChange={handleFilesChange}
               onFileRemove={handleFileRemove}
-              fileName={selectedFile?.name}
-              fileSize={selectedFile ? Number((selectedFile.size / 1024).toFixed(2)) : undefined}
-              title="Click para subir."
-              description="Arrastra y suelta o selecciona un archivo."
-              instructions="Archivos .pdf y .ppt  son compatibles."
+              files={selectedFiles}
             />
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-between mt-6">
               <button
-                className={`bg-blue-600 text-white px-4 py-2 rounded ${!selectedFile ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={() => {
-                  if (selectedFile) {
-                    console.log('Archivo subido:', selectedFile.name, 'para curso', selectedCourse.name);
-                    closeModal(); // Puedes reemplazar esto con la lógica real de subida
-                  }
-                }}
-                disabled={!selectedFile}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+                onClick={closeModal}
+              >
+                Cancelar
+              </button>
+              <button
+                className={`bg-blue-600 text-white px-4 py-2 rounded ${selectedFiles.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                
+                onClick={handleUpload}
+                disabled={selectedFiles.length === 0}
               >
                 Guardar
               </button>
