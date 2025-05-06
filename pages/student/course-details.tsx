@@ -5,17 +5,19 @@ import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import { useCourseDetail } from '../../hooks/useCourseDetail';
+import { useCoursesMaterials } from '../../hooks/courses/courseMaterial';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import React, { useState } from 'react';
 import './../../app/globals.css';
 
-
+//datos
 const CourseDetails = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
 
   const courseIdNumber = Array.isArray(course_id) ? parseInt(course_id[0]) : parseInt(course_id || '0');
+  const { coursesMaterials } = useCoursesMaterials(courseIdNumber);
   const { courseDetail, isLoading } = useCourseDetail(courseIdNumber);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   let name = '';
@@ -173,13 +175,19 @@ const CourseDetails = () => {
             </div>
           </div>
         ))}
+   
+{Array.isArray(coursesMaterials) && coursesMaterials.length > 0 ? (
+  <div className="items-center justify-center bg-brand-100 p-4">
 
-<div className="min-h-screen flex flex-col items-center justify-center bg-brand-100 p-4">
+  <CourseMaterials materials={coursesMaterials} />
+  </div>
+) : coursesMaterials && coursesMaterials.material ? (
+  <div className="items-center justify-center bg-brand-100 p-4">
 
-<CourseMaterials />
+  <CourseMaterials materials={[coursesMaterials]} />
+  </div>
+) : null}
 
- 
-</div>
 
         <div className="items-center justify-center bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 pb-20 px-4 lg:px-60">
           <h1 className="text-2xl lg:text-3xl font-bold mb-4 text-white pt-20">Temario</h1>
