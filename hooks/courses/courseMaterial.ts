@@ -1,12 +1,12 @@
 // useCoursesCount.tsx
 import { useEffect, useState } from 'react';
-import {CourseMaterial} from '../../interfaces/Courses/courseMaterial';
+import { CourseMaterial } from '../../interfaces/Courses/courseMaterial';
 import { getCourseMaterials } from '../../services/courses/courseMaterial';
 import { useAuth } from '../../context/AuthContext';
 
 // Custom Hook to fetch user course data
-export const useCoursesMaterials = (course_id : number) => {
-  const [coursesMaterials, setCourseMaterial] = useState<CourseMaterial >();
+export const useCoursesMaterials = (course_id: number) => {
+  const [coursesMaterials, setCourseMaterial] = useState<CourseMaterial>();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -30,5 +30,5 @@ export const useCoursesMaterials = (course_id : number) => {
     fetchCourseMaterial();
   }, [token]);
 
-  return { error, isLoading , coursesMaterials};
+  return { error, isLoading, coursesMaterials };
 };

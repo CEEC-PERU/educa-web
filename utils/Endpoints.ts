@@ -1,6 +1,6 @@
 //export const baseURL = `https://educa-web-api.onrender.com`;
 
-export const baseURL = `http://localhost:4100`;
+export const baseURL = `https://educa-web-api.onrender.com`;
 
 // authentication
 export const API_AUTH = `${baseURL}/api/auth/signin`;
@@ -37,48 +37,43 @@ export const API_OPTIONS = `${baseURL}/api/options`;
 // videos
 export const API_VIDEOS = `${baseURL}/api/videos`;
 
-
 // imagenes
 export const API_IMAGES = `${baseURL}/api/images`;
-       
 
 //socket
-export const API_SOCKET_URL = `http://localhost:4100`;
+export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
 
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
 
-//sesiones que ingreso 
+//sesiones que ingreso
 export const API_APPSESSION = `${baseURL}/api/appsession`;
 
-
-//obtener info de usuarios 
+//obtener info de usuarios
 export const API_GET_PROFILE_BY_USER = `${baseURL}/api/profiles/alldata`;
 
 //obtener info de empresa por usuario
 export const API_GET_EMPRESA_BY_USER = `${baseURL}/api/users/enterprise`;
 
-
 //actualizar perfil por user_id
 export const API_PUT_PROFILE = `${baseURL}/api/profiles`;
 
 //obtener cursos asignados al estudinate
-export const API_GET_COURSESTUDENT= `${baseURL}/api/coursestudents/cursos`;
+export const API_GET_COURSESTUDENT = `${baseURL}/api/coursestudents/cursos`;
 
-export const API_GET_COURSEMODULE= `${baseURL}/api/coursestudents/modules`;
-
+export const API_GET_COURSEMODULE = `${baseURL}/api/coursestudents/modules`;
 
 //obtener cursos asignados al estudiante
-export const API_GET_COURSESTUDENT_ENTERPRISE= `${baseURL}/api/coursestudents/enterprise`;
+export const API_GET_COURSESTUDENT_ENTERPRISE = `${baseURL}/api/coursestudents/enterprise`;
 
-export const API_GET_COURSESTUDENT_SUPERVISOR= `${baseURL}/api/coursestudents`;
+export const API_GET_COURSESTUDENT_SUPERVISOR = `${baseURL}/api/coursestudents`;
 
-export const API_GET_COURSESTUDENTS= `${baseURL}/api/coursestudents/students`;
+export const API_GET_COURSESTUDENTS = `${baseURL}/api/coursestudents/students`;
 
-export const API_GET_COURSESTUDENT_ASSIGNED= `${baseURL}/api/courseStudents/assigned`; 
+export const API_GET_COURSESTUDENT_ASSIGNED = `${baseURL}/api/courseStudents/assigned`;
 
-export const API_POST_COURSESTUDENT= `${baseURL}/api/coursestudents/assign`;
-//obtener detalle d elos cursos                    
+export const API_POST_COURSESTUDENT = `${baseURL}/api/coursestudents/assign`;
+//obtener detalle d elos cursos
 
 export const API_GET_DETAILCOURSE = `${baseURL}/api/coursestudents/detailcourse`;
 
@@ -93,28 +88,28 @@ export const API_USER = `${baseURL}/api/superadmin`;
 
 export const API_USERU = `${baseURL}/api/users`;
 
-//obtener info de empresas 
+//obtener info de empresas
 export const API_GET_ENTERPRISE = `${baseURL}/api/enterprises`;
 
-export const API_GET_USERS_BY_ENTERPRISE  = `${baseURL}/api/superadmin/enterprise`;
+export const API_GET_USERS_BY_ENTERPRISE = `${baseURL}/api/superadmin/enterprise`;
 
-export const API_REQUIREMENTS  = `${baseURL}/api/requirements`;
+export const API_REQUIREMENTS = `${baseURL}/api/requirements`;
 
 //Obtener modulos , sesiones , evaluacion y prox evaluacion_final
 export const API_GET_MODULESDETAIL = `${baseURL}/api/coursestudents/modules`;
 
 export const API_POST_SESSION_PROGRESS = `${baseURL}/api/userSessionProgress`;
 
-export const API_POST_MODULE_PROGRESS =  `${baseURL}/api/userModuleProgress`;
+export const API_POST_MODULE_PROGRESS = `${baseURL}/api/userModuleProgress`;
 
 export const API_GET_PROGRESS_SESSION_BYUSER = `${baseURL}/api/userSessionProgress/progress/user`;
 
 export const API_PUT_PROGRESS_SESSION_BYUSER = `${baseURL}/api/userSessionProgress/progress/user`;
 
 //PRUEBA
-export const API_POST_MODULE_RESULT =  `${baseURL}/api/moduleresults`;
+export const API_POST_MODULE_RESULT = `${baseURL}/api/moduleresults`;
 
-export const API_POST_COURSE_RESULT =  `${baseURL}/api/courseresults`;
+export const API_POST_COURSE_RESULT = `${baseURL}/api/courseresults`;
 
 export const API_GET_COUNT_COURSE_CORPORATE = `${baseURL}/api/metricascorporate/corporate`;
 

@@ -16,7 +16,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   onFileRemove,
   files,
   title = 'Click para subir.',
-  description = 'Arrastra y suelta o selecciona varios archivos.',
+  description = 'Selecciona varios archivos.',
   instructions = 'Archivos .pdf y .ppt son compatibles.',
   icon
 }) => {

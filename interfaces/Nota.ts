@@ -32,6 +32,7 @@ export interface UserProfile {
   export interface CourseStudents {
     course_id: number;
     created_at:Date;
+    progress: number;
     finished_date: Date;
     deadline: Date;
   }
