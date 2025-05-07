@@ -25,9 +25,15 @@ const UploadStep: React.FC<UploadStepProps> = ({ initialFile, onNext }) => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4 text-center">Sube tus archivos</h2>
-        <p className="mb-6 mt-6 text-center">Antes de subir los archivos en la sección de abajo, asegúrate de que el archivo está listo para importarse</p>
-        <FileUpload
+        <h2 className="text-xl font-bold mb-4 text-center">
+          Sube tus archivos
+        </h2>
+        <p className="mb-6 mt-6 text-center">
+          Antes de subir los archivos en la sección de abajo, asegúrate de que
+          el archivo está listo para importarse
+        </p>
+        {/* File upload component with drag and drop support 
+      <FileUpload
           onFileChange={handleFileChange}
           onFileRemove={handleFileRemove}
           fileName={selectedFile?.name}
@@ -52,10 +58,12 @@ const UploadStep: React.FC<UploadStepProps> = ({ initialFile, onNext }) => {
               />
             </svg>
           }
-        />
+        />*/}
         <div className="flex justify-end mt-4">
           <button
-            className={`bg-purple-500 text-white py-2 px-4 rounded ${!selectedFile ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`bg-purple-500 text-white py-2 px-4 rounded ${
+              !selectedFile ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
             onClick={() => selectedFile && onNext(selectedFile)}
             disabled={!selectedFile}
           >
