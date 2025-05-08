@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import MediaUploadPreview from '../../components/MediaUploadPreview';
-import FormField from '../../components/FormField';
-import ActionButtons from '../../components/Content/ActionButtons';
-import { getCategories } from '../../services/categoryService';
-import { getProfessors } from '../../services/professorService';
-import { getAvailableEvaluations } from '../../services/evaluationService';
-import { addCourse } from '../../services/courseService';
-import { Category } from '../../interfaces/Category';
-import { Professor } from '../../interfaces/Professor';
-import { Evaluation } from '../../interfaces/Evaluation';
-import { Course } from '../../interfaces/Course';
-import Loader from '../../components/Loader';
-import './../../app/globals.css';
+import Navbar from '../../../../components/Navbar';
+import Sidebar from '../../../../components/Content/SideBar';
+import MediaUploadPreview from '../../../../components/MediaUploadPreview';
+import FormField from '../../../../components/FormField';
+import ActionButtons from '../../../../components/Content/ActionButtons';
+import { getCategories } from '../../../../services/categoryService';
+import { getProfessors } from '../../../../services/professorService';
+import { getAvailableEvaluations } from '../../../../services/evaluationService';
+import { addCourse } from '../../../../services/courseService';
+import { Category } from '../../../../interfaces/Category';
+import { Professor } from '../../../../interfaces/Professor';
+import { Evaluation } from '../../../../interfaces/Evaluation';
+import { Course } from '../../../../interfaces/Course';
+import Loader from '../../../../components/Loader';
+import './../../../../app/globals.css';
 
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
+import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import AlertComponent from '../../components/AlertComponent';
+import AlertComponent from '../../../../components/AlertComponent';
 
 interface FormData
   extends Omit<Course, 'course_id' | 'created_at' | 'updated_at'> {
@@ -41,8 +41,8 @@ const AddCourse: React.FC = () => {
     name: '',
     description_short: '',
     description_large: '',
-    category_id: 0,
-    professor_id: 0,
+    category_id: 64, // Default category: Empresa
+    professor_id: 33, // Default professor: Claro
     evaluation_id: 0,
     intro_video: '',
     duration_video: '',
@@ -237,16 +237,16 @@ const AddCourse: React.FC = () => {
 
   return (
     <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+      <div className="relative min-h-screen flex flex-col bg-gradient-to-b ">
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
           <main
             className={`p-6 flex-grow ${
               showSidebar ? 'ml-20' : ''
-            } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}
+            } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4 `}
           >
-            <div className="max-w-6xl bg-white rounded-lg w-full">
+            <div className="max-w-6xl bg-white rounded-lg w-full p-20 justify-center items-center shadow-md">
               {showAlert && (
                 <AlertComponent
                   type={alertType || 'info'}
@@ -308,32 +308,29 @@ const AddCourse: React.FC = () => {
                     touched={touchedFields['description_large']}
                     required
                   />
-                  <FormField
-                    id="category_id"
-                    label="Categoría"
-                    type="select"
-                    value={formData.category_id.toString()}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    options={[
-                      { value: '', label: 'Seleccionar Categoría' },
-                      ...categories.map((category) => ({
-                        value: category.category_id.toString(),
-                        label: category.name,
-                      })),
-                    ]}
-                    error={
-                      formData.category_id === 0 && touchedFields['category_id']
-                    }
-                    touched={touchedFields['category_id']}
-                    required
-                  />
+
+                  <div className="relative z-0 w-full mb-5 group">
+                    <label className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
+                      Categoria
+                    </label>
+                    <div className="text-black py-3 px-0 w-full text-lg bg-gray-100 border-b-2 border-gray-300">
+                      {categories.find(
+                        (p) => p.category_id === formData.category_id
+                      )?.name || 'Categoria no seleccionado'}
+                    </div>
+                    {formData.category_id === 0 &&
+                      touchedFields['category_id'] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Debe seleccionar unacategoria
+                        </p>
+                      )}
+                  </div>
                   <div>
                     <label
                       htmlFor="image"
                       className="block text-sm font-medium mb-6 text-gray-700"
                     >
-                      Imagen
+                      Potada
                     </label>
                     <MediaUploadPreview
                       ref={imageUploadRef}
@@ -347,27 +344,23 @@ const AddCourse: React.FC = () => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <FormField
-                    id="professor_id"
-                    label="Profesor"
-                    type="select"
-                    value={formData.professor_id.toString()}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    options={[
-                      { value: '', label: 'Seleccionar Profesor' },
-                      ...professors.map((professor) => ({
-                        value: professor.professor_id.toString(),
-                        label: professor.full_name,
-                      })),
-                    ]}
-                    error={
-                      formData.professor_id === 0 &&
-                      touchedFields['professor_id']
-                    }
-                    touched={touchedFields['professor_id']}
-                    required
-                  />
+                  <div className="relative z-0 w-full mb-5 group">
+                    <label className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
+                      Profesor
+                    </label>
+                    <div className="text-black py-3 px-0 w-full text-lg bg-gray-100 border-b-2 border-gray-300">
+                      {professors.find(
+                        (p) => p.professor_id === formData.professor_id
+                      )?.full_name || 'Profesor no seleccionado'}
+                    </div>
+                    {formData.professor_id === 0 &&
+                      touchedFields['professor_id'] && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Debe seleccionar un profesor
+                        </p>
+                      )}
+                  </div>
+                  {/*   
                   <FormField
                     id="evaluation_id"
                     label="Evaluación"
@@ -388,7 +381,7 @@ const AddCourse: React.FC = () => {
                     }
                     touched={touchedFields['evaluation_id']}
                     required
-                  />
+                  />*/}
                   <FormField
                     id="duration_video"
                     label="Duración del Video"
@@ -436,14 +429,6 @@ const AddCourse: React.FC = () => {
                   />
                 </div>
               </form>
-            </div>
-            <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-              <ActionButtons
-                onSave={handleSubmit}
-                onCancel={handleCancel}
-                isEditing={true}
-                customSize={true} // Pass the customSize prop to set the size to 400x300
-              />
             </div>
           </main>
         </div>

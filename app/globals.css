@@ -4,10 +4,10 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-color: #F9FAFC;
+  --background-start-color: #f9fafc;
   --custom-blue: #0221d3b8;
-  --custom-purple: #6017AF;
-  --sidebar-color: #F9FAFC;
+  --custom-purple: #6017af;
+  --sidebar-color: #f9fafc;
   --sidebar-hover-color: #a485bd;
   --border-color: #b484e7;
 }
@@ -15,7 +15,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-color: #F9FAFC;
+    --background-start-color: #f9fafc;
     --sidebar-color: #ffffffbf;
     --sidebar-hover-color: #a485bd;
   }
@@ -23,10 +23,7 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-    to right,
-    var(--background-start-color),
-  );
+  background: linear-gradient(to right, var(--background-start-color));
   background-attachment: fixed;
   background-size: cover;
   min-height: 100vh;
@@ -37,7 +34,7 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   .bg-gradient-blue {
     @apply bg-gradient-to-r from-blue-400 to-blue-300;
   }
@@ -141,24 +138,22 @@ body {
   bottom: -250%; /* Adjust this value to move the starting position of emojis down */
 }
 
-
 .chart-container {
   margin-top: 1rem; /* Ajusta este valor según sea necesario */
 }
 
 .clip-fancy-shape {
   clip-path: polygon(
-    0 10%, 
-    5% 0%, 
-    95% 0%, 
-    100% 10%, 
-    100% 90%, 
-    95% 100%, 
-    5% 100%, 
+    0 10%,
+    5% 0%,
+    95% 0%,
+    100% 10%,
+    100% 90%,
+    95% 100%,
+    5% 100%,
     0 90%
   );
 }
-
 
 .animate-show {
   animation: show 0.7s ease-out forwards;
@@ -175,27 +170,31 @@ body {
 
 /* Animaciones del Hero */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes scaleIn {
-  from { 
+  from {
     opacity: 0;
     transform: scale(0.95);
   }
-  to { 
+  to {
     opacity: 1;
     transform: scale(1);
   }
@@ -227,14 +226,10 @@ body {
   .hero-section {
     view-timeline-name: --hero;
     view-timeline-axis: block;
-    
+
     animation-timeline: --hero;
     animation-name: fadeIn;
     animation-range: entry 25% cover 50%;
     animation-fill-mode: both;
   }
 }
-
-
-
-
