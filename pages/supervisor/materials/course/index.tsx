@@ -14,16 +14,16 @@ import { Professor } from '../../../../interfaces/Professor';
 import { Evaluation } from '../../../../interfaces/Evaluation';
 import { Course } from '../../../../interfaces/Course';
 import Loader from '../../../../components/Loader';
-import './../../../../app/globals.css';
-
 import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useEvaluationWizard } from '../../../../components/Evaluation/hooks/LogicWizard';
+import { EvaluationWizard } from '../../../../components/Evaluation/WizardEvaluation';
+import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../../../components/AlertComponent';
-
 interface FormData
   extends Omit<Course, 'course_id' | 'created_at' | 'updated_at'> {
   [key: string]: string | boolean | number;
 }
+import './../../../../app/globals.css';
 
 const AddCourse: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -37,13 +37,21 @@ const AddCourse: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
+  const [createdEvaluationId, setCreatedEvaluationId] = useState<number | null>(
+    null
+  );
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [currentStep, setCurrentStep] = useState<'evaluation' | 'course'>(
+    'evaluation'
+  );
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description_short: '',
     description_large: '',
     category_id: 64, // Default category: Empresa
     professor_id: 33, // Default professor: Claro
-    evaluation_id: 0,
+    evaluation_id: createdEvaluationId || 0,
     intro_video: '',
     duration_video: '',
     image: '',
@@ -84,11 +92,6 @@ const AddCourse: React.FC = () => {
     fetchCategoriesProfessorsEvaluations();
   }, []);
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -123,7 +126,11 @@ const AddCourse: React.FC = () => {
     setTouchedFields((prevState) => ({ ...prevState, image: true }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {};
+  const [showEvaluationWizard, setShowEvaluationWizard] = useState(false);
+  const wizard = useEvaluationWizard();
+
+  const handleGoToEvaluationWizard = (e: React.FormEvent) => {
     e.preventDefault();
     setFormLoading(true);
 
@@ -131,9 +138,6 @@ const AddCourse: React.FC = () => {
       'name',
       'description_short',
       'description_large',
-      'category_id',
-      'professor_id',
-      'evaluation_id',
       'duration_video',
       'duration_course',
     ];
@@ -166,45 +170,31 @@ const AddCourse: React.FC = () => {
       return;
     }
 
+    setShowEvaluationWizard(true);
+  };
+
+  // Adaptamos la función completeForm para cumplir con la interfaz
+  const adaptedCompleteForm = async () => {
+    setIsProcessing(true);
+
     try {
+      const evaluationId = await wizard.completeForm();
+      setCreatedEvaluationId(evaluationId);
+      setFormData((prev) => ({ ...prev, evaluation_id: evaluationId }));
       await addCourse(formData, videoFile!, imageFile!);
-      setAlertMessage('Curso creado exitosamente.');
-      setAlertType('success');
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-        setFormData({
-          name: '',
-          description_short: '',
-          description_large: '',
-          category_id: 0,
-          professor_id: 0,
-          evaluation_id: 0,
-          intro_video: '',
-          duration_video: '',
-          image: '',
-          duration_course: '',
-          is_active: true,
-        });
-        setTouchedFields({});
-        setVideoFile(null);
-        setImageFile(null);
-        setClearMediaPreview(true);
-        if (imageUploadRef.current) imageUploadRef.current.clear();
-        if (videoUploadRef.current) videoUploadRef.current.clear();
-        setTimeout(() => setClearMediaPreview(false), 500);
-      }, 3000);
+
+      // 4. Mostrar modal de éxito
+      setShowSuccessModal(true);
+
+      // Podrías agregar aquí lógica adicional si es necesario
     } catch (error) {
-      setAlertMessage('Error creating course');
-      setAlertType('danger');
-      setShowAlert(true);
-      console.error('Error creating course:', error);
-    } finally {
-      setFormLoading(false);
+      console.error('Error completing evaluation:', error);
     }
   };
 
-  const handleCancel = () => {
+  const handleSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    // Resetear el formulario
     setFormData({
       name: '',
       description_short: '',
@@ -225,7 +215,82 @@ const AddCourse: React.FC = () => {
     if (imageUploadRef.current) imageUploadRef.current.clear();
     if (videoUploadRef.current) videoUploadRef.current.clear();
     setTimeout(() => setClearMediaPreview(false), 500);
+
+    // Volver al wizard de evaluación
+    setShowEvaluationWizard(true);
+    setCurrentStep('evaluation');
   };
+
+  if (isProcessing) {
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+          <h3 className="text-lg font-medium text-gray-900">
+            {currentStep === 'evaluation'
+              ? 'Registrando evaluación...'
+              : 'Registrando curso...'}
+          </h3>
+          <p className="mt-2 text-sm text-gray-600">
+            Por favor, espere un momento.
+          </p>
+        </div>
+      </div>
+    </div>;
+  }
+
+  {
+    /* Modal de éxito */
+  }
+  if (showSuccessModal) {
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+        <div className="flex flex-col items-center">
+          <CheckCircleIcon className="h-12 w-12 text-green-500 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900">
+            ¡Registro completado!
+          </h3>
+          <p className="mt-2 text-sm text-gray-600 text-center">
+            El curso y la evaluación han sido registrados exitosamente.
+          </p>
+          <div className="mt-6">
+            <button
+              onClick={handleSuccessModalClose}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Aceptar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>;
+  }
+
+  if (showEvaluationWizard) {
+    return (
+      <ProtectedRoute>
+        <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+          <div className="flex flex-1 pt-16">
+            <Sidebar
+              showSidebar={showSidebar}
+              setShowSidebar={setShowSidebar}
+            />
+            <main
+              className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+                showSidebar ? 'ml-20' : 'ml-0'
+              }`}
+            >
+              <EvaluationWizard
+                {...wizard}
+                completeForm={adaptedCompleteForm}
+              />
+            </main>
+          </div>
+        </div>
+      </ProtectedRoute>
+    );
+  }
 
   if (loading) {
     return (
@@ -330,7 +395,7 @@ const AddCourse: React.FC = () => {
                       htmlFor="image"
                       className="block text-sm font-medium mb-6 text-gray-700"
                     >
-                      Potada
+                      Portada
                     </label>
                     <MediaUploadPreview
                       ref={imageUploadRef}
@@ -429,6 +494,23 @@ const AddCourse: React.FC = () => {
                   />
                 </div>
               </form>
+              <div className="col-span-2 flex justify-between mt-6">
+                <div className="flex space-x-4">
+                  <button
+                    type="button"
+                    onClick={handleGoToEvaluationWizard}
+                    className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+                  >
+                    Siguiente
+                  </button>
+
+                  {formData.evaluation_id > 0 && (
+                    <span className="flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-md">
+                      Evaluación #{formData.evaluation_id} asignada
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
           </main>
         </div>

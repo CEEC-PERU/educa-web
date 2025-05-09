@@ -24,10 +24,6 @@ const StepSummary: React.FC<StepSummaryProps> = ({
 
   const handleComplete = () => {
     completeForm();
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 3000); // Ocultar la alerta después de 3 segundos
   };
 
   return (
