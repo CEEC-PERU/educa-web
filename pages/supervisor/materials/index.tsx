@@ -6,6 +6,7 @@ import { getCoursesBySupervisor } from '../../../services/courseStudent';
 import Loader from '../../../components/Loader';
 import { API_MATERIALS } from '../../../utils/Endpoints';
 import FileUpload from '../../../components/FileUpload';
+import { useRouter } from 'next/router';
 import './../../../app/globals.css';
 
 interface Student {
@@ -37,7 +38,7 @@ const CorporateCourses: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
-
+  const router = useRouter();
   useEffect(() => {
     if (userId) {
       const fetchCourses = async () => {
@@ -113,6 +114,10 @@ const CorporateCourses: React.FC = () => {
     }
   };
 
+  const handleViewModules = (courseId: number) => {
+    router.push(`/supervisor/materials/module?id=${courseId}`);
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gray-50">
       {/* Notificación de éxito */}
@@ -165,7 +170,7 @@ const CorporateCourses: React.FC = () => {
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
 
         <main className="p-6 flex-grow ml-20">
-          <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-8 w-full">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
                 Gestión de Cursos
@@ -174,6 +179,26 @@ const CorporateCourses: React.FC = () => {
                 Administra los materiales de tus cursos
               </p>
             </div>
+
+            <button
+    onClick={() => router.push('/supervisor/materials/course')} // Cambia esta ruta por la que necesites
+    className="flex items-center bg-indigo-600 hover:bg-indigo-800 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+  >
+    <svg
+      className="w-5 h-5 mr-2"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+      />
+    </svg>
+    Crear Curso
+  </button>
           </div>
 
           {loading ? (
@@ -260,6 +285,12 @@ const CorporateCourses: React.FC = () => {
                       </svg>
                       Subir Materiales
                     </button>
+                    <button
+                  onClick={() => handleViewModules(course.course_id)}
+                  className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                >
+                  Ver módulos
+                </button>
                   </div>
                 </div>
               ))}
