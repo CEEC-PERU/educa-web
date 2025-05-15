@@ -133,7 +133,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
       ...questions,
       {
         question_text: '',
-        type_id: 0,
+        type_id: 4, // default tipo de pregunta opciones
         score: 0,
         evaluation_id: 0,
         image: '',
@@ -176,7 +176,20 @@ const StepTwo: React.FC<StepTwoProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">
               Tipo de Pregunta
             </label>
-            <select
+            <div className="flex items-center">
+              <input
+                type="text"
+                name="type_id"
+                value={
+                  questionTypes.find((type) => type.type_id === 4)?.name ||
+                  'Tipo por defecto'
+                }
+                readOnly
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline"
+              />
+              <input type="hidden" name="type_id" value={4} />
+            </div>
+            {/* <select
               name="type_id"
               value={question.type_id}
               onChange={(e) => handleQuestionChange(index, e)}
@@ -186,7 +199,9 @@ const StepTwo: React.FC<StepTwoProps> = ({
                   ? 'border-red-500'
                   : ''
               }`}
-            >
+            > 
+          
+
               <option value="">Seleccionar Tipo de Pregunta</option>
               {questionTypes.map((type) => (
                 <option key={type.type_id} value={type.type_id}>
@@ -194,6 +209,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
                 </option>
               ))}
             </select>
+              */}
+
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">
               Puntaje
             </label>

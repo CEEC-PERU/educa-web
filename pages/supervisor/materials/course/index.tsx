@@ -7,7 +7,7 @@ import FormField from '../../../../components/FormField';
 import { getCategories } from '../../../../services/categoryService';
 import { getProfessors } from '../../../../services/professorService';
 import { getAvailableEvaluations } from '../../../../services/evaluationService';
-import { addCourse } from '../../../../services/courseService';
+import { addCourse2 } from '../../../../services/courseService';
 import { Category } from '../../../../interfaces/Category';
 import { Professor } from '../../../../interfaces/Professor';
 import { Evaluation } from '../../../../interfaces/Evaluation';
@@ -19,7 +19,8 @@ import { EvaluationWizard } from '../../../../components/Evaluation/WizardEvalua
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../../../components/AlertComponent';
 
-interface FormData extends Omit<Course, 'course_id' | 'created_at' | 'updated_at'> {
+interface FormData
+  extends Omit<Course, 'course_id' | 'created_at' | 'updated_at'> {
   [key: string]: string | boolean | number;
 }
 
@@ -36,8 +37,12 @@ const AddCourse: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
-  const [createdEvaluationId, setCreatedEvaluationId] = useState<number | null>(null);
-  const [currentStep, setCurrentStep] = useState<'form' | 'evaluation' | 'processing' | 'success'>('form');
+  const [createdEvaluationId, setCreatedEvaluationId] = useState<number | null>(
+    null
+  );
+  const [currentStep, setCurrentStep] = useState<
+    'form' | 'evaluation' | 'processing' | 'success'
+  >('form');
   const [formData, setFormData] = useState<FormData>({
     name: '',
     description_short: '',
@@ -51,7 +56,9 @@ const AddCourse: React.FC = () => {
     duration_course: '',
     is_active: true,
   });
-  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
+  const [touchedFields, setTouchedFields] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [showAlert, setShowAlert] = useState(false);
 
   const router = useRouter();
@@ -62,17 +69,20 @@ const AddCourse: React.FC = () => {
   useEffect(() => {
     const fetchCategoriesProfessorsEvaluations = async () => {
       try {
-        const [categoriesRes, professorsRes, evaluationsRes] = await Promise.all([
-          getCategories(),
-          getProfessors(),
-          getAvailableEvaluations(),
-        ]);
+        const [categoriesRes, professorsRes, evaluationsRes] =
+          await Promise.all([
+            getCategories(),
+            getProfessors(),
+            getAvailableEvaluations(),
+          ]);
         setCategories(categoriesRes);
         setProfessors(professorsRes);
         setEvaluations(evaluationsRes);
         setLoading(false);
       } catch (error) {
-        setAlertMessage('Error fetching categories, professors, or evaluations');
+        setAlertMessage(
+          'Error fetching categories, professors, or evaluations'
+        );
         setAlertType('danger');
         setShowAlert(true);
         setLoading(false);
@@ -82,7 +92,9 @@ const AddCourse: React.FC = () => {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
     setFormData((prevState) => ({
@@ -92,7 +104,9 @@ const AddCourse: React.FC = () => {
   };
 
   const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { id } = e.target;
     setTouchedFields((prevState) => ({
@@ -136,7 +150,10 @@ const AddCourse: React.FC = () => {
       newTouchedFields['intro_video'] = true;
     }
 
-    const hasEmptyFields = requiredFields.some((field) => !formData[field]) || !imageFile || !videoFile;
+    const hasEmptyFields =
+      requiredFields.some((field) => !formData[field]) ||
+      !imageFile ||
+      !videoFile;
 
     if (hasEmptyFields) {
       setTouchedFields((prev) => ({ ...prev, ...newTouchedFields }));
@@ -152,24 +169,23 @@ const AddCourse: React.FC = () => {
   const handleCompleteEvaluation = async () => {
     try {
       setCurrentStep('processing');
-      
+
       // 1. Crear evaluación
       const evaluationId = await wizard.completeForm();
       setCreatedEvaluationId(evaluationId);
-      
+
       // 2. Actualizar formData con el ID de evaluación
       const updatedFormData = {
         ...formData,
-        evaluation_id: evaluationId
+        evaluation_id: evaluationId,
       };
       setFormData(updatedFormData);
-      
+
       // 3. Crear curso
-      await addCourse(updatedFormData, videoFile!, imageFile!);
-      
+      await addCourse2(updatedFormData, videoFile!, imageFile!);
+
       // 4. Mostrar éxito
       setCurrentStep('success');
-      
     } catch (error) {
       console.error('Error:', error);
       setCurrentStep('form');
@@ -201,7 +217,7 @@ const AddCourse: React.FC = () => {
     if (imageUploadRef.current) imageUploadRef.current.clear();
     if (videoUploadRef.current) videoUploadRef.current.clear();
     setTimeout(() => setClearMediaPreview(false), 500);
-    
+
     // Volver al formulario inicial
     setCurrentStep('form');
     setShowAlert(false);
@@ -216,15 +232,22 @@ const AddCourse: React.FC = () => {
   }
 
   // Renderizado condicional basado en currentStep
-  switch(currentStep) {
+  switch (currentStep) {
     case 'evaluation':
       return (
         <ProtectedRoute>
           <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
             <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
             <div className="flex flex-1 pt-16">
-              <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-              <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : 'ml-0'}`}>
+              <Sidebar
+                showSidebar={showSidebar}
+                setShowSidebar={setShowSidebar}
+              />
+              <main
+                className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+                  showSidebar ? 'ml-20' : 'ml-0'
+                }`}
+              >
                 <EvaluationWizard
                   {...wizard}
                   completeForm={handleCompleteEvaluation}
@@ -234,7 +257,7 @@ const AddCourse: React.FC = () => {
           </div>
         </ProtectedRoute>
       );
-    
+
     case 'processing':
       return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -245,13 +268,14 @@ const AddCourse: React.FC = () => {
                 Procesando registro...
               </h3>
               <p className="mt-2 text-sm text-gray-600">
-                Guardando evaluación y curso, por favor espere.
+                Guardando evaluación , curso y asignando usuarios , por favor
+                espere.
               </p>
             </div>
           </div>
         </div>
       );
-    
+
     case 'success':
       return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -276,7 +300,7 @@ const AddCourse: React.FC = () => {
           </div>
         </div>
       );
-    
+
     case 'form':
     default:
       return (
@@ -284,8 +308,15 @@ const AddCourse: React.FC = () => {
           <div className="relative min-h-screen flex flex-col bg-gradient-to-b ">
             <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
             <div className="flex flex-1 pt-16">
-              <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-              <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}>
+              <Sidebar
+                showSidebar={showSidebar}
+                setShowSidebar={setShowSidebar}
+              />
+              <main
+                className={`p-6 flex-grow ${
+                  showSidebar ? 'ml-20' : ''
+                } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}
+              >
                 <div className="max-w-6xl bg-white rounded-lg w-full p-20 justify-center items-center shadow-md">
                   {showAlert && (
                     <AlertComponent
@@ -323,7 +354,10 @@ const AddCourse: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         rows={4}
-                        error={!formData.description_short && touchedFields['description_short']}
+                        error={
+                          !formData.description_short &&
+                          touchedFields['description_short']
+                        }
                         touched={touchedFields['description_short']}
                         required
                       />
@@ -335,7 +369,10 @@ const AddCourse: React.FC = () => {
                         onChange={handleChange}
                         onBlur={handleBlur}
                         rows={4}
-                        error={!formData.description_large && touchedFields['description_large']}
+                        error={
+                          !formData.description_large &&
+                          touchedFields['description_large']
+                        }
                         touched={touchedFields['description_large']}
                         required
                       />
@@ -345,16 +382,22 @@ const AddCourse: React.FC = () => {
                           Categoria
                         </label>
                         <div className="text-black py-3 px-0 w-full text-lg bg-gray-100 border-b-2 border-gray-300">
-                          {categories.find((p) => p.category_id === formData.category_id)?.name || 'Categoria no seleccionado'}
+                          {categories.find(
+                            (p) => p.category_id === formData.category_id
+                          )?.name || 'Categoria no seleccionado'}
                         </div>
-                        {formData.category_id === 0 && touchedFields['category_id'] && (
-                          <p className="mt-1 text-sm text-red-600">
-                            Debe seleccionar una categoria
-                          </p>
-                        )}
+                        {formData.category_id === 0 &&
+                          touchedFields['category_id'] && (
+                            <p className="mt-1 text-sm text-red-600">
+                              Debe seleccionar una categoria
+                            </p>
+                          )}
                       </div>
                       <div>
-                        <label htmlFor="image" className="block text-sm font-medium mb-6 text-gray-700">
+                        <label
+                          htmlFor="image"
+                          className="block text-sm font-medium mb-6 text-gray-700"
+                        >
                           Portada
                         </label>
                         <MediaUploadPreview
@@ -374,13 +417,16 @@ const AddCourse: React.FC = () => {
                           Profesor
                         </label>
                         <div className="text-black py-3 px-0 w-full text-lg bg-gray-100 border-b-2 border-gray-300">
-                          {professors.find((p) => p.professor_id === formData.professor_id)?.full_name || 'Profesor no seleccionado'}
+                          {professors.find(
+                            (p) => p.professor_id === formData.professor_id
+                          )?.full_name || 'Profesor no seleccionado'}
                         </div>
-                        {formData.professor_id === 0 && touchedFields['professor_id'] && (
-                          <p className="mt-1 text-sm text-red-600">
-                            Debe seleccionar un profesor
-                          </p>
-                        )}
+                        {formData.professor_id === 0 &&
+                          touchedFields['professor_id'] && (
+                            <p className="mt-1 text-sm text-red-600">
+                              Debe seleccionar un profesor
+                            </p>
+                          )}
                       </div>
                       <FormField
                         id="duration_video"
@@ -389,12 +435,18 @@ const AddCourse: React.FC = () => {
                         value={formData.duration_video}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={!formData.duration_video && touchedFields['duration_video']}
+                        error={
+                          !formData.duration_video &&
+                          touchedFields['duration_video']
+                        }
                         touched={touchedFields['duration_video']}
                         required
                       />
                       <div>
-                        <label htmlFor="intro_video" className="block text-sm font-medium mb-6 text-gray-700">
+                        <label
+                          htmlFor="intro_video"
+                          className="block text-sm font-medium mb-6 text-gray-700"
+                        >
                           Video de Introducción
                         </label>
                         <MediaUploadPreview
@@ -414,7 +466,10 @@ const AddCourse: React.FC = () => {
                         value={formData.duration_course}
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        error={!formData.duration_course && touchedFields['duration_course']}
+                        error={
+                          !formData.duration_course &&
+                          touchedFields['duration_course']
+                        }
                         touched={touchedFields['duration_course']}
                         required
                       />
@@ -429,7 +484,6 @@ const AddCourse: React.FC = () => {
                       >
                         Siguiente
                       </button>
-                    
                     </div>
                   </div>
                 </div>
