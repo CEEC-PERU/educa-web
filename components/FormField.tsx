@@ -3,12 +3,28 @@ import React, { useState } from 'react';
 interface FormFieldProps {
   id: string;
   label: string;
-  type: 'text' | 'textarea' | 'select' | 'checkbox' | 'password' | 'date' | 'file' | 'number';
+  type:
+    | 'text'
+    | 'textarea'
+    | 'select'
+    | 'checkbox'
+    | 'password'
+    | 'date'
+    | 'file'
+    | 'number';
   name?: string;
   value?: string | boolean | number;
   checked?: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
+  onBlur?: (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => void;
   pattern?: string;
   options?: { value: string; label: string }[];
   rows?: number;
@@ -16,7 +32,8 @@ interface FormFieldProps {
   multiple?: boolean;
   error?: boolean;
   touched?: boolean;
-  className?:string;
+  className?: string;
+  disabled?: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -35,7 +52,8 @@ const FormField: React.FC<FormFieldProps> = ({
   multiple,
   error,
   touched,
-  className
+  className,
+  disabled,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -48,7 +66,10 @@ const FormField: React.FC<FormFieldProps> = ({
   if (type === 'select' && options) {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-black dark:text-gray-300 mb-1"
+        >
           {label}
         </label>
         <select
@@ -57,7 +78,10 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={` text-black block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          disabled={disabled} // Añade esta línea
+          className={`text-black block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${
+            isError ? 'border-red-500' : 'border-gray-300'
+          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`} // Añade clases condicionales
           required={required}
         >
           {options.map((option) => (
@@ -71,7 +95,10 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'textarea') {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-4">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-black dark:text-gray-300 mb-4"
+        >
           {label}
         </label>
         <textarea
@@ -81,7 +108,9 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           rows={rows}
-          className={`text-black block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`text-black block p-3 w-full text-lg bg-gray-50 rounded-lg border appearance-none focus:outline-none focus:ring-0 peer ${
+            isError ? 'border-red-500' : 'border-gray-300'
+          }`}
           required={required}
         />
       </div>
@@ -96,9 +125,14 @@ const FormField: React.FC<FormFieldProps> = ({
           checked={checked}
           onChange={onChange}
           onBlur={onBlur}
-          className={`mr-2 leading-tight ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`mr-2 leading-tight ${
+            isError ? 'border-red-500' : 'border-gray-300'
+          }`}
         />
-        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300">
+        <label
+          htmlFor={id}
+          className="text-black block text-sm font-medium dark:text-gray-300"
+        >
           {label}
         </label>
       </div>
@@ -106,7 +140,10 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'password') {
     return (
       <div className="relative z-0 w-full mb-10 group">
-        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300 mb-1">
+        <label
+          htmlFor={id}
+          className="text-black block text-sm font-medium dark:text-gray-300 mb-1"
+        >
           {label}
         </label>
         <div className="relative">
@@ -118,7 +155,9 @@ const FormField: React.FC<FormFieldProps> = ({
             value={value as string}
             onChange={onChange}
             onBlur={onBlur}
-            className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+            className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${
+              isError ? 'border-red-500' : 'border-gray-300'
+            }`}
             required={required}
           />
           <button
@@ -134,7 +173,10 @@ const FormField: React.FC<FormFieldProps> = ({
   } else if (type === 'date' || type === 'file') {
     return (
       <div className="relative z-0 w-full mb-5 group">
-        <label htmlFor={id} className="block text-sm font-medium text-black dark:text-gray-300 mb-1">
+        <label
+          htmlFor={id}
+          className="block text-sm font-medium text-black dark:text-gray-300 mb-1"
+        >
           {label}
         </label>
         <input
@@ -144,7 +186,9 @@ const FormField: React.FC<FormFieldProps> = ({
           onChange={onChange}
           onBlur={onBlur}
           multiple={type === 'file'}
-          className={`block py-3 text-black px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`block py-3 text-black px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${
+            isError ? 'border-red-500' : 'border-gray-300'
+          }`}
           required={required}
         />
       </div>
@@ -152,7 +196,10 @@ const FormField: React.FC<FormFieldProps> = ({
   } else {
     return (
       <div className="relative z-0 w-full mb-10 group">
-        <label htmlFor={id} className="text-black block text-sm font-medium dark:text-gray-300 mb-1">
+        <label
+          htmlFor={id}
+          className="text-black block text-sm font-medium dark:text-gray-300 mb-1"
+        >
           {label}
         </label>
         <input
@@ -163,7 +210,9 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${isError ? 'border-red-500' : 'border-gray-300'}`}
+          className={`text-black block py-3 px-4 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${
+            isError ? 'border-red-500' : 'border-gray-300'
+          }`}
           required={required}
         />
       </div>

@@ -13,21 +13,25 @@ declare module '@heroicons/react/24/solid' {
   export const ChevronDownIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const ChatIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const DocumentTextIcon: ComponentType<SVGProps<SVGSVGElement>>;
-  export const ArrowRightStartOnRectangleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ArrowRightStartOnRectangleIcon: ComponentType<
+    SVGProps<SVGSVGElement>
+  >;
   export const ComputerDesktopIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const MagnifyingGlassIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const PencilSquareIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const XCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const ChevronRightIcon: ComponentType<SVGProps<SVGSVGElement>>;
-  export const LockClosedIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const PuzzlePieceIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const DocumentIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const DocumentArrowUpIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const CameraIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const TrashIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const InformationCircleIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const   CheckCircleIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const VideoCameraIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const PaperAirplaneIcon : ComponentType<SVGProps<SVGSVGElement>>;
-  export const CheckIcon  : ComponentType<SVGProps<SVGSVGElement>>;
+
+  export const InformationCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const VideoCameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const PaperAirplaneIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const CheckIcon: ComponentType<SVGProps<SVGSVGElement>>;
+
+  export const LockClosedIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const PuzzlePieceIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const DocumentIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const DocumentArrowUpIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const CameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const CheckCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
 }
