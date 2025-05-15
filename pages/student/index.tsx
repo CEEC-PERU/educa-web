@@ -6,7 +6,12 @@ import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
-import { XCircleIcon, ChevronRightIcon, CameraIcon , TrashIcon } from '@heroicons/react/24/solid';
+import { XCircleIcon, ChevronRightIcon, CameraIcon , TrashIcon ,   DocumentTextIcon,
+  InformationCircleIcon,
+  CheckCircleIcon,
+  VideoCameraIcon,
+  PaperAirplaneIcon,  CheckIcon } from '@heroicons/react/24/solid';
+
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity';
@@ -55,9 +60,13 @@ const StudentIndex: React.FC = () => {
   let uri_picture = '';
   let lastName  = '';
 
-
-
-
+  const [currentStep, setCurrentStep] = useState(1); // Para el modal de pasos
+  const [consentGiven, setConsentGiven] = useState(false); // Para el checkbox de consentimiento
+  const [infoRead, setInfoRead] = useState(false); // Para confirmar lectura de información
+  const yourCompanyName = "Nombre de tu Empresa"; // Reemplaza con el nombre real
+  const yourCompanyAddress = "Dirección de tu Empresa"; // Reemplaza con la dirección real
+  const yourCompanyEmail = "contacto@tuempresa.com"; // Reemplaza con el email real
+  
   useEffect(() => {
     const checkModalStatus = async () => {
       try {
@@ -297,73 +306,210 @@ const StudentIndex: React.FC = () => {
     <ProtectedRoute>
     <div>
       <ScreenSecurity />
-      {/* Modal de Firma y Cámara */}
-      <Modal isOpen={isSignatureModalOpen} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-index" overlayClassName="fixed inset-0 z-50">
-        <div className="bg-white rounded-lg p-6 shadow-lg relative w-full max-w-lg max-h-[90vh] overflow-auto">
+      <Modal 
+  isOpen={isSignatureModalOpen} 
+  className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
+  overlayClassName="fixed inset-0"
+>
+  <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[95vh] overflow-y-auto border border-gray-100">
+    {loading ? (
+      <div className="min-h-[500px] flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    ) : (
+      <div className=" space-y-8 p-8">
+        {/* Encabezado mejorado */}
+        <div className="text-center">
+          <div className="  mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 mt-4">
+            <DocumentTextIcon className="w-10 h-10 text-blue-600" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">Autorización de Tratamiento de Datos</h2>
+          <p className="text-lg text-gray-500 mt-2">Complete su información de verificación</p>
+        </div>
+
+        {/* Contenido informativo con mejor diseño */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+          <div className="flex items-start">
+            <div className="flex-shrink-0 mt-1">
+              <InformationCircleIcon className="w-6 h-6 text-blue-500" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2">Declaración de Consentimiento</h3>
+              <p className="text-gray-700">
+                "Autorizo el tratamiento de mis datos personales (incluyendo imagen y firma) para efectos de registro de asistencia y control de ingreso, conforme a lo dispuesto en la Ley N.º 29733 - Ley de Protección de Datos Personales."
+              </p>
+            
+            </div>
+          </div>
+        </div>
+
+        {/* Sección de firma mejorada */}
+        <div className="space-y-5">
+          <div className="flex items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+              <span className="font-bold">1</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800">Firma Digital</h3>
+          </div>
           
-          {/* Spinner mientras se envían los datos */}
-          {loading ? <LoadingSpinner /> : null} {/* Muestra el spinner mientras se está enviando */}
-
-          {/* Botones de acciones */}
-          {!loading && (
-            <>
-            <h2 className="text-xl font-semibold mb-4 text-center">Firma Digital</h2>
-
-{/* Lienzo para la firma digital */}
-<canvas ref={canvasRef} className="border border-gray-300 mb-4 w-full h-40 rounded-md" onMouseDown={startDrawing} onTouchStart={startDrawing}></canvas>
-
-              <div className="flex space-x-2 justify-between">
-                <button onClick={clearCanvas} className="flex items-center bg-gray-300 text-gray-700 p-2 rounded-lg hover:bg-gray-400 transition-colors">
-                  <TrashIcon className="w-5 h-5 mr-2" />
-                  Borrar
-                </button>
-                <button
-                  onClick={() => {
-                    const dataURL = canvasRef.current?.toDataURL();
-                    if (dataURL) {
-                      setSignature(dataURL);
-                    }
-                  }}
-                  className="flex items-center bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors"
-                >
-                  <CameraIcon className="w-5 h-5 mr-2" />
-                  Capturar Firma
-                </button>
+          <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50">
+            <canvas 
+              ref={canvasRef} 
+              className="w-full h-48 bg-white rounded-lg shadow-inner"
+              onMouseDown={startDrawing}
+              onTouchStart={startDrawing}
+            />
+          </div>
+          
+          <div className="flex space-x-4">
+            <button 
+              onClick={clearCanvas}
+              className="flex items-center px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200"
+            >
+              <TrashIcon className="w-5 h-5 mr-2" />
+              Limpiar Firma
+            </button>
+            <button
+              onClick={() => {
+                const dataURL = canvasRef.current?.toDataURL();
+                if (dataURL) setSignature(dataURL);
+              }}
+              className="flex-1 flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
+            >
+              <CheckCircleIcon className="w-5 h-5 mr-2" />
+              Confirmar Firma
+            </button>
+          </div>
+          
+          {signature && (
+            <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
+              <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-green-800">Firma registrada correctamente</p>
+                <p className="text-sm text-green-600">Puede continuar con el siguiente paso</p>
               </div>
-
-              {/* Mostrar la firma capturada si existe */}
-              {signature && (
-                <div className="mt-4">
-                  <h2 className="text-lg font-bold">Firma Capturada:</h2>
-                  <img src={signature} alt="Firma Capturada" className="border border-gray-500 mt-2 rounded-md" />
-                </div>
-              )}
-
-              {/* Captura de foto */}
-              <h2 className="text-lg font-bold mt-6 mb-2">Captura de Foto</h2>
-              <img src="https://mentormind-qtech.s3.amazonaws.com/WEB-EDUCA/imagen_dni.jpg" alt="Formato para la foto" className="w-full h-auto object-cover mb-4 rounded-md" />
-              <video ref={videoRef} autoPlay playsInline className="border border-gray-300 mb-4 w-full rounded-md" />
-
-              <button onClick={capturePhoto} disabled={!cameraStream} className={`flex items-center justify-center w-full bg-blue-500 text-white p-2 rounded-lg transition-colors ${!cameraStream ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'}`}>
-                <CameraIcon className="w-5 h-5 mr-2" />
-                Capturar Foto
-              </button>
-
-              {photo && (
-                <div>
-                  <h2 className="text-lg font-bold mt-4 mb-2">Foto Capturada:</h2>
-                  <img src={photo} alt="Foto capturada" className="w-full h-auto object-cover rounded-md" />
-                </div>
-              )}
-
-              {/* Botón para guardar */}
-              <button onClick={generatePDF} className={`w-full bg-green-500 text-white p-2 rounded-lg mt-4 transition-colors ${!photo || !signature ? 'opacity-50 cursor-not-allowed' : 'hover:bg-green-600'}`} disabled={!photo || !signature}>
-                Guardar
-              </button>
-            </>
+            </div>
           )}
         </div>
-      </Modal>
+
+        {/* Sección de foto mejorada */}
+        <div className="space-y-5">
+          <div className="flex items-center">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+              <span className="font-bold">2</span>
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800">Verificación de Identidad</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="relative rounded-xl overflow-hidden bg-black">
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                className="w-full h-auto min-h-[250px] object-cover"
+              />
+              {!cameraStream && (
+                <div className="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center text-white p-6 text-center">
+                  <CameraIcon className="w-10 h-10 mb-3 opacity-70" />
+                  <p>Haga clic en "Activar Cámara" para comenzar</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                <h4 className="font-medium text-gray-800 mb-3 flex items-center">
+                  <InformationCircleIcon className="w-5 h-5 text-blue-500 mr-2" />
+                  Requisitos para la imagen
+                </h4>
+                <ul className="space-y-2.5">
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Rostro completamente visible y bien iluminado</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Sin accesorios que cubran el rostro (gafas oscuras, gorras, etc.)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-700">Fondo neutro preferiblemente</span>
+                  </li>
+                </ul>
+              </div>
+              
+              <button 
+                onClick={!cameraStream ? startCamera : capturePhoto}
+                className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${!cameraStream ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-indigo-600 text-white hover:bg-indigo-700'} shadow-md hover:shadow-lg`}
+              >
+                {!cameraStream ? (
+                  <>
+                    <VideoCameraIcon className="w-5 h-5 mr-2" />
+                    Activar Cámara
+                  </>
+                ) : (
+                  <>
+                    <CameraIcon className="w-5 h-5 mr-2" />
+                    Capturar Imagen
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+          
+          {photo && (
+            <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
+              <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
+              <div>
+                <p className="font-medium text-green-800">Imagen verificada correctamente</p>
+                <p className="text-sm text-green-600">Su identidad ha sido registrada</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+       {/* Checkbox de consentimiento mejorado con enlace */}
+<div className="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-200">
+  <input
+    type="checkbox"
+    id="consent-checkbox"
+    className="mt-1 mr-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+    checked={consentGiven}
+    onChange={(e) => setConsentGiven(e.target.checked)}
+  />
+  <label htmlFor="consent-checkbox" className="text-gray-700">
+    <span className="block font-medium">Confirmo mi consentimiento</span>
+    <span className="block text-sm">
+      Acepto el tratamiento de mis datos personales según lo establecido en la{' '}
+      <a 
+        href="https://www.canva.com/design/DAGnccU5tkw/x9QLqfr8057IgwHGv5sScA/view?utm_content=DAGnccU5tkw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb87bcf2817" 
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:text-blue-800 underline"
+      >
+        política de protección de datos
+      </a>{' '}
+      y confirmo que toda la información proporcionada es verídica.
+    </span>
+  </label>
+</div>
+
+        {/* Botones finales mejorados */}
+        <div className="flex space-x-4 pt-2">
+          <button
+            onClick={generatePDF}
+            disabled={!photo || !signature || !consentGiven}
+            className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${(!photo || !signature || !consentGiven) ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'}`}
+          >
+            <PaperAirplaneIcon className="w-5 h-5 mr-2" />
+            Enviar y Finalizar Registro
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
+</Modal>
 
       
       {/* El resto del contenido */}
