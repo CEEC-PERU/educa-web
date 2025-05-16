@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { getCourse, deleteCourse } from '../../services/courseService';
 import { getEvaluations } from '../../services/evaluationService';
-import { Course } from '../../interfaces/Course';
+import { Course } from '../../interfaces/Courses/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
@@ -87,7 +87,10 @@ const CourseDetail: React.FC = () => {
     return <p>Loading...</p>;
   }
 
-  const evaluationName = evaluations.find(evaluation => evaluation.evaluation_id === course.evaluation_id)?.name || 'No asignado';
+  const evaluationName =
+    evaluations.find(
+      (evaluation) => evaluation.evaluation_id === course.evaluation_id
+    )?.name || 'No asignado';
 
   const courseDetails = [
     { value: course.description_short },
@@ -99,49 +102,53 @@ const CourseDetail: React.FC = () => {
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          {success && (
-            <AlertComponent
-              type="success"
-              message={success}
-              onClose={() => setSuccess(null)}
-            />
-          )}
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center text-purple-600 mb-4"
+      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+        <div className="flex flex-1 pt-16">
+          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+          <main
+            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+              showSidebar ? 'ml-20' : ''
+            }`}
           >
-            <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            Volver
-          </button>
-          <div className="flex flex-col md:flex-row p-2 flex-1">
-            <DetailView
-              title={course.name}
-              imageUrl={course.image}
-              details={courseDetails}
-              videoUrl={course.intro_video}
-            />
-            <div className="md:ml-8 mt-4 md:mt-0 bg-white rounded-md flex-shrink-0">
-              <ActionButtons
-                onEdit={handleEdit}
-                onDelete={showModal}
-                customSize={true}
+            {success && (
+              <AlertComponent
+                type="success"
+                message={success}
+                onClose={() => setSuccess(null)}
               />
+            )}
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="flex items-center text-purple-600 mb-4"
+            >
+              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              Volver
+            </button>
+            <div className="flex flex-col md:flex-row p-2 flex-1">
+              <DetailView
+                title={course.name}
+                imageUrl={course.image}
+                details={courseDetails}
+                videoUrl={course.intro_video}
+              />
+              <div className="md:ml-8 mt-4 md:mt-0 bg-white rounded-md flex-shrink-0">
+                <ActionButtons
+                  onEdit={handleEdit}
+                  onDelete={showModal}
+                  customSize={true}
+                />
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
+        <ModalConfirmation
+          show={isVisible}
+          onClose={hideModal}
+          onConfirm={handleDelete}
+        />
       </div>
-      <ModalConfirmation
-        show={isVisible}
-        onClose={hideModal}
-        onConfirm={handleDelete}
-      />
-    </div>
     </ProtectedRoute>
   );
 };

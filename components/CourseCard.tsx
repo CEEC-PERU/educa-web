@@ -1,5 +1,5 @@
 import React from 'react';
-import CircularBar from '../../../components/Corporate/CircularBar';
+import CircularBar from '../components/Corporate/CircularBar';
 import { useRouter } from 'next/router';
 
 interface Student {
@@ -41,10 +41,7 @@ interface CourseCardProps {
   redirectPath: string;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({
-  course,
-  redirectPath = 'calidad/nota',
-}) => {
+const CourseCard: React.FC<CourseCardProps> = ({ course, redirectPath }) => {
   const router = useRouter();
 
   if (!course) {

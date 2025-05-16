@@ -8,7 +8,7 @@ import { useAuth } from '../../../context/AuthContext';
 import {
   useNotasSupervisor,
   useNotasSupervisorClassroom,
-} from '../../../hooks/useNotas';
+} from '../../../hooks/resultado/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -27,10 +27,8 @@ import {
   FiGrid,
   FiList,
 } from 'react-icons/fi';
-import { FaChalkboardTeacher } from 'react-icons/fa';
 
-// Importar react-apexcharts dinámicamente para evitar SSR
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+import { FaChalkboardTeacher } from 'react-icons/fa';
 
 const NotaCourses: React.FC = () => {
   const { user } = useAuth();

@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { ProfileRequest , UpdateProfileRequest} from '../interfaces/Profile';
-import { createProfile , updatedProfile } from '../services/profile';
-import { useAuth } from '../context/AuthContext';
+import {
+  ProfileRequest,
+  UpdateProfileRequest,
+} from '../../interfaces/User/Profile';
+import { createProfile, updatedProfile } from '../../services/profile';
+import { useAuth } from '../../context/AuthContext';
 
 export const useProfile = () => {
   const [profile, setProfile] = useState<ProfileRequest | null>(null);
@@ -35,14 +38,11 @@ export const useProfile = () => {
   };
 };
 
-
-export const useProfile2 = (user_id : number) => {
-
+export const useProfile2 = (user_id: number) => {
   const [profile, setProfile] = useState<ProfileRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
- 
 
   const updateProfile2 = async (profileData: ProfileRequest) => {
     setIsLoading(true);
@@ -69,7 +69,6 @@ export const useProfile2 = (user_id : number) => {
   };
 };
 
-
 export const useUpdatedProfile = () => {
   const [profile, setProfile] = useState<UpdateProfileRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +83,7 @@ export const useUpdatedProfile = () => {
       if (!token) {
         throw new Error('Token is null or undefined');
       }
-      const response = await updatedProfile(token, userInfo.id,  profileData);
+      const response = await updatedProfile(token, userInfo.id, profileData);
       setProfile(response);
     } catch (error) {
       console.error('Error updating profile:', error);

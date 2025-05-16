@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import { CourseDetail } from '../interfaces/CourseDetail';
-import { getCourseDetail } from '../services/courseDetail';
-import { useAuth } from '../context/AuthContext';
+import { CourseDetail } from '../../interfaces/Courses/CourseDetail';
+import { getCourseDetail } from '../../services/courseDetail';
+import { useAuth } from '../../context/AuthContext';
 //useCourseDetail
 export const useCourseDetail = (course_id: number) => {
   const [courseDetail, setCourseDetail] = useState<CourseDetail[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number  };
+  const userInfo = user as { id: number };
 
   useEffect(() => {
     const fetchCourseDetail = async () => {
@@ -19,11 +19,11 @@ export const useCourseDetail = (course_id: number) => {
       try {
         const response = await getCourseDetail(token, course_id);
         if (response === null) {
-          setCourseDetail([]); 
+          setCourseDetail([]);
         } else if (Array.isArray(response)) {
-          setCourseDetail(response); 
+          setCourseDetail(response);
         } else {
-          setCourseDetail([response]); 
+          setCourseDetail([response]);
         }
       } catch (error) {
         console.error('Error fetching course detail:', error);
@@ -39,6 +39,6 @@ export const useCourseDetail = (course_id: number) => {
   return {
     courseDetail,
     error,
-    isLoading
+    isLoading,
   };
 };

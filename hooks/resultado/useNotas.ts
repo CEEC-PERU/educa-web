@@ -1,16 +1,21 @@
-import { useEffect, useState , useCallback} from 'react';
-import { UserNota } from '../interfaces/Nota';
-import { getCourseNota , getCourseNotaSupervisor, getCourseNotaSupervisorClassroom  , getCourseNotabyClassroom} from '../services/NotasService';
-import { useAuth } from '../context/AuthContext';
+import { useEffect, useState, useCallback } from 'react';
+import { UserNota } from '../../interfaces/Nota';
+import {
+  getCourseNota,
+  getCourseNotaSupervisor,
+  getCourseNotaSupervisorClassroom,
+  getCourseNotabyClassroom,
+} from '../../services/NotasService';
+import { useAuth } from '../../context/AuthContext';
 
 //useNotas
-export const useNotas = (course_id: number ) => {
+export const useNotas = (course_id: number) => {
   const [courseNota, setCourseNota] = useState<UserNota[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number , enterprise_id : number};
-//useEffect
+  const userInfo = user as { id: number; enterprise_id: number };
+  //useEffect
   useEffect(() => {
     const fetchCourseDetail = async () => {
       if (!token) {
@@ -18,20 +23,24 @@ export const useNotas = (course_id: number ) => {
       }
       setIsLoading(true);
       try {
-        const response = await getCourseNota(token, userInfo.enterprise_id ,course_id);
+        const response = await getCourseNota(
+          token,
+          userInfo.enterprise_id,
+          course_id
+        );
         if (response === null) {
-          setCourseNota([]); 
+          setCourseNota([]);
         } else if (Array.isArray(response)) {
-          setCourseNota(response); 
+          setCourseNota(response);
         } else {
-          setCourseNota([response]); 
+          setCourseNota([response]);
         }
       } catch (error) {
         console.error('Error fetching course detail:', error);
         setError('Error fetching course detail. Please try again.');
       } finally {
         setIsLoading(false);
-        //carga 
+        //carga
       }
     };
 
@@ -41,12 +50,14 @@ export const useNotas = (course_id: number ) => {
   return {
     courseNota,
     error,
-    isLoading
+    isLoading,
   };
 };
 
 export const useNotasClassroom = (course_id: number, classroom_id: number) => {
-  const [courseNotaClassroom, setCourseNotaClassroom] = useState<UserNota[]>([]);
+  const [courseNotaClassroom, setCourseNotaClassroom] = useState<UserNota[]>(
+    []
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -80,9 +91,8 @@ export const useNotasClassroom = (course_id: number, classroom_id: number) => {
         setIsLoading(false);
       }
     },
-    [token,  course_id, classroom_id]
+    [token, course_id, classroom_id]
   );
-  
 
   // useEffect para inicializar la carga
   useEffect(() => {
@@ -97,14 +107,13 @@ export const useNotasClassroom = (course_id: number, classroom_id: number) => {
   };
 };
 
-
-export const useNotasSupervisor = (course_id: number ) => {
+export const useNotasSupervisor = (course_id: number) => {
   const [courseNota, setCourseNota] = useState<UserNota[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
-  const userInfo = user as { id: number , enterprise_id : number};
-//useEffect
+  const userInfo = user as { id: number; enterprise_id: number };
+  //useEffect
   useEffect(() => {
     const fetchCourseDetail = async () => {
       if (!token) {
@@ -112,20 +121,24 @@ export const useNotasSupervisor = (course_id: number ) => {
       }
       setIsLoading(true);
       try {
-        const response = await getCourseNotaSupervisor(token, userInfo.id ,course_id);
+        const response = await getCourseNotaSupervisor(
+          token,
+          userInfo.id,
+          course_id
+        );
         if (response === null) {
-          setCourseNota([]); 
+          setCourseNota([]);
         } else if (Array.isArray(response)) {
-          setCourseNota(response); 
+          setCourseNota(response);
         } else {
-          setCourseNota([response]); 
+          setCourseNota([response]);
         }
       } catch (error) {
         console.error('Error fetching course detail:', error);
         setError('Error fetching course detail. Please try again.');
       } finally {
         setIsLoading(false);
-        //carga 
+        //carga
       }
     };
 
@@ -135,12 +148,17 @@ export const useNotasSupervisor = (course_id: number ) => {
   return {
     courseNota,
     error,
-    isLoading
+    isLoading,
   };
 };
 
-export const useNotasSupervisorClassroom = (course_id: number, classroom_id: number) => {
-  const [courseNotaClassroom, setCourseNotaClassroom] = useState<UserNota[]>([]);
+export const useNotasSupervisorClassroom = (
+  course_id: number,
+  classroom_id: number
+) => {
+  const [courseNotaClassroom, setCourseNotaClassroom] = useState<UserNota[]>(
+    []
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -174,9 +192,8 @@ export const useNotasSupervisorClassroom = (course_id: number, classroom_id: num
         setIsLoading(false);
       }
     },
-    [token,  course_id, classroom_id]
+    [token, course_id, classroom_id]
   );
-  
 
   // useEffect para inicializar la carga
   useEffect(() => {

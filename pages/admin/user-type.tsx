@@ -2,14 +2,18 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
-import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
+import {
+  getCompanies,
+  getUsersByCompanyAndRole,
+  getUsersByRole,
+} from '../../services/userService';
 import FormField from '../../components/FormField';
 import TableUser from '../../components/TableUser';
 import ButtonContent from '../../components/Content/ButtonContent';
 import UserForm from '../../components/Admin/UserForm';
 import Modal from '../../components/Admin/Modal';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import { User } from '../../interfaces/UserAdmin';
+import { User } from '../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
 
@@ -53,10 +57,17 @@ const RoleDetail: React.FC = () => {
     const fetchUsers = async () => {
       try {
         let usersData: User[] = [];
-        if (roleId && (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)) {
+        if (
+          roleId &&
+          (Number(roleId) === ADMIN_ROLE_ID ||
+            Number(roleId) === CONTENT_ROLE_ID)
+        ) {
           usersData = await getUsersByRole(roleId.toString());
         } else if (selectedCompany && roleId) {
-          usersData = await getUsersByCompanyAndRole(selectedCompany, Number(roleId));
+          usersData = await getUsersByCompanyAndRole(
+            selectedCompany,
+            Number(roleId)
+          );
         }
         console.log('Users data:', usersData);
         setUsers(usersData);
@@ -68,18 +79,25 @@ const RoleDetail: React.FC = () => {
     fetchUsers();
   }, [selectedCompany, roleId]);
 
-  const handleFilterChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleFilterChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setFilter(e.target.value);
   };
 
-  const filteredUsers = users.filter(user =>
-    (user.userProfile?.first_name?.toLowerCase().includes(filter.toLowerCase()) ||
-      user.userProfile?.last_name?.toLowerCase().includes(filter.toLowerCase())) ||
-    user.dni.includes(filter)
+  const filteredUsers = users.filter(
+    (user) =>
+      user.userProfile?.first_name
+        ?.toLowerCase()
+        .includes(filter.toLowerCase()) ||
+      user.userProfile?.last_name
+        ?.toLowerCase()
+        .includes(filter.toLowerCase()) ||
+      user.dni.includes(filter)
   );
 
-  const usersWithProfile = filteredUsers.filter(user => user.userProfile);
-  const usersWithoutProfile = filteredUsers.filter(user => !user.userProfile);
+  const usersWithProfile = filteredUsers.filter((user) => user.userProfile);
+  const usersWithoutProfile = filteredUsers.filter((user) => !user.userProfile);
 
   const columnsWithProfile = [
     { header: '', accessor: 'userProfile.profile_picture' },
@@ -94,14 +112,23 @@ const RoleDetail: React.FC = () => {
     { header: 'Contraseña', accessor: 'password' },
   ];
 
-  if (roleId && (Number(roleId) === STUDENT_ROLE_ID)) {
+  if (roleId && Number(roleId) === STUDENT_ROLE_ID) {
     columnsWithProfile.push({ header: 'Sesiones', accessor: 'session_count' });
-    columnsWithoutProfile.push({ header: 'Sesiones', accessor: 'session_count' });
+    columnsWithoutProfile.push({
+      header: 'Sesiones',
+      accessor: 'session_count',
+    });
   }
 
-  if (roleId && (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)) {
+  if (
+    roleId &&
+    (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID)
+  ) {
     columnsWithProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
-    columnsWithoutProfile.push({ header: 'Empresa', accessor: 'enterprise.name' });
+    columnsWithoutProfile.push({
+      header: 'Empresa',
+      accessor: 'enterprise.name',
+    });
   }
 
   const handleActionClick = (row: any) => {
@@ -125,7 +152,10 @@ const RoleDetail: React.FC = () => {
     if (selectedCompany && roleId) {
       const fetchUsers = async () => {
         try {
-          const usersData = await getUsersByCompanyAndRole(selectedCompany, Number(roleId));
+          const usersData = await getUsersByCompanyAndRole(
+            selectedCompany,
+            Number(roleId)
+          );
           setUsers(usersData);
         } catch (error) {
           console.error('Error fetching users:', error);
@@ -138,82 +168,102 @@ const RoleDetail: React.FC = () => {
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          <div className="flex space-x-4 mb-4">
-            {roleId && Number(roleId) === STUDENT_ROLE_ID && (
+      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+        <div className="flex flex-1 pt-16">
+          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
+          <main
+            className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+              showSidebar ? 'ml-20' : ''
+            }`}
+          >
+            <div className="flex space-x-4 mb-4">
+              {roleId && Number(roleId) === STUDENT_ROLE_ID && (
+                <div>
+                  <ButtonContent
+                    buttonLabel="Exportar CSV"
+                    backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
+                    textColor="text-white"
+                    fontSize="text-xs"
+                    buttonSize="py-2 px-7"
+                    onClick={handleExportCSV}
+                  />
+                </div>
+              )}
               <div>
                 <ButtonContent
-                  buttonLabel="Exportar CSV"
+                  buttonLabel="Agregar Usuario"
                   backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
                   textColor="text-white"
                   fontSize="text-xs"
                   buttonSize="py-2 px-7"
-                  onClick={handleExportCSV}
+                  onClick={handleAddUser}
                 />
               </div>
-            )}
-            <div>
-              <ButtonContent
-                buttonLabel="Agregar Usuario"
-                backgroundColor="bg-gradient-to-r from-green-500 to-green-400"
-                textColor="text-white"
-                fontSize="text-xs"
-                buttonSize="py-2 px-7"
-                onClick={handleAddUser}
+            </div>
+            {roleId &&
+              Number(roleId) !== ADMIN_ROLE_ID &&
+              Number(roleId) !== CONTENT_ROLE_ID && (
+                <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
+                  {companies.map((company, index) => (
+                    <ButtonContent
+                      key={company.enterprise_id}
+                      buttonLabel={company.name}
+                      backgroundColor={
+                        buttonColors[index % buttonColors.length]
+                      }
+                      buttonSize="py-2 px-4"
+                      onClick={() => setSelectedCompany(company.enterprise_id)}
+                    />
+                  ))}
+                </div>
+              )}
+            <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
+              <FormField
+                id="filter"
+                label="Filtrar por nombre, apellido o DNI"
+                type="text"
+                value={filter}
+                onChange={handleFilterChange}
               />
             </div>
-          </div>
-          {roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID && (
-            <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
-              {companies.map((company, index) => (
-                <ButtonContent
-                  key={company.enterprise_id}
-                  buttonLabel={company.name}
-                  backgroundColor={buttonColors[index % buttonColors.length]}
-                  buttonSize="py-2 px-4"
-                  onClick={() => setSelectedCompany(company.enterprise_id)}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
+              <div>
+                <h2 className="text-lg font-semibold mb-2">
+                  Usuarios con Perfil
+                </h2>
+                <TableUser
+                  columns={columnsWithProfile}
+                  data={usersWithProfile}
+                  actionLabel="Editar"
+                  onActionClick={handleActionClick}
                 />
-              ))}
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold mb-2">
+                  Usuarios sin Perfil
+                </h2>
+                <TableUser
+                  columns={columnsWithoutProfile}
+                  data={usersWithoutProfile}
+                />
+              </div>
             </div>
-          )}
-          <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-            <FormField
-              id="filter"
-              label="Filtrar por nombre, apellido o DNI"
-              type="text"
-              value={filter}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Usuarios con Perfil</h2>
-              <TableUser
-                columns={columnsWithProfile}
-                data={usersWithProfile}
-                actionLabel="Editar"
-                onActionClick={handleActionClick}
-              />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold mb-2">Usuarios sin Perfil</h2>
-              <TableUser
-                columns={columnsWithoutProfile}
-                data={usersWithoutProfile}
-              />
-            </div>
-          </div>
-        </main>
-      </div>
+          </main>
+        </div>
 
-      <Modal show={isModalOpen} onClose={handleModalClose} title="Registrar nuevo usuario">
-        <UserForm roleId={Number(roleId)} onClose={handleModalClose} onSuccess={handleUserCreateSuccess} />
-      </Modal>
-    </div>
+        <Modal
+          show={isModalOpen}
+          onClose={handleModalClose}
+          title="Registrar nuevo usuario"
+        >
+          <UserForm
+            roleId={Number(roleId)}
+            onClose={handleModalClose}
+            onSuccess={handleUserCreateSuccess}
+          />
+        </Modal>
+      </div>
     </ProtectedRoute>
   );
 };

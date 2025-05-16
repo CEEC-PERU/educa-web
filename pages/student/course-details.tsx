@@ -4,7 +4,7 @@ import CourseMaterials from '../../components/student/CourseMaterials';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/UserInterfaces';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
-import { useCourseDetail } from '../../hooks/useCourseDetail';
+import { useCourseDetail } from '../../hooks/courses/useCourseDetail';
 import { useCoursesMaterials } from '../../hooks/courses/courseMaterial';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import React, { useState } from 'react';

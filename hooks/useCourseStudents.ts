@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
-import { CourseStudent } from '../interfaces/CourseStudent';
-import { getCourseStudent  , getCourseStudentCategory} from '../services/courseStudent';
+import { CourseStudent } from '../interfaces/Courses/CourseStudent';
+import {
+  getCourseStudent,
+  getCourseStudentCategory,
+} from '../services/courseStudent';
 import { useAuth } from '../context/AuthContext';
 //useCourseStudent
 export const useCourseStudent = () => {
@@ -19,13 +22,12 @@ export const useCourseStudent = () => {
         }
         const response = await getCourseStudent(token, userInfo.id);
         if (response === null) {
-            setCourseStudent([]); 
-          } else if (Array.isArray(response)) {
-            setCourseStudent(response); 
-          } else {
-            setCourseStudent([response]); 
-          }
-         
+          setCourseStudent([]);
+        } else if (Array.isArray(response)) {
+          setCourseStudent(response);
+        } else {
+          setCourseStudent([response]);
+        }
       } catch (error) {
         console.error('Error fetching course student:', error);
         setError('Error fetching course student. Please try again.');
@@ -39,15 +41,15 @@ export const useCourseStudent = () => {
   return {
     courseStudent,
     error,
-    isLoading
+    isLoading,
   };
 };
 
-
-
 // Hook actualizado para obtener los datos del curso según la categoría seleccionada
 export const useCourseStudentCategory = (categoryId: number | null) => {
-  const [courseStudentCategory, setCourseStudentCategory] = useState<CourseStudent[]>([]);
+  const [courseStudentCategory, setCourseStudentCategory] = useState<
+    CourseStudent[]
+  >([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -61,7 +63,11 @@ export const useCourseStudentCategory = (categoryId: number | null) => {
         if (!token) {
           throw new Error('Token is null or undefined');
         }
-        const response = await getCourseStudentCategory(token, userInfo.id, categoryId);
+        const response = await getCourseStudentCategory(
+          token,
+          userInfo.id,
+          categoryId
+        );
         if (response === null) {
           setCourseStudentCategory([]);
         } else if (Array.isArray(response)) {

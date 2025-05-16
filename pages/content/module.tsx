@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import CardCourses from '../../components/Content/CardCourses';
 import { getCourses } from '../../services/courseService';
-import { Course } from '../../interfaces/Course';
+import { Course } from '../../interfaces/Courses/Course';
 import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
@@ -50,33 +50,39 @@ const ModulePage: React.FC = () => {
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          {error && <p className="text-red-500">{error}</p>}
-          <div className="w-full bg-white rounded-lg">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cursos.map((curso) => (
-                <CardCourses
-                  key={curso.course_id}
-                  id={curso.course_id}
-                  image={curso.image}
-                  name={curso.name}
-                  description_short={curso.description_short}
-                  duration_course={curso.duration_course}
-                  rating={4.9}
-                  buttonLabel="Ver Módulos"
-                  textColor="text-blue-gray-900"
-                  onButtonClick={() => handleViewModulesClick(curso.course_id)}
-                />
-              ))}
+      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+        <div className="flex flex-1 pt-16">
+          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+          <main
+            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+              showSidebar ? 'ml-20' : ''
+            }`}
+          >
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="w-full bg-white rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {cursos.map((curso) => (
+                  <CardCourses
+                    key={curso.course_id}
+                    id={curso.course_id}
+                    image={curso.image}
+                    name={curso.name}
+                    description_short={curso.description_short}
+                    duration_course={curso.duration_course}
+                    rating={4.9}
+                    buttonLabel="Ver Módulos"
+                    textColor="text-blue-gray-900"
+                    onButtonClick={() =>
+                      handleViewModulesClick(curso.course_id)
+                    }
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
     </ProtectedRoute>
   );
 };

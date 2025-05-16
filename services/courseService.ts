@@ -1,5 +1,5 @@
 import axios from './axios';
-import { Course } from '../interfaces/Course';
+import { Course } from '../interfaces/Courses/Course';
 import { Module } from '../interfaces/Module';
 import { API_COURSES } from '../utils/Endpoints';
 

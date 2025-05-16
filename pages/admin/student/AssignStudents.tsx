@@ -3,11 +3,17 @@ import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import { Enterprise } from '../../../interfaces/Enterprise';
 import { User } from '../../../interfaces/UserCourse';
-import { Course } from '../../../interfaces/Course';
+import { Course } from '../../../interfaces/Courses/Course';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
-import { getCompanies, getUsersByCompanyAndRole } from '../../../services/userService';
+import {
+  getCompanies,
+  getUsersByCompanyAndRole,
+} from '../../../services/userService';
 import { getCourses } from '../../../services/courseService';
-import { assignStudentsToCourse, getUnassignedStudents } from '../../../services/courseStudent';
+import {
+  assignStudentsToCourse,
+  getUnassignedStudents,
+} from '../../../services/courseStudent';
 import FormField from '../../../components/FormField';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import AlertComponent from '../../../components/AlertComponent';
@@ -58,7 +64,10 @@ const AssignStudents: React.FC = () => {
     if (selectedCompany) {
       const fetchStudents = async () => {
         try {
-          const studentsData = await getUsersByCompanyAndRole(selectedCompany, 1); // 1 es el role_id para estudiantes
+          const studentsData = await getUsersByCompanyAndRole(
+            selectedCompany,
+            1
+          ); // 1 es el role_id para estudiantes
           setStudents(studentsData);
         } catch (error) {
           console.error('Error fetching students:', error);
@@ -73,7 +82,10 @@ const AssignStudents: React.FC = () => {
     if (courseId && selectedCompany) {
       const fetchUnassignedStudents = async () => {
         try {
-          const unassignedStudents = await getUnassignedStudents(courseId, selectedCompany);
+          const unassignedStudents = await getUnassignedStudents(
+            courseId,
+            selectedCompany
+          );
           setUnassignedStudents(unassignedStudents);
         } catch (error) {
           console.error('Error fetching unassigned students:', error);
@@ -84,14 +96,24 @@ const AssignStudents: React.FC = () => {
     }
   }, [courseId, selectedCompany]);
 
-  const handleCompanyChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) {
+  const handleCompanyChange = (
+    e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (
+      e.target instanceof HTMLSelectElement ||
+      e.target instanceof HTMLInputElement
+    ) {
       setSelectedCompany(Number(e.target.value));
     }
   };
 
-  const handleCourseChange = (e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    if (e.target instanceof HTMLSelectElement || e.target instanceof HTMLInputElement) {
+  const handleCourseChange = (
+    e: ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (
+      e.target instanceof HTMLSelectElement ||
+      e.target instanceof HTMLInputElement
+    ) {
       setCourseId(Number(e.target.value));
     }
   };
@@ -106,7 +128,9 @@ const AssignStudents: React.FC = () => {
       const result = await assignStudentsToCourse(selectedCompany, courseId);
       setSuccess('Estudiantes asignados correctamente al curso');
       if (result.alreadyAssigned.length > 0) {
-        const alreadyAssignedStudents = students.filter((student: User) => result.alreadyAssigned.includes(student.user_id));
+        const alreadyAssignedStudents = students.filter((student: User) =>
+          result.alreadyAssigned.includes(student.user_id)
+        );
         setAlreadyAssigned(alreadyAssignedStudents);
         setError('Algunos estudiantes ya estaban asignados al curso');
       }
@@ -124,12 +148,10 @@ const AssignStudents: React.FC = () => {
   };
 
   // Configuración de columnas y filas para la tabla de estudiantes no asignados
-  const columns = [
-    { label: 'DNI', key: 'dni' }
-  ];
+  const columns = [{ label: 'DNI', key: 'dni' }];
 
-  const rows = unassignedStudents.map(student => ({
-    dni: student.dni
+  const rows = unassignedStudents.map((student) => ({
+    dni: student.dni,
   }));
 
   return (
@@ -137,7 +159,11 @@ const AssignStudents: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
+        <main
+          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+            showSidebar ? 'ml-20' : ''
+          }`}
+        >
           {showAlert && (
             <AlertComponent
               type="success"
@@ -161,7 +187,13 @@ const AssignStudents: React.FC = () => {
                   type="select"
                   value={selectedCompany?.toString() || ''}
                   onChange={handleCompanyChange}
-                  options={[{ value: '', label: 'Seleccionar Empresa' }, ...companies.map(company => ({ value: company.enterprise_id.toString(), label: company.name }))]}
+                  options={[
+                    { value: '', label: 'Seleccionar Empresa' },
+                    ...companies.map((company) => ({
+                      value: company.enterprise_id.toString(),
+                      label: company.name,
+                    })),
+                  ]}
                 />
               </div>
               <div className="mb-4">
@@ -171,7 +203,13 @@ const AssignStudents: React.FC = () => {
                   type="select"
                   value={courseId?.toString() || ''}
                   onChange={handleCourseChange}
-                  options={[{ value: '', label: 'Seleccionar Curso' }, ...courses.map(course => ({ value: course.course_id.toString(), label: course.name }))]}
+                  options={[
+                    { value: '', label: 'Seleccionar Curso' },
+                    ...courses.map((course) => ({
+                      value: course.course_id.toString(),
+                      label: course.name,
+                    })),
+                  ]}
                 />
               </div>
               <div className="flex justify-center mb-4">
@@ -190,7 +228,9 @@ const AssignStudents: React.FC = () => {
             <div className="w-full md:flex-grow ml-0 md:ml-4 overflow-auto">
               {unassignedStudents.length > 0 && (
                 <div className="mt-6 md:mt-0">
-                  <h3 className="text-lg font-semibold mb-4">Estudiantes no asignados</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Estudiantes no asignados
+                  </h3>
                   <Table columns={columns} rows={rows} />
                 </div>
               )}

@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { ClassroomRequest, Shift } from '../../interfaces/Classroom'; 
+import { ClassroomRequest, Shift } from '../../interfaces/Classroom';
 import { createClassroom } from '../../services/classroomService';
 import { getShifts } from '../../services/shiftService';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import { useAuth } from '../../context/AuthContext';
-import { User } from '../../interfaces/UserAdmin';
-import { getCompanies, getUsersByCompanyAndRole, getUsersByRole } from '../../services/userService';
+import { User } from '../../interfaces/User/UserAdmin';
+import {
+  getCompanies,
+  getUsersByCompanyAndRole,
+  getUsersByRole,
+} from '../../services/userService';
 interface ClassroomFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-
-const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => {
+const ClassroomForm: React.FC<ClassroomFormProps> = ({
+  onClose,
+  onSuccess,
+}) => {
   const { user } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
 
@@ -43,9 +49,11 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
 
     const fetchUsers = async () => {
       try {
-        const usersData = await getUsersByCompanyAndRole(userInfo.enterprise_id , 6 );
+        const usersData = await getUsersByCompanyAndRole(
+          userInfo.enterprise_id,
+          6
+        );
         setUsers(usersData);
-        
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -56,12 +64,13 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
     fetchShifts();
   }, []);
 
-  
-      
-     
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { id, value } = e.target;
-    setFormData(prevData => ({ ...prevData, [id]: value }));
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -86,41 +95,73 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({ onClose, onSuccess }) => 
     <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-auto">
       {loading && <Loader />}
       <form onSubmit={handleSubmit}>
-        {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
-        {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
+        {success && (
+          <AlertComponent
+            type="success"
+            message={success}
+            onClose={() => setSuccess(null)}
+          />
+        )}
+        {error && (
+          <AlertComponent
+            type="danger"
+            message={error}
+            onClose={() => setError(null)}
+          />
+        )}
 
-        <FormField id="code" label="Código" type="text" value={formData.code} onChange={handleChange} />
-
-        <FormField 
-          id="shift_id" 
-          label="Turno" 
-          type="select" 
-          value={formData.shift_id} 
-          onChange={handleChange} 
-          options={[{ value: '', label: 'Seleccione un turno' }, ...shifts.map(shift => ({ value: shift.shift_id.toString(), label: shift.name }))]}
+        <FormField
+          id="code"
+          label="Código"
+          type="text"
+          value={formData.code}
+          onChange={handleChange}
         />
 
-<FormField 
-  id="user_id" 
-  label="Profesor" 
-  type="select" 
-  value={formData.user_id?.toString() || ''}  // Garantiza que sea un string o cadena vacía
-  onChange={handleChange} 
-  options={[
-    { value: '', label: 'Seleccione un profesor' }, 
-    ...users.map(user => ({
-      value: user.user_id?.toString() || '',  // Verifica si user_id es undefined y usa cadena vacía
-      label: `${user.userProfile?.first_name || 'Sin nombre'} ${user.userProfile?.last_name || ''}`.trim()
-    }))
-  ]}
-/>
+        <FormField
+          id="shift_id"
+          label="Turno"
+          type="select"
+          value={formData.shift_id}
+          onChange={handleChange}
+          options={[
+            { value: '', label: 'Seleccione un turno' },
+            ...shifts.map((shift) => ({
+              value: shift.shift_id.toString(),
+              label: shift.name,
+            })),
+          ]}
+        />
 
+        <FormField
+          id="user_id"
+          label="Profesor"
+          type="select"
+          value={formData.user_id?.toString() || ''} // Garantiza que sea un string o cadena vacía
+          onChange={handleChange}
+          options={[
+            { value: '', label: 'Seleccione un profesor' },
+            ...users.map((user) => ({
+              value: user.user_id?.toString() || '', // Verifica si user_id es undefined y usa cadena vacía
+              label: `${user.userProfile?.first_name || 'Sin nombre'} ${
+                user.userProfile?.last_name || ''
+              }`.trim(),
+            })),
+          ]}
+        />
 
         <div className="flex justify-end space-x-4 mt-8">
-          <button type="button" onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded">
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-500 text-white py-2 px-4 rounded"
+          >
             Cancelar
           </button>
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded"
+          >
             Guardar
           </button>
         </div>

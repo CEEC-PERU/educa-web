@@ -1,26 +1,38 @@
 // services/userService.ts
 import axios from './axios';
-import { API_USERS, API_USER, API_GET_USERS_BY_ENTERPRISE, API_USERCOUNT, API_USERS_COURSES, API_USERU} from '../utils/Endpoints';
-import { UserCount} from '../interfaces/UserCount';
+import {
+  API_USERS,
+  API_USER,
+  API_GET_USERS_BY_ENTERPRISE,
+  API_USERCOUNT,
+  API_USERS_COURSES,
+  API_USERU,
+} from '../utils/Endpoints';
+import { UserCount } from '../interfaces/User/UserCount';
 interface ImportUsersResponse {
   success: boolean;
   message: string;
 }
 
-
-export const getUserCount = async (userToken: string , enterprise_id : number ): Promise<UserCount| null> => {
+export const getUserCount = async (
+  userToken: string,
+  enterprise_id: number
+): Promise<UserCount | null> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
     };
-    const response = await axios.get<UserCount>(`${API_USERCOUNT}/${enterprise_id}`, config);
+    const response = await axios.get<UserCount>(
+      `${API_USERCOUNT}/${enterprise_id}`,
+      config
+    );
     if (response.data) {
-      return response.data; 
+      return response.data;
     } else {
       console.warn('No enterprise found for user:', enterprise_id);
-      return null; 
+      return null;
     }
   } catch (error) {
     console.error('Error getting enterprise:', error);
@@ -33,7 +45,9 @@ export const createIndividualUser = async (userData: any) => {
   return response.data;
 };
 
-export const importUsers = async (formData: FormData): Promise<ImportUsersResponse> => {
+export const importUsers = async (
+  formData: FormData
+): Promise<ImportUsersResponse> => {
   const response = await axios.post<ImportUsersResponse>(API_USERS, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
@@ -43,7 +57,9 @@ export const importUsers = async (formData: FormData): Promise<ImportUsersRespon
 };
 
 export const getUsersByEnterprise = async (enterpriseId: number) => {
-  const response = await axios.get(`${API_GET_USERS_BY_ENTERPRISE}/${enterpriseId}`);
+  const response = await axios.get(
+    `${API_GET_USERS_BY_ENTERPRISE}/${enterpriseId}`
+  );
   return response.data;
 };
 
@@ -62,16 +78,25 @@ export const getCompanies = async () => {
   return response.data;
 };
 
-export const getUsersByCompanyAndRole = async (companyId: number, roleId: number) => {
-  const response = await axios.get(`${API_USER}/users/company/${companyId}/role/${roleId}`);
+export const getUsersByCompanyAndRole = async (
+  companyId: number,
+  roleId: number
+) => {
+  const response = await axios.get(
+    `${API_USER}/users/company/${companyId}/role/${roleId}`
+  );
   return response.data;
 };
 
-export const getUsersByClassroom = async (userId: number, companyId: number) => {
-  const response = await axios.get(`${API_USER}/classrooms/users/${userId}/company/${companyId}`);
+export const getUsersByClassroom = async (
+  userId: number,
+  companyId: number
+) => {
+  const response = await axios.get(
+    `${API_USER}/classrooms/users/${userId}/company/${companyId}`
+  );
   return response.data;
 };
-
 
 export const getUserById = async (userId: number) => {
   const response = await axios.get(`${API_USER}/users/${userId}`);
@@ -87,11 +112,10 @@ export const deleteUserById = async (userId: number) => {
   }
 };
 
-export const getCoursesByUser= async (userId: number) => {
+export const getCoursesByUser = async (userId: number) => {
   const response = await axios.get(`${API_USERS_COURSES}/${userId}`);
   return response.data;
 };
-
 
 export const updateUser = async (userId: number, userData: any) => {
   const response = await axios.put(`${API_USER}/update/${userId}`, userData);

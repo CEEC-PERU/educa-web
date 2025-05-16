@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { User } from '../interfaces/UserAdmin';
+import { User } from '../interfaces/User/UserAdmin';
 import { useAuth } from '../context/AuthContext';
 import { getUsersByCompanyAndRole } from '../services/userService';
 
@@ -9,20 +9,24 @@ export const useProfesor = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user } = useAuth();
 
-
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-       // Obtener datos del localStorage
-       const storedUserInfo = localStorage.getItem('userInfo');
-       if (!storedUserInfo) {
-         throw new Error('No se encontró información del usuario en el localStorage.');
-       }
- 
-      const { enterprise_id } = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
+      // Obtener datos del localStorage
+      const storedUserInfo = localStorage.getItem('userInfo');
+      if (!storedUserInfo) {
+        throw new Error(
+          'No se encontró información del usuario en el localStorage.'
+        );
+      }
+
+      const { enterprise_id } = JSON.parse(storedUserInfo) as {
+        id: number;
+        enterprise_id: number;
+      };
       const usersData = await getUsersByCompanyAndRole(enterprise_id, 6);
       setUsers(usersData);
-      console.log("profesores", usersData);
+      console.log('profesores', usersData);
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Error al obtener usuarios');
@@ -40,6 +44,5 @@ export const useProfesor = () => {
     users,
     error,
     isLoading,
-    
   };
 };

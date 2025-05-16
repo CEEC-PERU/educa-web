@@ -1,22 +1,30 @@
 import axios from 'axios';
-import { API_GET_DETAILCOURSE, API_GET_MODULESDETAIL } from '../utils/Endpoints';
-import { CourseDetail } from '../interfaces/CourseDetail';
+import {
+  API_GET_DETAILCOURSE,
+  API_GET_MODULESDETAIL,
+} from '../utils/Endpoints';
+import { CourseDetail } from '../interfaces/Courses/CourseDetail';
 import { Course } from '../interfaces/StudentModule';
 
-
-export const getCourseDetail = async (userToken: string, courseId: number): Promise<CourseDetail| null> => {
+export const getCourseDetail = async (
+  userToken: string,
+  courseId: number
+): Promise<CourseDetail | null> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
     };
-    const response = await axios.get<CourseDetail>(`${API_GET_DETAILCOURSE}/${courseId}`, config);
+    const response = await axios.get<CourseDetail>(
+      `${API_GET_DETAILCOURSE}/${courseId}`,
+      config
+    );
     if (response.data) {
-      return response.data; 
+      return response.data;
     } else {
       console.warn('No enterprise found for user:', courseId);
-      return null; 
+      return null;
     }
   } catch (error) {
     console.error('Error getting enterprise:', error);
@@ -24,20 +32,26 @@ export const getCourseDetail = async (userToken: string, courseId: number): Prom
   }
 };
 
-
-export const getModuleDetail = async (userToken: string, courseId: number , user_id :number): Promise<Course| null> => {
+export const getModuleDetail = async (
+  userToken: string,
+  courseId: number,
+  user_id: number
+): Promise<Course | null> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
     };
-    const response = await axios.get<Course>(`${API_GET_MODULESDETAIL}/${courseId}/${user_id}`, config);
+    const response = await axios.get<Course>(
+      `${API_GET_MODULESDETAIL}/${courseId}/${user_id}`,
+      config
+    );
     if (response.data) {
-      return response.data; 
+      return response.data;
     } else {
       console.warn('No enterprise found for user:', courseId);
-      return null; 
+      return null;
     }
   } catch (error) {
     console.error('Error getting enterprise:', error);

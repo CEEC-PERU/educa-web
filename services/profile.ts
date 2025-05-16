@@ -1,8 +1,20 @@
 import axios from 'axios';
-import { ProfileRequest , ProfileResponse , UpdateProfileRequest} from '../interfaces/Profile';
-import { API_PROFILE, API_GET_PROFILE_BY_USER  , API_PUT_PROFILE} from '../utils/Endpoints';
-import { Profile, UserInfo  } from "../interfaces/UserInterfaces";
-export const createProfile = async ( userToken : string ,user_id : number , profileData: ProfileRequest) => {
+import {
+  ProfileRequest,
+  ProfileResponse,
+  UpdateProfileRequest,
+} from '../interfaces/User/Profile';
+import {
+  API_PROFILE,
+  API_GET_PROFILE_BY_USER,
+  API_PUT_PROFILE,
+} from '../utils/Endpoints';
+import { Profile, UserInfo } from '../interfaces/UserInterfaces';
+export const createProfile = async (
+  userToken: string,
+  user_id: number,
+  profileData: ProfileRequest
+) => {
   try {
     const config = {
       headers: {
@@ -10,7 +22,11 @@ export const createProfile = async ( userToken : string ,user_id : number , prof
       },
     };
     // Hacer la solicitud POST a la API del perfil
-    const response = await axios.post(`${API_PROFILE}/${user_id}`, profileData, config);
+    const response = await axios.post(
+      `${API_PROFILE}/${user_id}`,
+      profileData,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error('Error creating profile:', error);
@@ -18,9 +34,11 @@ export const createProfile = async ( userToken : string ,user_id : number , prof
   }
 };
 
-
-
-export const getProfile = async (userToken: string, userId: number, allData = false): Promise<Profile | null | UserInfo> => {
+export const getProfile = async (
+  userToken: string,
+  userId: number,
+  allData = false
+): Promise<Profile | null | UserInfo> => {
   try {
     const config = {
       headers: {
@@ -29,7 +47,10 @@ export const getProfile = async (userToken: string, userId: number, allData = fa
     };
 
     // Realizar la solicitud GET al API para obtener el perfil del usuario
-    const response = await axios.get<UserInfo>(`${API_GET_PROFILE_BY_USER}/${userId}`, config);
+    const response = await axios.get<UserInfo>(
+      `${API_GET_PROFILE_BY_USER}/${userId}`,
+      config
+    );
 
     // Verificar si la respuesta tiene datos y si existe el campo userProfile
     if (response.data && response.data.userProfile) {
@@ -46,7 +67,11 @@ export const getProfile = async (userToken: string, userId: number, allData = fa
   }
 };
 
-export const updatedProfile = async ( userToken : string ,user_id : number , profileData: UpdateProfileRequest) => {
+export const updatedProfile = async (
+  userToken: string,
+  user_id: number,
+  profileData: UpdateProfileRequest
+) => {
   try {
     const config = {
       headers: {
@@ -54,12 +79,14 @@ export const updatedProfile = async ( userToken : string ,user_id : number , pro
       },
     };
     // Hacer la solicitud POST a la API del perfil
-    const response = await axios.put(`${API_PUT_PROFILE}/${user_id}`, profileData, config);
+    const response = await axios.put(
+      `${API_PUT_PROFILE}/${user_id}`,
+      profileData,
+      config
+    );
     return response.data;
   } catch (error) {
     console.error('Error updateed profile:', error);
     throw new Error('Error updated profile');
   }
 };
-
-

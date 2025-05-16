@@ -1,7 +1,7 @@
 // hooks/useUserInfo.ts
 import { useState } from 'react';
-import { createUserInfo } from '../services/userInfoService';
-import { UserInfoData } from '../interfaces/UserInfo';
+import { createUserInfo } from '../../services/userInfoService';
+import { UserInfoData } from '../../interfaces/User/UserInfo';
 
 export const useUserInfo = () => {
   const [loading, setLoading] = useState(false);

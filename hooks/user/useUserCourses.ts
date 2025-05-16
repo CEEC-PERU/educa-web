@@ -1,12 +1,13 @@
 // useCoursesCount.tsx
 import { useEffect, useState } from 'react';
-import { GetCoursesByUserResponse } from '../interfaces/UserCount';
-import { getCoursesByUser } from '../services/userService';
-import { useAuth } from '../context/AuthContext';
+import { GetCoursesByUserResponse } from '../../interfaces/User/UserCount';
+import { getCoursesByUser } from '../../services/userService';
+import { useAuth } from '../../context/AuthContext';
 
 // Custom Hook to fetch user course data
 export const useCoursesCount = () => {
-  const [coursescount, setCoursesCount] = useState<GetCoursesByUserResponse | null>(null);
+  const [coursescount, setCoursesCount] =
+    useState<GetCoursesByUserResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();

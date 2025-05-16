@@ -11,7 +11,7 @@ import { addCourse2 } from '../../../../services/courseService';
 import { Category } from '../../../../interfaces/Category';
 import { Professor } from '../../../../interfaces/Professor';
 import { Evaluation } from '../../../../interfaces/Evaluation';
-import { Course } from '../../../../interfaces/Course';
+import { Course } from '../../../../interfaces/Courses/Course';
 import Loader from '../../../../components/Loader';
 import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
 import { useEvaluationWizard } from '../../../../components/Evaluation/hooks/LogicWizard';

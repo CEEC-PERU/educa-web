@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '../../interfaces/UserAdmin';
+import { User } from '../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
 import { createIndividualUser, getCompanies } from '../../services/userService';
 import FormField from '../../components/FormField';
@@ -43,9 +43,13 @@ const UserForm: React.FC<UserFormProps> = ({ roleId, onClose, onSuccess }) => {
     fetchCompanies();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { id, value } = e.target;
-    setFormData(prevData => ({ ...prevData, [id]: value }));
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,26 +74,63 @@ const UserForm: React.FC<UserFormProps> = ({ roleId, onClose, onSuccess }) => {
     <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-auto">
       {loading && <Loader />}
       <form onSubmit={handleSubmit}>
-        {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
-        {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
+        {success && (
+          <AlertComponent
+            type="success"
+            message={success}
+            onClose={() => setSuccess(null)}
+          />
+        )}
+        {error && (
+          <AlertComponent
+            type="danger"
+            message={error}
+            onClose={() => setError(null)}
+          />
+        )}
 
-        <FormField id="dni" label="DNI" type="text" value={formData.dni} onChange={handleChange} />
-        <FormField id="password" label="Contraseña" type="password" value={formData.password} onChange={handleChange} />
-
-        <FormField 
-          id="enterprise_id" 
-          label="Empresa" 
-          type="select" 
-          value={formData.enterprise_id} 
-          onChange={handleChange} 
-          options={[{ value: '', label: 'Seleccione una empresa' }, ...companies.map(company => ({ value: company.enterprise_id.toString(), label: company.name }))]}
+        <FormField
+          id="dni"
+          label="DNI"
+          type="text"
+          value={formData.dni}
+          onChange={handleChange}
         />
-        
+        <FormField
+          id="password"
+          label="Contraseña"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+
+        <FormField
+          id="enterprise_id"
+          label="Empresa"
+          type="select"
+          value={formData.enterprise_id}
+          onChange={handleChange}
+          options={[
+            { value: '', label: 'Seleccione una empresa' },
+            ...companies.map((company) => ({
+              value: company.enterprise_id.toString(),
+              label: company.name,
+            })),
+          ]}
+        />
+
         <div className="flex justify-end space-x-4 mt-8">
-          <button type="button" onClick={onClose} className="bg-gray-500 text-white py-2 px-4 rounded">
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-500 text-white py-2 px-4 rounded"
+          >
             Cancelar
           </button>
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white py-2 px-4 rounded"
+          >
             Guardar
           </button>
         </div>

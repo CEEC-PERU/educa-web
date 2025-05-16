@@ -1,7 +1,7 @@
 // hooks/useDeleteUser.ts
 
 import { useState } from 'react';
-import { deleteUserById } from '../services/userService';
+import { deleteUserById } from '../../services/userService';
 
 export const useDeleteUser = () => {
   const [isLoading, setIsLoading] = useState(false);

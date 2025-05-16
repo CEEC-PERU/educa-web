@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import { DonutChartData } from '../interfaces/Metricas';
-import { getCountCourseCorporate } from '../services/MetricasCorporateService';
-import { useAuth } from '../context/AuthContext';
+import { DonutChartData } from '../../interfaces/Metricas';
+import { getCountCourseCorporate } from '../../services/MetricasCorporateService';
+import { useAuth } from '../../context/AuthContext';
 
 export const useMetricaCorporate = () => {
-  const [donutChartData, setDonutChartData] = useState<DonutChartData | null>(null);
+  const [donutChartData, setDonutChartData] = useState<DonutChartData | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { user, token } = useAuth();
@@ -24,8 +26,11 @@ export const useMetricaCorporate = () => {
 
       setIsLoading(true);
       try {
-        const response = await getCountCourseCorporate(token, userInfo.enterprise_id);
-        console.log(response)
+        const response = await getCountCourseCorporate(
+          token,
+          userInfo.enterprise_id
+        );
+        console.log(response);
         if (response) {
           setDonutChartData(response);
         } else {
