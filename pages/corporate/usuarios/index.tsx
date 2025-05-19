@@ -15,7 +15,7 @@ import Modal from '../../../components/Admin/Modal';
 import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../../interfaces/Enterprise';
-import { useUserCount } from '../../../hooks/useUserCount';
+import { useUserCount } from '../../../hooks/user/useUserCount';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import './../../../app/globals.css';
 

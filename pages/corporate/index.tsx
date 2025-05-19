@@ -49,10 +49,7 @@ const CorporateDashboard: React.FC = () => {
   //  { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
   //];
 
-  const courseTimeData = [
-    { course: 'Contctados', Tiempo: 10 },
-    { course: 'Consulta Previa Prepago', Tiempo: 40 },
-  ];
+  const courseTimeData = [{ course: 'Contctados', Tiempo: 10 }];
 
   //averageTimeData
   const averageTimePerDayData = [
@@ -434,7 +431,6 @@ const CorporateDashboard: React.FC = () => {
               },
             }}
             height={300}
-            badgeText={`Total: ${satisData.reduce((a, b) => 2, 0)} votos`}
             showUpdateDate={true}
             className="mt-4"
           />

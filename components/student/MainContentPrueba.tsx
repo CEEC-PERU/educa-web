@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import "./../../app/globals.css";
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import './../../app/globals.css';
 import { useSesionProgress } from '../../hooks/useProgressSession';
 import {
   Question,
@@ -9,14 +9,18 @@ import {
   VideosInteractivo,
   CourseEvaluation,
   ModuleEvaluation,
-  CourseResults
-} from "../../interfaces/StudentModule";
-import { useResultModule } from "../../hooks/useResultModule";
-import { useCuestionarioStar ,useCuestionarioNPS, useCreateCuestionario } from "../../hooks/useCuestionario";
-import { useResultCourse } from "../../hooks/useCourseResults";
-import { useAuth } from "../../context/AuthContext";
-import NPSForm from "./../../components/student/NPSForm";
-import StarForm from "./../../components/student/StarForm";
+  CourseResults,
+} from '../../interfaces/StudentModule';
+import { useResultModule } from '../../hooks/resultado/useResultModule';
+import {
+  useCuestionarioStar,
+  useCuestionarioNPS,
+  useCreateCuestionario,
+} from '../../hooks/useCuestionario';
+import { useResultCourse } from '../../hooks/useCourseResults';
+import { useAuth } from '../../context/AuthContext';
+import NPSForm from './../../components/student/NPSForm';
+import StarForm from './../../components/student/StarForm';
 
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
@@ -65,13 +69,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [showNPSForm, setShowNPSForm] = useState(false);
   const [showStarForm, setShowStarForm] = useState(false);
-  const [textAnswer, setTextAnswer] = useState(""); // For open-ended questions
+  const [textAnswer, setTextAnswer] = useState(''); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
   const [evamodulecount, setEvaModCount] = useState(0);
-    const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
+  const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
   const { createSession_Progress, session_progress } = useSesionProgress();
-// Nuevo estado para guardar todas las respuestas seleccionadas
-const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en cada render
+  // Nuevo estado para guardar todas las respuestas seleccionadas
+  const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en cada render
   const [answers, setAnswers] = useState<
     {
       question_id: number;
@@ -83,13 +87,20 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     }[]
   >([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
- 
-    const estrella_vacia = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png';
-    const estrella_llena = 'https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png';
+
+  const estrella_vacia =
+    'https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png';
+  const estrella_llena =
+    'https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png';
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  
-  const optionColors = ["bg-blue-500", "bg-orange-500", "bg-purple-500", "bg-cyan-500"];
+
+  const optionColors = [
+    'bg-blue-500',
+    'bg-orange-500',
+    'bg-purple-500',
+    'bg-cyan-500',
+  ];
   // Context
   const { user, token } = useAuth();
   const userInfo = user as { id: number };
@@ -98,26 +109,24 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
 
   const router = useRouter();
   const courseId = Array.isArray(router.query.course_id)
-  ? parseInt(router.query.course_id[0], 10)
-  : parseInt(router.query.course_id as string, 10);
+    ? parseInt(router.query.course_id[0], 10)
+    : parseInt(router.query.course_id as string, 10);
 
   const { createCuestionarioResult } = useCreateCuestionario();
-  const {  cuestionariostar  } = useCuestionarioStar(courseId);
-  const {  cuestionariosnps} = useCuestionarioNPS(courseId);
+  const { cuestionariostar } = useCuestionarioStar(courseId);
+  const { cuestionariosnps } = useCuestionarioNPS(courseId);
   const [finalTime, setFinalTime] = useState<number | null>(null); // Nuevo estado para el tiempo final
-  
 
   useEffect(() => {
     // Actualización automática sin recargar cuando cambia el estado
     if (moduleResults && moduleResults.length > 0) {
-      console.log("Resultados del módulo actualizados", moduleResults);
+      console.log('Resultados del módulo actualizados', moduleResults);
     }
-     // Actualización automática sin recargar cuando cambia el estado
-     if (courseResults && courseResults.length > 0) {
-      console.log("Resultados del cursos actualizados", courseResults);
+    // Actualización automática sin recargar cuando cambia el estado
+    if (courseResults && courseResults.length > 0) {
+      console.log('Resultados del cursos actualizados', courseResults);
     }
-  }, [moduleResults , courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
-
+  }, [moduleResults, courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
 
   useEffect(() => {
     setCurrentQuestion(0);
@@ -139,137 +148,124 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
   //modificacion progreso
   useEffect(() => {
     isProgressSent.current = false; // Permitir nuevos envíos de progreso en la nueva sesión
- }, [sessionId, sessionVideo]);
- 
+  }, [sessionId, sessionVideo]);
+
   useEffect(() => {
-    
     if (!videoRef.current) return;
-   
-    
 
-      const handleTimeUpdate = () => {
-        const currentTime = videoRef.current!.currentTime;
-        const duration = videoRef.current!.duration;
-        const progress = (currentTime / duration) * 100;
-  
-        if (onProgress) onProgress(progress, false);
-  
-        if (progress >= 100 && !isProgressSent.current) {
-          sendSessionProgress(100, true); // Marcar como completado
-          isProgressSent.current = true;
-        }
-  
-        setCurrentTime(currentTime);
-      };
-  
-      
-
-      
-  const handlePause = () => {
-    if (videoRef.current ) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      const progress = (currentTime / duration) * 100;
-      // Enviar el progreso actual al pausar
-      sendSessionProgress(progress, false); // No se ha completado, solo se guarda el progreso actual
-    }
-  };
-
-   // Función para manejar cuando el usuario sale de la ventana o pestaña
-   const handleVisibilityChange = () => {
-    if (document.visibilityState === "hidden" && videoRef.current) {
-      videoRef.current.pause(); // Pausa automáticamente el video al salir de la ventana
-    }
-  };
-
-   // Función para manejar cuando el usuario retrocede en el navegador
-   const handlePopState = () => {
-    if (videoRef.current ) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
+    const handleTimeUpdate = () => {
+      const currentTime = videoRef.current!.currentTime;
+      const duration = videoRef.current!.duration;
       const progress = (currentTime / duration) * 100;
 
-    
-        sendSessionProgress(progress, false);
-     
-    }
-  };
-
-
-   // Función auxiliar para enviar el progreso de la sesión al servidor
-   const sendSessionProgress = async (progress: number, isCompleted: boolean) => {
-    const progressUpdate = Math.round(progress);
-
-  
-
-    if (sessionId && !isProgressSent.current) {
-  
-      const sessionProgress = {
-        session_id: sessionId,
-        progress: progressUpdate,
-        is_completed: isCompleted,
-        user_id: userInfo.id,
-      };
-  
-      await createSession_Progress(sessionProgress);
-  
-      if (!isCompleted) {
-        // Permitir nuevas actualizaciones si no se ha completado la sesión
-        isProgressSent.current = false;
-      }
-    }
-  };
-
- 
-
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime;
-      const duration = videoRef.current.duration;
-      const progress = (currentTime / duration) * 100;
       if (onProgress) onProgress(progress, false);
-    
-    videoRef.current.pause(); 
-     // Muestra un mensaje de confirmación al usuario (en algunos navegadores)
-     e.preventDefault();
-     e.returnValue = ''; // Obligatorio para algunos navegadores modernos
 
-    }
-  };
-
-   // Evitar que el usuario adelante el video
-      const handleSeeking = () => {
-        if (videoRef.current!.currentTime > currentTime) {
-          videoRef.current!.currentTime = currentTime;
-        }
-      };
-
-      videoRef.current.addEventListener("timeupdate", handleTimeUpdate);
-      videoRef.current.addEventListener("seeking", handleSeeking);
-      videoRef.current.addEventListener("pause", handlePause); // Escucha el evento "pause" (cuando el usuario pausa el video)
-      document.addEventListener("visibilitychange", handleVisibilityChange); // Detecta cambios de ventana o pestaña
-      window.addEventListener("beforeunload", handleBeforeUnload); // Escucha el evento "beforeunload" (cuando el usuario intenta salir o recargar la página)
-      window.addEventListener("popstate", handlePopState); // Detecta retroceso en el historial del navegador
-      
-      if (videoProgress > 0 && !videoEnded) {
-        const duration = videoRef.current!.duration;
-        const targetTime = (videoProgress / 100) * duration;
-        if (targetTime > 0 && targetTime < duration) {
-          videoRef.current.currentTime = targetTime;
-        }
+      if (progress >= 100 && !isProgressSent.current) {
+        sendSessionProgress(100, true); // Marcar como completado
+        isProgressSent.current = true;
       }
 
-      return () => {
-        if (videoRef.current) {
-          videoRef.current.removeEventListener("timeupdate", handleTimeUpdate);
-          videoRef.current.removeEventListener("seeking", handleSeeking);
-          videoRef.current.removeEventListener("pause", handlePause); // Elimina el evento "pause"
-          document.addEventListener("visibilitychange", handleVisibilityChange); // Evento para cambiar de pestaña
+      setCurrentTime(currentTime);
+    };
+
+    const handlePause = () => {
+      if (videoRef.current) {
+        const currentTime = videoRef.current.currentTime;
+        const duration = videoRef.current.duration;
+        const progress = (currentTime / duration) * 100;
+        // Enviar el progreso actual al pausar
+        sendSessionProgress(progress, false); // No se ha completado, solo se guarda el progreso actual
+      }
+    };
+
+    // Función para manejar cuando el usuario sale de la ventana o pestaña
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && videoRef.current) {
+        videoRef.current.pause(); // Pausa automáticamente el video al salir de la ventana
+      }
+    };
+
+    // Función para manejar cuando el usuario retrocede en el navegador
+    const handlePopState = () => {
+      if (videoRef.current) {
+        const currentTime = videoRef.current.currentTime;
+        const duration = videoRef.current.duration;
+        const progress = (currentTime / duration) * 100;
+
+        sendSessionProgress(progress, false);
+      }
+    };
+
+    // Función auxiliar para enviar el progreso de la sesión al servidor
+    const sendSessionProgress = async (
+      progress: number,
+      isCompleted: boolean
+    ) => {
+      const progressUpdate = Math.round(progress);
+
+      if (sessionId && !isProgressSent.current) {
+        const sessionProgress = {
+          session_id: sessionId,
+          progress: progressUpdate,
+          is_completed: isCompleted,
+          user_id: userInfo.id,
+        };
+
+        await createSession_Progress(sessionProgress);
+
+        if (!isCompleted) {
+          // Permitir nuevas actualizaciones si no se ha completado la sesión
+          isProgressSent.current = false;
         }
-        window.removeEventListener("beforeunload", handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
-        window.removeEventListener("popstate", handlePopState); // Elimina el evento de retroceso
-      };
-    
+      }
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (videoRef.current) {
+        const currentTime = videoRef.current.currentTime;
+        const duration = videoRef.current.duration;
+        const progress = (currentTime / duration) * 100;
+        if (onProgress) onProgress(progress, false);
+
+        videoRef.current.pause();
+        // Muestra un mensaje de confirmación al usuario (en algunos navegadores)
+        e.preventDefault();
+        e.returnValue = ''; // Obligatorio para algunos navegadores modernos
+      }
+    };
+
+    // Evitar que el usuario adelante el video
+    const handleSeeking = () => {
+      if (videoRef.current!.currentTime > currentTime) {
+        videoRef.current!.currentTime = currentTime;
+      }
+    };
+
+    videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
+    videoRef.current.addEventListener('seeking', handleSeeking);
+    videoRef.current.addEventListener('pause', handlePause); // Escucha el evento "pause" (cuando el usuario pausa el video)
+    document.addEventListener('visibilitychange', handleVisibilityChange); // Detecta cambios de ventana o pestaña
+    window.addEventListener('beforeunload', handleBeforeUnload); // Escucha el evento "beforeunload" (cuando el usuario intenta salir o recargar la página)
+    window.addEventListener('popstate', handlePopState); // Detecta retroceso en el historial del navegador
+
+    if (videoProgress > 0 && !videoEnded) {
+      const duration = videoRef.current!.duration;
+      const targetTime = (videoProgress / 100) * duration;
+      if (targetTime > 0 && targetTime < duration) {
+        videoRef.current.currentTime = targetTime;
+      }
+    }
+
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+        videoRef.current.removeEventListener('seeking', handleSeeking);
+        videoRef.current.removeEventListener('pause', handlePause); // Elimina el evento "pause"
+        document.addEventListener('visibilitychange', handleVisibilityChange); // Evento para cambiar de pestaña
+      }
+      window.removeEventListener('beforeunload', handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
+      window.removeEventListener('popstate', handlePopState); // Elimina el evento de retroceso
+    };
   }, [
     onProgress,
     currentTime,
@@ -283,7 +279,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
   useEffect(() => {
     if (
       evaluationQuestions?.[currentQuestion]?.type_id === 3 &&
-      textAnswer.trim() !== ""
+      textAnswer.trim() !== ''
     ) {
       setShowContinueButton(true); // Mostrar el botón continuar si el textarea no está vacío
     } else {
@@ -294,9 +290,9 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
   const handleNextQuestion = () => {
     if (
       evaluationQuestions?.[currentQuestion]?.type_id === 3 &&
-      textAnswer.trim() === ""
+      textAnswer.trim() === ''
     ) {
-      alert("Por favor, responde la pregunta.");
+      alert('Por favor, responde la pregunta.');
       return;
     }
     if (currentQuestion >= (evaluationQuestions?.length || 0) - 1) {
@@ -306,7 +302,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
       setCurrentQuestion((prev) => prev + 1);
       setSelectedOption(null);
       setSelectedOptions([]);
-      setTextAnswer("");
+      setTextAnswer('');
       setIsCorrect(null);
     }
   };
@@ -347,7 +343,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
             response: optionId,
             response2: optionText,
             isCorret: isCorrect,
-            isCorrect2: "",
+            isCorrect2: '',
             score: score,
           },
         ];
@@ -385,10 +381,10 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
           ...updatedAnswers,
           {
             question_id: questionId,
-            response: "",
+            response: '',
             response2: value,
-            isCorret: "",
-            isCorrect2: "",
+            isCorret: '',
+            isCorrect2: '',
             score: evaluationQuestions?.[currentQuestion]?.score || 0,
           },
         ];
@@ -396,7 +392,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     }
 
     // Mostrar botón continuar si hay texto en el textarea
-    setShowContinueButton(value.trim() !== "");
+    setShowContinueButton(value.trim() !== '');
   };
 
   const handleMultipleSelect = (
@@ -470,16 +466,15 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
   };
 
   const handleFinish = () => {
-   
     setEvaluationCompleted(true);
-      
+
     // Guardar el tiempo final y detener el temporizador
     setFinalTime(timeElapsed);
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-   
+
     // Calcular y mostrar el puntaje total
     const totalScore = answers.reduce((score, answer) => {
       const question = evaluationQuestions?.find(
@@ -492,11 +487,10 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
       return score;
     }, 0);
 
-    
-    console.log("Puntaje total:", totalScore);
+    console.log('Puntaje total:', totalScore);
     setTotalScore(totalScore);
     if (onFinish) onFinish();
- 
+
     if (selectedModuleId) {
       // Si hay un selectedModuleId, es una evaluación de módulo
 
@@ -515,10 +509,8 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
         })),
       };
       createResultModule(moduloResultado);
-    
-      console.log("MODULO_RESULTADO", moduloResultado);
-      
 
+      console.log('MODULO_RESULTADO', moduloResultado);
     } else {
       // Si no hay selectedModuleId, es la evaluación final del curso
       const courseId = Array.isArray(router.query.course_id)
@@ -541,8 +533,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
         })),
       };
       createResultCourse(cursoResultado);
-      console.log("CURSO_RESULTADO", cursoResultado);
-    
+      console.log('CURSO_RESULTADO', cursoResultado);
     }
   };
 
@@ -563,25 +554,25 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     setCorrectAnswers(0);
     setEvaluationCompleted(false);
     setShowStartMessage(false);
- 
+
     if (isFinalEvaluation) {
       setShowNPSForm(true); // Show NPS form before final evaluation
-       // Verificar si los cuestionarios de NPS y Star tienen resultados
-    if (cuestionariosnps && cuestionariostar) {
-      // Mostrar NPSForm si no hay resultados en NPS
-      if (cuestionariosnps.length === 0) {
-        setShowNPSForm(true);
-      } else {
-        setShowNPSForm(false); // Ocultar NPS si ya tiene resultados
-      }
+      // Verificar si los cuestionarios de NPS y Star tienen resultados
+      if (cuestionariosnps && cuestionariostar) {
+        // Mostrar NPSForm si no hay resultados en NPS
+        if (cuestionariosnps.length === 0) {
+          setShowNPSForm(true);
+        } else {
+          setShowNPSForm(false); // Ocultar NPS si ya tiene resultados
+        }
 
-      // Mostrar StarForm si no hay resultados en Star
-      if (cuestionariostar.length === 0) {
-        setShowStarForm(true);
-      } else {
-        setShowStarForm(false); // Ocultar StarForm si ya tiene resultados
+        // Mostrar StarForm si no hay resultados en Star
+        if (cuestionariostar.length === 0) {
+          setShowStarForm(true);
+        } else {
+          setShowStarForm(false); // Ocultar StarForm si ya tiene resultados
+        }
       }
-    }
     } else {
       setShowStartMessage(false);
     }
@@ -596,10 +587,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
     setEvaluationCompleted(false);
     setShowStartMessage(false);
     if (onUpdated) onUpdated();
-  
   };
-
-
 
   const handleReloadEvaluation = () => {
     if (isFinalEvaluation) {
@@ -614,26 +602,25 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
       user_id: userInfo.id, // Usar el course_id del router o contexto
       score: score,
       course_id: courseId,
-      cuestype_id:1
+      cuestype_id: 1,
     };
-    createCuestionarioResult(npscreate)
+    createCuestionarioResult(npscreate);
     console.log(`NPS Score: ${score}`);
     setShowNPSForm(false); // Ocultar formulario NPS
-    setShowStarForm(true);  // Mostrar formulario de estrellas
+    setShowStarForm(true); // Mostrar formulario de estrellas
   };
-
 
   const handleStarSubmit = (score: number) => {
     const starcreate = {
       user_id: userInfo.id, // Usar el course_id del router o contexto
       score: score,
       course_id: courseId,
-      cuestype_id:2
+      cuestype_id: 2,
     };
-    createCuestionarioResult(starcreate)
+    createCuestionarioResult(starcreate);
     console.log(`Star Score: ${score}`);
     setShowStarForm(false); // Ocultar formulario de estrellas
-    setShowStartMessage(false); 
+    setShowStartMessage(false);
   };
 
   const handleContinue = () => {
@@ -650,7 +637,7 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
   const moduleResult = moduleResults?.find(
     (result) => result.module_id === selectedModuleId
   );
-//numero de intentos
+  //numero de intentos
   const hasTwoAttempts =
     moduleResults &&
     moduleResults.filter((result) => result.module_id === selectedModuleId)
@@ -662,76 +649,88 @@ const isProgressSent = useRef(false); // Usamos useRef para evitar reinicio en c
 
   const isFinalEvaluation = !selectedModuleId;
 
+  //CURSO RESULTADOS VERIFICAR
+  // Si no hay selectedModuleId, es la evaluación final del curso
+  //const courseId = Array.isArray(router.query.course_id)
+  //? parseInt(router.query.course_id[0], 10)
+  // : parseInt(router.query.course_id as string, 10);
 
-//CURSO RESULTADOS VERIFICAR
- // Si no hay selectedModuleId, es la evaluación final del curso
- //const courseId = Array.isArray(router.query.course_id)
- //? parseInt(router.query.course_id[0], 10)
-// : parseInt(router.query.course_id as string, 10);
+  //si el estudiante tiene mayor a 16 en todo sus modules result primer intento(created_at) puede obtener un segundo intento en el examen final,
+  //es decir el second_chance debe estar activado en el coruse_results
 
-//si el estudiante tiene mayor a 16 en todo sus modules result primer intento(created_at) puede obtener un segundo intento en el examen final,
-//es decir el second_chance debe estar activado en el coruse_results
+  //obtener la nota del primer created_at(la fecha de creacion que se creo primero) por cada evalation_id
+  const hasTwoEvaCourse =
+    moduleResults &&
+    moduleResults.filter(
+      (result) =>
+        result.puntaje >= 16 && result.evaluation_id == result.evaluation_id
+    );
 
-//obtener la nota del primer created_at(la fecha de creacion que se creo primero) por cada evalation_id 
-const hasTwoEvaCourse = moduleResults&& moduleResults.filter((result )=> result.puntaje >= 16 && result.evaluation_id == result.evaluation_id );
-
-//reutilizar el anterior y validar si en todos los modulos se obtiene la nota mayor a 16
-//si tiene mayor a 16 habilitar segundo intento / caso contrario solo tendra un intento a courseresults //actualización de que finalizo el curso.
-
-
+  //reutilizar el anterior y validar si en todos los modulos se obtiene la nota mayor a 16
+  //si tiene mayor a 16 habilitar segundo intento / caso contrario solo tendra un intento a courseresults //actualización de que finalizo el curso.
 
   // Función para obtener el primer resultado de evaluación por evaluation_id
-const getFirstCreatedAtResults = (moduleResults?: ModuleResults[]) => {
-  if (!moduleResults) return [];
+  const getFirstCreatedAtResults = (moduleResults?: ModuleResults[]) => {
+    if (!moduleResults) return [];
 
-  // Ordenar por fecha de creación y filtrar el primer resultado por evaluation_id
-  const uniqueResults = moduleResults.reduce((acc, result) => {
-    const existing = acc.find(r => r.evaluation_id === result.evaluation_id);
-    if (!existing || new Date(result.created_at) < new Date(existing.created_at)) {
-      return [...acc.filter(r => r.evaluation_id !== result.evaluation_id), result];
-    }
-    return acc;
-  }, [] as ModuleResults[]);
+    // Ordenar por fecha de creación y filtrar el primer resultado por evaluation_id
+    const uniqueResults = moduleResults.reduce((acc, result) => {
+      const existing = acc.find(
+        (r) => r.evaluation_id === result.evaluation_id
+      );
+      if (
+        !existing ||
+        new Date(result.created_at) < new Date(existing.created_at)
+      ) {
+        return [
+          ...acc.filter((r) => r.evaluation_id !== result.evaluation_id),
+          result,
+        ];
+      }
+      return acc;
+    }, [] as ModuleResults[]);
 
-  return uniqueResults;
-};
+    return uniqueResults;
+  };
 
+  // Obtener la nota del primer intento de evaluación en cada evaluation_id
+  const firstResults = getFirstCreatedAtResults(moduleResults);
+  // Filtrar módulos con puntaje mayor o igual a 16
+  const modulesWithHighScores = firstResults.filter(
+    (result) => result.puntaje >= 16
+  );
+  // Verificar si todos los módulos tienen un puntaje mayor o igual a 16
+  const allModulesPassed = modulesWithHighScores.length === firstResults.length;
+  // Habilitar segundo intento si todos los módulos tienen puntaje mayor o igual a 16
+  const enableSecondAttempt = allModulesPassed;
+  // Si no pasa en todos los módulos, solo tiene un intento
+  if (enableSecondAttempt) {
+    console.log('Se habilita el segundo intento.');
+  } else {
+    console.log('Solo tiene un intento.');
+  }
 
-// Obtener la nota del primer intento de evaluación en cada evaluation_id
-const firstResults = getFirstCreatedAtResults(moduleResults);
-// Filtrar módulos con puntaje mayor o igual a 16
-const modulesWithHighScores = firstResults.filter(result => result.puntaje >= 16);
-// Verificar si todos los módulos tienen un puntaje mayor o igual a 16
-const allModulesPassed = modulesWithHighScores.length === firstResults.length;
-// Habilitar segundo intento si todos los módulos tienen puntaje mayor o igual a 16
-const enableSecondAttempt = allModulesPassed;
-// Si no pasa en todos los módulos, solo tiene un intento
-if (enableSecondAttempt) {
-  console.log("Se habilita el segundo intento.");
-} else {
-  console.log("Solo tiene un intento.");
-}
-
-
-// Asegúrate de que courseId tiene el valor correcto del curso que estás filtrando
-const attemptCountCourse = courseResults && courseResults?.filter((result) => result.course_id === courseId).length || 0;
-
-
+  // Asegúrate de que courseId tiene el valor correcto del curso que estás filtrando
+  const attemptCountCourse =
+    (courseResults &&
+      courseResults?.filter((result) => result.course_id === courseId)
+        .length) ||
+    0;
 
   return (
     <div className="h-full w-full p-4 relative">
-       {showNPSForm ? (
+      {showNPSForm ? (
         <NPSForm onSubmit={handleNPSSubmit} />
-      ) :  showStarForm ? (
+      ) : showStarForm ? (
         <StarForm onSubmit={handleStarSubmit} />
-      )  : sessionVideo ? (
+      ) : sessionVideo ? (
         <div className="flex flex-col items-center">
           <video
             key={sessionVideo}
             controls
             className="w-full h-full"
             controlsList="nodownload"
-            style={{ maxWidth: "100%" }}
+            style={{ maxWidth: '100%' }}
             onEnded={handleVideoEnd}
             ref={videoRef}
           >
@@ -743,109 +742,118 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
           <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-6 rounded-lg shadow-lg">
             <h1
               className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
-                isFinalEvaluation ? "" : "hidden"
+                isFinalEvaluation ? '' : 'hidden'
               }`}
             >
               EVALUACIÓN FINAL
             </h1>
             <p
               className={`text-4xl text-white mb-8 ${
-                isFinalEvaluation ? "" : "hidden"
+                isFinalEvaluation ? '' : 'hidden'
               }`}
             >
               Para finalizar el curso, inicia esto
             </p>
             <h1
               className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
-                isFinalEvaluation ? "hidden" : ""
+                isFinalEvaluation ? 'hidden' : ''
               }`}
             >
               ¡Ponte a Prueba!
             </h1>
             <p
               className={`text-4xl text-white mb-8  text-center ${
-                isFinalEvaluation ? "hidden" : ""
+                isFinalEvaluation ? 'hidden' : ''
               }`}
             >
-              Para finalizar el módulo, ¡Inicia la Evaluación! 
+              Para finalizar el módulo, ¡Inicia la Evaluación!
             </p>
             <p
               className={`text-xl text-white mb-8 text-center ${
-                isFinalEvaluation ? "hidden" : ""
+                isFinalEvaluation ? 'hidden' : ''
               }`}
             >
-               ¡Tienes 2 Intentos Disponibles!
-                Si obtienes mayor a 16 en el primer intento de los examenes modulares tienes un segundo intento en el examen final
+              ¡Tienes 2 Intentos Disponibles! Si obtienes mayor a 16 en el
+              primer intento de los examenes modulares tienes un segundo intento
+              en el examen final
             </p>
             {/*Imagen dependiendo de evaluación del modulo y evaluación final*/}
             <img
               src={
                 isFinalEvaluation
-                  ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png"
-                  : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"
+                  ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png'
+                  : 'https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png'
               }
               alt="Evaluation"
               className="mb-6 w-64 h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
             />
-             <div>
-                {enableSecondAttempt === false && attemptCountCourse === 1? (
-                  <p className={`text-white text-xl mt-4 ${
-                    isFinalEvaluation ?   "" : "hidden"
-                  }`}>
-                    Completaste todos los intentos disponibles
-                  </p>
-                ) : enableSecondAttempt === true && attemptCountCourse === 1 ? (
-                  <button
-                    onClick={handleStartEvaluation}
-                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ?  "" : "hidden"
-                    }`}>
-                    Volver a Intentar
-                  </button>
-                ) : enableSecondAttempt === true && attemptCountCourse === 2 ? (
-                  <p className={`text-white text-xl mt-4 ${
-                    isFinalEvaluation ?   "" : "hidden"
-                  }`}>
-                    Completaste todos los intentos disponibles
-                  </p>
-                ) : (
-                  <button
-                    onClick={handleStartEvaluation}
-                    className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ?   "" : "hidden"
-                    }`}>
-                    Comenzar Evaluación Final
-                  </button>
-                )}
-              </div>
             <div>
-           
+              {enableSecondAttempt === false && attemptCountCourse === 1 ? (
+                <p
+                  className={`text-white text-xl mt-4 ${
+                    isFinalEvaluation ? '' : 'hidden'
+                  }`}
+                >
+                  Completaste todos los intentos disponibles
+                </p>
+              ) : enableSecondAttempt === true && attemptCountCourse === 1 ? (
+                <button
+                  onClick={handleStartEvaluation}
+                  className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                    isFinalEvaluation ? '' : 'hidden'
+                  }`}
+                >
+                  Volver a Intentar
+                </button>
+              ) : enableSecondAttempt === true && attemptCountCourse === 2 ? (
+                <p
+                  className={`text-white text-xl mt-4 ${
+                    isFinalEvaluation ? '' : 'hidden'
+                  }`}
+                >
+                  Completaste todos los intentos disponibles
+                </p>
+              ) : (
+                <button
+                  onClick={handleStartEvaluation}
+                  className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
+                    isFinalEvaluation ? '' : 'hidden'
+                  }`}
+                >
+                  Comenzar Evaluación Final
+                </button>
+              )}
+            </div>
+            <div>
               <div>
                 {attemptCount >= 2 ? (
-                  <p className={`text-white text-xl mt-4 ${
-                    isFinalEvaluation ? "hidden" :  ""
-                  }`}>
-                     Completaste todos los intentos disponibles
+                  <p
+                    className={`text-white text-xl mt-4 ${
+                      isFinalEvaluation ? 'hidden' : ''
+                    }`}
+                  >
+                    Completaste todos los intentos disponibles
                   </p>
                 ) : attemptCount === 1 ? (
                   <button
                     onClick={handleStartEvaluation}
                     className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ?  "hidden" : ""
-                    }`}>
+                      isFinalEvaluation ? 'hidden' : ''
+                    }`}
+                  >
                     Volver a Intentar
                   </button>
                 ) : (
                   <button
                     onClick={handleStartEvaluation}
                     className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ?  "hidden" : ""
-                    }`}>
+                      isFinalEvaluation ? 'hidden' : ''
+                    }`}
+                  >
                     Comenzar Evaluación
                   </button>
                 )}
               </div>
-             
             </div>
 
             <div className="mt-4 text-white text-sm">
@@ -853,130 +861,140 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
             </div>
           </div>
         ) : (
-          
           <div className="flex flex-col items-center justify-center h-full bg-white p-4 md:p-6 rounded-lg shadow-xl space-y-6">
-         {/* Puntaje actual   , arriba para cambiar el fondo*/}
-         <div className="w-full text-center text-brandm-500 text-2xl md:text-4xl font-bold">
-            Puntaje: {totalScore}
-          </div>
-        
-         
-          {/* Progreso de evaluación */}
-          <div className="w-full max-w-6xl bg-brandmc-100 rounded-full h-10 md:h-10 mb-6 overflow-hidden shadow-lg">
-            <div
-              className="bg-brandmo-800 h-10 md:h-10 text-xs font-medium text-white text-center leading-none rounded-full transition-all duration-300 ease-in-out"
-              style={{
-                width: `${((currentQuestion + 1) / evaluationQuestions.length) * 100}%`,
-              }}
-            >
-             <p className="text-white text-xl pt-3 font-bold">
-  {Math.round(((currentQuestion + 1) / evaluationQuestions.length) * 100)}%
-</p>
-
+            {/* Puntaje actual   , arriba para cambiar el fondo*/}
+            <div className="w-full text-center text-brandm-500 text-2xl md:text-4xl font-bold">
+              Puntaje: {totalScore}
             </div>
-          </div>
-        
-       
-        
-          {!evaluationCompleted ? (
-            <div className="flex flex-col items-center text-center w-full max-w-4xl space-y-6">
-                 <h3 className="text-brandmc-100 text4xl md:text-5xl pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-6 mt-6 ">
-                    {evaluationQuestions[currentQuestion]?.question_text}
-                  </h3>
-              <div className="flex w-full space-x-8">
-                
-                {/* Pregunta e imagen */}
-                <div className="w-1/2">
-               
-                  {evaluationQuestions[currentQuestion]?.image && (
-                    <img
-                      src={evaluationQuestions[currentQuestion]?.image}
-                      alt="Imagen relacionada con la pregunta"
-                      className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-100 pt-10"
-                    />
+
+            {/* Progreso de evaluación */}
+            <div className="w-full max-w-6xl bg-brandmc-100 rounded-full h-10 md:h-10 mb-6 overflow-hidden shadow-lg">
+              <div
+                className="bg-brandmo-800 h-10 md:h-10 text-xs font-medium text-white text-center leading-none rounded-full transition-all duration-300 ease-in-out"
+                style={{
+                  width: `${
+                    ((currentQuestion + 1) / evaluationQuestions.length) * 100
+                  }%`,
+                }}
+              >
+                <p className="text-white text-xl pt-3 font-bold">
+                  {Math.round(
+                    ((currentQuestion + 1) / evaluationQuestions.length) * 100
                   )}
-                </div>
-        
-                {/* Opciones de respuesta */}
-                <div className="w-1/2 space-y-4">
-                  {/* Pregunta de opción múltiple */}
-                  {evaluationQuestions[currentQuestion]?.type_id === 1 && (
-                    <ul className="space-y-3">
-                      {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                        <li key={idx} className="flex items-center space-x-3">
-                          <input
-                            type="checkbox"
-                            className="w-5 h-5 text-yellow-500 rounded focus:ring focus:ring-purple-700"
-                            checked={selectedOptions.includes(option.option_id)}
-                            onChange={() =>
-                              handleMultipleSelect(
-                                option.option_id,
-                                option.option_text,
-                                option.is_correct,
-                                evaluationQuestions?.[currentQuestion]?.score || 0
-                              )
-                            }
-                          />
-                          <label className="text-white text-xl">{option.option_text}</label>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-        
-                  {/* Pregunta abierta */}
-                  {evaluationQuestions[currentQuestion]?.type_id === 3 && (
-                    <textarea
-                      value={textAnswer}
-                      onChange={handleTextAnswerChange}
-                      className="w-full h-40 p-4 text-white bg-gray-700 rounded-lg border border-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                      placeholder="Escribe tu respuesta aquí..."
-                    />
-                  )}
-        
-                  {/* Pregunta de opción única */}
-                  {evaluationQuestions[currentQuestion]?.type_id === 4 && (
-                    
-                    <ul className="space-y-3">
-                      
-                      {evaluationQuestions[currentQuestion]?.options.map((option, idx) => (
-                        
-                        <li key={idx}>
-                          <button
-                            className={`p-6 text-xl font-bold rounded-r-lg w-full  transition-all duration-300 px-10  ${
-                              selectedOption === option.option_id
-                                ? isCorrect
-                                  ? "bg-green-500 border-green-600"
-                                  : "bg-red-500 border-red-600"
-                                : "bg-brandm-500  text-white hover:bg-yellow-400 "
-                            }`}
-                            onClick={() =>
-                              handleOptionSelect(
-                                option.option_id,
-                                option.option_text,
-                                option.is_correct,
-                                evaluationQuestions?.[currentQuestion]?.score || 0
-                              )
-                            }
-                            disabled={selectedOption !== null}
-                          >
-                            {option.option_text}
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
+                  %
+                </p>
               </div>
-        
-              {/* Mostrar botón continuar */}
-              {showContinueButton && (
-                <button
-                  className="mt-6 p-3 bg-brandm-400 text-white text-2xl font-bold rounded-lg shadow-lg w-full md:w-1/3 transition-transform transform hover:scale-105"
-                  onClick={handleNextQuestion}
-                >
-                  {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}
-                </button>
-              )}
+            </div>
+
+            {!evaluationCompleted ? (
+              <div className="flex flex-col items-center text-center w-full max-w-4xl space-y-6">
+                <h3 className="text-brandmc-100 text4xl md:text-5xl pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-6 mt-6 ">
+                  {evaluationQuestions[currentQuestion]?.question_text}
+                </h3>
+                <div className="flex w-full space-x-8">
+                  {/* Pregunta e imagen */}
+                  <div className="w-1/2">
+                    {evaluationQuestions[currentQuestion]?.image && (
+                      <img
+                        src={evaluationQuestions[currentQuestion]?.image}
+                        alt="Imagen relacionada con la pregunta"
+                        className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-100 pt-10"
+                      />
+                    )}
+                  </div>
+
+                  {/* Opciones de respuesta */}
+                  <div className="w-1/2 space-y-4">
+                    {/* Pregunta de opción múltiple */}
+                    {evaluationQuestions[currentQuestion]?.type_id === 1 && (
+                      <ul className="space-y-3">
+                        {evaluationQuestions[currentQuestion]?.options.map(
+                          (option, idx) => (
+                            <li
+                              key={idx}
+                              className="flex items-center space-x-3"
+                            >
+                              <input
+                                type="checkbox"
+                                className="w-5 h-5 text-yellow-500 rounded focus:ring focus:ring-purple-700"
+                                checked={selectedOptions.includes(
+                                  option.option_id
+                                )}
+                                onChange={() =>
+                                  handleMultipleSelect(
+                                    option.option_id,
+                                    option.option_text,
+                                    option.is_correct,
+                                    evaluationQuestions?.[currentQuestion]
+                                      ?.score || 0
+                                  )
+                                }
+                              />
+                              <label className="text-white text-xl">
+                                {option.option_text}
+                              </label>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    )}
+
+                    {/* Pregunta abierta */}
+                    {evaluationQuestions[currentQuestion]?.type_id === 3 && (
+                      <textarea
+                        value={textAnswer}
+                        onChange={handleTextAnswerChange}
+                        className="w-full h-40 p-4 text-white bg-gray-700 rounded-lg border border-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                        placeholder="Escribe tu respuesta aquí..."
+                      />
+                    )}
+
+                    {/* Pregunta de opción única */}
+                    {evaluationQuestions[currentQuestion]?.type_id === 4 && (
+                      <ul className="space-y-3">
+                        {evaluationQuestions[currentQuestion]?.options.map(
+                          (option, idx) => (
+                            <li key={idx}>
+                              <button
+                                className={`p-6 text-xl font-bold rounded-r-lg w-full  transition-all duration-300 px-10  ${
+                                  selectedOption === option.option_id
+                                    ? isCorrect
+                                      ? 'bg-green-500 border-green-600'
+                                      : 'bg-red-500 border-red-600'
+                                    : 'bg-brandm-500  text-white hover:bg-yellow-400 '
+                                }`}
+                                onClick={() =>
+                                  handleOptionSelect(
+                                    option.option_id,
+                                    option.option_text,
+                                    option.is_correct,
+                                    evaluationQuestions?.[currentQuestion]
+                                      ?.score || 0
+                                  )
+                                }
+                                disabled={selectedOption !== null}
+                              >
+                                {option.option_text}
+                              </button>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+
+                {/* Mostrar botón continuar */}
+                {showContinueButton && (
+                  <button
+                    className="mt-6 p-3 bg-brandm-400 text-white text-2xl font-bold rounded-lg shadow-lg w-full md:w-1/3 transition-transform transform hover:scale-105"
+                    onClick={handleNextQuestion}
+                  >
+                    {currentQuestion < (evaluationQuestions?.length || 0) - 1
+                      ? 'Siguiente'
+                      : 'Finalizar'}
+                  </button>
+                )}
                 {/*Reacciones para repsuesta incorrecta e incorrecta */}
                 {showReaction && (
                   <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
@@ -984,15 +1002,15 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                       <div
                         key={idx}
                         className={`absolute text-4xl md:text-6xl ${
-                          isCorrect ? "text-green-500" : "text-red-500"
+                          isCorrect ? 'text-green-500' : 'text-red-500'
                         } animate-float`}
                         style={{
-                          bottom: "0",
+                          bottom: '0',
                           left: `${Math.random() * 100}%`,
                           animationDelay: `${Math.random() * 0.5}s`,
                         }}
                       >
-                        {isCorrect ? "😊" : "😢"}
+                        {isCorrect ? '😊' : '😢'}
                       </div>
                     ))}
                   </div>
@@ -1000,82 +1018,106 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
               </div>
             ) : (
               <div className="flex justify-center items-center w-full h-full  bg-white">
-  <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl text-center text-white p-8 space-y-6">
-    
-    
-    {/* Imagen central con estrellas */}
-    <div className="relative flex justify-center mb-6">
-      <img
-        src={
-          totalScore >= 16
-            ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png"
-            : totalScore >= 13
-            ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
-            : "https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
-        }
-      
-        className="w-60 h-60 rounded-full border-4 border-brandmc-100 shadow-md"
-      />
-      {/* Estrellas alrededor de la imagen */}
-      <div className="absolute flex justify-center space-x-2 -top-12 pb-20">
-        <img src={estrella_llena} alt="Estrella 1" className="w-12 h-12" />
-        {totalScore >= 13 && <img src={estrella_llena} alt="Estrella 2" className="w-12 h-12" />}
-        {totalScore >= 16 && <img src={estrella_llena} alt="Estrella 3" className="w-12 h-12" />}
-      </div>
-    </div>
+                <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl text-center text-white p-8 space-y-6">
+                  {/* Imagen central con estrellas */}
+                  <div className="relative flex justify-center mb-6">
+                    <img
+                      src={
+                        totalScore >= 16
+                          ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png'
+                          : totalScore >= 13
+                          ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png'
+                          : 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png'
+                      }
+                      className="w-60 h-60 rounded-full border-4 border-brandmc-100 shadow-md"
+                    />
+                    {/* Estrellas alrededor de la imagen */}
+                    <div className="absolute flex justify-center space-x-2 -top-12 pb-20">
+                      <img
+                        src={estrella_llena}
+                        alt="Estrella 1"
+                        className="w-12 h-12"
+                      />
+                      {totalScore >= 13 && (
+                        <img
+                          src={estrella_llena}
+                          alt="Estrella 2"
+                          className="w-12 h-12"
+                        />
+                      )}
+                      {totalScore >= 16 && (
+                        <img
+                          src={estrella_llena}
+                          alt="Estrella 3"
+                          className="w-12 h-12"
+                        />
+                      )}
+                    </div>
+                  </div>
 
-    {/* Mensaje final */}
-    <p className="text-2xl font-semibold mb-4 text-brandm-500">
-      {totalScore >= 16
-        ? "¡Eres realmente el rey del saber!"
-        : totalScore >= 13
-        ? "¡Nada mal, pero puedes mejorar!"
-        : "¡Necesitas repasar las sesiones!"}
-    </p>
+                  {/* Mensaje final */}
+                  <p className="text-2xl font-semibold mb-4 text-brandm-500">
+                    {totalScore >= 16
+                      ? '¡Eres realmente el rey del saber!'
+                      : totalScore >= 13
+                      ? '¡Nada mal, pero puedes mejorar!'
+                      : '¡Necesitas repasar las sesiones!'}
+                  </p>
 
-   
-    {/* Resumen de resultados */}
-<div className="grid grid-cols-3 gap-6 bg-brandmc-100 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
-  <div className="col-span-1 flex flex-col items-center">
-    <span className="text-xl">Duración</span>
-    {/* Add the image below the label */}
-    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/ect4ksc3nxzzu7jsu5jw.png" alt="Duración icon" className="w-18 h-18 my-2" />
-    <span className="text-xl">{finalTime !== null ? Math.floor(finalTime / 60) : 0} min {finalTime !== null ? finalTime % 60 : 0} s</span>
-  </div>
-  <div className="col-span-1 flex flex-col items-center">
-    <span className="text-xl">Respuestas Correctas</span>
-    {/* Add the image below the label */}
-    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/b4a0n1srq6zwexb837d3.png" alt="Correctas icon" className="w-18 h-18 my-2" />
-    <span className="text-xl">{correctAnswers}</span>
-  </div>
-  <div className="col-span-1 flex flex-col items-center">
-    <span className="text-xl">Total de Preguntas</span>
-    {/* Add the image below the label */}
-    <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/aogv21pxjfi2civsg7a9.png" alt="Total icon" className="w-18 h-18 my-2" />
-    <span className="text-xl">{evaluationQuestions?.length || 0}</span>
-  </div>
-</div>
+                  {/* Resumen de resultados */}
+                  <div className="grid grid-cols-3 gap-6 bg-brandmc-100 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
+                    <div className="col-span-1 flex flex-col items-center">
+                      <span className="text-xl">Duración</span>
+                      {/* Add the image below the label */}
+                      <img
+                        src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/ect4ksc3nxzzu7jsu5jw.png"
+                        alt="Duración icon"
+                        className="w-18 h-18 my-2"
+                      />
+                      <span className="text-xl">
+                        {finalTime !== null ? Math.floor(finalTime / 60) : 0}{' '}
+                        min {finalTime !== null ? finalTime % 60 : 0} s
+                      </span>
+                    </div>
+                    <div className="col-span-1 flex flex-col items-center">
+                      <span className="text-xl">Respuestas Correctas</span>
+                      {/* Add the image below the label */}
+                      <img
+                        src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/b4a0n1srq6zwexb837d3.png"
+                        alt="Correctas icon"
+                        className="w-18 h-18 my-2"
+                      />
+                      <span className="text-xl">{correctAnswers}</span>
+                    </div>
+                    <div className="col-span-1 flex flex-col items-center">
+                      <span className="text-xl">Total de Preguntas</span>
+                      {/* Add the image below the label */}
+                      <img
+                        src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/aogv21pxjfi2civsg7a9.png"
+                        alt="Total icon"
+                        className="w-18 h-18 my-2"
+                      />
+                      <span className="text-xl">
+                        {evaluationQuestions?.length || 0}
+                      </span>
+                    </div>
+                  </div>
 
+                  {/* Botón de acción */}
+                  <div className="pt-4">
+                    <button
+                      onClick={handleReintentarEvaluation}
+                      className={`w-full py-3 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105 ${
+                        totalScore >= 16
+                          ? 'bg-brandm-500 text-white'
+                          : 'bg-brandm-500 text-white'
+                      }`}
+                    >
+                      Regresar
+                    </button>
+                  </div>
 
-    {/* Botón de acción */}
-    <div className="pt-4">
-      
-        <button
-          onClick={handleReintentarEvaluation}
-          className={`w-full py-3 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105 ${
-            totalScore >= 16
-              ? "bg-brandm-500 text-white"
-              : "bg-brandm-500 text-white"
-          }`}
-        >
-         Regresar
-        </button>
-    
-    </div>
-   
-            
-
-                 {/*Finalizar Evalauación los botones ya nos e muestra 
+                  {/*Finalizar Evalauación los botones ya nos e muestra 
                  {attemptCount >= 2 ? (
                   <p className="text-white text-xl mt-4">
                     Completaste todos los intentos disponibles
@@ -1096,22 +1138,24 @@ const attemptCountCourse = courseResults && courseResults?.filter((result) => re
                   </button>
                 )}
                     */}
-              </div>
-            
                 </div>
-            
+              </div>
             )}
 
             {/* Botones para evaluación final */}
-  {selectedOption !== null && !showReaction && !evaluationCompleted && (
-    <button
-      className="mt-10 p-3  text-2xl bg-brandmo-800 text-white font-bold rounded-lg shadow-lg w-full md:w-1/3"
-      onClick={handleNextQuestion}
-    >
-      {currentQuestion < (evaluationQuestions?.length || 0) - 1 ? "Siguiente" : "Finalizar"}
-    </button>
-  )}
-</div>
+            {selectedOption !== null &&
+              !showReaction &&
+              !evaluationCompleted && (
+                <button
+                  className="mt-10 p-3  text-2xl bg-brandmo-800 text-white font-bold rounded-lg shadow-lg w-full md:w-1/3"
+                  onClick={handleNextQuestion}
+                >
+                  {currentQuestion < (evaluationQuestions?.length || 0) - 1
+                    ? 'Siguiente'
+                    : 'Finalizar'}
+                </button>
+              )}
+          </div>
         )
       ) : (
         <div className="flex justify-center items-center h-full w-full p-4 text-white">

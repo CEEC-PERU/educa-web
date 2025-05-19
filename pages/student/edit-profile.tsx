@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/router';
-import { useUpdatedProfile } from '../../hooks/useProfile';
+import { useUpdatedProfile } from '../../hooks/user/useProfile';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
@@ -14,11 +14,15 @@ const StudentProfile: React.FC = () => {
   const { updateProfile } = useUpdatedProfile();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  let name = '', last_name = '', uri_picture = '', initialPhone, initialEmail;
+  let name = '',
+    last_name = '',
+    uri_picture = '',
+    initialPhone,
+    initialEmail;
   let userInfo = { id: 0, dni: '' };
 
   if (user) {
-    userInfo = user as { id: number, dni: string };
+    userInfo = user as { id: number; dni: string };
   }
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -54,11 +58,10 @@ const StudentProfile: React.FC = () => {
     }
   };
 
-  
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
-  
+
   return (
     <ProtectedRoute>
       <Navbar
@@ -67,7 +70,10 @@ const StudentProfile: React.FC = () => {
         user={user ? { profilePicture: uri_picture } : undefined}
         toggleSidebar={toggleSidebar}
       />
-    <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+      <SidebarDrawer
+        isDrawerOpen={isDrawerOpen}
+        toggleSidebar={toggleSidebar}
+      />
       <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 pt-16">
         <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-8">
           <img
@@ -89,15 +95,17 @@ const StudentProfile: React.FC = () => {
           </h2>
         </div>
         {showAlert && (
-            <div className="mt-4 p-3 bg-brandmorado-700 text-white rounded-md shadow-md">
-              {alertMessage}
-            </div>
-          )}
+          <div className="mt-4 p-3 bg-brandmorado-700 text-white rounded-md shadow-md">
+            {alertMessage}
+          </div>
+        )}
         <div className="lg:max-w-4xl mx-auto p-4 ">
           <div className="flex justify-between items-center mb-4">
-            <p className="2xl:text-xl lg:text-xl md:text-xl text-white font-bold">Datos Personales</p>
+            <p className="2xl:text-xl lg:text-xl md:text-xl text-white font-bold">
+              Datos Personales
+            </p>
           </div>
-        
+
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div className="bg-gray-200 p-4 rounded-lg shadow-md">
               <p className="text-lg font-medium text-gray-600">Nombres</p>
@@ -160,11 +168,12 @@ const StudentProfile: React.FC = () => {
               />
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-4">
-            <button 
+            <button
               onClick={handleSaveClick}
-              className="bg-brandrosado-800 text-white px-4 py-2 rounded-full hover:bg-brandmorado-700">
+              className="bg-brandrosado-800 text-white px-4 py-2 rounded-full hover:bg-brandmorado-700"
+            >
               Guardar Cambios
             </button>
           </div>
@@ -172,6 +181,6 @@ const StudentProfile: React.FC = () => {
       </div>
     </ProtectedRoute>
   );
-}
+};
 
 export default StudentProfile;
