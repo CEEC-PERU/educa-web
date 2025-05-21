@@ -42,7 +42,7 @@ export const API_IMAGES = `${baseURL}/api/images`;
 
 //socket
 export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
-//dato incorrecto de updatedperfildata
+
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
 

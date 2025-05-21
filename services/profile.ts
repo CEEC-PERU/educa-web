@@ -38,7 +38,7 @@ export const createProfile = async (
 export const createProfileLogin = async (
   userToken: string,
   user_id: number,
-  profileData: ProfileRequest
+  profileData: ProfileRequestLogin
 ) => {
   try {
     const config = {
