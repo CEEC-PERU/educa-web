@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
   ProfileRequest,
+  ProfileRequestLogin,
   ProfileResponse,
   UpdateProfileRequest,
 } from '../interfaces/User/Profile';
@@ -24,6 +25,30 @@ export const createProfile = async (
     // Hacer la solicitud POST a la API del perfil
     const response = await axios.post(
       `${API_PROFILE}/${user_id}`,
+      profileData,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error creating profile:', error);
+    throw new Error('Error creating profile');
+  }
+};
+
+export const createProfileLogin = async (
+  userToken: string,
+  user_id: number,
+  profileData: ProfileRequest
+) => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    // Hacer la solicitud POST a la API del perfil
+    const response = await axios.post(
+      `${API_PROFILE}/login/${user_id}`,
       profileData,
       config
     );

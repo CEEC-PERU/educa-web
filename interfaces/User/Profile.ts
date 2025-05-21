@@ -4,6 +4,13 @@ export interface ProfileRequest {
   phone: string;
   profile_picture: string;
   email: string;
+}
+export interface ProfileRequestLogin {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  profile_picture: string;
+  email: string;
   password: string;
 }
 
