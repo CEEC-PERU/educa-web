@@ -6,8 +6,8 @@ import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
 import { Profile } from '../../interfaces/UserInterfaces';
 import { useEnterprise } from '../../hooks/useEnterprise';
-
 import './../../app/globals.css';
+//datos que se utilizan de StudentProfile
 
 const StudentProfile: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -155,5 +155,5 @@ const StudentProfile: React.FC = () => {
     </ProtectedRoute>
   );
 };
-
+77;
 export default StudentProfile;

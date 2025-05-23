@@ -10,7 +10,7 @@ import {
   updatedProfile,
 } from '../../services/profile';
 import { useAuth } from '../../context/AuthContext';
-
+//datos de useProfile que datos
 export const useProfile = () => {
   const [profile, setProfile] = useState<ProfileRequestLogin | null>(null);
   const [error, setError] = useState<string | null>(null);
