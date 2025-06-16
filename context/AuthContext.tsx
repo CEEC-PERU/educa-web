@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useContext,
+  useMemo,
+} from 'react';
 import { useRouter } from 'next/router';
 import { jwtDecode } from 'jwt-decode';
 import { getProfile } from '../services/profile';
@@ -12,16 +18,11 @@ import axios, { AxiosError } from 'axios';
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
 
-
 export const useAuth = () => {
-  
   return useContext(AuthContext);
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-
-  
-
   const [user, setUser] = useState<{
     id: number;
     role: number;
@@ -31,39 +32,56 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(null);
+  const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(
+    null
+  );
   const router = useRouter();
 
-// AuthContext.tsx
-const refreshProfile = async (token: string, userId: number) => {
-  try {
-    const profile = await getProfile(token, userId);
-    if (profile) {
-      localStorage.setItem('profileInfo', JSON.stringify(profile));
-      setProfileInfo(profile);
+  // AuthContext.tsx
+  const refreshProfile = async (token: string, userId: number) => {
+    try {
+      const profile = await getProfile(token, userId);
+      if (profile) {
+        localStorage.setItem('profileInfo', JSON.stringify(profile));
+        setProfileInfo(profile);
+      }
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
     }
-  } catch (error) {
-    console.error('Error refreshing profile:', error);
-  }
-};
+  };
 
   const login = async (dni: string, password: string) => {
     setIsLoading(true);
     try {
       const response: LoginResponse = await signin({ dni, password });
       if (response.token) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
-        const decodedToken: { id: number; role: number; dni: string; enterprise_id: number } = jwtDecode(response.token);
+        axios.defaults.headers.common[
+          'Authorization'
+        ] = `Bearer ${response.token}`;
+        const decodedToken: {
+          id: number;
+          role: number;
+          dni: string;
+          enterprise_id: number;
+        } = jwtDecode(response.token);
         setToken(response.token);
-        setUser({ id: decodedToken.id, role: decodedToken.role, dni: decodedToken.dni, enterprise_id: decodedToken.enterprise_id });
-
-        localStorage.setItem('userToken', response.token);
-        localStorage.setItem('userInfo', JSON.stringify({
+        setUser({
           id: decodedToken.id,
           role: decodedToken.role,
           dni: decodedToken.dni,
           enterprise_id: decodedToken.enterprise_id,
-        }));
+        });
+
+        localStorage.setItem('userToken', response.token);
+        localStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            id: decodedToken.id,
+            role: decodedToken.role,
+            dni: decodedToken.dni,
+            enterprise_id: decodedToken.enterprise_id,
+          })
+        );
         if (decodedToken.role === 1) {
           socket.emit('login', { userToken: response.token });
         }
@@ -76,7 +94,10 @@ const refreshProfile = async (token: string, userId: number) => {
           redirectToProfile(decodedToken.role);
         }
       } else {
-        setError(response.msg ?? 'Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.');
+        setError(
+          response.msg ??
+            'Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.'
+        );
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
@@ -100,12 +121,17 @@ const refreshProfile = async (token: string, userId: number) => {
     localStorage.removeItem('userInfo');
     localStorage.removeItem('profileInfo');
     if (token) {
-      const decodedToken: { id: number; role: number; email: string; client_id: number } = jwtDecode(token);
+      const decodedToken: {
+        id: number;
+        role: number;
+        email: string;
+        client_id: number;
+      } = jwtDecode(token);
       if (decodedToken.role === 1) {
         socket.emit('logout');
       }
     }
-    
+
     setUser(null);
     setToken(null);
     router.push('/');
@@ -113,7 +139,7 @@ const refreshProfile = async (token: string, userId: number) => {
 
   useEffect(() => {
     try {
-      const storedUserToken = localStorage.getItem('userToken');                                      
+      const storedUserToken = localStorage.getItem('userToken');
       const storedUserInfo = localStorage.getItem('userInfo');
       const isValid = storedUserToken ? validateToken(storedUserToken) : false;
 
@@ -124,7 +150,7 @@ const refreshProfile = async (token: string, userId: number) => {
         }
 
         const { id, role, dni, enterprise_id } = JSON.parse(storedUserInfo);
-        
+
         setToken(storedUserToken);
         setUser({ id, role, dni, enterprise_id });
       } else {
@@ -145,7 +171,12 @@ const refreshProfile = async (token: string, userId: number) => {
       case 1:
         router.push('/student');
         if (token) {
-          const decodedToken: { id: number; role: number; email: string; client_id: number } = jwtDecode(token);
+          const decodedToken: {
+            id: number;
+            role: number;
+            email: string;
+            client_id: number;
+          } = jwtDecode(token);
           if (decodedToken.role === 1) {
             socket.emit('login', { userToken: token });
           }
@@ -160,14 +191,17 @@ const refreshProfile = async (token: string, userId: number) => {
       case 4:
         router.push('/admin');
         break;
-        case 5:
+      case 5:
         router.push('/admincorporative');
         break;
-        case 6:
+      case 6:
         router.push('/supervisor');
         break;
-        case 7:
+      case 7:
         router.push('/calidad');
+        break;
+      case 8:
+        router.push('/comercial');
         break;
       default:
         router.push('/');
@@ -178,21 +212,20 @@ const refreshProfile = async (token: string, userId: number) => {
     router.push('/profile');
   };
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    isLoading,
-    error,
-    login,
-    logout,
-    profileInfo,
-    redirectToDashboard,
-    refreshProfile,
-  }), [user, token, isLoading, error, profileInfo, ]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      isLoading,
+      error,
+      login,
+      logout,
+      profileInfo,
+      redirectToDashboard,
+      refreshProfile,
+    }),
+    [user, token, isLoading, error, profileInfo]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

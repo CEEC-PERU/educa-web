@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
+import Sidebar from '../../components/comercial/SideBarComercial';
 import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
@@ -62,33 +62,37 @@ const CorporateDashboard: React.FC = () => {
     { day: 'Domingo', time: 36 },
   ];
 
-  //Curso completados al 100%
+  const topAdvisorsData = [
+    { name: 'Estrella Zavaleta', Calificación: 20 },
+    { name: 'Erick Zavaleta', Calificación: 20 },
+    { name: 'Estrella Zavaleta', Calificación: 20 },
+    { name: 'Erick Zavaleta', Calificación: 15 },
+    { name: 'Estrella Zavaleta', Calificación: 15 },
+  ];
+
   const courseCompletionData = [
-    { course: 'Contactados', completion: 0 },
-    { course: 'Consulta Previa Prepago', completion: 24 },
+    { course: 'CP Pospago', completion: 1 },
+    { course: 'Formación Continua', completion: 0 },
   ];
 
-  //Participantes en la semana
   const dailyParticipationData = [
-    { day: 'Lunes', active: 2 },
-    { day: 'Martes', active: 4 },
-    { day: 'Miércoles', active: 2 },
-    { day: 'Jueves', active: 3 },
-    { day: 'Viernes', active: 2 },
-    { day: 'Sabado', active: 1 },
-    { day: 'Domingo', active: 0 },
+    { day: 'Lunes', active: 5 },
+    { day: 'Martes', active: 2 },
+    { day: 'Miércoles', active: 10 },
+    { day: 'Jueves', active: 4 },
+    { day: 'Viernes', active: 6 },
+    { day: 'Sabado', active: 4 },
+    { day: 'Domingo', active: 5 },
   ];
 
-  //Lista de modulos por curso
   const moduleCompletionData = (course: string) => {
     if (course === 'CP Pospago') {
       return [
-        { module: 'Formación Integral ', completion: 50 },
-        { module: 'Gestión Integral ', completion: 40 },
-        { module: 'Gestión De Contacto ', completion: 35 },
+        { module: 'Formación Integral ', completion: 0 },
+        { module: 'Gestión Integral ', completion: 0 },
       ];
     } else if (course === 'Formación Continua') {
-      return [{ module: 'Retenciones 1', completion: 85 }];
+      return [{ module: 'Retenciones 1', completion: 0 }];
     }
     return [];
   };
@@ -228,13 +232,13 @@ const CorporateDashboard: React.FC = () => {
               series={[
                 {
                   name: 'Calificación',
-                  data: topRanking.map((item) => item.puntaje),
+                  data: topAdvisorsData.map((item) => item.Calificación),
                 },
               ]}
               options={{
                 chart: { type: 'bar' },
                 xaxis: {
-                  categories: topRanking.map((item) => item.name),
+                  categories: topAdvisorsData.map((item) => item.name),
                   title: { text: 'Asesores' },
                 },
                 yaxis: { title: { text: 'Calificaciòn' } },
@@ -254,12 +258,15 @@ const CorporateDashboard: React.FC = () => {
             <Chart
               type="line"
               series={[
-                { name: 'Tiempo', data: averagetime.map((item) => item.time) },
+                {
+                  name: 'Tiempo',
+                  data: averageTimePerDayData.map((item) => item.time),
+                },
               ]} // Assuming `averagetime` has objects with `time` property
               options={{
                 chart: { type: 'line' },
                 xaxis: {
-                  categories: averagetime.map((item) => item.day),
+                  categories: averageTimePerDayData.map((item) => item.day),
                   title: { text: 'Días' },
                 },
                 yaxis: { title: { text: 'Tiempo (minutos)' } },
@@ -282,13 +289,13 @@ const CorporateDashboard: React.FC = () => {
               series={[
                 {
                   name: 'Cantidad',
-                  data: activeuser.map((item) => item.active),
+                  data: dailyParticipationData.map((item) => item.active),
                 },
               ]}
               options={{
                 chart: { type: 'line' },
                 xaxis: {
-                  categories: activeuser.map((item) => item.day),
+                  categories: dailyParticipationData.map((item) => item.day),
                   title: { text: 'Día' },
                 },
                 yaxis: { title: { text: 'Cantidad Estudiantes' } },

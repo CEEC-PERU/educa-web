@@ -28,4 +28,8 @@ declare module '@heroicons/react/24/solid' {
   export const CameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const CheckCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const InformationCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const VideoCameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const PaperAirplaneIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const CheckIcon: ComponentType<SVGProps<SVGSVGElement>>;
 }
