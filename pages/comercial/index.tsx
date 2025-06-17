@@ -562,7 +562,7 @@ const CorporateDashboard: React.FC = () => {
               ],
             }}
             height={350}
-            badgeText="Evaluación 2024"
+            badgeText="Evaluación 2025"
             showUpdateDate={true}
             className="mt-6"
           />
