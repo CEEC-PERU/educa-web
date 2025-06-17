@@ -108,6 +108,18 @@ const ProfilePage: React.FC = () => {
           case 4:
             router.push('/admin');
             break;
+          case 5:
+            router.push('/admincorporative');
+            break;
+          case 6:
+            router.push('/supervisor');
+            break;
+          case 7:
+            router.push('/calidad');
+            break;
+          case 8:
+            router.push('/comercial');
+            break;
           default:
             router.push('/');
         }
