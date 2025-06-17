@@ -257,6 +257,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       case 7:
         router.push('/calidad');
         break;
+      case 8:
+        router.push('/comercial');
+        break;
       default:
         router.push('/');
     }
