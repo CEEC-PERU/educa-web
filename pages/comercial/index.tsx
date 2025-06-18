@@ -62,7 +62,7 @@ const CorporateDashboard: React.FC = () => {
 
   const courseProgressData = [
     {
-      course: 'Consulta Previa Prepago',
+      course: 'Productividad Ágil',
       Estudiantes: 20,
       Progreso: 50,
     },

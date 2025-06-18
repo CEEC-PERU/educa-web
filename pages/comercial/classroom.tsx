@@ -13,7 +13,11 @@ import { useClassroom } from '../../hooks/useClassroom';
 import FloatingButton from '../../components/FloatingButton';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
-import { UserGroupIcon } from '@heroicons/react/24/outline';
+import {
+  UserGroupIcon,
+  UserIcon,
+  AcademicCapIcon,
+} from '@heroicons/react/24/outline';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import ProfileForm from '../../components/Corporate/ProfileForm';
 
@@ -31,6 +35,7 @@ const Classroom: React.FC = () => {
   const userInfo = user as { enterprise_id: number };
   const [newUserId, setNewUserId] = useState<number | null>(null);
   const [profileLoading, setProfileLoading] = useState(false);
+
   const handleAddUser = () => {
     setModalType('supervisor');
     setIsModalOpen(true);
@@ -44,19 +49,18 @@ const Classroom: React.FC = () => {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setModalType(null);
-    setNewUserId(null); // Reinicia el estado del user_id
+    setNewUserId(null);
     fetchClassrooms();
   };
 
   const handleUserCreateSuccess = (createdUserId: number) => {
-    console.log('usuario', createdUserId);
-    setNewUserId(createdUserId); // Establece el user_id del usuario creado
-    setModalType('profile'); // Cambia el modal para mostrar el formulario de perfil
+    setNewUserId(createdUserId);
+    setModalType('profile');
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+    <div className="relative min-h-screen bg-gray-50">
+      <Navbar bgColor="bg-gradient-to-r from-blue-600 to-indigo-700" />
       <div className="flex flex-1 pt-16">
         <Sidebar
           showSidebar={showSidebar}
@@ -65,128 +69,193 @@ const Classroom: React.FC = () => {
 
         <main
           className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-20' : ''
+            showSidebar ? 'ml-20' : 'ml-0'
           }`}
         >
-          <div className="pb-4"></div>
-
-          {/* Contenedor de Profesores */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div>
-              <div className="flex justify-left items-center mb-6">
-                <FloatingButton
-                  onClick={handleAddUser}
-                  label="AñadirProfesor"
-                />
-                <h2 className="text-xl font-bold ml-3">Profesores</h2>
-              </div>
-              {users.length > 0 ? (
-                users.map((user) => (
-                  <div
-                    key={user.user_id}
-                    className="flex items-center mt-2 border-2 border-e-cyan-800 p-5"
-                  >
-                    <img
-                      src={
-                        user.userProfile?.profile_picture ||
-                        '/default-course-image.jpg'
-                      }
-                      alt="profile"
-                      className="h-12 w-12 mr-4 rounded-full"
-                    />
-                    <p className="text-gray-700">
-                      {user.userProfile?.first_name}{' '}
-                      {user.userProfile?.last_name}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No hay profesores asignados</p>
-              )}
+          <div className="max-w-7xl mx-auto">
+            {/* Header Section */}
+            <div className="mb-8">
+              <h1 className="text-2xl font-bold text-gray-800">
+                Gestión de Aulas
+              </h1>
+              <p className="text-gray-600">
+                Administra profesores, aulas y cursos
+              </p>
             </div>
 
-            {/* Contenedor de Aulas */}
-            <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-              <div className="flex justify-left items-center mb-6">
-                <FloatingButton
-                  onClick={handleAddClassroom}
-                  label="Añadir Aula"
-                />
-                <h2 className="text-xl font-bold ml-3  text-black ">Aulas</h2>
-              </div>
-              <div className="grid grid-cols-1 gap-6">
-                {!isLoading && classrooms && classrooms.length > 0 ? (
-                  classrooms.map((classroom) => (
-                    <div
-                      key={classroom.classroom_id}
-                      className="flex items-center p-4 bg-white shadow rounded-md"
-                    >
-                      <div className="mr-4">
-                        <UserGroupIcon className="h-10 w-10 text-blue-500" />
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Teachers Column */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+                    <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
+                    Profesores
+                  </h2>
+                  <button
+                    onClick={handleAddUser}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Añadir
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {users.length > 0 ? (
+                    users.map((user) => (
+                      <div
+                        key={user.user_id}
+                        className="flex items-center p-3 rounded-md hover:bg-gray-50 transition-colors border border-gray-100"
+                      >
+                        <img
+                          src={
+                            user.userProfile?.profile_picture ||
+                            '/default-avatar.png'
+                          }
+                          alt="profile"
+                          className="h-10 w-10 mr-3 rounded-full object-cover"
+                        />
+                        <div>
+                          <p className="font-medium text-gray-800">
+                            {user.userProfile?.first_name}{' '}
+                            {user.userProfile?.last_name}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-grow">
-                        <h3 className="font-bold text-lg">{classroom.code}</h3>
-                        <p className="text-gray-600">
-                          Empresa: {classroom.Enterprise.name}
-                        </p>
-                        <p className="text-gray-600">
-                          Turno: {classroom.Shift.name}
-                        </p>
-                        <p className="text-black">
-                          Profesor: {classroom.User.userProfile.first_name}{' '}
-                          {classroom.User.userProfile.last_name}
-                        </p>
-                        <p className="text-gray-600">
-                          Creado el:{' '}
-                          {new Date(classroom.created_at).toLocaleDateString()}
-                        </p>
+                    ))
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-gray-500">
+                        No hay profesores asignados
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Classrooms Column */}
+              <div className="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+                    <UserGroupIcon className="h-5 w-5 mr-2 text-indigo-600" />
+                    Aulas
+                  </h2>
+                  <button
+                    onClick={handleAddClassroom}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
+                  >
+                    Añadir
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  {!isLoading && classrooms && classrooms.length > 0 ? (
+                    classrooms.map((classroom) => (
+                      <div
+                        key={classroom.classroom_id}
+                        className="border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                      >
+                        <div className="flex items-start">
+                          <div className="bg-indigo-100 p-3 rounded-full mr-4">
+                            <UserGroupIcon className="h-5 w-5 text-indigo-600" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex justify-between">
+                              <h3 className="font-bold text-gray-800">
+                                {classroom.code}
+                              </h3>
+                              <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                {classroom.Shift.name}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Empresa: {classroom.Enterprise.name}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Profesor: {classroom.User.userProfile.first_name}{' '}
+                              {classroom.User.userProfile.last_name}
+                            </p>
+                            <div className="mt-2 flex justify-between items-center">
+                              <p className="text-xs text-gray-500">
+                                Creado el:{' '}
+                                {new Date(
+                                  classroom.created_at
+                                ).toLocaleDateString()}
+                              </p>
+                              <button className="text-xs text-blue-600 hover:text-blue-800">
+                                Ver detalles
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-gray-500">No hay aulas disponibles</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Courses Section */}
+            <div className="mt-6 bg-white rounded-lg shadow-md p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-gray-800 flex items-center">
+                  <AcademicCapIcon className="h-5 w-5 mr-2 text-purple-600" />
+                  Cursos Asignados
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {courseStudent.length > 0 ? (
+                  courseStudent.map((course) => (
+                    <div
+                      key={course.course_id}
+                      className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-center">
+                        <img
+                          src={
+                            course.Course.image || '/default-course-image.jpg'
+                          }
+                          alt={course.Course.name}
+                          className="h-12 w-12 mr-3 rounded-md object-cover"
+                        />
+                        <div>
+                          <h3 className="font-medium text-gray-800">
+                            {course.Course.name}
+                          </h3>
+                        </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-600">No hay aulas disponibles</p>
+                  <div className="col-span-full text-center py-4">
+                    <p className="text-gray-500">No hay cursos asignados</p>
+                  </div>
                 )}
               </div>
-            </div>
-
-            {/* Contenedor de Cursos */}
-            <div>
-              <h4 className="font-bold text-md  text-black ">Cursos</h4>
-              {courseStudent.length > 0 ? (
-                courseStudent.map((course) => (
-                  <div
-                    key={course.course_id}
-                    className="flex items-center mt-2 border-2 border-e-cyan-800 p-5"
-                  >
-                    <img
-                      src={course.Course.image || '/default-course-image.jpg'}
-                      alt={course.Course.name}
-                      className="h-12 w-12 mr-4 rounded-full"
-                    />
-                    <p className="text-gray-700">{course.Course.name}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No hay cursos asignados</p>
-              )}
             </div>
           </div>
         </main>
       </div>
 
-      {/* Modal que carga el formulario según modalType */}
+      {/* Modal */}
       <Modal
         show={isModalOpen}
         onClose={handleModalClose}
         title={
           modalType === 'supervisor'
-            ? 'Registrar Profesor'
-            : 'Registrar nuevo aula'
+            ? 'Registrar Nuevo Profesor'
+            : modalType === 'classroom'
+            ? 'Crear Nueva Aula'
+            : 'Completar Perfil'
         }
       >
         {modalType === 'profile' && newUserId ? (
           profileLoading ? (
-            <Loader /> // Muestra el loader mientras se carga el perfil
+            <div className="flex justify-center py-8">
+              <Loader />
+            </div>
           ) : (
             <ProfileForm userId={newUserId} onSuccess={handleModalClose} />
           )
