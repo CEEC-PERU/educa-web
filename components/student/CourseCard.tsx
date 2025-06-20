@@ -16,6 +16,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
   isJuegosIndex = false,
 }) => {
   return (
+    //return a card component with the course details
     <div
       className={`rounded-xl overflow-hidden shadow-lg bg-brandazul-600 ${
         isJuegosIndex

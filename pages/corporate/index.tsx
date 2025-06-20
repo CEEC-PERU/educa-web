@@ -93,6 +93,7 @@ const CorporateDashboard: React.FC = () => {
     return [];
   };
 
+  //Datos actualizados
   const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
       return [0, 0, 0, 1, 0, 33]; // Valores en porcentaje para cada estrella
