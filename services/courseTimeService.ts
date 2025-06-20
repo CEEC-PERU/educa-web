@@ -42,3 +42,19 @@ export const createCourseTimeEndTime = async (
     throw new Error('Error creating profile');
   }
 };
+
+export const getCourseTime = async (
+  course_id: number,
+  role_id: number,
+  enterprise_id: number
+) => {
+  try {
+    const response = await axios.get(
+      `${API_COURSETIME}/average-time/${course_id}/${role_id}/${enterprise_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching course time:', error);
+    throw new Error('Error fetching course time');
+  }
+};

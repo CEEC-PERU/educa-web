@@ -49,7 +49,7 @@ const CorporateDashboard: React.FC = () => {
   //  { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
   //];
 
-  const courseTimeData = [{ course: 'Contctados', Tiempo: 10 }];
+  const courseTimeData = [{ course: 'Contactados', Tiempo: 20 }];
 
   //averageTimeData
   const averageTimePerDayData = [
@@ -245,7 +245,7 @@ const CorporateDashboard: React.FC = () => {
             badgeText="Puntaje "
           />
 
-          {/* Gráfico de Tiempo promedio por día */}
+          {/* Gráfico de Tiempo promedio por día en  */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">
               Tiempo promedio por día en la plataforma

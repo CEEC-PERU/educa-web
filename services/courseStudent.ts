@@ -82,6 +82,7 @@ export const assignStudentsToCourse = async (
     const response = await axios.post(`${API_POST_COURSESTUDENT}`, {
       enterprise_id: enterpriseId,
       course_id: courseId,
+      role_id: 2, // Asumiendo que el role_id para estudiantes es 2
     });
     return response.data;
   } catch (error) {

@@ -25,8 +25,8 @@ const CourseCard: React.FC<CourseCardProps> = ({
     >
       <img
         className={`${
-          isJuegosIndex ? 'w-1/3 h-auto' : 'w-full h-32 lg:h-40 xl:h-48'
-        } object-cover p-3 rounded-lg`}
+          isJuegosIndex ? 'w-1/3 h-auto' : 'w-full h-48 object-cover'
+        }`}
         src={image}
         alt={name}
       />
