@@ -1,5 +1,5 @@
 // hooks/useDownloadNotas.ts
-import useDownload from './../useDownload';
+import useDownload from '../useDownload';
 import { API_GET_NOTAS_EXCEL } from '../../utils/Endpoints';
 import { useAuth } from '../../context/AuthContext';
 
