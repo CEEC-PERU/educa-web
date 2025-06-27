@@ -10,7 +10,7 @@ import {
   API_GET_PROFILE_BY_USER,
   API_PUT_PROFILE,
 } from '../utils/Endpoints';
-import { Profile, UserInfo } from '../interfaces/UserInterfaces';
+import { Profile, UserInfo } from '../interfaces/User/UserInterfaces';
 export const createProfile = async (
   userToken: string,
   user_id: number,

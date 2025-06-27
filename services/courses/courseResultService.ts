@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { RequestCourseResult } from '../interfaces/Courses/CourseResult';
-import { API_POST_COURSE_RESULT } from '../utils/Endpoints';
+import { RequestCourseResult } from '../../interfaces/Courses/CourseResult';
+import { API_POST_COURSE_RESULT } from '../../utils/Endpoints';
 export const createCourseResult = async (
   userToken: string,
   CourseResultData: RequestCourseResult

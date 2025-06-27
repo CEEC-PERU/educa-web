@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
 import {

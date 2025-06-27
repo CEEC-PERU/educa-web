@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { HomeIcon, ArrowRightStartOnRectangleIcon, ComputerDesktopIcon, PuzzlePieceIcon , DocumentIcon , DocumentArrowUpIcon } from '@heroicons/react/24/solid';
+import {
+  HomeIcon,
+  ArrowRightStartOnRectangleIcon,
+  ComputerDesktopIcon,
+  PuzzlePieceIcon,
+  DocumentIcon,
+  DocumentArrowUpIcon,
+} from '@heroicons/react/24/solid';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 
-const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => void }> = ({ isDrawerOpen, toggleSidebar }) => {
+const DrawerNavigation: React.FC<{
+  isDrawerOpen: boolean;
+  toggleSidebar: () => void;
+}> = ({ isDrawerOpen, toggleSidebar }) => {
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
 
@@ -22,8 +32,16 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => v
   };
 
   return (
-    <div className={`fixed left-0 top-16 h-full z-50 transition-transform transform ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:w-64`}>
-      <div className={`bg-brandmorado-700 h-full rounded-r-lg text-white transition-width transform ${isDrawerOpen ? 'w-64' : 'w-16'}`}>
+    <div
+      className={`fixed left-0 top-16 h-full z-50 transition-transform transform ${
+        isDrawerOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0 lg:w-64`}
+    >
+      <div
+        className={`bg-brandmorado-700 h-full rounded-r-lg text-white transition-width transform ${
+          isDrawerOpen ? 'w-64' : 'w-16'
+        }`}
+      >
         <nav className="flex-1">
           <ul>
             <li>
@@ -40,7 +58,11 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => v
                 onClick={() => handleNavigation('/student/profile')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <img src={uri_picture} alt="Profile" className="h-6 w-6 rounded-full" />
+                <img
+                  src={uri_picture}
+                  alt="Profile"
+                  className="h-6 w-6 rounded-full"
+                />
                 {isDrawerOpen && <span className="ml-2">{name}</span>}
               </button>
             </li>
@@ -71,14 +93,16 @@ const DrawerNavigation: React.FC<{ isDrawerOpen: boolean; toggleSidebar: () => v
                 {isDrawerOpen && <span className="ml-2">Mis Diplomas</span>}
               </button>
             </li>
-            
+
             <li>
               <button
                 onClick={() => handleNavigation('/student/juegos')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <PuzzlePieceIcon className="h-6 w-6" />
-                {isDrawerOpen && <span className="ml-2">Juegos Didácticos</span>}
+                {isDrawerOpen && (
+                  <span className="ml-2">Juegos Didácticos</span>
+                )}
               </button>
             </li>
             <li>

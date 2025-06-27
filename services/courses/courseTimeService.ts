@@ -1,6 +1,10 @@
 import axios from 'axios';
-import { CourseTime, CourseTimeEnd } from '../interfaces/Courses/CourseTime';
-import { API_COURSETIME } from '../utils/Endpoints';
+import {
+  CourseTime,
+  CourseTimeEnd,
+  CourseTimeAverage,
+} from '../../interfaces/Courses/CourseTime';
+import { API_COURSETIME } from '../../utils/Endpoints';
 export const createCourseTime = async (
   userToken: string,
   course_time: CourseTime
@@ -43,15 +47,22 @@ export const createCourseTimeEndTime = async (
   }
 };
 
-export const getCourseTime = async (
-  course_id: number,
-  role_id: number,
-  enterprise_id: number
+export const getCourseTimeAverage = async (
+  course_id?: number,
+  role_id?: number,
+  enterprise_id?: number
 ) => {
+  if (!course_id || !role_id || !enterprise_id) {
+    throw new Error(
+      'Parámetros incompletos para obtener el tiempo promedio del curso.'
+    );
+  }
+
   try {
     const response = await axios.get(
       `${API_COURSETIME}/average-time/${course_id}/${role_id}/${enterprise_id}`
     );
+    console.log('Response average time:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching course time:', error);

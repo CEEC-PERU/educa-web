@@ -3,7 +3,7 @@ import { CourseStudent } from '../interfaces/Courses/CourseStudent';
 import {
   getCourseStudent,
   getCourseStudentCategory,
-} from '../services/courseStudent';
+} from '../services/courses/courseStudent';
 import { useAuth } from '../context/AuthContext';
 //useCourseStudent
 export const useCourseStudent = () => {

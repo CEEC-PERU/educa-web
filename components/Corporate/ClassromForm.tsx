@@ -11,7 +11,7 @@ import {
   getCompanies,
   getUsersByCompanyAndRole,
   getUsersByRole,
-} from '../../services/userService';
+} from '../../services/users/userService';
 interface ClassroomFormProps {
   onClose: () => void;
   onSuccess: () => void;

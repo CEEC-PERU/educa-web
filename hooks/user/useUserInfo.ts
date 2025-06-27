@@ -1,6 +1,6 @@
 // hooks/useUserInfo.ts
 import { useState } from 'react';
-import { createUserInfo } from '../../services/userInfoService';
+import { createUserInfo } from '../../services/users/userInfoService';
 import { UserInfoData } from '../../interfaces/User/UserInfo';
 
 export const useUserInfo = () => {

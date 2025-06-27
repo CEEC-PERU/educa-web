@@ -4,14 +4,14 @@ import { useAuth } from '../../context/AuthContext';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import CourseCard from '../../components/student/CourseCard';
 import { useRouter } from 'next/router';
 
 import './../../app/globals.css';
 
-Modal.setAppElement('#__next'); 
+Modal.setAppElement('#__next');
 
 const Diplomas: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -41,15 +41,20 @@ const Diplomas: React.FC = () => {
             user={user ? { profilePicture: uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />
-          <SidebarDrawer isDrawerOpen={isDrawerOpen} toggleSidebar={toggleSidebar} />
+          <SidebarDrawer
+            isDrawerOpen={isDrawerOpen}
+            toggleSidebar={toggleSidebar}
+          />
         </div>
 
         <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
-          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60" >
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Columna 1: Contenido principal */}
               <div className="text-white">
-                <h1 className="text-2xl font-bold mb-4 text-center lg:text-left">Mis Diplomas</h1>
+                <h1 className="text-2xl font-bold mb-4 text-center lg:text-left">
+                  Mis Diplomas
+                </h1>
 
                 <div className="bg-white p-6 rounded-lg shadow-lg">
                   <img

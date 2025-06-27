@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
-import { createIndividualUser, getCompanies } from '../../services/userService';
+import {
+  createIndividualUser,
+  getCompanies,
+} from '../../services/users/userService';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';

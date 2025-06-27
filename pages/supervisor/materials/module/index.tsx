@@ -5,7 +5,7 @@ import {
   updateModuleStatus,
   getModule,
 } from '../../../../services/moduleService';
-import { getModulesByCourseId } from '../../../../services/courseService';
+import { getModulesByCourseId } from '../../../../services/courses/courseService';
 import { deleteModule } from '../../../../services/moduleService';
 import { deleteSession } from '../../../../services/sessionService';
 import { getEvaluations } from '../../../../services/evaluationService';
@@ -27,7 +27,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import ModalConfirmation from '../../../../components/ModalConfirmation';
-import useModal from '../../../../hooks/useModal';
+import useModal from '../../../../hooks/ui/useModal';
 import AlertComponent from '../../../../components/AlertComponent';
 import Modal from '../../../../components/Admin/Modal';
 import AddModuleForm from './../../../content/addModule';

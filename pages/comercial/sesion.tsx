@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
 import { useAuth } from '../../context/AuthContext';
-import { getUsersByEnterpriseWithSessions } from '../../services/courseStudent';
+import { getUsersByEnterpriseWithSessions } from '../../services/courses/courseStudent';
 import Loader from '../../components/Loader';
 import TopStudentsChart from '../../components/Corporate/TopStudent';
 import './../../app/globals.css';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const CorporateUsers: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();

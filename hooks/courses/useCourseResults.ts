@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { RequestCourseResult } from '../interfaces/Courses/CourseResult';
-import { createCourseResult } from '../services/courseResultService';
-import { useAuth } from '../context/AuthContext';
+import { RequestCourseResult } from '../../interfaces/Courses/CourseResult';
+import { createCourseResult } from '../../services/courses/courseResultService';
+import { useAuth } from '../../context/AuthContext';
 
 export const useResultCourse = () => {
   const [resultcourse, setResultCourse] = useState<RequestCourseResult | null>(

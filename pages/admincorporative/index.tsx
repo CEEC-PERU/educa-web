@@ -18,7 +18,7 @@ import {
 import { ChartOptions } from 'chart.js';
 import './../../app/globals.css';
 import { useMetricaCorporate } from '../../hooks/dashboard/useMetricaCorporate';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import SidebarAdminCorporate from '@/components/admincorporative/CorporativeSideBar';
 
 ChartJS.register(

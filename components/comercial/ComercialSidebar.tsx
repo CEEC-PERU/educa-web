@@ -10,7 +10,7 @@ import {
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
 interface SidebarComercialProps {

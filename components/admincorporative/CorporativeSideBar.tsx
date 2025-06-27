@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import {
+  BookOpenIcon,
+  TagIcon,
+  AcademicCapIcon,
+  ClipboardDocumentCheckIcon,
+  ClockIcon,
+  ArrowRightStartOnRectangleIcon,
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
 interface SidebarCorporateProps {
@@ -10,7 +17,10 @@ interface SidebarCorporateProps {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({
+  showSidebar,
+  setShowSidebar,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
@@ -62,7 +72,7 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, s
       >
         <nav className="flex-1">
           <ul>
-          <li>
+            <li>
               <button
                 onClick={() => handleNavigation('/admincorporative/')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
@@ -71,9 +81,7 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, s
                 {isOpen && <span className="ml-2">Dashboard</span>}
               </button>
             </li>
-         
-           
-           
+
             <li>
               <button
                 onClick={logout}
@@ -83,7 +91,6 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, s
                 {isOpen && <span className="ml-2">Cerrar Sesión</span>}
               </button>
             </li>
-            
           </ul>
         </nav>
       </div>

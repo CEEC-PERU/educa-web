@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import {
+  BookOpenIcon,
+  TagIcon,
+  AcademicCapIcon,
+  ClipboardDocumentCheckIcon,
+  ClockIcon,
+  ArrowRightStartOnRectangleIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
 interface SidebarCorporateProps {
@@ -10,7 +18,10 @@ interface SidebarCorporateProps {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarCorporate: React.FC<SidebarCorporateProps> = ({
+  showSidebar,
+  setShowSidebar,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
@@ -100,7 +111,9 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({ showSidebar, setSho
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/corporate/qualification/progress')}
+                onClick={() =>
+                  handleNavigation('/corporate/qualification/progress')
+                }
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <AcademicCapIcon className="h-6 w-6" />

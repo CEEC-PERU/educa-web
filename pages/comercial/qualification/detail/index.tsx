@@ -16,8 +16,8 @@ import Sidebar from '../../../../components/comercial/ComercialSidebar';
 import {
   getCoursesWithGradesByStudent,
   getModulesByCourseId2,
-} from '../../../../services/courseStudent';
-import { getUserById } from '../../../../services/userService';
+} from '../../../../services/courses/courseStudent';
+import { getUserById } from '../../../../services/users/userService';
 import { getEnterprise } from '../../../../services/enterpriseService';
 import Loader from '../../../../components/Loader';
 import './../../../../app/globals.css';

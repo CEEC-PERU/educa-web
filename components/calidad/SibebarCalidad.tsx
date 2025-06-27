@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, AcademicCapIcon, ClipboardDocumentCheckIcon, ClockIcon, ArrowRightStartOnRectangleIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import {
+  BookOpenIcon,
+  TagIcon,
+  AcademicCapIcon,
+  ClipboardDocumentCheckIcon,
+  ClockIcon,
+  ArrowRightStartOnRectangleIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
-
 
 interface SidebarSupervisorProps {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setShowSidebar }) => {
+const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
+  showSidebar,
+  setShowSidebar,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
@@ -24,7 +34,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
   }
-//sidebarcalidad
+  //sidebarcalidad
   useEffect(() => {
     const fetchRequirements = async () => {
       try {
@@ -34,7 +44,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
         console.error('Error fetching requirements:', error);
       }
     };
-//datos actualziados , prueba , sidebar calidad
+    //datos actualziados , prueba , sidebar calidad
     fetchRequirements();
   }, []);
 
@@ -63,8 +73,6 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
       >
         <nav className="flex-1">
           <ul>
-          
-          
             <li>
               <button
                 onClick={() => handleNavigation('/calidad')}
@@ -74,8 +82,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
                 {isOpen && <span className="ml-2">Cursos</span>}
               </button>
             </li>
-           
-           
+
             <li>
               <button
                 onClick={logout}
@@ -85,7 +92,6 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({ showSidebar, setS
                 {isOpen && <span className="ml-2">Cerrar Sesión</span>}
               </button>
             </li>
-            
           </ul>
         </nav>
       </div>

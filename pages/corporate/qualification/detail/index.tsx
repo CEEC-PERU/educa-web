@@ -1,19 +1,36 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Bar, Doughnut } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from 'chart.js';
 import Navbar from '../../../../components/Navbar';
 import Sidebar from '../../../../components/Corporate/CorporateSideBar';
-import { getCoursesWithGradesByStudent, getModulesByCourseId2 } from '../../../../services/courseStudent';
-import { getUserById } from '../../../../services/userService';
+import {
+  getCoursesWithGradesByStudent,
+  getModulesByCourseId2,
+} from '../../../../services/courses/courseStudent';
+import { getUserById } from '../../../../services/users/userService';
 import { getEnterprise } from '../../../../services/enterpriseService';
 import Loader from '../../../../components/Loader';
 import './../../../../app/globals.css';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 const Detail: React.FC = () => {
   const router = useRouter();
@@ -38,7 +55,9 @@ const Detail: React.FC = () => {
           const enterpriseData = await getEnterprise(studentData.enterprise_id);
           setEnterprise(enterpriseData);
 
-          const coursesData = await getCoursesWithGradesByStudent(Number(user_id));
+          const coursesData = await getCoursesWithGradesByStudent(
+            Number(user_id)
+          );
           setCourses(coursesData);
         } catch (error) {
           console.error('Error fetching data:', error);
@@ -52,7 +71,10 @@ const Detail: React.FC = () => {
 
   const handleViewGrades = async (course: any) => {
     try {
-      const modulesData = await getModulesByCourseId2(course.course_id, Number(user_id));
+      const modulesData = await getModulesByCourseId2(
+        course.course_id,
+        Number(user_id)
+      );
       setModules(modulesData[0].courseModules);
       setFinalExam(modulesData[0].Evaluation);
       setSelectedCourse(course);
@@ -105,17 +127,25 @@ const Detail: React.FC = () => {
                   <div className="flex flex-col sm:flex-row items-center border-t border-b border-[#8282FF] bg-[#FFFFFF] p-4">
                     <div className="flex-shrink-0 mb-4 sm:mb-0 sm:mr-6">
                       <img
-                        src={student.userProfile?.profile_picture || 'default_profile_picture.png'}
+                        src={
+                          student.userProfile?.profile_picture ||
+                          'default_profile_picture.png'
+                        }
                         alt="Profile"
                         className="h-32 w-32 rounded-full"
                       />
                     </div>
                     <div className="text-center sm:text-left">
                       <h2 className="text-2xl font-bold text-blue-600 mb-2">
-                        {student.userProfile?.first_name} {student.userProfile?.last_name}
+                        {student.userProfile?.first_name}{' '}
+                        {student.userProfile?.last_name}
                       </h2>
-                      <p className="text-lg text-gray-700">{student.userProfile?.email}</p>
-                      <p className="text-md text-gray-500">{student.userProfile?.job_title}</p>
+                      <p className="text-lg text-gray-700">
+                        {student.userProfile?.email}
+                      </p>
+                      <p className="text-md text-gray-500">
+                        {student.userProfile?.job_title}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -137,7 +167,6 @@ const Detail: React.FC = () => {
                   </div>
                   <div className="ml-0 md:ml-6 w-full md:w-auto mt-4 md:mt-0">
                     <Bar data={barChartData} options={{ responsive: true }} />
-
                   </div>
                 </div>
               </div>
@@ -145,15 +174,25 @@ const Detail: React.FC = () => {
               <div className="mt-10 flex flex-col lg:flex-row gap-6 ">
                 <div className="w-full lg:w-1/2 flex justify-center">
                   <div className="w-full h-80 bg-white p-6">
-                    <Doughnut data={doughnutChartData} options={{ responsive: true }} />
+                    <Doughnut
+                      data={doughnutChartData}
+                      options={{ responsive: true }}
+                    />
                   </div>
                 </div>
                 <div className="w-full lg:w-1/2 flex flex-col bg-white p-6">
-                  <img src="https://res.cloudinary.com/dk2red18f/image/upload/v1724343480/uuhx7zsmvbsn91hcdzex.png" alt="Course" className="w-full h-40 object-cover rounded-lg" />
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1724343480/uuhx7zsmvbsn91hcdzex.png"
+                    alt="Course"
+                    className="w-full h-40 object-cover rounded-lg"
+                  />
                   <h3 className="mt-4 text-xl font-bold">Soft Skills</h3>
                   <p className="text-gray-600">Time Dedicated: 50 hours</p>
                   <p className="text-gray-600">Instructor: John Doe</p>
-                  <p className="text-gray-500 mt-2">Course Description: This is a brief description of the course.</p>
+                  <p className="text-gray-500 mt-2">
+                    Course Description: This is a brief description of the
+                    course.
+                  </p>
                 </div>
               </div>
 

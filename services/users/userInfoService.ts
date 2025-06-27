@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { UserInfoData } from '../interfaces/User/UserInfo';
-import { API_USER_INFO } from '../utils/Endpoints';
+import { UserInfoData } from '../../interfaces/User/UserInfo';
+import { API_USER_INFO } from '../../utils/Endpoints';
 
 export const createUserInfo = async (data: UserInfoData) => {
   const formData = new FormData();

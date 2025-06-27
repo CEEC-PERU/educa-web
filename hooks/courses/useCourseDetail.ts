@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CourseDetail } from '../../interfaces/Courses/CourseDetail';
-import { getCourseDetail } from '../../services/courseDetail';
+import { getCourseDetail } from '../../services/courses/courseDetail';
 import { useAuth } from '../../context/AuthContext';
 //useCourseDetail
 export const useCourseDetail = (course_id: number) => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { User } from '../interfaces/User/UserAdmin';
 import { useAuth } from '../context/AuthContext';
-import { getUsersByCompanyAndRole } from '../services/userService';
+import { getUsersByCompanyAndRole } from '../services/users/userService';
 
 export const useProfesor = () => {
   const [users, setUsers] = useState<User[]>([]);

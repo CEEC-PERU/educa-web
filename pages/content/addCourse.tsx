@@ -8,7 +8,7 @@ import ActionButtons from '../../components/Content/ActionButtons';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
 import { getAvailableEvaluations } from '../../services/evaluationService';
-import { addCourse } from '../../services/courseService';
+import { addCourse } from '../../services/courses/courseService';
 import { Category } from '../../interfaces/Category';
 import { Professor } from '../../interfaces/Professor';
 import { Evaluation } from '../../interfaces/Evaluation';

@@ -1,9 +1,14 @@
-import { useState } from 'react';
-import { CourseTime, CourseTimeEnd } from '../../interfaces/Courses/CourseTime';
+import { useState, useEffect } from 'react';
+import {
+  CourseTime,
+  CourseTimeEnd,
+  CourseTimeAverage,
+} from '../../interfaces/Courses/CourseTime';
 import {
   createCourseTime,
   createCourseTimeEndTime,
-} from '../../services/courseTimeService';
+  getCourseTimeAverage,
+} from '../../services/courses/courseTimeService';
 import { useAuth } from '../../context/AuthContext';
 
 export const useCourseTime = () => {
@@ -69,5 +74,49 @@ export const useCourseTimeEnd = () => {
     error,
     isLoading,
     createCourseTimeEnd,
+  };
+};
+
+export const useAverageCourse = (course_id?: number) => {
+  const [coursetimeaverage, setCourseTimeAverage] = useState<
+    CourseTimeAverage[]
+  >([]);
+
+  const [error, setError] = useState<string | null>(null);
+  const [isLoadingAverage, setIsLoadingAverage] = useState<boolean>(true);
+  const { user } = useAuth();
+  const userInfo = user as { id: number; enterprise_id: number };
+
+  useEffect(() => {
+    const fetchAverageCourse = async () => {
+      if (!course_id || !userInfo?.enterprise_id) {
+        setIsLoadingAverage(false);
+        setError('Faltan datos necesarios para obtener el promedio.');
+        return;
+      }
+
+      try {
+        setIsLoadingAverage(true);
+        const fetchedAverageCourse = await getCourseTimeAverage(
+          course_id,
+          1, // Asumiendo role_id 1 es válido
+          userInfo.enterprise_id
+        );
+        setCourseTimeAverage(fetchedAverageCourse);
+      } catch (error) {
+        console.error('Error fetching average course:', error);
+        setError('Error al obtener el tiempo promedio del curso.');
+      } finally {
+        setIsLoadingAverage(false);
+      }
+    };
+
+    fetchAverageCourse();
+  }, [course_id]);
+
+  return {
+    coursetimeaverage,
+    error,
+    isLoadingAverage,
   };
 };

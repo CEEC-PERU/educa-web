@@ -1,7 +1,7 @@
-import axios from './axios';
-import { Course } from '../interfaces/Courses/Course';
-import { Module } from '../interfaces/Module';
-import { API_COURSES } from '../utils/Endpoints';
+import axios from './../axios';
+import { Course } from '../../interfaces/Courses/Course';
+import { Module } from '../../interfaces/Module';
+import { API_COURSES } from '../../utils/Endpoints';
 
 export const getCourses = async (): Promise<Course[]> => {
   const response = await axios.get<Course[]>(API_COURSES);

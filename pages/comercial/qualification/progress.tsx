@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/comercial/ComercialSidebar';
 import { useAuth } from '../../../context/AuthContext';
-import { getStudentsByEnterprise } from '../../../services/courseStudent';
+import { getStudentsByEnterprise } from '../../../services/courses/courseStudent';
 import Loader from '../../../components/Loader';
 import ProgressBar from '../../../components/Corporate/ProgressBar';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';

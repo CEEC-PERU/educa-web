@@ -2,18 +2,18 @@ import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import { Enterprise } from '../../../interfaces/Enterprise';
-import { User } from '../../../interfaces/UserCourse';
+import { User } from '../../../interfaces/User/UserCourse';
 import { Course } from '../../../interfaces/Courses/Course';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
 import {
   getCompanies,
   getUsersByCompanyAndRole,
-} from '../../../services/userService';
-import { getCourses } from '../../../services/courseService';
+} from '../../../services/users/userService';
+import { getCourses } from '../../../services/courses/courseService';
 import {
   assignStudentsToCourse,
   getUnassignedStudents,
-} from '../../../services/courseStudent';
+} from '../../../services/courses/courseStudent';
 import FormField from '../../../components/FormField';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import AlertComponent from '../../../components/AlertComponent';

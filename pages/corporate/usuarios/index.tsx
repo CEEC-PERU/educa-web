@@ -6,7 +6,7 @@ import {
   getCompanies,
   getUsersByCompanyAndRole,
   getUsersByRole,
-} from '../../../services/userService';
+} from '../../../services/users/userService';
 import FormField from '../../../components/FormField';
 import TableUser from '../../../components/TableUser';
 import ButtonContent from '../../../components/Content/ButtonContent';
@@ -17,9 +17,11 @@ import { User } from '../../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../../interfaces/Enterprise';
 import { useUserCount } from '../../../hooks/user/useUserCount';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
+import { useDeleteUser } from '../../../hooks/user/useDeleteUser';
 import './../../../app/globals.css';
 
 const Usuarios: React.FC = () => {
+  const { deleteUser } = useDeleteUser();
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { usercount, isLoading, error } = useUserCount();
@@ -132,8 +134,21 @@ const Usuarios: React.FC = () => {
     });
   }
 
-  const handleActionClick = (row: any) => {
-    router.push(`/admin/editUser/${row.user_id}`);
+  const handleDeleteClick = async (row: any) => {
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que deseas eliminar al usuario ?`
+    );
+    if (confirmDelete) {
+      try {
+        await deleteUser(row.user_id);
+        console.log('Usuario eliminado:', row.user_id);
+        alert('Usuario eliminado correctamente.');
+        router.reload();
+        setUsers(users.filter((user) => user.user_id !== row.user_id)); // Actualizar la lista local de usuarios
+      } catch (error) {
+        alert('Error al eliminar el usuario.');
+      }
+    }
   };
 
   const handleExportCSV = () => {
@@ -223,7 +238,7 @@ const Usuarios: React.FC = () => {
                   columns={columnsWithProfile}
                   data={usersWithProfile}
                   actionLabel="Editar"
-                  onActionClick={handleActionClick}
+                  onDeleteClick={handleDeleteClick}
                 />
               </div>
               <div>
@@ -233,6 +248,7 @@ const Usuarios: React.FC = () => {
                 <TableUser
                   columns={columnsWithoutProfile}
                   data={usersWithoutProfile}
+                  onDeleteClick={handleDeleteClick}
                 />
               </div>
             </div>

@@ -23,7 +23,7 @@ const SessionPage: React.FC = () => {
       try {
         const [sessionsRes, modulesRes] = await Promise.all([
           getSessions(),
-          getModules()
+          getModules(),
         ]);
         setSessions(sessionsRes);
         setModules(modulesRes);
@@ -44,7 +44,9 @@ const SessionPage: React.FC = () => {
   const handleDelete = async (session_id: number) => {
     try {
       await deleteSession(session_id);
-      setSessions(sessions.filter(session => session.session_id !== session_id));
+      setSessions(
+        sessions.filter((session) => session.session_id !== session_id)
+      );
     } catch (error) {
       console.error('Error deleting session:', error);
       setError('Error deleting session');
@@ -57,13 +59,18 @@ const SessionPage: React.FC = () => {
     { label: '', key: 'actions' },
   ];
 
-  const rows = sessions.map(session => ({
+  const rows = sessions.map((session) => ({
     name: <span>{session.name}</span>,
-    module_name: <span>{modules.find(module => module.module_id === session.module_id)?.name || ''}</span>,
+    module_name: (
+      <span>
+        {modules.find((module) => module.module_id === session.module_id)
+          ?.name || ''}
+      </span>
+    ),
     actions: (
       <div className="flex space-x-2">
-        <Link  href={`/content/editSession?id=${session.session_id}`}>
-            <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
+        <Link href={`/content/editSession?id=${session.session_id}`}>
+          <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
         </Link>
         <button onClick={() => handleDelete(session.session_id)}>
           <TrashIcon className="w-6 h-5  text-red-500 cursor-pointer" />
@@ -74,24 +81,31 @@ const SessionPage: React.FC = () => {
 
   return (
     <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`flex-grow p-10 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-64' : ''}`}>
-          <div className="grid grid-cols-1 max-w-4xl mt-16">
-            <div className="container mx-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold">Sesiones</h2>
-                <FloatingButton link="/content/addSession" label="Agregar Sesión" />
+      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+        <div className="flex flex-1">
+          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+          <main
+            className={`flex-grow p-10 transition-all duration-300 ease-in-out ${
+              showSidebar ? 'ml-64' : ''
+            }`}
+          >
+            <div className="grid grid-cols-1 max-w-4xl mt-16">
+              <div className="container mx-auto">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold">Sesiones</h2>
+                  <FloatingButton
+                    link="/content/addSession"
+                    label="Agregar Sesión"
+                  />
+                </div>
+                {error && <p className="text-red-500">{error}</p>}
+                <Table columns={columns} rows={rows} />
               </div>
-              {error && <p className="text-red-500">{error}</p>}
-              <Table columns={columns} rows={rows} />
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
-    </div>
     </ProtectedRoute>
   );
 };

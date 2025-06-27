@@ -8,8 +8,8 @@ import {
   API_POST_COURSESTUDENT,
   API_GET_COURSESTUDENT_ASSIGNED,
   API_GET_COURSESTUDENT_SUPERVISOR,
-} from '../utils/Endpoints';
-import { CourseStudent } from '../interfaces/Courses/CourseStudent';
+} from '../../utils/Endpoints';
+import { CourseStudent } from '../../interfaces/Courses/CourseStudent';
 
 export const getCourseStudent = async (
   userToken: string,

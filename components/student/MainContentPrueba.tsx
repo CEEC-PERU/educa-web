@@ -17,7 +17,7 @@ import {
   useCuestionarioNPS,
   useCreateCuestionario,
 } from '../../hooks/useCuestionario';
-import { useResultCourse } from '../../hooks/useCourseResults';
+import { useResultCourse } from '../../hooks/courses/useCourseResults';
 import { useAuth } from '../../context/AuthContext';
 import NPSForm from './../../components/student/NPSForm';
 import StarForm from './../../components/student/StarForm';

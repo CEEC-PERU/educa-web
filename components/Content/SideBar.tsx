@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { BookOpenIcon, TagIcon, UserGroupIcon, CubeIcon, DocumentTextIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/outline';
+import {
+  BookOpenIcon,
+  TagIcon,
+  UserGroupIcon,
+  CubeIcon,
+  DocumentTextIcon,
+  ArrowRightStartOnRectangleIcon,
+} from '@heroicons/react/24/outline';
 
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 
 interface SidebarProps {
   showSidebar: boolean;
@@ -75,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                 {isOpen && <span className="ml-2">Profesores</span>}
               </button>
             </li>
-              <li>
+            <li>
               <button
                 onClick={() => handleNavigation('/content/module')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
@@ -89,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
                 onClick={() => handleNavigation('/content/evaluation')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <DocumentTextIcon  className="h-6 w-6" />
+                <DocumentTextIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Evaluaciones</span>}
               </button>
             </li>
@@ -108,6 +115,5 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
     </div>
   );
 };
-
 
 export default Sidebar;

@@ -6,7 +6,7 @@ import {
   getCompanies,
   getUsersByCompanyAndRole,
   getUsersByRole,
-} from '../../services/userService';
+} from '../../services/users/userService';
 import FormField from '../../components/FormField';
 import TableUser from '../../components/TableUser';
 import ButtonContent from '../../components/Content/ButtonContent';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { UserCount } from '../../interfaces/User/UserCount';
-import { getUserCount } from '../../services/userService';
+import { getUserCount } from '../../services/users/userService';
 import { useAuth } from '../../context/AuthContext';
 
 //useNotas

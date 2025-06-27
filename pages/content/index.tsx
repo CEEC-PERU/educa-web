@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import CardCourses from '../../components/Content/CardCourses';
 import ButtonComponent from '../../components/ButtonComponent';
-import { getCourses } from '../../services/courseService';
+import { getCourses } from '../../services/courses/courseService';
 import { Course } from '../../interfaces/Courses/Course';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';

@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import CourseMaterials from '../../components/student/CourseMaterials';
 import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import { useCourseDetail } from '../../hooks/courses/useCourseDetail';
 import { useCoursesMaterials } from '../../hooks/courses/courseMaterial';

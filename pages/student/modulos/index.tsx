@@ -4,7 +4,7 @@ import SidebarPrueba from '../../../components/student/SideBarPrueba';
 import { useAuth } from '../../../context/AuthContext';
 import Navbar from '../../../components/Navbar';
 import MainContentPrueba from '../../../components/student/MainContentPrueba';
-import { Profile } from '../../../interfaces/UserInterfaces';
+import { Profile } from '../../../interfaces/User/UserInterfaces';
 import {
   Question,
   ModuleEvaluation,

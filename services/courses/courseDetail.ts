@@ -2,9 +2,9 @@ import axios from 'axios';
 import {
   API_GET_DETAILCOURSE,
   API_GET_MODULESDETAIL,
-} from '../utils/Endpoints';
-import { CourseDetail } from '../interfaces/Courses/CourseDetail';
-import { Course } from '../interfaces/StudentModule';
+} from '../../utils/Endpoints';
+import { CourseDetail } from '../../interfaces/Courses/CourseDetail';
+import { Course } from '../../interfaces/StudentModule';
 
 export const getCourseDetail = async (
   userToken: string,

@@ -4,7 +4,7 @@ import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import { getCategories } from '../../services/categoryService';
 import { getProfessors } from '../../services/professorService';
-import { getCourse, updateCourse } from '../../services/courseService';
+import { getCourse, updateCourse } from '../../services/courses/courseService';
 import { uploadVideo } from '../../services/videoService';
 import { uploadImage } from '../../services/imageService';
 import { getAvailableEvaluations } from '../../services/evaluationService';

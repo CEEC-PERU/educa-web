@@ -12,7 +12,6 @@ import {
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import ProgressBar from '../../../components/Corporate/ProgressBar';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
@@ -146,7 +145,8 @@ const NotaCourses: React.FC = () => {
         refuerzo = 0,
         desaprobado = 0;
       currentCourseData.forEach((user) => {
-        const examGrade = user.CourseResults?.[0]?.puntaje || 0;
+        const examGrade = user.CourseResults?.[0]?.puntaje;
+        if (examGrade === null || examGrade === undefined) return;
         const status = getStatus(examGrade);
         if (status === 'Notable') notable++;
         else if (status === 'Aprobado') aprobado++;
@@ -376,10 +376,10 @@ const NotaCourses: React.FC = () => {
 
                               {/* Barra de progreso */}
                               <div className="mb-4">
-                                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <div className="flex justify-betweesn text-sm text-gray-600 mb-1">
                                   <span>Progreso</span>
                                   <span>
-                                    {Math.round((finalGrade / 20) * 100)}%
+                                    {user.CourseStudents?.[0]?.progress} %
                                   </span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -611,6 +611,7 @@ const NotaCourses: React.FC = () => {
                                       : 'En Proceso'}
                                   </span>
                                 </td>
+
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                   {user.CourseStudents?.[0]?.created_at
                                     ? new Date(

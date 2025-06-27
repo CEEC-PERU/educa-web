@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../hooks/user/useProfile';
 import { useRouter } from 'next/router';
-import { Profile, UserInfo } from '../interfaces/UserInterfaces';
+import { Profile, UserInfo } from '../interfaces/User/UserInterfaces';
 import Loader from '@/components/Loader';
 import './../app/globals.css';
 

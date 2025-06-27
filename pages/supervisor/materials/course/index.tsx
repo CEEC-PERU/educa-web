@@ -7,7 +7,7 @@ import FormField from '../../../../components/FormField';
 import { getCategories } from '../../../../services/categoryService';
 import { getProfessors } from '../../../../services/professorService';
 import { getAvailableEvaluations } from '../../../../services/evaluationService';
-import { addCourse2 } from '../../../../services/courseService';
+import { addCourse2 } from '../../../../services/courses/courseService';
 import { Category } from '../../../../interfaces/Category';
 import { Professor } from '../../../../interfaces/Professor';
 import { Evaluation } from '../../../../interfaces/Evaluation';

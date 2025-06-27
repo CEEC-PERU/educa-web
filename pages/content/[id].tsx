@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { getCourse, deleteCourse } from '../../services/courseService';
+import { getCourse, deleteCourse } from '../../services/courses/courseService';
 import { getEvaluations } from '../../services/evaluationService';
 import { Course } from '../../interfaces/Courses/Course';
 import { Evaluation } from '../../interfaces/Evaluation';
@@ -12,7 +12,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Loader from '../../components/Loader';
 import ModalConfirmation from '../../components/ModalConfirmation';
 import AlertComponent from '../../components/AlertComponent';
-import useModal from '../../hooks/useModal';
+import useModal from '../../hooks/ui/useModal';
 import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 

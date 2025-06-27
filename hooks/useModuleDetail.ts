@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Course } from '../interfaces/StudentModule';
-import { getModuleDetail } from '../services/courseDetail';
+import { getModuleDetail } from '../services/courses/courseDetail';
 import { useAuth } from '../context/AuthContext';
 
 export const useModuleDetail = (course_id: number) => {
@@ -18,7 +18,7 @@ export const useModuleDetail = (course_id: number) => {
     setIsLoading(true);
     try {
       const response = await getModuleDetail(token, course_id, userInfo.id);
-      console.log("RESPONSE", response);
+      console.log('RESPONSE', response);
       if (response === null) {
         setCourseData([]);
       } else if (Array.isArray(response)) {

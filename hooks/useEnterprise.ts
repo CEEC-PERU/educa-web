@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { UserEnterprise } from '../interfaces/UserEnterprise';
+import { UserEnterprise } from '../interfaces/User/UserEnterprise';
 import { getUserEnterprise } from '../services/enterprise';
 import { useAuth } from '../context/AuthContext';
 
@@ -28,13 +28,13 @@ export const useEnterprise = () => {
   };
 
   useEffect(() => {
-    updateEnterprise(); 
-  }, []); 
+    updateEnterprise();
+  }, []);
 
   return {
     enterprise,
     error,
     isLoading,
-    updateEnterprise, 
+    updateEnterprise,
   };
 };

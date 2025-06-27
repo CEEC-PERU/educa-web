@@ -1,5 +1,5 @@
 // services/userService.ts
-import axios from './axios';
+import axios from './../axios';
 import {
   API_USERS,
   API_USER,
@@ -7,8 +7,8 @@ import {
   API_USERCOUNT,
   API_USERS_COURSES,
   API_USERU,
-} from '../utils/Endpoints';
-import { UserCount } from '../interfaces/User/UserCount';
+} from '../../utils/Endpoints';
+import { UserCount } from '../../interfaces/User/UserCount';
 interface ImportUsersResponse {
   success: boolean;
   message: string;

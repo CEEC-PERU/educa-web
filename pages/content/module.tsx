@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Content/SideBar';
 import CardCourses from '../../components/Content/CardCourses';
-import { getCourses } from '../../services/courseService';
+import { getCourses } from '../../services/courses/courseService';
 import { Course } from '../../interfaces/Courses/Course';
 import { useAuth } from '../../context/AuthContext';
 import './../../app/globals.css';

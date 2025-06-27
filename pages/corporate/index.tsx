@@ -9,6 +9,7 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { useMetricaCorporate } from '../../hooks/dashboard/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useCourseProgress } from '../../hooks/useProgressCurso';
+import { useAverageCourse } from '../../hooks/courses/useCourseTime';
 
 import {
   useTop,
@@ -24,6 +25,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
+
   const enterpriseId = user
     ? (user as { id: number; role: number; dni: string; enterprise_id: number })
         .enterprise_id
@@ -41,6 +43,9 @@ const CorporateDashboard: React.FC = () => {
   const { activeuser } = useAUserActive();
   const { npsData } = useNPS(1, selectedCourse);
   const { satisData } = useSatisfaccion(2, selectedCourse);
+  const { coursetimeaverage } = useAverageCourse(selectedCourse);
+
+  console.log('coursetimeaverage', coursetimeaverage);
   console.log(selectedCourse);
 
   // Datos de ejemplo
@@ -189,18 +194,19 @@ const CorporateDashboard: React.FC = () => {
             <h2 className="text-lg font-semibold mb-2">
               Tiempo Promedio por Curso
             </h2>
+
             <Chart
               type="bar"
               series={[
                 {
                   name: 'Tiempo',
-                  data: courseTimeData.map((item) => item.Tiempo),
+                  data: coursetimeaverage.map((item) => item.average_time),
                 },
               ]}
               options={{
                 chart: { type: 'bar' },
                 xaxis: {
-                  categories: courseTimeData.map((item) => item.course),
+                  categories: coursetimeaverage.map((item) => item.course_name),
                   title: { text: 'Cursos' },
                 },
                 yaxis: { title: { text: 'Tiempo(minutos)' } },

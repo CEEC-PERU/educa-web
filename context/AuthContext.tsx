@@ -11,7 +11,11 @@ import { getProfile } from '../services/profile';
 import { signin } from '../services/authService';
 import { AuthContextData, AuthProviderProps } from '../interfaces/Auth';
 import { API_SOCKET_URL } from '../utils/Endpoints';
-import { LoginResponse, Profile, UserInfo } from '../interfaces/UserInterfaces';
+import {
+  LoginResponse,
+  Profile,
+  UserInfo,
+} from '../interfaces/User/UserInterfaces';
 import { validateToken } from '../helpers/helper-token';
 import { io } from 'socket.io-client';
 import axios, { AxiosError } from 'axios';

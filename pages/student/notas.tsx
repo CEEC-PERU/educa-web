@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import SidebarDrawer from '../../components/student/DrawerNavigation';
 import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/UserInterfaces';
+import { Profile } from '../../interfaces/User/UserInterfaces';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useNotas } from '../../hooks/resultado/useNotasUserId';
 import ScreenSecurity from '../../components/ScreenSecurity';

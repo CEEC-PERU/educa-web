@@ -6,13 +6,13 @@ import {
   getUsersByCompanyAndRole,
   getUsersByRole,
   getUsersByClassroom,
-} from '../../../services/userService';
+} from '../../../services/users/userService';
 import FormField from '../../../components/FormField';
 import TableUser from '../../../components/TableUser';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import UserForm from '../../../components/supervisor/UserForm';
 import Modal from '../../../components/Admin/Modal';
-import { StudentData } from '../../../interfaces/UsuariosSupervisor';
+import { StudentData } from '../../../interfaces/User/UsuariosSupervisor';
 import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../interfaces/User/UserAdmin';
 import { useUserCount } from '../../../hooks/user/useUserCount';

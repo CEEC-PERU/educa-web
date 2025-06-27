@@ -1,14 +1,18 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
-import { getUsersByCompanyAndRole } from '../../../services/userService';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import ClassroomForm from '../../../components/supervisor/ClassromForm';
 import Modal from '../../../components/Admin/Modal';
 import { useAuth } from '../../../context/AuthContext';
-import { UserGroupIcon } from '@heroicons/react/24/outline';
-
+import {
+  UserGroupIcon,
+  AcademicCapIcon,
+  BuildingOfficeIcon,
+  ClockIcon,
+  CalendarIcon,
+} from '@heroicons/react/24/outline';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import { useCourseStudent } from '../../../hooks/useCourseStudents';
 import './../../../app/globals.css';
@@ -17,12 +21,10 @@ const Classroom: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { classrooms, isLoading } = useClassroomBySupervisor();
-  const { logout, user, profileInfo } = useAuth();
+  const { courseStudent } = useCourseStudent();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { courseStudent } = useCourseStudent(); // Fetch the courses for the student
-
-  const handleAddUser = () => {
+  const handleAddClassroom = () => {
     setIsModalOpen(true);
   };
 
@@ -30,104 +32,161 @@ const Classroom: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleUserCreateSuccess = () => {
+  const handleClassroomCreateSuccess = () => {
     setIsModalOpen(false);
     router.reload();
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
+    <div className="relative min-h-screen flex flex-col bg-gray-50">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
+        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+
         <main
-          className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out ${
             showSidebar ? 'ml-20' : ''
           }`}
         >
-          <div className="pb-4"></div>
-          <div className="flex space-x-4 mb-4">
-            <div>
+          <div className="max-w-7xl mx-auto">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-800">
+                  Gestión de Aulas
+                </h1>
+                <p className="text-gray-600">
+                  Administra las aulas asignadas a tu supervisión
+                </p>
+              </div>
               <ButtonContent
-                buttonLabel="Registrar Aula"
-                backgroundColor="bg-yellow-500"
+                buttonLabel="Registrar Nueva Aula"
+                backgroundColor="bg-yellow-500 hover:bg-yellow-600"
                 textColor="text-white"
-                fontSize="text-xs"
-                buttonSize="py-2 px-7"
-                onClick={handleAddUser}
+                fontSize="text-sm"
+                buttonSize="py-2 px-4"
+                onClick={handleAddClassroom}
               />
             </div>
-          </div>
-          <div className="grid grid-cols-2 ">
-            <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-              <h2 className="text-lg font-semibold mb-2 text-black">Aulas</h2>
-              <div className="grid grid-cols-1 gap-6">
-                {!isLoading && classrooms && classrooms.length > 0 ? (
-                  classrooms.map((classroom) => (
-                    <div
-                      key={classroom.classroom_id}
-                      className="flex items-center p-4 bg-white shadow rounded-md"
-                    >
-                      <div className="mr-4">
-                        <UserGroupIcon className="h-10 w-10 text-blue-500" />
-                      </div>
-                      <div className="flex-grow">
-                        <h3 className="font-bold text-lg text-black">
-                          {classroom.code}
-                        </h3>
-                        <p className="text-gray-600">
-                          Empresa: {classroom.Enterprise.name}
-                        </p>
-                        <p className="text-gray-600">
-                          Turno: {classroom.Shift.name}
-                        </p>
-                        <p className="text-gray-600">
-                          Creado el:{' '}
-                          {new Date(classroom.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
 
-                      {/* Courses Section */}
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Classrooms Section - Takes 2/3 space */}
+              <div className="lg:col-span-2">
+                <div className="bg-white rounded-lg shadow-md p-6">
+                  <h2 className="text-xl font-semibold mb-4 flex items-center">
+                    <UserGroupIcon className="h-5 w-5 mr-2 text-blue-500" />
+                    Aulas Asignadas
+                  </h2>
+
+                  {isLoading ? (
+                    <div className="flex justify-center py-8">
+                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                     </div>
-                  ))
+                  ) : classrooms && classrooms.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {classrooms.map((classroom) => (
+                        <div
+                          key={classroom.classroom_id}
+                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-start">
+                            <div className="bg-blue-100 p-3 rounded-full mr-4">
+                              <UserGroupIcon className="h-6 w-6 text-blue-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-bold text-lg text-gray-800">
+                                {classroom.code}
+                              </h3>
+                              <div className="mt-2 space-y-1">
+                                <div className="flex items-center text-sm text-gray-600">
+                                  <BuildingOfficeIcon className="h-4 w-4 mr-2" />
+                                  <span>
+                                    Empresa: {classroom.Enterprise.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center text-sm text-gray-600">
+                                  <ClockIcon className="h-4 w-4 mr-2" />
+                                  <span>Turno: {classroom.Shift.name}</span>
+                                </div>
+                                <div className="flex items-center text-sm text-gray-600">
+                                  <CalendarIcon className="h-4 w-4 mr-2" />
+                                  <span>
+                                    Creado:{' '}
+                                    {new Date(
+                                      classroom.created_at
+                                    ).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <UserGroupIcon className="mx-auto h-12 w-12 text-gray-400" />
+                      <p className="mt-2 text-gray-500">
+                        No hay aulas disponibles
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Courses Section - Takes 1/3 space */}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
+                  <AcademicCapIcon className="h-5 w-5 mr-2 text-blue-500" />
+                  Cursos Asociados
+                </h2>
+
+                {courseStudent.length > 0 ? (
+                  <div className="space-y-3">
+                    {courseStudent.map((course) => (
+                      <div
+                        key={course.course_id}
+                        className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        <img
+                          src={
+                            course.Course.image || '/default-course-image.jpg'
+                          }
+                          alt={course.Course.name}
+                          className="h-12 w-12 rounded-lg object-cover"
+                        />
+                        <div className="ml-3">
+                          <p className="font-medium text-gray-800">
+                            {course.Course.name}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
-                  <p className="text-gray-600">No hay aulas disponibles</p>
+                  <div className="text-center py-8">
+                    <AcademicCapIcon className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-gray-500">
+                      No hay cursos asignados
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
-            <div className=" pl-20  flex-grow  grid-cols-2">
-              <h4 className="font-bold text-md text-black">Courses</h4>
-              {courseStudent.length > 0 ? (
-                courseStudent.map((course) => (
-                  <div
-                    key={course.course_id}
-                    className="flex items-center mt-2  border-2 border-e-cyan-800 p-5"
-                  >
-                    <img
-                      src={course.Course.image || '/default-course-image.jpg'}
-                      alt={course.Course.name}
-                      className="h-12 w-12 mr-4"
-                    />
-                    <p className="text-gray-700">{course.Course.name}</p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-600">No courses assigned</p>
-              )}
-            </div>
           </div>
-
-          <div></div>
         </main>
       </div>
+
+      {/* Classroom Registration Modal */}
       <Modal
         show={isModalOpen}
         onClose={handleModalClose}
-        title="Registrar nuevo usuario"
+        title="Registrar Nueva Aula"
       >
         <ClassroomForm
           onClose={handleModalClose}
-          onSuccess={handleUserCreateSuccess}
+          onSuccess={handleClassroomCreateSuccess}
         />
       </Modal>
     </div>

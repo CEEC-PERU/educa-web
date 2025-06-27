@@ -1,4 +1,4 @@
-import { Profile, UserInfo } from './UserInterfaces';
+import { Profile, UserInfo } from './User/UserInterfaces';
 
 export interface AuthContextData {
   user?:

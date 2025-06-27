@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getUserById, updateUser } from '../../../services/userService';
+import { getUserById, updateUser } from '../../../services/users/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
@@ -23,7 +23,6 @@ const EditUser: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
 
-
   useEffect(() => {
     const fetchUserAndEnterprise = async () => {
       if (userId) {
@@ -43,7 +42,11 @@ const EditUser: React.FC = () => {
     fetchUserAndEnterprise();
   }, [userId]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     const { id, value } = e.target;
     const [field, subField] = id.split('.');
 
@@ -71,15 +74,15 @@ const EditUser: React.FC = () => {
       setAlertMessage('Usuario editado correctamente');
       setShowAlert(true);
       setIsEditing(false);
-  
+
       // Re-fetch user data to ensure it's updated
       const userData = await getUserById(Number(userId));
       setUser(userData);
-  
+
       // Optionally, you can also re-fetch enterprise data if needed
       // const enterpriseData = await getEnterprise(userData.enterprise_id);
       // setEnterprise(enterpriseData);
-  
+
       // No need to redirect using router.push() to stay on the same page
     } catch (error) {
       setError('Error updating user');
@@ -88,7 +91,6 @@ const EditUser: React.FC = () => {
       setFormLoading(false);
     }
   };
-  
 
   if (!user || !enterprise) {
     return <div>Loading...</div>;
@@ -99,14 +101,18 @@ const EditUser: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${true ? 'ml-20' : ''}`}>
-        {showAlert && (
-          <Alert
-            type="info"
-            message={alertMessage}
-            onClose={() => setShowAlert(false)}
-          />
-        )}
+        <main
+          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+            true ? 'ml-20' : ''
+          }`}
+        >
+          {showAlert && (
+            <Alert
+              type="info"
+              message={alertMessage}
+              onClose={() => setShowAlert(false)}
+            />
+          )}
           <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-8">
             <img
               src={enterprise.image_fondo}
@@ -134,83 +140,91 @@ const EditUser: React.FC = () => {
           </div>
           {isEditing ? (
             <form onSubmit={handleSubmit} className="lg:max-w-4xl mx-auto p-4">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div className="bg-gray-200 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-gray-600">Nombres</p>
-                <input
-                  id="userProfile.first_name"
-                  type="text"
-                  value={user.userProfile?.first_name || ''}
-                  onChange={handleChange}
-                  readOnly={!isEditing}
-                  className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${isEditing ? 'border-gray-400' : 'border-transparent'} text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm`}
-                />
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-gray-600">Nombres</p>
+                  <input
+                    id="userProfile.first_name"
+                    type="text"
+                    value={user.userProfile?.first_name || ''}
+                    onChange={handleChange}
+                    readOnly={!isEditing}
+                    className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${
+                      isEditing ? 'border-gray-400' : 'border-transparent'
+                    } text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm`}
+                  />
+                </div>
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-gray-600">Apellidos</p>
+                  <input
+                    id="userProfile.last_name"
+                    type="text"
+                    value={user.userProfile?.last_name || ''}
+                    onChange={handleChange}
+                    readOnly={!isEditing}
+                    className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${
+                      isEditing ? 'border-gray-400' : 'border-transparent'
+                    } text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm`}
+                  />
+                </div>
+                <div className="bg-purple-300 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-white">Email</p>
+                  <input
+                    id="userProfile.email"
+                    type="text"
+                    value={user.userProfile?.email || ''}
+                    onChange={handleChange}
+                    readOnly={!isEditing}
+                    className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${
+                      isEditing ? 'border-white' : 'border-transparent'
+                    } text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm`}
+                  />
+                </div>
+                <div className="bg-purple-300 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-white">Teléfono</p>
+                  <input
+                    id="userProfile.phone"
+                    type="text"
+                    value={user.userProfile?.phone || ''}
+                    onChange={handleChange}
+                    readOnly={!isEditing}
+                    className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${
+                      isEditing ? 'border-white' : 'border-transparent'
+                    } text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm`}
+                  />
+                </div>
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-gray-600">Empresa</p>
+                  <input
+                    id="enterprise.name"
+                    type="text"
+                    value={enterprise.name}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-gray-400 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm"
+                  />
+                </div>
+                <div className="bg-gray-200 p-4 rounded-lg shadow-md">
+                  <p className="text-lg font-medium text-gray-600">Usuario</p>
+                  <input
+                    id="dni"
+                    type="text"
+                    value={user.dni}
+                    readOnly
+                    className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-gray-400 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm"
+                  />
+                </div>
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-gray-600">Apellidos</p>
-                <input
-                  id="userProfile.last_name"
-                  type="text"
-                  value={user.userProfile?.last_name || ''}
-                  onChange={handleChange}
-                  readOnly={!isEditing}
-                  className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${isEditing ? 'border-gray-400' : 'border-transparent'} text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm`}
-                />
-              </div>
-              <div className="bg-purple-300 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-white">Email</p>
-                <input
-                  id="userProfile.email"
-                  type="text"
-                  value={user.userProfile?.email || ''}
-                  onChange={handleChange}
-                  readOnly={!isEditing}
-                  className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${isEditing ? 'border-white' : 'border-transparent'} text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm`}
-                />
-              </div>
-              <div className="bg-purple-300 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-white">Teléfono</p>
-                <input
-                  id="userProfile.phone"
-                  type="text"
-                  value={user.userProfile?.phone || ''}
-                  onChange={handleChange}
-                  readOnly={!isEditing}
-                  className={`mt-1 block w-full px-3 py-2 bg-transparent border-b ${isEditing ? 'border-white' : 'border-transparent'} text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm`}
-                />
-              </div>
-              <div className="bg-gray-200 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-gray-600">Empresa</p>
-                <input
-                  id="enterprise.name"
-                  type="text"
-                  value={enterprise.name}
-                  readOnly
-                  className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-gray-400 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm"
-                />
-              </div>
-              <div className="bg-gray-200 p-4 rounded-lg shadow-md">
-                <p className="text-lg font-medium text-gray-600">Usuario</p>
-                <input
-                  id="dni"
-                  type="text"
-                  value={user.dni}
-                  readOnly
-                  className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-gray-400 text-gray-600 placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-gray-400 sm:text-sm"
-                />
-              </div>
-            </div>
-            {isEditing && (
-              <div className="flex justify-center mt-4">
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full"
-                >
-                  Guardar Cambios
-                </button>
-              </div>
-            )}
-          </form>
+              {isEditing && (
+                <div className="flex justify-center mt-4">
+                  <button
+                    type="submit"
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full"
+                  >
+                    Guardar Cambios
+                  </button>
+                </div>
+              )}
+            </form>
           ) : (
             <div className="lg:max-w-4xl mx-auto p-4">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
