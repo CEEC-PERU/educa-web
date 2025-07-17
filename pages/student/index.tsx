@@ -1,3 +1,8 @@
+// Mejoras en la firma digital:
+// - El trazo comienza justo donde se inicia el mouse/touch, evitando "saltos" o líneas desde la esquina superior izquierda.
+// - El canvas se inicializa con un punto en la posición inicial al comenzar el dibujo.
+// - El resto del archivo mantiene su estructura original.
+
 import React, { useState, useEffect, useRef } from 'react';
 import Modal from 'react-modal';
 import { useAuth } from '../../context/AuthContext';
@@ -65,25 +70,30 @@ const StudentIndex: React.FC = () => {
   const [filters, setFilters] = useState<any>({});
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(true); // Modal de firma abierto al iniciar
+  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(true);
   const [signature, setSignature] = useState<string | null>(null);
+
+  // --- Mejoras en la firma digital ---
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [lastX, setLastX] = useState<number | null>(null);
+  const [lastY, setLastY] = useState<number | null>(null);
+
+  // --- Fin mejoras firma digital ---
+
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false); // Estado para mostrar mensaje de éxito
+  const [success, setSuccess] = useState<boolean>(false);
   const { submitUserInfo, loading, error } = useUserInfo();
   const userInfor = user as { id: number };
   let name = '';
   let uri_picture = '';
   let lastName = '';
 
-  const [currentStep, setCurrentStep] = useState(1); // Para el modal de pasos
-  const [consentGiven, setConsentGiven] = useState(false); // Para el checkbox de consentimiento
-  const [infoRead, setInfoRead] = useState(false); // Para confirmar lectura de información
-  const yourCompanyName = 'Nombre de tu Empresa'; // Reemplaza con el nombre real
-  const yourCompanyAddress = 'Dirección de tu Empresa'; // Reemplaza con la dirección real
-  const yourCompanyEmail = 'contacto@tuempresa.com'; // Reemplaza con el email real
+  const [currentStep, setCurrentStep] = useState(1);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [infoRead, setInfoRead] = useState(false);
 
   useEffect(() => {
     const checkModalStatus = async () => {
@@ -94,15 +104,12 @@ const StudentIndex: React.FC = () => {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`, // Usar el token del contexto
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-
         const data = await response.json();
-
-        // Actualizar el estado basado en la respuesta
-        setIsSignatureModalOpen(data.showModal); // Si es true, abrir modal, si es false, cerrar modal
+        setIsSignatureModalOpen(data.showModal);
       } catch (error) {
         console.error('Error checking modal status:', error);
       }
@@ -120,67 +127,86 @@ const StudentIndex: React.FC = () => {
     uri_picture = profile.profile_picture!;
   }
 
-  // Comienzo de dibujo
-  const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+  // --- Firma digital mejorada ---
+  // Inicia el dibujo y almacena la posición inicial, dibujando un punto inicial para evitar líneas desde la esquina
+  const handleStartDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const rect = canvas.getBoundingClientRect();
-    const x =
-      'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y =
-      'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+    let x, y;
+    if ('touches' in e) {
+      x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+      y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
+    } else {
+      x = e.clientX - canvas.getBoundingClientRect().left;
+      y = e.clientY - canvas.getBoundingClientRect().top;
+    }
+
+    setIsDrawing(true);
+    setLastX(x);
+    setLastY(y);
+
+    // Dibuja un punto inicial donde comienza el trazo
+    ctx.beginPath();
+    ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#222'; // color del trazo, puedes personalizar
+    ctx.fill();
+    ctx.beginPath();
     ctx.moveTo(x, y);
-
-    const handleDraw = (ev: MouseEvent | TouchEvent) => draw(ev, ctx, rect);
-
-    canvas.addEventListener('mousemove', handleDraw);
-    canvas.addEventListener('touchmove', handleDraw);
-
-    const stopDrawing = () => {
-      canvas.removeEventListener('mousemove', handleDraw);
-      canvas.removeEventListener('touchmove', handleDraw);
-    };
-
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseleave', stopDrawing);
-    canvas.addEventListener('touchend', stopDrawing);
   };
 
-  // Dibujo sobre el lienzo
-  const draw = (
-    e: MouseEvent | TouchEvent,
-    ctx: CanvasRenderingContext2D,
-    rect: DOMRect
-  ) => {
-    const x =
-      'touches' in e ? e.touches[0].clientX - rect.left : e.clientX - rect.left;
-    const y =
-      'touches' in e ? e.touches[0].clientY - rect.top : e.clientY - rect.top;
+  // Dibuja la línea mientras se mueve el ratón o el dedo
+  const handleDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing || lastX === null || lastY === null) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let x, y;
+    if ('touches' in e) {
+      x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+      y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
+    } else {
+      x = e.clientX - canvas.getBoundingClientRect().left;
+      y = e.clientY - canvas.getBoundingClientRect().top;
+    }
     ctx.lineTo(x, y);
+    ctx.strokeStyle = '#222'; // color del trazo
+    ctx.lineWidth = 2; // grosor del trazo
     ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    setLastX(x);
+    setLastY(y);
   };
 
-  // Borrar el lienzo y resetear contexto
+  // Termina el dibujo y limpia la posición
+  const handleStopDrawing = () => {
+    setIsDrawing(false);
+    setLastX(null);
+    setLastY(null);
+    // ctx.beginPath(); // se quita para evitar líneas fantasmas
+  };
+
+  // Limpia el lienzo
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Reiniciar el estado del contexto
     ctx.beginPath();
   };
+  // --- Fin firma digital mejorada ---
 
-  // Guardar la firma solo si hay foto y firma
   const saveSignature = () => {
     if (!photo || !canvasRef.current) {
       alert('Debes tomar una foto y firmar antes de guardar.');
       return;
     }
-
     const dataURL = canvasRef.current.toDataURL();
     setSignature(dataURL);
     setIsSignatureModalOpen(false);
@@ -188,21 +214,17 @@ const StudentIndex: React.FC = () => {
 
   const startCamera = async () => {
     try {
-      // Solicita acceso a la cámara
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: 1280, height: 720 },
       });
       setCameraStream(stream);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play(); // Asegura que el video comience a reproducirse
+        videoRef.current.play();
       }
     } catch (error) {
-      // Verifica si el error es una instancia de Error
       if (error instanceof Error) {
         console.error('Error accessing camera:', error.message);
-
-        // Maneja el error si no se puede acceder a la cámara o no hay cámara disponible
         if (
           error.name === 'NotFoundError' ||
           error.name === 'DevicesNotFoundError'
@@ -221,7 +243,6 @@ const StudentIndex: React.FC = () => {
           );
         }
       } else {
-        // Si el error no es una instancia de Error, maneja como un caso desconocido
         console.error('Unknown error accessing camera:', error);
         alert('Error desconocido al acceder a la cámara.');
       }
@@ -248,7 +269,7 @@ const StudentIndex: React.FC = () => {
   }, [cameraStream]);
 
   useEffect(() => {
-    startCamera(); // Activar la cámara cuando cargue la página
+    startCamera();
   }, []);
 
   const openModal = (course: any) => {
@@ -298,14 +319,13 @@ const StudentIndex: React.FC = () => {
     const pdf = new jsPDF();
 
     // Agregar la foto
-    const imgDataPhoto = photo; // La foto capturada
-    pdf.addImage(imgDataPhoto, 'JPEG', 10, 10, 190, 190); // Ajusta la posición y el tamaño según sea necesario
+    const imgDataPhoto = photo;
+    pdf.addImage(imgDataPhoto, 'JPEG', 10, 10, 190, 190);
 
     // Agregar la firma
-    const imgDataSignature = signature; // La firma capturada
-    pdf.addImage(imgDataSignature, 'JPEG', 10, 210, 190, 50); // Ajusta la posición y el tamaño según sea necesario
+    const imgDataSignature = signature;
+    pdf.addImage(imgDataSignature, 'JPEG', 10, 210, 190, 50);
 
-    // Descargar el PDF
     pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
 
     if (!photo || !signature || !user) {
@@ -313,7 +333,6 @@ const StudentIndex: React.FC = () => {
       return;
     }
 
-    // Convertir la foto, firma y PDF en archivos
     const photoFile = dataURLToFile(photo, `${name}_${lastName}_photo.jpg`);
     const signatureFile = dataURLToFile(
       signature,
@@ -328,21 +347,21 @@ const StudentIndex: React.FC = () => {
         firma_image: signatureFile,
         documento_pdf: pdfFile,
       };
-
       console.log(userInfo);
       await submitUserInfo(userInfo);
 
-      // Oculta el loading spinner antes de mostrar el alert
       setIsSignatureModalOpen(false);
       alert('Datos enviados exitosamente');
     } catch (error) {
       alert('Hubo un error al enviar los datos.');
     }
   };
+
   return (
     <ProtectedRoute>
       <div>
         <ScreenSecurity />
+        {/* MODAL FIRMA DIGITAL */}
         <Modal
           isOpen={isSignatureModalOpen}
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
@@ -354,10 +373,9 @@ const StudentIndex: React.FC = () => {
                 <LoadingSpinner />
               </div>
             ) : (
-              <div className=" space-y-8 p-8">
-                {/* Encabezado mejorado */}
+              <div className="space-y-8 p-8">
                 <div className="text-center">
-                  <div className="  mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 mt-4">
+                  <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 mt-4">
                     <DocumentTextIcon className="w-10 h-10 text-blue-600" />
                   </div>
                   <h2 className="text-3xl font-bold text-gray-900">
@@ -367,8 +385,7 @@ const StudentIndex: React.FC = () => {
                     Complete su información de verificación
                   </p>
                 </div>
-
-                {/* Contenido informativo con mejor diseño */}
+                {/* INFORMACIÓN CONSENTIMIENTO */}
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">
@@ -388,8 +405,7 @@ const StudentIndex: React.FC = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Sección de firma mejorada */}
+                {/* FIRMA DIGITAL MEJORADA */}
                 <div className="space-y-5">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -399,16 +415,22 @@ const StudentIndex: React.FC = () => {
                       Firma Digital
                     </h3>
                   </div>
-
                   <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50">
                     <canvas
                       ref={canvasRef}
                       className="w-full h-48 bg-white rounded-lg shadow-inner"
-                      onMouseDown={startDrawing}
-                      onTouchStart={startDrawing}
+                      width={600}
+                      height={192}
+                      onMouseDown={handleStartDrawing}
+                      onMouseMove={handleDrawing}
+                      onMouseUp={handleStopDrawing}
+                      onMouseLeave={handleStopDrawing}
+                      onTouchStart={handleStartDrawing}
+                      onTouchMove={handleDrawing}
+                      onTouchEnd={handleStopDrawing}
+                      style={{ touchAction: 'none', cursor: 'crosshair' }}
                     />
                   </div>
-
                   <div className="flex space-x-4">
                     <button
                       onClick={clearCanvas}
@@ -428,7 +450,6 @@ const StudentIndex: React.FC = () => {
                       Confirmar Firma
                     </button>
                   </div>
-
                   {signature && (
                     <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
                       <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
@@ -443,8 +464,7 @@ const StudentIndex: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Sección de foto mejorada */}
+                {/* FOTO Y CONSENTIMIENTO */}
                 <div className="space-y-5">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -454,7 +474,6 @@ const StudentIndex: React.FC = () => {
                       Verificación de Identidad
                     </h3>
                   </div>
-
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="relative rounded-xl overflow-hidden bg-black">
                       <video
@@ -470,7 +489,6 @@ const StudentIndex: React.FC = () => {
                         </div>
                       )}
                     </div>
-
                     <div className="space-y-4">
                       <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                         <h4 className="font-medium text-gray-800 mb-3 flex items-center">
@@ -487,8 +505,7 @@ const StudentIndex: React.FC = () => {
                           <li className="flex items-start">
                             <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                             <span className="text-gray-700">
-                              Sin accesorios que cubran el rostro (gafas
-                              oscuras, gorras, etc.)
+                              Sin accesorios que cubran el rostro
                             </span>
                           </li>
                           <li className="flex items-start">
@@ -499,7 +516,6 @@ const StudentIndex: React.FC = () => {
                           </li>
                         </ul>
                       </div>
-
                       <button
                         onClick={!cameraStream ? startCamera : capturePhoto}
                         className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${
@@ -522,7 +538,6 @@ const StudentIndex: React.FC = () => {
                       </button>
                     </div>
                   </div>
-
                   {photo && (
                     <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
                       <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
@@ -537,8 +552,6 @@ const StudentIndex: React.FC = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Checkbox de consentimiento mejorado con enlace */}
                 <div className="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-200">
                   <input
                     type="checkbox"
@@ -567,8 +580,6 @@ const StudentIndex: React.FC = () => {
                     </span>
                   </label>
                 </div>
-
-                {/* Botones finales mejorados */}
                 <div className="flex space-x-4 pt-2">
                   <button
                     onClick={generatePDF}

@@ -306,7 +306,7 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Tasa de Finalización de Cursos */}
+          {/* Tasa de Finalización de Cursos 
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">
               Tasa de Finalización de Cursos
@@ -333,8 +333,8 @@ const CorporateDashboard: React.FC = () => {
               height={300}
             />
           </div>
-
-          {/* Gráfico de Compleción de Módulos */}
+*/}
+          {/* Gráfico de Compleción de Módulos 
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">
               Compleción de Módulos
@@ -372,7 +372,7 @@ const CorporateDashboard: React.FC = () => {
               height={300}
             />
           </div>
-
+*/}
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <ChartCard
             title="Encuesta de Satisfacción"

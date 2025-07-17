@@ -224,6 +224,7 @@ const Home: React.FC = () => {
   const handleEvaluationFinish = () => {
     refetch();
   };
+
   return (
     <ProtectedRoute>
       <div>

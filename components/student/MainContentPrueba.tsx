@@ -87,6 +87,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }[]
   >([]);
   const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
+  // Detectar si la sesión es PPTX
+  const isPptx = sessionVideo && sessionVideo.endsWith('.pptx');
 
   const estrella_vacia =
     'https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png';
@@ -116,6 +118,15 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const { cuestionariostar } = useCuestionarioStar(courseId);
   const { cuestionariosnps } = useCuestionarioNPS(courseId);
   const [finalTime, setFinalTime] = useState<number | null>(null); // Nuevo estado para el tiempo final
+
+  // Marcar progreso al 100% si es PPTX
+  useEffect(() => {
+    if (isPptx && sessionId && onProgress) {
+      // Solo ejecuta si no se ha marcado completado antes
+      onProgress(100, true);
+    }
+    // eslint-disable-next-line
+  }, [sessionVideo, sessionId]);
 
   useEffect(() => {
     // Actualización automática sin recargar cuando cambia el estado
@@ -149,6 +160,25 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   useEffect(() => {
     isProgressSent.current = false; // Permitir nuevos envíos de progreso en la nueva sesión
   }, [sessionId, sessionVideo]);
+
+  // Marcar progreso al 100% si es PPTX y guardar en BD
+  useEffect(() => {
+    if (isPptx && sessionId && !isProgressSent.current) {
+      const sendSessionProgress = async () => {
+        const sessionProgress = {
+          session_id: sessionId,
+          progress: 100,
+          is_completed: true,
+          user_id: userInfo.id,
+        };
+        await createSession_Progress(sessionProgress);
+        if (onProgress) onProgress(100, true);
+        isProgressSent.current = true;
+      };
+      sendSessionProgress();
+    }
+    // eslint-disable-next-line
+  }, [isPptx, sessionId, sessionVideo]);
 
   useEffect(() => {
     if (!videoRef.current) return;
@@ -724,19 +754,40 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       ) : showStarForm ? (
         <StarForm onSubmit={handleStarSubmit} />
       ) : sessionVideo ? (
-        <div className="flex flex-col items-center">
-          <video
-            key={sessionVideo}
-            controls
-            className="w-full h-full"
-            controlsList="nodownload"
-            style={{ maxWidth: '100%' }}
-            onEnded={handleVideoEnd}
-            ref={videoRef}
-          >
-            <source src={sessionVideo} type="video/mp4" />
-          </video>
-        </div>
+        isPptx ? (
+          // Visor PPTX usando Office Viewer (puedes cambiar a Google Viewer si lo prefieres)
+          <div className="flex flex-col items-center h-full">
+            <iframe
+              src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+                sessionVideo
+              )}`}
+              width="100%"
+              height="600px"
+              frameBorder="0"
+              title="PPTX Viewer"
+              allowFullScreen
+              style={{
+                background: '#fff',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px #0002',
+              }}
+            ></iframe>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <video
+              key={sessionVideo}
+              controls
+              className="w-full h-full"
+              controlsList="nodownload"
+              style={{ maxWidth: '100%' }}
+              onEnded={handleVideoEnd}
+              ref={videoRef}
+            >
+              <source src={sessionVideo} type="video/mp4" />
+            </video>
+          </div>
+        )
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         showStartMessage ? (
           <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-6 rounded-lg shadow-lg">
