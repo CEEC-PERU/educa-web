@@ -123,8 +123,7 @@ const CorporateDashboard: React.FC = () => {
   };
 
   const courseTimeData = [
-    { course: 'CP Pospago', Tiempo: 20 },
-    { course: 'Formación Continua', Tiempo: 5 },
+    { course: 'Protocolo de Atencion al Cliente ', Tiempo: 0 },
   ];
 
   const averageTimePerDayData = [
@@ -166,9 +165,9 @@ const CorporateDashboard: React.FC = () => {
 
   const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
-      return [0, 0, 0, 0, 0, 33]; // Valores en porcentaje para cada estrella
+      return [0, 0, 0, 0, 0, 0]; // Valores en porcentaje para cada estrella
     } else if (course === 'Formación Continua') {
-      return [0, 0, 0, 0, 2];
+      return [0, 0, 0, 0, 0];
     }
     return [];
   };
@@ -470,7 +469,7 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Tasa de Finalización de Cursos */}
+          {/* Tasa de Finalización de Cursos 
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold  text-black mb-2">
               Tasa de Finalización de Cursos
@@ -497,8 +496,8 @@ const CorporateDashboard: React.FC = () => {
               height={300}
             />
           </div>
-
-          {/* Gráfico de Compleción de Módulos */}
+*/}
+          {/* Gráfico de Compleción de Módulos 
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold text-black mb-2">
               Compleción de Módulos
@@ -536,6 +535,7 @@ const CorporateDashboard: React.FC = () => {
               height={300}
             />
           </div>
+          */}
 
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
@@ -570,7 +570,7 @@ const CorporateDashboard: React.FC = () => {
             subtitle="Net Promoter Score (NPS)"
             type="bar"
             series={[
-              { name: 'Respuestas', data: [0, 0, 0, 0, 0, 0, 8, 0, 5, 2] },
+              { name: 'Respuestas', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
             ]}
             options={{
               plotOptions: {
