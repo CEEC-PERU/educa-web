@@ -180,8 +180,8 @@ const Classroom: React.FC = () => {
                                   <UserIcon className="h-4 w-4 mr-2" />
                                   <span>
                                     Profesor:{' '}
-                                    {classroom.User.userProfile.first_name}{' '}
-                                    {classroom.User.userProfile.last_name}
+                                    {classroom.User.userProfile?.first_name}{' '}
+                                    {classroom.User.userProfile?.last_name}
                                   </span>
                                 </div>
                               </div>

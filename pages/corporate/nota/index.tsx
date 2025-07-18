@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Corporate/CorporateSideBar';
 import useDownloadNotas from '../../../hooks/notas/useDownloadNotas';
+import useDownloadWordReport from '../../../hooks/notas/useDonwloadWord'; // NUEVO
+import DownloadWordButton from '../../../components/Corporate/ButtonDownload'; // NUEVO
 import { useClassroom } from '../../../hooks/useClassroom';
 import { useNotas, useNotasClassroom } from '../../../hooks/resultado/useNotas';
 import { StatCard } from '../../../components/StatCard';
@@ -87,7 +89,9 @@ const NotaCourses: React.FC = () => {
     classroomId
   );
   const { downloadNotas } = useDownloadNotas();
-
+  // NUEVO: Hook para descarga de Word
+  const { downloadWordReport, isDownloading, error, clearError } =
+    useDownloadWordReport();
   // Current data based on classroom selection
   const currentCourseData = selectedClassroom
     ? courseNotaClassroom
@@ -152,6 +156,16 @@ const NotaCourses: React.FC = () => {
   const handleClassroomChange = async (value: string) => {
     setSelectedClassroom(value);
     await fetchCourseDetail(Number(value));
+  };
+
+  // NUEVA: Función para manejar descarga de informe Word
+  const handleDownloadWordReport = async () => {
+    const success = await downloadWordReport(20, 103);
+
+    if (success) {
+      // Opcional: mostrar notificación de éxito
+      console.log('Informe descargado exitosamente');
+    }
   };
 
   // Chart data
@@ -220,6 +234,12 @@ const NotaCourses: React.FC = () => {
                     <DownloadButton
                       onClick={() => downloadNotas(courseIdNumber)}
                       loading={isLoading}
+                    />
+
+                    {/* NUEVO: Botón para descargar informe Word */}
+                    <DownloadWordButton
+                      onClick={handleDownloadWordReport}
+                      loading={isDownloading}
                     />
                   </div>
                 </div>
