@@ -401,7 +401,7 @@ const StatsSummary = ({
       textColor="text-blue-600"
     />
     <StatCard
-      title="Aprobados Notables 13"
+      title="Aprobados Notables "
       value={statusCount.notable}
       icon={<FiAward className="h-5 w-5" />}
       bgColor="bg-emerald-100"
