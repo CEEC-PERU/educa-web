@@ -10,7 +10,8 @@ import { useMetricaCorporate } from '../../hooks/dashboard/useMetricaCorporate';
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import { useCourseProgress } from '../../hooks/useProgressCurso';
 import { useAverageCourse } from '../../hooks/courses/useCourseTime';
-
+//cuando solo hay un curso no permite seleccionar por deafult me muestre
+//en blanco para seleccionar el curso
 import {
   useTop,
   useAverageTime,
@@ -136,21 +137,26 @@ const CorporateDashboard: React.FC = () => {
   </select>*/}
 
             <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(Number(e.target.value))}
+              value={selectedCourse ?? ''}
+              onChange={(e) =>
+                setSelectedCourse(Number(e.target.value) || undefined)
+              }
               className="block border-4 p-2 mr-4"
+              disabled={courseStudent.length === 0}
             >
-              {courseStudent.length > 0 ? (
-                courseStudent.map((course) => (
-                  <option
-                    key={course.course_id}
-                    value={course.course_id}
-                    className="text-gray-700"
-                  >
-                    {course.Course.name}
-                  </option>
-                ))
-              ) : (
+              {courseStudent.length > 0 && (
+                <option value="">Seleccione un curso...</option>
+              )}
+              {courseStudent.map((course) => (
+                <option
+                  key={course.course_id}
+                  value={course.course_id}
+                  className="text-gray-700"
+                >
+                  {course.Course.name}
+                </option>
+              ))}
+              {courseStudent.length === 0 && (
                 <option disabled className="text-gray-600">
                   No hay cursos asignados
                 </option>
@@ -441,7 +447,7 @@ const CorporateDashboard: React.FC = () => {
             showUpdateDate={true}
             className="mt-4"
           />
-          {/* CORREGIR 2 , TOTAL DE VOTOS*/}
+          {/* CORREGIR 2 , TOTAL DE VOTOS  */}
           {/* Gráfico de NPS */}
           <ChartCard
             title="Del 1 al 10 ¿Qué tanto recomendarías este curso?"
