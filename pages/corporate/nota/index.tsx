@@ -97,6 +97,9 @@ const NotaCourses: React.FC = () => {
     aprobado: 0,
     refuerzo: 0,
     desaprobado: 0,
+    totalWithProfile: 0,
+    totalWithoutProfile: 0,
+    totalStudents: 0,
   });
 
   // Filter students based on search term
@@ -110,9 +113,42 @@ const NotaCourses: React.FC = () => {
   // Calculate status counts when data changes
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
-      const counts = { notable: 0, aprobado: 0, refuerzo: 0, desaprobado: 0 };
+      const counts = {
+        notable: 0,
+        aprobado: 0,
+        refuerzo: 0,
+        desaprobado: 0,
+        totalWithProfile: 0,
+        totalWithoutProfile: 0,
+        totalStudents: 0,
+      };
 
       currentCourseData.forEach((user) => {
+        const examGrade = user.CourseResults?.[0]?.puntaje;
+        if (examGrade === null || examGrade === undefined) return;
+
+        const status = getStatus(examGrade);
+        if (status === 'Notable') counts.notable++;
+        else if (status === 'Aprobado') counts.aprobado++;
+        else if (status === 'Refuerzo') counts.refuerzo++;
+        else if (status === 'Desaprobado') counts.desaprobado++;
+      });
+
+      currentCourseData.forEach((user) => {
+        counts.totalStudents++;
+
+        // Verificar si el usuario tiene perfil completo
+        const hasCompleteProfile =
+          user?.userProfile &&
+          user.userProfile.first_name &&
+          user.userProfile.last_name;
+
+        if (hasCompleteProfile) {
+          counts.totalWithProfile++;
+        } else {
+          counts.totalWithoutProfile++;
+        }
+
         const examGrade = user.CourseResults?.[0]?.puntaje;
         if (examGrade === null || examGrade === undefined) return;
 
@@ -205,6 +241,8 @@ const NotaCourses: React.FC = () => {
 
               {/* Stats Summary */}
               <StatsSummary
+                totalWithProfile={statusCount.totalWithProfile}
+                totalWithoutProfile={statusCount.totalWithoutProfile}
                 totalStudents={filteredStudents?.length || 0}
                 statusCount={statusCount}
               />
@@ -375,14 +413,19 @@ const DownloadButton = ({
 
 const StatsSummary = ({
   totalStudents,
+
   statusCount,
 }: {
   totalStudents: number;
+  totalWithProfile: number;
+  totalWithoutProfile: number;
   statusCount: {
     notable: number;
     aprobado: number;
     refuerzo: number;
     desaprobado: number;
+    totalWithoutProfile: number;
+    totalWithProfile: number;
   };
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -394,18 +437,39 @@ const StatsSummary = ({
       textColor="text-blue-600"
     />
     <StatCard
-      title="Notables"
+      title="Total Aprobados"
+      value={statusCount.aprobado + statusCount.notable}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-blue-100"
+      textColor="text-blue-600"
+    />
+    <StatCard
+      title="Aprobados Notables "
       value={statusCount.notable}
       icon={<FiAward className="h-5 w-5" />}
       bgColor="bg-emerald-100"
       textColor="text-emerald-600"
     />
     <StatCard
-      title="Aprobados"
+      title="Aprobados < 16"
       value={statusCount.aprobado}
       icon={<FiCheckCircle className="h-5 w-5" />}
       bgColor="bg-blue-100"
       textColor="text-blue-600"
+    />
+    <StatCard
+      title="Usuarios Activos"
+      value={statusCount.totalWithProfile}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-green-100"
+      textColor="text-green-600"
+    />
+    <StatCard
+      title="Usuarios No Activos"
+      value={statusCount.totalWithoutProfile}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-green-100"
+      textColor="text-green-600"
     />
     <StatCard
       title="Desaprobados"
@@ -445,34 +509,7 @@ const SessionsChart = ({ students }: { students: any[] }) => {
     }
   }, [students]);
 
-  return (
-    <ChartCard
-      title="Sesiones por Estudiante"
-      icon={<FiClock className="mr-2 text-blue-500" />}
-    >
-      <Chart
-        type="bar"
-        options={{
-          chart: { id: 'sessions-chart', toolbar: { show: false } },
-          xaxis: {
-            categories:
-              students?.map(
-                (user: any) =>
-                  `${
-                    user.userProfile?.first_name
-                  } ${user.userProfile?.last_name.substring(0, 1)}.`
-              ) || [],
-            labels: { style: { colors: '#6b7280' }, rotate: -45 },
-          },
-          yaxis: { labels: { style: { colors: '#6b7280' } } },
-          colors: ['#6366F1'],
-          plotOptions: { bar: { borderRadius: 4 } },
-        }}
-        series={[{ name: 'Sesiones', data: randomSessions }]}
-        height={300}
-      />
-    </ChartCard>
-  );
+  return <p> </p>;
 };
 
 export default NotaCourses;

@@ -271,9 +271,11 @@ const TableRow = ({
           </div>
           <div className="ml-4">
             <div className="text-sm font-medium text-gray-900">
-              {user?.userProfile?.first_name || '-'}{' '}
-              {user?.userProfile?.last_name || '-'}
+              {user?.userProfile
+                ? `${user.userProfile.first_name} ${user.userProfile.last_name}`
+                : user?.dni || '-'}
             </div>
+
             <div className="text-sm text-gray-500">{user.email}</div>
           </div>
         </div>
