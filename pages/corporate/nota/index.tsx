@@ -308,7 +308,7 @@ const StatsSummary = ({
       textColor="text-blue-600"
     />
     <StatCard
-      title="Aprobados"
+      title=" Total Aprobados"
       value={statusCount.aprobado + statusCount.notable + statusCount.refuerzo}
       icon={<FiCheckCircle className="h-5 w-5" />}
       bgColor="bg-blue-100"
@@ -338,14 +338,14 @@ const StatsSummary = ({
     />
     {/* NEW Profile-based StatCards */}
     <StatCard
-      title="Con Perfil"
+      title="Usuario Activo"
       value={profileCount.withProfile}
       icon={<FiUser className="h-5 w-5" />}
       bgColor="bg-green-100"
       textColor="text-green-600"
     />
     <StatCard
-      title="Sin Perfil"
+      title="Usuario No Activo "
       value={profileCount.withoutProfile}
       icon={<FiUserX className="h-5 w-5" />}
       bgColor="bg-orange-100"
