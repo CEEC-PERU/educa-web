@@ -97,9 +97,6 @@ const NotaCourses: React.FC = () => {
     aprobado: 0,
     refuerzo: 0,
     desaprobado: 0,
-    totalWithProfile: 0,
-    totalWithoutProfile: 0,
-    totalStudents: 0,
   });
 
   // Filter students based on search term
@@ -113,42 +110,9 @@ const NotaCourses: React.FC = () => {
   // Calculate status counts when data changes
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
-      const counts = {
-        notable: 0,
-        aprobado: 0,
-        refuerzo: 0,
-        desaprobado: 0,
-        totalWithProfile: 0,
-        totalWithoutProfile: 0,
-        totalStudents: 0,
-      };
+      const counts = { notable: 0, aprobado: 0, refuerzo: 0, desaprobado: 0 };
 
       currentCourseData.forEach((user) => {
-        const examGrade = user.CourseResults?.[0]?.puntaje;
-        if (examGrade === null || examGrade === undefined) return;
-
-        const status = getStatus(examGrade);
-        if (status === 'Notable') counts.notable++;
-        else if (status === 'Aprobado') counts.aprobado++;
-        else if (status === 'Refuerzo') counts.refuerzo++;
-        else if (status === 'Desaprobado') counts.desaprobado++;
-      });
-
-      currentCourseData.forEach((user) => {
-        counts.totalStudents++;
-
-        // Verificar si el usuario tiene perfil completo
-        const hasCompleteProfile =
-          user?.userProfile &&
-          user.userProfile.first_name &&
-          user.userProfile.last_name;
-
-        if (hasCompleteProfile) {
-          counts.totalWithProfile++;
-        } else {
-          counts.totalWithoutProfile++;
-        }
-
         const examGrade = user.CourseResults?.[0]?.puntaje;
         if (examGrade === null || examGrade === undefined) return;
 
@@ -241,8 +205,6 @@ const NotaCourses: React.FC = () => {
 
               {/* Stats Summary */}
               <StatsSummary
-                totalWithProfile={statusCount.totalWithProfile}
-                totalWithoutProfile={statusCount.totalWithoutProfile}
                 totalStudents={filteredStudents?.length || 0}
                 statusCount={statusCount}
               />
@@ -413,19 +375,14 @@ const DownloadButton = ({
 
 const StatsSummary = ({
   totalStudents,
-
   statusCount,
 }: {
   totalStudents: number;
-  totalWithProfile: number;
-  totalWithoutProfile: number;
   statusCount: {
     notable: number;
     aprobado: number;
     refuerzo: number;
     desaprobado: number;
-    totalWithoutProfile: number;
-    totalWithProfile: number;
   };
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -437,14 +394,14 @@ const StatsSummary = ({
       textColor="text-blue-600"
     />
     <StatCard
-      title="Total Aprobados"
+      title="Aprobados"
       value={statusCount.aprobado + statusCount.notable}
       icon={<FiCheckCircle className="h-5 w-5" />}
       bgColor="bg-blue-100"
       textColor="text-blue-600"
     />
     <StatCard
-      title="Aprobados Notables "
+      title="Aprobados Notables 13"
       value={statusCount.notable}
       icon={<FiAward className="h-5 w-5" />}
       bgColor="bg-emerald-100"
@@ -456,20 +413,6 @@ const StatsSummary = ({
       icon={<FiCheckCircle className="h-5 w-5" />}
       bgColor="bg-blue-100"
       textColor="text-blue-600"
-    />
-    <StatCard
-      title="Usuarios Activos"
-      value={statusCount.totalWithProfile}
-      icon={<FiCheckCircle className="h-5 w-5" />}
-      bgColor="bg-green-100"
-      textColor="text-green-600"
-    />
-    <StatCard
-      title="Usuarios No Activos"
-      value={statusCount.totalWithoutProfile}
-      icon={<FiXCircle className="h-5 w-5" />}
-      bgColor="bg-rose-100"
-      textColor="text-rose-600"
     />
     <StatCard
       title="Desaprobados"
