@@ -467,9 +467,9 @@ const StatsSummary = ({
     <StatCard
       title="Usuarios No Activos"
       value={statusCount.totalWithoutProfile}
-      icon={<FiCheckCircle className="h-5 w-5" />}
-      bgColor="bg-green-100"
-      textColor="text-green-600"
+      icon={<FiXCircle className="h-5 w-5" />}
+      bgColor="bg-rose-100"
+      textColor="text-rose-600"
     />
     <StatCard
       title="Desaprobados"
