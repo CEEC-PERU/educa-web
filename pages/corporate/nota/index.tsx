@@ -24,6 +24,8 @@ import {
   FiClock,
   FiGrid,
   FiList,
+  FiUser,
+  FiUserX,
 } from 'react-icons/fi';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -99,6 +101,12 @@ const NotaCourses: React.FC = () => {
     desaprobado: 0,
   });
 
+  // Profile count calculation - NEW
+  const [profileCount, setProfileCount] = useState({
+    withProfile: 0,
+    withoutProfile: 0,
+  });
+
   // Filter students based on search term
   const filteredStudents = currentCourseData?.filter((user: any) => {
     const fullName = `${user?.userProfile?.first_name || ''} ${
@@ -107,23 +115,37 @@ const NotaCourses: React.FC = () => {
     return fullName.includes(searchTerm.toLowerCase());
   });
 
-  // Calculate status counts when data changes
+  // Calculate status counts and profile counts when data changes
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
       const counts = { notable: 0, aprobado: 0, refuerzo: 0, desaprobado: 0 };
+      const profileCounts = { withProfile: 0, withoutProfile: 0 };
 
       currentCourseData.forEach((user) => {
+        // Grade status calculation (existing logic)
         const examGrade = user.CourseResults?.[0]?.puntaje;
-        if (examGrade === null || examGrade === undefined) return;
+        if (examGrade !== null && examGrade !== undefined) {
+          const status = getStatus(examGrade);
+          if (status === 'Notable') counts.notable++;
+          else if (status === 'Aprobado') counts.aprobado++;
+          else if (status === 'Refuerzo') counts.refuerzo++;
+          else if (status === 'Desaprobado') counts.desaprobado++;
+        }
 
-        const status = getStatus(examGrade);
-        if (status === 'Notable') counts.notable++;
-        else if (status === 'Aprobado') counts.aprobado++;
-        else if (status === 'Refuerzo') counts.refuerzo++;
-        else if (status === 'Desaprobado') counts.desaprobado++;
+        // Profile status calculation (NEW)
+        if (
+          user.userProfile &&
+          user.userProfile.first_name &&
+          user.userProfile.last_name
+        ) {
+          profileCounts.withProfile++;
+        } else {
+          profileCounts.withoutProfile++;
+        }
       });
 
       setStatusCount(counts);
+      setProfileCount(profileCounts);
     }
   }, [currentCourseData]);
 
@@ -203,10 +225,11 @@ const NotaCourses: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stats Summary */}
+              {/* Stats Summary - UPDATED */}
               <StatsSummary
                 totalStudents={filteredStudents?.length || 0}
                 statusCount={statusCount}
+                profileCount={profileCount}
               />
 
               {/* Main Content */}
@@ -257,7 +280,82 @@ const NotaCourses: React.FC = () => {
   );
 };
 
-// Subcomponents for better organization
+// UPDATED StatsSummary component
+const StatsSummary = ({
+  totalStudents,
+  statusCount,
+  profileCount,
+}: {
+  totalStudents: number;
+  statusCount: {
+    notable: number;
+    aprobado: number;
+    refuerzo: number;
+    desaprobado: number;
+  };
+  profileCount: {
+    withProfile: number;
+    withoutProfile: number;
+  };
+}) => (
+  <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    {/* Existing StatCards - maintaining exact logic */}
+    <StatCard
+      title="Total Estudiantes"
+      value={totalStudents}
+      icon={<FiUsers className="h-5 w-5" />}
+      bgColor="bg-blue-100"
+      textColor="text-blue-600"
+    />
+    <StatCard
+      title="Aprobados"
+      value={statusCount.aprobado + statusCount.notable + statusCount.refuerzo}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-blue-100"
+      textColor="text-blue-600"
+    />
+
+    <StatCard
+      title="Notables ≥18"
+      value={statusCount.notable}
+      icon={<FiAward className="h-5 w-5" />}
+      bgColor="bg-emerald-100"
+      textColor="text-emerald-600"
+    />
+    <StatCard
+      title="Aprobados ≥16"
+      value={statusCount.aprobado}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-blue-100"
+      textColor="text-blue-600"
+    />
+    <StatCard
+      title="Refuerzo ≥13"
+      value={statusCount.refuerzo}
+      icon={<FiCheckCircle className="h-5 w-5" />}
+      bgColor="bg-orange-100"
+      textColor="text-orange-600"
+    />
+    {/* NEW Profile-based StatCards */}
+    <StatCard
+      title="Con Perfil"
+      value={profileCount.withProfile}
+      icon={<FiUser className="h-5 w-5" />}
+      bgColor="bg-green-100"
+      textColor="text-green-600"
+    />
+    <StatCard
+      title="Sin Perfil"
+      value={profileCount.withoutProfile}
+      icon={<FiUserX className="h-5 w-5" />}
+      bgColor="bg-orange-100"
+      textColor="text-orange-600"
+    />
+  </div>
+);
+
+// ... rest of the components remain the same
+
 const SearchInput = ({
   value,
   onChange,
@@ -371,57 +469,6 @@ const DownloadButton = ({
     <FiDownload className="h-4 w-4" />
     <span>Exportar Reporte</span>
   </button>
-);
-
-const StatsSummary = ({
-  totalStudents,
-  statusCount,
-}: {
-  totalStudents: number;
-  statusCount: {
-    notable: number;
-    aprobado: number;
-    refuerzo: number;
-    desaprobado: number;
-  };
-}) => (
-  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-    <StatCard
-      title="Total Estudiantes"
-      value={totalStudents}
-      icon={<FiUsers className="h-5 w-5" />}
-      bgColor="bg-blue-100"
-      textColor="text-blue-600"
-    />
-    <StatCard
-      title="Aprobados"
-      value={statusCount.aprobado + statusCount.notable}
-      icon={<FiCheckCircle className="h-5 w-5" />}
-      bgColor="bg-blue-100"
-      textColor="text-blue-600"
-    />
-    <StatCard
-      title="Aprobados Notables "
-      value={statusCount.notable}
-      icon={<FiAward className="h-5 w-5" />}
-      bgColor="bg-emerald-100"
-      textColor="text-emerald-600"
-    />
-    <StatCard
-      title="Aprobados < 16"
-      value={statusCount.aprobado}
-      icon={<FiCheckCircle className="h-5 w-5" />}
-      bgColor="bg-blue-100"
-      textColor="text-blue-600"
-    />
-    <StatCard
-      title="Desaprobados"
-      value={statusCount.desaprobado}
-      icon={<FiXCircle className="h-5 w-5" />}
-      bgColor="bg-rose-100"
-      textColor="text-rose-600"
-    />
-  </div>
 );
 
 const ChartCard = ({
