@@ -30,7 +30,9 @@ export const StudentCardsView: React.FC<NotasViewProps> = ({
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">
-                  {user?.userProfile?.first_name} {user?.userProfile?.last_name}
+                  {user?.userProfile
+                    ? `${user.userProfile.first_name} ${user.userProfile.last_name}`
+                    : user?.dni}
                 </h3>
                 <span
                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}

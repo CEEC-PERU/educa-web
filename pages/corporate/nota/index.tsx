@@ -459,8 +459,8 @@ const SessionsChart = ({ students }: { students: any[] }) => {
               students?.map(
                 (user: any) =>
                   `${
-                    user.userProfile.first_name
-                  } ${user.userProfile.last_name.substring(0, 1)}.`
+                    user.userProfile?.first_name
+                  } ${user.userProfile?.last_name.substring(0, 1)}.`
               ) || [],
             labels: { style: { colors: '#6b7280' }, rotate: -45 },
           },
