@@ -220,8 +220,8 @@ const UserForm: React.FC<{
                 >
                   {classroom.code} - Empresa: {classroom.Enterprise.name} -
                   Turno: {classroom.Shift.name} - Profesor:{' '}
-                  {classroom.User.userProfile.first_name}{' '}
-                  {classroom.User.userProfile.last_name}
+                  {classroom.User.userProfile?.first_name}{' '}
+                  {classroom.User.userProfile?.last_name}
                 </option>
               ))
             )}

@@ -55,6 +55,21 @@ const getStatus = (finalExamGrade: number) => {
   return 'Desaprobado';
 };
 
+// NUEVA: Función para obtener el último intento
+const getLastAttemptGrade = (courseResults: any[]) => {
+  if (!courseResults || courseResults.length === 0) return null;
+
+  // Si solo hay un resultado, devolverlo
+  if (courseResults.length === 1) {
+    return courseResults[0]?.puntaje;
+  }
+
+  // Si hay múltiples resultados, obtener el último (más reciente)
+  // Asumiendo que están ordenados por fecha o que el último en el array es el más reciente
+  const lastResult = courseResults[courseResults.length - 1];
+  return lastResult?.puntaje;
+};
+
 const formatDate = (dateString: string) => {
   if (!dateString) return '-';
   const date = new Date(dateString);
@@ -126,8 +141,11 @@ const NotaCourses: React.FC = () => {
       const profileCounts = { withProfile: 0, withoutProfile: 0 };
 
       currentCourseData.forEach((user) => {
-        // Grade status calculation (existing logic)
-        const examGrade = user.CourseResults?.[0]?.puntaje;
+        // Grade status calculation - MODIFICADO para usar el último intento
+        const examGrade = selectedClassroom
+          ? getLastAttemptGrade(user.CourseResults) // Para aula seleccionada, usar último intento
+          : user.CourseResults?.[0]?.puntaje; // Para vista general, mantener lógica original
+
         if (examGrade !== null && examGrade !== undefined) {
           const status = getStatus(examGrade);
           if (status === 'Notable') counts.notable++;
@@ -151,7 +169,7 @@ const NotaCourses: React.FC = () => {
       setStatusCount(counts);
       setProfileCount(profileCounts);
     }
-  }, [currentCourseData]);
+  }, [currentCourseData, selectedClassroom]); // Agregado selectedClassroom como dependencia
 
   const handleClassroomChange = async (value: string) => {
     setSelectedClassroom(value);
@@ -355,6 +373,13 @@ const StatsSummary = ({
       icon={<FiCheckCircle className="h-5 w-5" />}
       bgColor="bg-orange-100"
       textColor="text-orange-600"
+    />
+    <StatCard
+      title="Desaprobados <13"
+      value={statusCount.desaprobado}
+      icon={<FiUserX className="h-5 w-5" />}
+      bgColor="bg-red-100"
+      textColor="text-red-600"
     />
     {/* NEW Profile-based StatCards */}
     <StatCard
