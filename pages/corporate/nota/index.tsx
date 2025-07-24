@@ -3,8 +3,8 @@ import dynamic from 'next/dynamic';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Corporate/CorporateSideBar';
 import useDownloadNotas from '../../../hooks/notas/useDownloadNotas';
-import useDownloadWordReport from '../../../hooks/notas/useDonwloadWord'; // NUEVO
-import DownloadWordButton from '../../../components/Corporate/ButtonDownload'; // NUEVO
+import useDownloadWordReport from '../../../hooks/notas/useDonwloadWord';
+import DownloadWordButton from '../../../components/Corporate/ButtonDownload';
 import { useClassroom } from '../../../hooks/useClassroom';
 import { useNotas, useNotasClassroom } from '../../../hooks/resultado/useNotas';
 import { StatCard } from '../../../components/StatCard';
@@ -55,19 +55,35 @@ const getStatus = (finalExamGrade: number) => {
   return 'Desaprobado';
 };
 
-// NUEVA: Función para obtener el último intento
+// MEJORADA: Función unificada para obtener el puntaje (último intento con fallback al primero)
 const getLastAttemptGrade = (courseResults: any[]) => {
   if (!courseResults || courseResults.length === 0) return null;
 
-  // Si solo hay un resultado, devolverlo
+  // Función helper para validar si un puntaje es válido
+  const isValidScore = (score: any) => {
+    return score !== null && score !== undefined && !isNaN(Number(score));
+  };
+
+  // Si solo hay un resultado, devolverlo si es válido
   if (courseResults.length === 1) {
-    return courseResults[0]?.puntaje;
+    const score = courseResults[0]?.puntaje;
+    return isValidScore(score) ? score : null;
   }
 
-  // Si hay múltiples resultados, obtener el último (más reciente)
-  // Asumiendo que están ordenados por fecha o que el último en el array es el más reciente
+  // Si hay múltiples resultados, intentar obtener el último (más reciente)
   const lastResult = courseResults[courseResults.length - 1];
-  return lastResult?.puntaje;
+  const lastScore = lastResult?.puntaje;
+
+  // Si el último intento tiene puntaje válido, usarlo
+  if (isValidScore(lastScore)) {
+    return lastScore;
+  }
+
+  // FALLBACK: Si el último intento no tiene puntaje válido, usar el primero
+  const firstResult = courseResults[0];
+  const firstScore = firstResult?.puntaje;
+
+  return isValidScore(firstScore) ? firstScore : null;
 };
 
 const formatDate = (dateString: string) => {
@@ -104,9 +120,9 @@ const NotaCourses: React.FC = () => {
     classroomId
   );
   const { downloadNotas } = useDownloadNotas();
-  // NUEVO: Hook para descarga de Word
   const { downloadWordReport, isDownloading, error, clearError } =
     useDownloadWordReport();
+
   // Current data based on classroom selection
   const currentCourseData = selectedClassroom
     ? courseNotaClassroom
@@ -120,7 +136,7 @@ const NotaCourses: React.FC = () => {
     desaprobado: 0,
   });
 
-  // Profile count calculation - NEW
+  // Profile count calculation
   const [profileCount, setProfileCount] = useState({
     withProfile: 0,
     withoutProfile: 0,
@@ -141,10 +157,8 @@ const NotaCourses: React.FC = () => {
       const profileCounts = { withProfile: 0, withoutProfile: 0 };
 
       currentCourseData.forEach((user) => {
-        // Grade status calculation - MODIFICADO para usar el último intento
-        const examGrade = selectedClassroom
-          ? getLastAttemptGrade(user.CourseResults) // Para aula seleccionada, usar último intento
-          : user.CourseResults?.[0]?.puntaje; // Para vista general, mantener lógica original
+        // UNIFICADA: Usar la misma lógica para ambas vistas (general y aula específica)
+        const examGrade = getLastAttemptGrade(user.CourseResults);
 
         if (examGrade !== null && examGrade !== undefined) {
           const status = getStatus(examGrade);
@@ -154,7 +168,7 @@ const NotaCourses: React.FC = () => {
           else if (status === 'Desaprobado') counts.desaprobado++;
         }
 
-        // Profile status calculation (NEW)
+        // Profile status calculation
         if (
           user.userProfile &&
           user.userProfile.first_name &&
@@ -169,19 +183,18 @@ const NotaCourses: React.FC = () => {
       setStatusCount(counts);
       setProfileCount(profileCounts);
     }
-  }, [currentCourseData, selectedClassroom]); // Agregado selectedClassroom como dependencia
+  }, [currentCourseData, selectedClassroom]);
 
   const handleClassroomChange = async (value: string) => {
     setSelectedClassroom(value);
     await fetchCourseDetail(Number(value));
   };
 
-  // NUEVA: Función para manejar descarga de informe Word
+  // Función para manejar descarga de informe Word
   const handleDownloadWordReport = async () => {
     const success = await downloadWordReport(20, 103);
 
     if (success) {
-      // Opcional: mostrar notificación de éxito
       console.log('Informe descargado exitosamente');
     }
   };
@@ -254,7 +267,6 @@ const NotaCourses: React.FC = () => {
                       loading={isLoading}
                     />
 
-                    {/* NUEVO: Botón para descargar informe Word */}
                     <DownloadWordButton
                       onClick={handleDownloadWordReport}
                       loading={isDownloading}
@@ -263,7 +275,7 @@ const NotaCourses: React.FC = () => {
                 </div>
               </div>
 
-              {/* Stats Summary - UPDATED */}
+              {/* Stats Summary */}
               <StatsSummary
                 totalStudents={filteredStudents?.length || 0}
                 statusCount={statusCount}
@@ -318,7 +330,7 @@ const NotaCourses: React.FC = () => {
   );
 };
 
-// UPDATED StatsSummary component
+// StatsSummary component
 const StatsSummary = ({
   totalStudents,
   statusCount,
@@ -337,7 +349,6 @@ const StatsSummary = ({
   };
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
-    {/* Existing StatCards - maintaining exact logic */}
     <StatCard
       title="Total Estudiantes"
       value={totalStudents}
@@ -352,7 +363,6 @@ const StatsSummary = ({
       bgColor="bg-blue-100"
       textColor="text-blue-600"
     />
-
     <StatCard
       title="Notables ≥18"
       value={statusCount.notable}
@@ -381,7 +391,6 @@ const StatsSummary = ({
       bgColor="bg-red-100"
       textColor="text-red-600"
     />
-    {/* NEW Profile-based StatCards */}
     <StatCard
       title="Usuario Activo"
       value={profileCount.withProfile}
@@ -398,8 +407,6 @@ const StatsSummary = ({
     />
   </div>
 );
-
-// ... rest of the components remain the same
 
 const SearchInput = ({
   value,
