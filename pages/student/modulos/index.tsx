@@ -47,6 +47,10 @@ const Home: React.FC = () => {
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>(
     {}
   );
+  // Nuevo estado para controlar la vista móvil del sidebar
+  const [showSidebarMobile, setShowSidebarMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
   const { createSession_Progress, session_progress } = useSesionProgress();
   const { createCourseTimeStart } = useCourseTime();
   const { createCourseTimeEnd } = useCourseTimeEnd();
@@ -54,6 +58,7 @@ const Home: React.FC = () => {
   const [hasStarted, setHasStarted] = useState(false);
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [hasEnded, setHasEnded] = useState(false);
+
   let name = '';
   let uri_picture = '';
 
@@ -63,20 +68,30 @@ const Home: React.FC = () => {
     uri_picture = profile.profile_picture!;
   }
 
+  // Detectar si es dispositivo móvil
   useEffect(() => {
-    let timer = 0; // Contador en segundos
-    const startTime = new Date(); // Hora exacta de inicio
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    let timer = 0;
+    const startTime = new Date();
 
     console.log('Inicio del curso:', startTime);
 
     let interval: NodeJS.Timeout | null = null;
-    let isPageVisible = true; // Flag para verificar si la página es visible
+    let isPageVisible = true;
 
     const startTimer = () => {
-      // Incrementar el timer cada segundo
       interval = setInterval(() => {
         if (isPageVisible) {
-          // Solo incrementar si la página está visible
           timer += 1;
           console.log('Tiempo transcurrido (segundos):', timer);
         }
@@ -84,54 +99,46 @@ const Home: React.FC = () => {
     };
 
     const handleEndSession = () => {
-      const endTime = new Date(); // Hora exacta de finalización
-      clearInterval(interval!); // Detener el timer
+      const endTime = new Date();
+      clearInterval(interval!);
 
       console.log('Fin del curso:', endTime);
       console.log('Duración total (segundos):', timer);
 
-      // Llamada al backend para registrar el tiempo de la sesión
       createCourseTimeStart({
         course_id: courseIdNumber,
         user_id: userInfo.id,
         startTime: startTime,
         endTime: endTime,
-        duration: timer, // Incluye el tiempo transcurrido
+        duration: timer,
       }).catch((error: any) =>
         console.error('Error al registrar el tiempo de inicio:', error)
       );
     };
 
-    // Cuando la página gana o pierde visibilidad
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        // Si la pestaña pierde visibilidad, no incrementar el tiempo
         isPageVisible = false;
       } else {
-        // Si la pestaña gana visibilidad, reanudar el temporizador
         isPageVisible = true;
       }
     };
 
-    // Detectar cuando el usuario navega hacia atrás o adelante en el historial
     const handlePopState = () => {
-      handleEndSession(); // Llamar a la función para finalizar la sesión cuando retroceda de página
+      handleEndSession();
     };
 
-    // Empezar el temporizador
     startTimer();
 
-    // Registrar la finalización al cerrar la ventana
     window.addEventListener('beforeunload', handleEndSession);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('popstate', handlePopState); // Detectar retroceso en el historial
+    window.addEventListener('popstate', handlePopState);
 
-    // Cleanup para eliminar el intervalo y el listener
     return () => {
-      clearInterval(interval!); // Limpiar el intervalo
+      clearInterval(interval!);
       window.removeEventListener('beforeunload', handleEndSession);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('popstate', handlePopState); // Eliminar el listener del retroceso
+      window.removeEventListener('popstate', handlePopState);
     };
   }, [courseIdNumber, userInfo, createCourseTimeStart]);
 
@@ -168,10 +175,20 @@ const Home: React.FC = () => {
         }
       }
     }
+
+    // Cerrar sidebar en móvil después de seleccionar
+    if (isMobile) {
+      setShowSidebarMobile(false);
+    }
   };
 
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  // Nueva función para toggle del sidebar móvil
+  const toggleSidebarMobile = () => {
+    setShowSidebarMobile(!showSidebarMobile);
   };
 
   const handleVideoProgress = async (
@@ -188,7 +205,6 @@ const Home: React.FC = () => {
         user_id: userInfo.id,
       };
 
-      // Actualizar el estado local para reflejar el progreso
       setVideoProgress((prevProgress) => ({
         ...prevProgress,
         [selectedSession.session_id!]: progressUpdate,
@@ -198,8 +214,9 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 1014) {
+      if (window.innerWidth > 1024) {
         setIsDrawerOpen(false);
+        setShowSidebarMobile(false);
       }
     };
 
@@ -221,31 +238,64 @@ const Home: React.FC = () => {
   if (!courseData || courseData.length === 0) {
     return <LoadingIndicator />;
   }
+
   const handleEvaluationFinish = () => {
     refetch();
   };
 
   return (
     <ProtectedRoute>
-      <div>
-        <div className="relative z-10">
+      <div className="relative">
+        {/* Navbar con botón para móvil */}
+        <div className="relative z-50">
           <Navbar
             bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
             borderColor="border border-stone-300"
             user={user ? { profilePicture: uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />
+
+          {/* Botón flotante para mostrar contenido del curso en móvil */}
+          {isMobile && (
+            <button
+              onClick={toggleSidebarMobile}
+              className="fixed bottom-4 right-4 z-50 bg-brand-200 text-white p-3 rounded-full shadow-lg lg:hidden"
+              aria-label="Ver contenido del curso"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          )}
+
           <SidebarDrawer
             isDrawerOpen={isDrawerOpen}
             toggleSidebar={toggleSidebar}
           />
         </div>
-        <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
-          <div className="flex flex-grow pt-16 flex-col lg:flex-row relative bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+
+        {/* Layout principal */}
+        <div className="flex flex-col min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+          <div className="flex flex-grow pt-16 relative bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+            {/* Contenido principal */}
             <div
-              className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${
-                isDrawerOpen ? 'ml-64' : 'ml-16'
-              }`}
+              className={`
+              flex-1 transition-all duration-300 ease-in-out
+              ${isMobile ? 'p-2' : 'p-4'}
+              ${!isMobile && isDrawerOpen ? 'ml-64' : ''}
+              ${!isMobile ? 'lg:ml-16 lg:mr-96' : ''}
+              ${isMobile && showSidebarMobile ? 'opacity-30' : ''}
+            `}
             >
               <MainContentPrueba
                 sessionVideo={selectedSession.video}
@@ -260,15 +310,81 @@ const Home: React.FC = () => {
                 onUpdated={handleEvaluationFinish}
               />
             </div>
-            <SidebarPrueba
-              courseModules={courseData[0].courseModules}
-              courseEvaluation={courseData[0].Evaluation}
-              moduleEvaluations={courseData[0].courseModules.map(
-                (module) => module.moduleEvaluation
-              )}
-              onSelect={handleSelect}
-              videoProgress={videoProgress}
-            />
+
+            {/* Sidebar desktop */}
+            {!isMobile && (
+              <SidebarPrueba
+                courseModules={courseData[0].courseModules}
+                courseEvaluation={courseData[0].Evaluation}
+                moduleEvaluations={courseData[0].courseModules.map(
+                  (module) => module.moduleEvaluation
+                )}
+                onSelect={handleSelect}
+                videoProgress={videoProgress}
+              />
+            )}
+
+            {/* Sidebar móvil como overlay */}
+            {isMobile && (
+              <>
+                {/* Overlay oscuro */}
+                {showSidebarMobile && (
+                  <div
+                    className="fixed inset-0 bg-black bg-opacity-50 z-40"
+                    onClick={toggleSidebarMobile}
+                  />
+                )}
+
+                {/* Sidebar móvil deslizable */}
+                <div
+                  className={`
+                  fixed top-16 right-0 h-full w-80 max-w-[85vw] z-50
+                  transform transition-transform duration-300 ease-in-out
+                  ${showSidebarMobile ? 'translate-x-0' : 'translate-x-full'}
+                  bg-white shadow-xl overflow-y-auto
+                `}
+                >
+                  {/* Header del sidebar móvil */}
+                  <div className="flex items-center justify-between p-4 border-b bg-brand-100">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      Contenido del Curso
+                    </h3>
+                    <button
+                      onClick={toggleSidebarMobile}
+                      className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                      aria-label="Cerrar menú"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Contenido del sidebar */}
+                  <div className="h-full pb-16">
+                    <SidebarPrueba
+                      courseModules={courseData[0].courseModules}
+                      courseEvaluation={courseData[0].Evaluation}
+                      moduleEvaluations={courseData[0].courseModules.map(
+                        (module) => module.moduleEvaluation
+                      )}
+                      onSelect={handleSelect}
+                      videoProgress={videoProgress}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
