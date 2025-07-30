@@ -15,17 +15,21 @@ import { useAuth } from '../../../context/AuthContext';
 import { Profile } from '../../../interfaces/User/UserInterfaces';
 
 interface Question {
-  question_id: number;
+  question_sche_id: number;
+  evaluation_sche_id: number;
   question_text: string;
   question_type: 'multiple_choice' | 'true_false' | 'open_ended';
   points: number;
   order_index: number;
+  explanation: string;
   options: QuestionOption[];
 }
 
 interface QuestionOption {
-  option_id: number;
+  option_sche_id: number;
+  question_sche_id: number;
   option_text: string;
+  is_correct: boolean;
   order_index: number;
 }
 
@@ -36,12 +40,20 @@ interface UserAnswer {
 }
 
 interface EvaluationData {
-  evaluation_id: number;
+  evaluation_sche_id: number;
   title: string;
   description: string;
   duration_minutes: number;
   total_points: number;
+  passing_score: number;
+  user_id: number;
+  enterprise_id: number;
+  is_active: boolean;
   instructions: string;
+  start_date: string;
+  due_date: string;
+  max_attempts: number;
+  show_results_immediately: boolean;
   questions: Question[];
   attempt_id?: number;
 }
@@ -60,130 +72,91 @@ const TakeEvaluation = () => {
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
   const [attemptId, setAttemptId] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   let name = '';
   let uri_picture = '';
+  let userId: number | null = null;
+
+  const userInfo = user as { id: number; enterprise_id: number };
   if (profileInfo) {
     const profile = profileInfo as Profile;
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
+    // Asegúrate de obtener el user_id correctamente del perfil
+    userId = userInfo.id;
+  }
+
+  // Si no tienes el user_id en profileInfo, intenta obtenerlo de user
+  if (!userId && user) {
+    // Asume que user puede ser un número o un objeto con id
+    if (typeof user === 'number') {
+      userId = user;
+    } else if (typeof user === 'object' && user.id) {
+      userId = user.id;
+    } else if (typeof user === 'string') {
+      userId = parseInt(user);
+    }
   }
 
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  // Sample evaluation data
+  // Fetch evaluation data from API
   useEffect(() => {
-    if (id) {
-      const sampleEvaluation: EvaluationData = {
-        evaluation_id: 1,
-        title: 'Evaluación de Claro Postpago',
-        description: 'Evaluación sobre conceptos de telefonía de Claro',
-        duration_minutes: 60,
-        total_points: 100,
-        instructions:
-          'Lee cuidadosamente cada pregunta antes de responder. Una vez iniciada la evaluación, el tiempo comenzará a correr y no se puede pausar. Asegúrate de tener una conexión estable a internet.',
-        questions: [
-          {
-            question_id: 1,
-            question_text:
-              '¿Cuál es la principal ventaja del plan postpago de Claro?',
-            question_type: 'multiple_choice',
-            points: 10,
-            order_index: 1,
-            options: [
-              {
-                option_id: 1,
-                option_text: 'Mayor control del gasto mensual',
-                order_index: 1,
-              },
-              {
-                option_id: 2,
-                option_text: 'Líneas adicionales sin costo',
-                order_index: 2,
-              },
-              {
-                option_id: 3,
-                option_text: 'Internet ilimitado en todos los planes',
-                order_index: 3,
-              },
-              {
-                option_id: 4,
-                option_text: 'Roaming internacional gratuito',
-                order_index: 4,
-              },
-            ],
-          },
-          {
-            question_id: 2,
-            question_text:
-              '¿Los planes postpago de Claro incluyen llamadas ilimitadas a números Claro?',
-            question_type: 'true_false',
-            points: 10,
-            order_index: 2,
-            options: [
-              { option_id: 5, option_text: 'Verdadero', order_index: 1 },
-              { option_id: 6, option_text: 'Falso', order_index: 2 },
-            ],
-          },
-          {
-            question_id: 3,
-            question_text:
-              'Explica los pasos para activar un plan postpago de Claro',
-            question_type: 'open_ended',
-            points: 15,
-            order_index: 3,
-            options: [],
-          },
-          {
-            question_id: 4,
-            question_text:
-              '¿Qué documentos se requieren para contratar un plan postpago?',
-            question_type: 'multiple_choice',
-            points: 10,
-            order_index: 4,
-            options: [
-              {
-                option_id: 7,
-                option_text: 'Solo cédula de identidad',
-                order_index: 1,
-              },
-              {
-                option_id: 8,
-                option_text: 'Cédula y comprobante de ingresos',
-                order_index: 2,
-              },
-              {
-                option_id: 9,
-                option_text:
-                  'Cédula, comprobante de ingresos y referencias comerciales',
-                order_index: 3,
-              },
-              {
-                option_id: 10,
-                option_text: 'No se requieren documentos',
-                order_index: 4,
-              },
-            ],
-          },
-          {
-            question_id: 5,
-            question_text:
-              '¿Es posible cambiar de plan postpago durante el periodo de contrato?',
-            question_type: 'true_false',
-            points: 10,
-            order_index: 5,
-            options: [
-              { option_id: 11, option_text: 'Verdadero', order_index: 1 },
-              { option_id: 12, option_text: 'Falso', order_index: 2 },
-            ],
-          },
-        ],
-      };
-      setEvaluation(sampleEvaluation);
-      setTimeRemaining(sampleEvaluation.duration_minutes * 60); // Convert to seconds
-    }
+    const fetchEvaluation = async () => {
+      if (!id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `http://localhost:4100/api/evaluations/assignment/evaluations-scheduled/${id}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data: EvaluationData = await response.json();
+
+        // Verificar si la evaluación está activa
+        if (!data.is_active) {
+          setError('Esta evaluación no está disponible');
+          return;
+        }
+
+        // Verificar si está dentro del período de tiempo
+        const now = new Date();
+        const startDate = new Date(data.start_date);
+        const dueDate = new Date(data.due_date);
+
+        if (now < startDate) {
+          setError('Esta evaluación aún no ha comenzado');
+          return;
+        }
+
+        if (now > dueDate) {
+          setError('Esta evaluación ya ha expirado');
+          return;
+        }
+
+        setEvaluation(data);
+        setTimeRemaining(data.duration_minutes * 60); // Convert to seconds
+      } catch (error) {
+        console.error('Error fetching evaluation:', error);
+        setError(
+          'Error al cargar la evaluación. Por favor, intenta nuevamente.'
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvaluation();
   }, [id]);
 
   // Timer effect
@@ -218,26 +191,53 @@ const TakeEvaluation = () => {
 
   const startEvaluation = async () => {
     try {
-      // Aquí llamarías a tu API para crear el attempt
-      const response = await fetch('/api/evaluations/start-attempt', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          evaluation_id: evaluation?.evaluation_id,
-          user_id: user?.toString,
-        }),
+      // Validaciones antes de enviar
+      if (!evaluation?.evaluation_sche_id) {
+        alert('Error: No se ha cargado la evaluación correctamente');
+        return;
+      }
+
+      if (!userId) {
+        alert(
+          'Error: Usuario no identificado. Por favor, inicia sesión nuevamente.'
+        );
+        return;
+      }
+
+      console.log('Datos a enviar:', {
+        evaluation_sche_id: evaluation.evaluation_sche_id,
+        user_id: userId,
       });
 
+      const response = await fetch(
+        'http://localhost:4100/api/evaluations/scheduled/start-attempt',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Si tienes autenticación por token, agrégalo aquí
+            // 'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            evaluation_sche_id: evaluation.evaluation_sche_id,
+            user_id: userId,
+          }),
+        }
+      );
+
       const data = await response.json();
+
+      console.log('Respuesta del servidor:', data);
+
       if (data.success) {
         setAttemptId(data.data.attempt_id);
         setIsStarted(true);
+      } else {
+        alert(data.message || 'Error al iniciar la evaluación');
       }
     } catch (error) {
       console.error('Error starting evaluation:', error);
-      // For demo purposes, just start
-      setIsStarted(true);
-      setAttemptId(1); // Demo attempt ID
+      alert('Error al iniciar la evaluación');
     }
   };
 
@@ -275,8 +275,9 @@ const TakeEvaluation = () => {
 
   const getAnsweredCount = () => {
     return (
-      evaluation?.questions.filter((q) => isQuestionAnswered(q.question_id))
-        .length || 0
+      evaluation?.questions.filter((q) =>
+        isQuestionAnswered(q.question_sche_id)
+      ).length || 0
     );
   };
 
@@ -288,36 +289,140 @@ const TakeEvaluation = () => {
   const submitEvaluation = async (timeExpired = false) => {
     setIsSubmitting(true);
     try {
-      // Aquí llamarías a tu API para enviar las respuestas
-      const response = await fetch('/api/evaluations/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          attempt_id: attemptId,
-          answers: answers,
-          time_expired: timeExpired,
-        }),
+      // Formatear respuestas para el backend
+      const formattedAnswers = answers.map((answer) => ({
+        question_id: answer.question_id, // Esto se mapea a question_sche_id en el backend
+        selected_option_id: answer.selected_option_id,
+        answer_text: answer.answer_text,
+      }));
+
+      console.log('Enviando evaluación:', {
+        attempt_id: attemptId,
+        answers: formattedAnswers,
+        time_expired: timeExpired,
       });
 
+      const response = await fetch(
+        'http://localhost:4100/api/evaluations/scheduled/submit',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attempt_id: attemptId,
+            answers: formattedAnswers,
+            time_expired: timeExpired,
+          }),
+        }
+      );
+
       const data = await response.json();
+      console.log('Respuesta del envío:', data);
+
       if (data.success) {
+        // Redirigir a resultados
         router.push(
           `/student/evaluaciones/${id}/resultados?attempt_id=${attemptId}`
         );
+      } else {
+        alert(data.message || 'Error al enviar la evaluación');
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error('Error submitting evaluation:', error);
-      // For demo purposes, redirect anyway
-      router.push(
-        `/student/evaluaciones/${id}/resultados?attempt_id=${attemptId}`
-      );
+      alert('Error al enviar la evaluación');
+      setIsSubmitting(false);
     }
   };
+
+  // Función opcional para guardar progreso
+  const saveAnswerProgress = async (
+    questionId: number,
+    optionId?: number,
+    text?: string
+  ) => {
+    if (!attemptId) return;
+
+    try {
+      await fetch(
+        'http://localhost:4100/api/evaluations/scheduled/save-answer',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            attempt_id: attemptId,
+            question_sche_id: questionId,
+            option_sche_id: optionId,
+            answer_text: text,
+            time_spent_seconds: 0, // Puedes calcular el tiempo real aquí
+          }),
+        }
+      );
+    } catch (error) {
+      console.error('Error saving progress:', error);
+      // No mostrar error al usuario, es solo para guardar progreso
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-200 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando evaluación...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <ExclamationTriangleIcon className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Error al cargar la evaluación
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200"
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!evaluation) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Cargando...
+        <p className="text-gray-600">No se encontró la evaluación</p>
+      </div>
+    );
+  }
+
+  // Verificar que tenemos userId antes de mostrar la interfaz
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <ExclamationTriangleIcon className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Usuario no identificado
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Por favor, inicia sesión para continuar con la evaluación.
+          </p>
+          <button
+            onClick={() => router.push('/login')}
+            className="px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200"
+          >
+            Ir a Login
+          </button>
+        </div>
       </div>
     );
   }
@@ -381,6 +486,25 @@ const TakeEvaluation = () => {
                   </div>
                 </div>
 
+                {/* Mostrar información adicional de la evaluación */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600">
+                      Puntuación mínima para aprobar:
+                    </p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {evaluation.passing_score} de {evaluation.total_points}{' '}
+                      puntos
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <p className="text-sm text-gray-600">Intentos máximos:</p>
+                    <p className="text-lg font-semibold text-gray-900">
+                      {evaluation.max_attempts}
+                    </p>
+                  </div>
+                </div>
+
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8">
                   <div className="flex items-start">
                     <AlertTriangle className="h-6 w-6 text-yellow-600 mt-1 mr-3" />
@@ -400,6 +524,10 @@ const TakeEvaluation = () => {
                           • Asegúrate de tener conexión estable a internet
                         </li>
                         <li>• Revisa todas tus respuestas antes de enviar</li>
+                        <li>
+                          • Puntuación mínima para aprobar:{' '}
+                          {evaluation.passing_score} puntos
+                        </li>
                       </ul>
                     </div>
                   </div>
@@ -520,12 +648,12 @@ const TakeEvaluation = () => {
                       rows={6}
                       placeholder="Escribe tu respuesta aquí..."
                       value={
-                        getCurrentAnswer(currentQuestion.question_id)
+                        getCurrentAnswer(currentQuestion.question_sche_id)
                           ?.answer_text || ''
                       }
                       onChange={(e) =>
                         handleAnswerChange(
-                          currentQuestion.question_id,
+                          currentQuestion.question_sche_id,
                           undefined,
                           e.target.value
                         )
@@ -534,21 +662,21 @@ const TakeEvaluation = () => {
                   ) : (
                     currentQuestion.options.map((option) => (
                       <label
-                        key={option.option_id}
+                        key={option.option_sche_id}
                         className="flex items-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
                       >
                         <input
                           type="radio"
-                          name={`question_${currentQuestion.question_id}`}
-                          value={option.option_id}
+                          name={`question_${currentQuestion.question_sche_id}`}
+                          value={option.option_sche_id}
                           checked={
-                            getCurrentAnswer(currentQuestion.question_id)
-                              ?.selected_option_id === option.option_id
+                            getCurrentAnswer(currentQuestion.question_sche_id)
+                              ?.selected_option_id === option.option_sche_id
                           }
                           onChange={() =>
                             handleAnswerChange(
-                              currentQuestion.question_id,
-                              option.option_id
+                              currentQuestion.question_sche_id,
+                              option.option_sche_id
                             )
                           }
                           className="h-4 w-4 text-brand-200 focus:ring-brand-200 border-gray-300"
@@ -619,7 +747,7 @@ const TakeEvaluation = () => {
                         index === currentQuestionIndex
                           ? 'bg-brand-200 text-white'
                           : isQuestionAnswered(
-                              evaluation.questions[index].question_id
+                              evaluation.questions[index].question_sche_id
                             )
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

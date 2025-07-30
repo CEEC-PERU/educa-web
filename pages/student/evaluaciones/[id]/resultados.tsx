@@ -16,23 +16,24 @@ import { useAuth } from '../../../../context/AuthContext';
 import { Profile } from '../../../../interfaces/User/UserInterfaces';
 
 interface QuestionResult {
-  question_id: number;
+  question_sche_id: number;
   question_text: string;
   question_type: 'multiple_choice' | 'true_false' | 'open_ended';
   points: number;
+  explanation: string;
   user_answer: {
     selected_option_id?: number;
     answer_text?: string;
-    is_correct: boolean;
+    is_correct: boolean | null;
     points_earned: number;
   };
-  correct_answer: {
-    option_id?: number;
-    option_text?: string;
-    explanation?: string;
-  };
+  correct_options: Array<{
+    option_sche_id: number;
+    option_text: string;
+    is_correct: boolean;
+  }>;
   all_options: Array<{
-    option_id: number;
+    option_sche_id: number;
     option_text: string;
     is_correct: boolean;
   }>;
@@ -41,7 +42,7 @@ interface QuestionResult {
 interface EvaluationResult {
   attempt_id: number;
   evaluation: {
-    evaluation_id: number;
+    evaluation_sche_id: number;
     title: string;
     description: string;
     total_points: number;
@@ -51,6 +52,7 @@ interface EvaluationResult {
   percentage: number;
   time_spent_minutes: number;
   completed_at: string;
+  submitted_at: string;
   status: string;
   passed: boolean;
   questions: QuestionResult[];
@@ -64,6 +66,8 @@ const EvaluationResults = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [results, setResults] = useState<EvaluationResult | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   let name = '';
   let uri_picture = '';
@@ -77,179 +81,124 @@ const EvaluationResults = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  // Sample results data
+  // Fetch results from API
   useEffect(() => {
-    if (id && attempt_id) {
-      const sampleResults: EvaluationResult = {
-        attempt_id: 1,
-        evaluation: {
-          evaluation_id: 1,
-          title: 'Evaluación de Claro Postpago',
-          description: 'Evaluación sobre conceptos de telefonía de Claro',
-          total_points: 55,
-          passing_score: 39, // 70% of 55
-        },
-        score: 45,
-        percentage: 81.82,
-        time_spent_minutes: 42,
-        completed_at: '2025-07-22T15:30:00Z',
-        status: 'completed',
-        passed: true,
-        questions: [
-          {
-            question_id: 1,
-            question_text:
-              '¿Cuál es la principal ventaja del plan postpago de Claro?',
-            question_type: 'multiple_choice',
-            points: 10,
-            user_answer: {
-              selected_option_id: 1,
-              is_correct: true,
-              points_earned: 10,
-            },
-            correct_answer: {
-              option_id: 1,
-              option_text: 'Mayor control del gasto mensual',
-              explanation:
-                'Los planes postpago permiten un mejor control del gasto ya que tienes un monto fijo mensual.',
-            },
-            all_options: [
-              {
-                option_id: 1,
-                option_text: 'Mayor control del gasto mensual',
-                is_correct: true,
-              },
-              {
-                option_id: 2,
-                option_text: 'Líneas adicionales sin costo',
-                is_correct: false,
-              },
-              {
-                option_id: 3,
-                option_text: 'Internet ilimitado en todos los planes',
-                is_correct: false,
-              },
-              {
-                option_id: 4,
-                option_text: 'Roaming internacional gratuito',
-                is_correct: false,
-              },
-            ],
+    const fetchResults = async () => {
+      if (!attempt_id) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `http://localhost:4100/api/evaluations/scheduled/attempt/${attempt_id}/results`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Error al cargar los resultados');
+        }
+
+        // Transformar los datos para que coincidan con la interfaz
+        const transformedResults: EvaluationResult = {
+          attempt_id: data.data.attempt_id,
+          evaluation: {
+            evaluation_sche_id: data.data.evaluation.evaluation_sche_id,
+            title: data.data.evaluation.title,
+            description: data.data.evaluation.description,
+            total_points: data.data.evaluation.total_points,
+            passing_score: data.data.evaluation.passing_score,
           },
-          {
-            question_id: 2,
-            question_text:
-              '¿Los planes postpago de Claro incluyen llamadas ilimitadas a números Claro?',
-            question_type: 'true_false',
-            points: 10,
-            user_answer: {
-              selected_option_id: 5,
-              is_correct: true,
-              points_earned: 10,
-            },
-            correct_answer: {
-              option_id: 5,
-              option_text: 'Verdadero',
-              explanation:
-                'Efectivamente, la mayoría de planes postpago incluyen llamadas ilimitadas entre números Claro.',
-            },
-            all_options: [
-              { option_id: 5, option_text: 'Verdadero', is_correct: true },
-              { option_id: 6, option_text: 'Falso', is_correct: false },
-            ],
-          },
-          {
-            question_id: 3,
-            question_text:
-              'Explica los pasos para activar un plan postpago de Claro',
-            question_type: 'open_ended',
-            points: 15,
-            user_answer: {
-              answer_text:
-                'Los pasos son: 1) Acercarse a un centro de atención Claro, 2) Presentar documentos requeridos, 3) Elegir el plan, 4) Firmar contrato, 5) Activar la línea',
-              is_correct: true,
-              points_earned: 12,
-            },
-            correct_answer: {
-              explanation:
-                'Respuesta parcialmente correcta. Faltó mencionar la verificación crediticia y el tiempo de activación.',
-            },
-            all_options: [],
-          },
-          {
-            question_id: 4,
-            question_text:
-              '¿Qué documentos se requieren para contratar un plan postpago?',
-            question_type: 'multiple_choice',
-            points: 10,
-            user_answer: {
-              selected_option_id: 9,
-              is_correct: true,
-              points_earned: 10,
-            },
-            correct_answer: {
-              option_id: 9,
-              option_text:
-                'Cédula, comprobante de ingresos y referencias comerciales',
-              explanation:
-                'Para un plan postpago se requiere identificación, demostrar capacidad de pago y referencias.',
-            },
-            all_options: [
-              {
-                option_id: 7,
-                option_text: 'Solo cédula de identidad',
-                is_correct: false,
+          score: data.data.score,
+          percentage: parseFloat(data.data.percentage),
+          time_spent_minutes: data.data.time_spent_minutes,
+          completed_at: data.data.completed_at,
+          submitted_at: data.data.submitted_at,
+          status: data.data.status,
+          passed: data.data.score >= data.data.evaluation.passing_score,
+          questions: data.data.evaluation.questions.map((question: any) => {
+            // Buscar la respuesta del usuario para esta pregunta
+            const userAnswer = data.data.answers.find(
+              (answer: any) =>
+                answer.question_sche_id === question.question_sche_id
+            );
+
+            return {
+              question_sche_id: question.question_sche_id,
+              question_text: question.question_text,
+              question_type: question.question_type,
+              points: question.points,
+              explanation: question.explanation,
+              user_answer: {
+                selected_option_id: userAnswer?.option_sche_id || null,
+                answer_text: userAnswer?.answer_text || '',
+                is_correct: userAnswer?.is_correct || false,
+                points_earned: userAnswer?.points_earned || 0,
               },
-              {
-                option_id: 8,
-                option_text: 'Cédula y comprobante de ingresos',
-                is_correct: false,
-              },
-              {
-                option_id: 9,
-                option_text:
-                  'Cédula, comprobante de ingresos y referencias comerciales',
-                is_correct: true,
-              },
-              {
-                option_id: 10,
-                option_text: 'No se requieren documentos',
-                is_correct: false,
-              },
-            ],
-          },
-          {
-            question_id: 5,
-            question_text:
-              '¿Es posible cambiar de plan postpago durante el periodo de contrato?',
-            question_type: 'true_false',
-            points: 10,
-            user_answer: {
-              selected_option_id: 12,
-              is_correct: false,
-              points_earned: 0,
-            },
-            correct_answer: {
-              option_id: 11,
-              option_text: 'Verdadero',
-              explanation:
-                'Sí es posible cambiar de plan, aunque pueden aplicar ciertas condiciones según el contrato.',
-            },
-            all_options: [
-              { option_id: 11, option_text: 'Verdadero', is_correct: true },
-              { option_id: 12, option_text: 'Falso', is_correct: false },
-            ],
-          },
-        ],
-      };
-      setResults(sampleResults);
-    }
-  }, [id, attempt_id]);
+              correct_options: question.options.filter(
+                (opt: any) => opt.is_correct
+              ),
+              all_options: question.options,
+            };
+          }),
+        };
+
+        setResults(transformedResults);
+      } catch (error) {
+        console.error('Error fetching results:', error);
+        setError(
+          'Error al cargar los resultados. Por favor, intenta nuevamente.'
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResults();
+  }, [attempt_id]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-200 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando resultados...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <XCircleIcon className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Error al cargar los resultados
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => router.back()}
+            className="px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200"
+          >
+            Volver
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!results) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        Cargando resultados...
+        <p className="text-gray-600">No se encontraron resultados</p>
       </div>
     );
   }
@@ -277,6 +226,16 @@ const EvaluationResults = () => {
     if (percentage >= 80) return 'bg-blue-50 border-blue-200';
     if (percentage >= 70) return 'bg-yellow-50 border-yellow-200';
     return 'bg-red-50 border-red-200';
+  };
+
+  const getStatusText = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      completed: 'Completada',
+      time_expired: 'Tiempo Expirado',
+      abandoned: 'Abandonada',
+      in_progress: 'En Progreso',
+    };
+    return statusMap[status] || status;
   };
 
   return (
@@ -410,7 +369,7 @@ const EvaluationResults = () => {
                     <p className="text-2xl font-bold text-gray-900">
                       {
                         results.questions.filter(
-                          (q) => q.user_answer.is_correct
+                          (q) => q.user_answer.is_correct === true
                         ).length
                       }
                     </p>
@@ -430,7 +389,7 @@ const EvaluationResults = () => {
                     <p className="text-2xl font-bold text-gray-900">
                       {
                         results.questions.filter(
-                          (q) => !q.user_answer.is_correct
+                          (q) => q.user_answer.is_correct === false
                         ).length
                       }
                     </p>
@@ -462,7 +421,7 @@ const EvaluationResults = () => {
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Estado</p>
                     <p className="text-sm font-bold text-gray-900">
-                      {results.passed ? 'Aprobado' : 'No aprobado'}
+                      {getStatusText(results.status)}
                     </p>
                   </div>
                 </div>
@@ -503,7 +462,7 @@ const EvaluationResults = () => {
                 <div className="mt-6 space-y-6">
                   {results.questions.map((question, index) => (
                     <div
-                      key={question.question_id}
+                      key={question.question_sche_id}
                       className="border-l-4 border-gray-200 pl-6"
                     >
                       <div className="flex items-start justify-between mb-3">
@@ -515,10 +474,12 @@ const EvaluationResults = () => {
                             {question.user_answer.points_earned}/
                             {question.points} pts
                           </span>
-                          {question.user_answer.is_correct ? (
+                          {question.user_answer.is_correct === true ? (
                             <CheckCircleIcon className="h-5 w-5 text-green-500" />
-                          ) : (
+                          ) : question.user_answer.is_correct === false ? (
                             <XCircleIcon className="h-5 w-5 text-red-500" />
+                          ) : (
+                            <ClockIcon className="h-5 w-5 text-yellow-500" />
                           )}
                         </div>
                       </div>
@@ -530,17 +491,24 @@ const EvaluationResults = () => {
                               Tu respuesta:
                             </p>
                             <div className="bg-gray-50 p-3 rounded text-sm">
-                              {question.user_answer.answer_text}
+                              {question.user_answer.answer_text ||
+                                'Sin respuesta'}
                             </div>
                           </div>
-                          {question.correct_answer.explanation && (
+                          {question.explanation && (
                             <div>
                               <p className="text-sm font-medium text-gray-700 mb-1">
-                                Feedback:
+                                Explicación:
                               </p>
                               <div className="bg-blue-50 p-3 rounded text-sm text-blue-800">
-                                {question.correct_answer.explanation}
+                                {question.explanation}
                               </div>
+                            </div>
+                          )}
+                          {question.user_answer.is_correct === null && (
+                            <div className="bg-yellow-50 p-3 rounded text-sm text-yellow-800">
+                              <strong>Nota:</strong> Esta respuesta requiere
+                              evaluación manual.
                             </div>
                           )}
                         </div>
@@ -548,9 +516,9 @@ const EvaluationResults = () => {
                         <div className="space-y-2">
                           {question.all_options.map((option) => (
                             <div
-                              key={option.option_id}
+                              key={option.option_sche_id}
                               className={`p-3 rounded text-sm ${
-                                option.option_id ===
+                                option.option_sche_id ===
                                 question.user_answer.selected_option_id
                                   ? option.is_correct
                                     ? 'bg-green-100 border border-green-300'
@@ -563,7 +531,7 @@ const EvaluationResults = () => {
                               <div className="flex items-center justify-between">
                                 <span>{option.option_text}</span>
                                 <div className="flex items-center gap-2">
-                                  {option.option_id ===
+                                  {option.option_sche_id ===
                                     question.user_answer.selected_option_id && (
                                     <span className="text-xs font-medium px-2 py-1 rounded bg-blue-100 text-blue-700">
                                       Tu respuesta
@@ -576,10 +544,10 @@ const EvaluationResults = () => {
                               </div>
                             </div>
                           ))}
-                          {question.correct_answer.explanation && (
+                          {question.explanation && (
                             <div className="bg-blue-50 p-3 rounded text-sm text-blue-800 mt-2">
                               <strong>Explicación:</strong>{' '}
-                              {question.correct_answer.explanation}
+                              {question.explanation}
                             </div>
                           )}
                         </div>

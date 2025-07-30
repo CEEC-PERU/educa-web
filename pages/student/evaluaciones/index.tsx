@@ -5,28 +5,21 @@ import { DocumentTextIcon } from '@heroicons/react/24/solid';
 import { ClockIcon, PlayIcon, CalendarIcon, ExpandIcon } from 'lucide-react';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
 import Navbar from '../../../components/Navbar';
+import {
+  ApiAssignment,
+  ApiEvaluation,
+  Evaluation,
+} from '../../../interfaces/EvaluationModule/Evaluation';
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Profile } from '../../../interfaces/User/UserInterfaces';
 import { useAuth } from '../../../context/AuthContext';
 
-interface Evaluation {
-  id: string;
-  title: string;
-  description: string;
-  duration_minutes: number;
-  total_points: number;
-  due_date: string;
-  course_name: string;
-  status: 'pending' | 'completed' | 'overdue';
-  attempts_used: number;
-  max_attempts: number;
-  best_score?: number;
-}
-
 const EvaluationsList = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const { profileInfo } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { profileInfo, user } = useAuth();
   const router = useRouter();
 
   let name = '';
@@ -37,67 +30,84 @@ const EvaluationsList = () => {
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
   }
+  const userInfo = user as { id: number; enterprise_id: number };
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  // Sample data
+  // Fetch evaluations from API
   useEffect(() => {
-    const sampleEvaluations: Evaluation[] = [
-      {
-        id: '1',
-        title: 'Evaluación de Claro Postpago',
-        description: 'Evaluación sobre conceptos de telefonia de claro',
-        duration_minutes: 60,
-        total_points: 100,
-        due_date: '2025-07-25T23:59:59Z',
-        course_name: 'Claro Postpago',
-        status: 'pending',
-        attempts_used: 0,
-        max_attempts: 3,
-      },
-      {
-        id: '2',
-        title: 'Examen de Historia Universal',
-        description:
-          'Evaluación comprensiva sobre eventos históricos del siglo XX.',
-        duration_minutes: 90,
-        total_points: 150,
-        due_date: '2025-07-23T23:59:59Z',
-        course_name: 'Historia Mundial',
-        status: 'pending',
-        attempts_used: 1,
-        max_attempts: 2,
-      },
-      {
-        id: '3',
-        title: 'Quiz de Programación - JavaScript',
-        description: 'Evaluación práctica sobre conceptos de JavaScript ES6+.',
-        duration_minutes: 45,
-        total_points: 75,
-        due_date: '2025-07-22T23:59:59Z',
-        course_name: 'Desarrollo Web',
-        status: 'completed',
-        attempts_used: 2,
-        max_attempts: 3,
-        best_score: 68,
-      },
-      {
-        id: '4',
-        title: 'Evaluación de Química Orgánica',
-        description:
-          'Examen sobre estructuras moleculares y reacciones químicas.',
-        duration_minutes: 120,
-        total_points: 200,
-        due_date: '2025-07-20T23:59:59Z',
-        course_name: 'Química Avanzada',
-        status: 'overdue',
-        attempts_used: 0,
-        max_attempts: 1,
-      },
-    ];
-    setEvaluations(sampleEvaluations);
-  }, []);
+    const fetchEvaluations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Get user ID from profile or use default (you may need to adjust this)
+        const userId = userInfo.id;
+
+        const response = await fetch(
+          `http://localhost:4100/api/evaluations/assignment/student/${userId}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Error fetching evaluations: ${response.status}`);
+        }
+
+        const apiData: ApiAssignment[] = await response.json();
+
+        // Transform API data to component format
+        const transformedEvaluations: Evaluation[] = apiData.map(
+          (assignment) => {
+            const { evaluation } = assignment;
+
+            // Determine status based on assignment status and dates
+            let status: 'pending' | 'completed' | 'overdue' = 'pending';
+            const currentDate = new Date();
+            const dueDate = new Date(
+              assignment.due_date_override || evaluation.due_date
+            );
+
+            if (assignment.status === 'completed') {
+              status = 'completed';
+            } else if (currentDate > dueDate) {
+              status = 'overdue';
+            } else {
+              status = 'pending';
+            }
+
+            return {
+              id: assignment.assignment_id.toString(),
+              title: evaluation.title,
+              description: evaluation.description,
+              duration_minutes: evaluation.duration_minutes,
+              total_points: evaluation.total_points,
+              due_date: assignment.due_date_override || evaluation.due_date,
+              course_name: evaluation.title, // Using title as course name since course_name is not in API
+              status,
+
+              max_attempts: evaluation.max_attempts,
+              passing_score: evaluation.passing_score,
+              instructions: evaluation.instructions,
+              total_attempts: evaluation.total_attempts,
+              can_attempt: evaluation.can_attempt,
+              attempts_remaining: evaluation.attempts_remaining,
+            };
+          }
+        );
+
+        setEvaluations(transformedEvaluations);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        console.error('Error fetching evaluations:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (profileInfo) {
+      fetchEvaluations();
+    }
+  }, [profileInfo]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -139,9 +149,70 @@ const EvaluationsList = () => {
   const canTakeEvaluation = (evaluation: Evaluation) => {
     return (
       evaluation.status === 'pending' &&
-      evaluation.attempts_used < evaluation.max_attempts
+      evaluation.total_attempts < evaluation.max_attempts
     );
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="relative z-10">
+          <Navbar
+            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+            borderColor="border border-stone-300"
+            user={uri_picture ? { profilePicture: uri_picture } : undefined}
+            toggleSidebar={toggleSidebar}
+          />
+          <SidebarDrawer
+            isDrawerOpen={isDrawerOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        </div>
+        <div className="pt-16">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-200"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="relative z-10">
+          <Navbar
+            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
+            borderColor="border border-stone-300"
+            user={uri_picture ? { profilePicture: uri_picture } : undefined}
+            toggleSidebar={toggleSidebar}
+          />
+          <SidebarDrawer
+            isDrawerOpen={isDrawerOpen}
+            toggleSidebar={toggleSidebar}
+          />
+        </div>
+        <div className="pt-16">
+          <div className="container mx-auto px-4 py-8">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <h3 className="text-red-800 font-medium">
+                Error al cargar evaluaciones
+              </h3>
+              <p className="text-red-600 text-sm mt-1">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Reintentar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -275,10 +346,18 @@ const EvaluationsList = () => {
                         <p className="text-sm font-medium text-gray-700 mb-4">
                           Curso: {evaluation.course_name}
                         </p>
+                        {evaluation.instructions && (
+                          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p className="text-sm text-blue-800">
+                              <strong>Instrucciones:</strong>{' '}
+                              {evaluation.instructions}
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
                       <div className="flex items-center gap-2">
                         <ClockIcon className="h-4 w-4 text-gray-400" />
                         <span className="text-sm text-gray-600">
@@ -291,6 +370,7 @@ const EvaluationsList = () => {
                           {evaluation.total_points} puntos
                         </span>
                       </div>
+
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-gray-400" />
                         <span className="text-sm text-gray-600">
@@ -299,7 +379,7 @@ const EvaluationsList = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-600">
-                          Intentos: {evaluation.attempts_used}/
+                          Intentos: {evaluation.total_attempts}/
                           {evaluation.max_attempts}
                         </span>
                       </div>
@@ -356,7 +436,7 @@ const EvaluationsList = () => {
               ))}
             </div>
 
-            {evaluations.length === 0 && (
+            {evaluations.length === 0 && !loading && (
               <div className="text-center py-12">
                 <DocumentTextIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
