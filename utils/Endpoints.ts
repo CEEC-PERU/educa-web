@@ -1,6 +1,6 @@
 //export const baseURL = `https://educa-web-api.onrender.com`;
 
-export const baseURL = `https://educa-web-api.onrender.com`;
+export const baseURL = `http://localhost:4100`;
 
 // authentication datos
 export const API_AUTH = `${baseURL}/api/auth/signin`;
@@ -41,7 +41,7 @@ export const API_VIDEOS = `${baseURL}/api/videos`;
 export const API_IMAGES = `${baseURL}/api/images`;
 
 //socket
-export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
+export const API_SOCKET_URL = `http://localhost:4100`;
 
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
@@ -161,3 +161,5 @@ export const API_RESPONSE = `${baseURL}/api/resultado`;
 export const API_MATERIALS = `${baseURL}/api/coursematerials`;
 
 export const API_STUDENT_EVALUATION = `${baseURL}/api/evaluations/assignment`;
+
+export const API_EVALUATIONMODULE = `${baseURL}/api/evaluationsmodule`;

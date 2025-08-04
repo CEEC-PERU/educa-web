@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
+import { API_EVALUATIONMODULE } from '../../../utils/Endpoints';
 import Modal from '../../../components/Admin/Modal';
+import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import { useAuth } from '../../../context/AuthContext';
 import {
   PlusIcon,
@@ -15,6 +17,8 @@ import {
   StarIcon,
   CheckCircleIcon,
   XCircleIcon,
+  UserGroupIcon,
+  ClipboardDocumentListIcon,
 } from '@heroicons/react/24/outline';
 import '../../../app/globals.css';
 
@@ -47,8 +51,6 @@ interface Evaluation {
   total_points: number;
   passing_score: number;
   instructions: string;
-  start_date: string;
-  due_date: string;
   max_attempts: number;
   show_results_immediately: boolean;
   is_active: boolean;
@@ -56,21 +58,71 @@ interface Evaluation {
   created_at?: string;
 }
 
+interface Profile {
+  first_name: string;
+  last_name: string;
+}
+
+interface User {
+  user_id: number;
+  userProfile: Profile;
+}
+
+interface Shift {
+  shift_id: number;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Enterprise {
+  enterprise_id: number;
+  name: string;
+}
+
+interface Classroom {
+  classroom_id: number;
+  code: string;
+  user_id: number;
+  enterprise_id: number;
+  shift_id: number;
+  created_at: string;
+  updated_at: string;
+  Enterprise: Enterprise;
+  Shift: Shift;
+  User: User;
+}
+
+interface AssignmentFormData {
+  evaluation_sche_id: number;
+  classroom_ids: number[];
+  start_date: string;
+  due_date: string;
+  status: 'assigned';
+}
+
 const Evaluations: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
   const [editingEvaluation, setEditingEvaluation] = useState<Evaluation | null>(
     null
   );
+  const { classrooms } = useClassroomBySupervisor();
   const [isSaving, setIsSaving] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [assignmentErrors, setAssignmentErrors] = useState<{
+    [key: string]: string;
+  }>({});
 
   const router = useRouter();
   const { user } = useAuth();
+  const userInfo = user as { id: number; enterprise_id: number };
 
-  // Estado del formulario
+  // Estado del formulario de evaluación
   const [formData, setFormData] = useState<Evaluation>({
     title: '',
     description: '',
@@ -78,13 +130,21 @@ const Evaluations: React.FC = () => {
     total_points: 100,
     passing_score: 60,
     instructions: '',
-    start_date: '',
-    due_date: '',
     max_attempts: 1,
     show_results_immediately: true,
     is_active: true,
     questions: [],
   });
+
+  // Estado del formulario de asignación
+  const [assignmentFormData, setAssignmentFormData] =
+    useState<AssignmentFormData>({
+      evaluation_sche_id: 0,
+      classroom_ids: [],
+      start_date: '',
+      due_date: '',
+      status: 'assigned',
+    });
 
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
     question_text: '',
@@ -99,14 +159,31 @@ const Evaluations: React.FC = () => {
 
   // Cargar evaluaciones
   useEffect(() => {
-    fetchEvaluations();
+    if (userInfo?.id) {
+      fetchEvaluations();
+    }
+  }, [userInfo]);
+
+  // Inicializar fechas por defecto
+  useEffect(() => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(now);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    setAssignmentFormData((prev) => ({
+      ...prev,
+      start_date: tomorrow.toISOString().slice(0, 16),
+      due_date: nextWeek.toISOString().slice(0, 16),
+    }));
   }, []);
 
   const fetchEvaluations = async () => {
     try {
       setIsLoading(true);
       const response = await fetch(
-        'http://localhost:4100/api/evaluationsmodule/user/273',
+        `${API_EVALUATIONMODULE}/user/${userInfo.id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -116,7 +193,17 @@ const Evaluations: React.FC = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setEvaluations(data.data || []);
+        // Filter out invalid questions and ensure proper data structure
+        const validEvaluations = (data.data || []).map((evaluation: any) => ({
+          ...evaluation,
+          questions: (evaluation.questions || []).filter(
+            (question: any) =>
+              question &&
+              question.question_text &&
+              typeof question.question_text === 'string'
+          ),
+        }));
+        setEvaluations(validEvaluations);
       } else {
         console.error('Error fetching evaluations:', response.statusText);
         setEvaluations([]);
@@ -129,7 +216,129 @@ const Evaluations: React.FC = () => {
     }
   };
 
-  // Validación del formulario
+  // Validación del formulario de asignación
+  const validateAssignmentForm = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!assignmentFormData.evaluation_sche_id) {
+      newErrors.evaluation_sche_id = 'Debe seleccionar una evaluación';
+    }
+
+    if (assignmentFormData.classroom_ids.length === 0) {
+      newErrors.classroom_ids = 'Debe seleccionar al menos un aula';
+    }
+
+    if (!assignmentFormData.start_date) {
+      newErrors.start_date = 'La fecha de inicio es requerida';
+    }
+
+    if (!assignmentFormData.due_date) {
+      newErrors.due_date = 'La fecha de fin es requerida';
+    }
+
+    if (
+      assignmentFormData.start_date &&
+      assignmentFormData.due_date &&
+      new Date(assignmentFormData.start_date) >=
+        new Date(assignmentFormData.due_date)
+    ) {
+      newErrors.due_date =
+        'La fecha de fin debe ser posterior a la fecha de inicio';
+    }
+
+    setAssignmentErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Actualizar la función handleAssignEvaluation en el frontend:
+
+  const handleAssignEvaluation = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateAssignmentForm()) {
+      return;
+    }
+
+    try {
+      setIsAssigning(true);
+      setAssignmentErrors({});
+
+      const assignmentData = {
+        evaluation_sche_id: assignmentFormData.evaluation_sche_id,
+        classroom_ids: assignmentFormData.classroom_ids,
+        start_date: assignmentFormData.start_date,
+        due_date: assignmentFormData.due_date,
+        status: assignmentFormData.status,
+      };
+
+      console.log('Enviando datos de asignación:', assignmentData);
+
+      const response = await fetch(
+        `${API_EVALUATIONMODULE}/assignments/${userInfo.id}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+          body: JSON.stringify(assignmentData),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        handleCloseAssignModal();
+        showNotification(
+          `${result.message}. Total estudiantes: ${
+            result.summary?.total_students_assigned || 0
+          }`,
+          'success'
+        );
+      } else {
+        showNotification(
+          result.message || 'Error al asignar la evaluación',
+          'error'
+        );
+      }
+    } catch (error) {
+      console.error('Error assigning evaluation:', error);
+      showNotification('Error al asignar la evaluación', 'error');
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+  // Abrir modal de asignación con una evaluación específica
+  const handleOpenAssignModal = (evaluation: Evaluation) => {
+    setAssignmentFormData((prev) => ({
+      ...prev,
+      evaluation_sche_id: evaluation.evaluation_sche_id || 0,
+    }));
+    setShowAssignModal(true);
+  };
+
+  // Cerrar modal de asignación
+  const handleCloseAssignModal = () => {
+    setShowAssignModal(false);
+    setAssignmentFormData((prev) => ({
+      ...prev,
+      evaluation_sche_id: 0,
+      classroom_ids: [],
+    }));
+    setAssignmentErrors({});
+  };
+
+  // Manejar selección de aulas
+  const handleClassroomSelection = (classroomId: number, checked: boolean) => {
+    setAssignmentFormData((prev) => ({
+      ...prev,
+      classroom_ids: checked
+        ? [...prev.classroom_ids, classroomId]
+        : prev.classroom_ids.filter((id) => id !== classroomId),
+    }));
+  };
+
+  // Validación del formulario de evaluación
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
 
@@ -147,23 +356,6 @@ const Evaluations: React.FC = () => {
     ) {
       newErrors.passing_score =
         'La puntuación mínima debe estar entre 1 y el total de puntos';
-    }
-
-    if (!formData.start_date) {
-      newErrors.start_date = 'La fecha de inicio es requerida';
-    }
-
-    if (!formData.due_date) {
-      newErrors.due_date = 'La fecha de fin es requerida';
-    }
-
-    if (
-      formData.start_date &&
-      formData.due_date &&
-      new Date(formData.start_date) >= new Date(formData.due_date)
-    ) {
-      newErrors.due_date =
-        'La fecha de fin debe ser posterior a la fecha de inicio';
     }
 
     if (!formData.questions || formData.questions.length === 0) {
@@ -186,8 +378,8 @@ const Evaluations: React.FC = () => {
       setErrors({});
 
       const url = editingEvaluation
-        ? `http://localhost:4100/api/evaluationsmodule/${editingEvaluation.evaluation_sche_id}`
-        : 'http://localhost:4100/api/evaluationsmodule';
+        ? `${API_EVALUATIONMODULE}/${editingEvaluation.evaluation_sche_id}`
+        : `${API_EVALUATIONMODULE}/profesor/${userInfo.id}/${userInfo.enterprise_id}`;
 
       const method = editingEvaluation ? 'PUT' : 'POST';
 
@@ -203,7 +395,6 @@ const Evaluations: React.FC = () => {
       if (response.ok) {
         await fetchEvaluations();
         handleCloseModal();
-        // Usar una notificación más elegante en lugar de alert
         showNotification(
           editingEvaluation
             ? 'Evaluación actualizada exitosamente'
@@ -225,24 +416,19 @@ const Evaluations: React.FC = () => {
     }
   };
 
-  // Función para mostrar notificaciones (puedes reemplazar con tu sistema de notificaciones)
   const showNotification = (message: string, type: 'success' | 'error') => {
-    // Por ahora usamos alert, pero puedes implementar un toast más elegante
     alert(message);
   };
 
   const handleDelete = async (id: number) => {
     if (confirm('¿Estás seguro de que deseas eliminar esta evaluación?')) {
       try {
-        const response = await fetch(
-          `http://localhost:4100/api/evaluationsmodule/${id}`,
-          {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_EVALUATIONMODULE}/${id}`, {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
         if (response.ok) {
           await fetchEvaluations();
@@ -265,8 +451,6 @@ const Evaluations: React.FC = () => {
       total_points: 100,
       passing_score: 60,
       instructions: '',
-      start_date: '',
-      due_date: '',
       max_attempts: 1,
       show_results_immediately: true,
       is_active: true,
@@ -297,15 +481,17 @@ const Evaluations: React.FC = () => {
 
   const handleEdit = (evaluation: Evaluation) => {
     setEditingEvaluation(evaluation);
-    setFormData({
+    // Ensure questions array exists and is properly formatted
+    const safeEvaluation = {
       ...evaluation,
-      start_date: evaluation.start_date
-        ? new Date(evaluation.start_date).toISOString().slice(0, 16)
-        : '',
-      due_date: evaluation.due_date
-        ? new Date(evaluation.due_date).toISOString().slice(0, 16)
-        : '',
-    });
+      questions: (evaluation.questions || []).filter(
+        (question) =>
+          question &&
+          question.question_text &&
+          typeof question.question_text === 'string'
+      ),
+    };
+    setFormData(safeEvaluation);
     setShowCreateModal(true);
   };
 
@@ -327,7 +513,6 @@ const Evaluations: React.FC = () => {
         return false;
       }
 
-      // Para single_choice, solo debe haber una respuesta correcta
       if (currentQuestion.question_type === 'single_choice') {
         const correctCount =
           currentQuestion.options?.filter((option) => option.is_correct)
@@ -341,7 +526,6 @@ const Evaluations: React.FC = () => {
         }
       }
 
-      // Validar que las opciones tengan texto
       const emptyOptions = currentQuestion.options?.filter(
         (option) => !option.option_text.trim()
       );
@@ -382,7 +566,6 @@ const Evaluations: React.FC = () => {
       formData.questions?.filter((_, i) => i !== index) || [];
     const totalPoints = newQuestions.reduce((sum, q) => sum + q.points, 0);
 
-    // Reindexar las preguntas
     const reindexedQuestions = newQuestions.map((q, i) => ({
       ...q,
       order_index: i + 1,
@@ -412,7 +595,6 @@ const Evaluations: React.FC = () => {
   const updateOption = (index: number, field: keyof Option, value: any) => {
     const newOptions = [...(currentQuestion.options || [])];
 
-    // Para single_choice, si se marca como correcta, desmarcar las demás
     if (
       field === 'is_correct' &&
       value &&
@@ -457,7 +639,6 @@ const Evaluations: React.FC = () => {
     } else if (type === 'open_ended') {
       options = [];
     } else if (type === 'single_choice' || type === 'multiple_choice') {
-      // Si cambiamos a single_choice y hay múltiples respuestas correctas, mantener solo la primera
       if (type === 'single_choice' && options) {
         let foundCorrect = false;
         options = options.map((option) => ({
@@ -469,7 +650,6 @@ const Evaluations: React.FC = () => {
         }));
       }
 
-      // Asegurar que hay al menos 2 opciones
       if (!options || options.length < 2) {
         options = [
           { option_text: '', is_correct: false, order_index: 1 },
@@ -510,6 +690,17 @@ const Evaluations: React.FC = () => {
     </div>
   );
 
+  // Safe question text display with null checks
+  const getQuestionDisplayText = (question: Question): string => {
+    if (!question || !question.question_text) {
+      return 'Pregunta sin texto';
+    }
+    const questionText = question.question_text.toString();
+    return questionText.length > 60
+      ? `${questionText.slice(0, 60)}...`
+      : questionText;
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gray-50">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -532,13 +723,22 @@ const Evaluations: React.FC = () => {
                   Gestiona las evaluaciones para tus estudiantes
                 </p>
               </div>
-              <button
-                onClick={() => setShowCreateModal(true)}
-                className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-              >
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Nueva Evaluación
-              </button>
+              <div className="mt-4 sm:mt-0 flex space-x-3">
+                <button
+                  onClick={() => setShowAssignModal(true)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
+                >
+                  <ClipboardDocumentListIcon className="h-4 w-4 mr-2" />
+                  Asignar Evaluación
+                </button>
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Nueva Evaluación
+                </button>
+              </div>
             </div>
 
             {/* Evaluations Grid */}
@@ -560,6 +760,13 @@ const Evaluations: React.FC = () => {
                         </div>
                         <div className="flex space-x-2">
                           <button
+                            onClick={() => handleOpenAssignModal(evaluation)}
+                            className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                            title="Asignar evaluación"
+                          >
+                            <UserGroupIcon className="h-4 w-4" />
+                          </button>
+                          <button
                             onClick={() => handleEdit(evaluation)}
                             className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
                             title="Editar evaluación"
@@ -579,7 +786,7 @@ const Evaluations: React.FC = () => {
                       </div>
 
                       <h3 className="font-bold text-lg text-gray-800 mb-2 line-clamp-2">
-                        {evaluation.title}
+                        {evaluation.title || 'Sin título'}
                       </h3>
 
                       <p className="text-sm text-gray-600 mb-4 line-clamp-2">
@@ -589,36 +796,33 @@ const Evaluations: React.FC = () => {
                       <div className="space-y-2">
                         <div className="flex items-center text-sm text-gray-600">
                           <ClockIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>{evaluation.duration_minutes} minutos</span>
+                          <span>
+                            {evaluation.duration_minutes || 0} minutos
+                          </span>
                         </div>
 
                         <div className="flex items-center text-sm text-gray-600">
                           <StarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span>{evaluation.total_points} puntos total</span>
-                        </div>
-
-                        <div className="flex items-center text-sm text-gray-600">
-                          <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
-                          <span className="truncate">
-                            {new Date(evaluation.start_date).toLocaleDateString(
-                              'es-ES',
-                              {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                              }
-                            )}{' '}
-                            -{' '}
-                            {new Date(evaluation.due_date).toLocaleDateString(
-                              'es-ES',
-                              {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
-                              }
-                            )}
+                          <span>
+                            {evaluation.total_points || 0} puntos total
                           </span>
                         </div>
+
+                        {evaluation.created_at && (
+                          <div className="flex items-center text-sm text-gray-600">
+                            <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
+                            <span className="truncate">
+                              Creada:{' '}
+                              {new Date(
+                                evaluation.created_at
+                              ).toLocaleDateString('es-ES', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="mt-4 pt-4 border-t border-gray-200">
@@ -659,6 +863,205 @@ const Evaluations: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {/* Modal para Asignar Evaluación */}
+      {showAssignModal && (
+        <Modal
+          isOpen={showAssignModal}
+          onClose={handleCloseAssignModal}
+          title="Asignar Evaluación"
+          size="lg"
+        >
+          <form onSubmit={handleAssignEvaluation} className="space-y-6">
+            <div className="space-y-4">
+              {/* Selección de Evaluación */}
+              {renderFormField(
+                assignmentErrors.evaluation_sche_id,
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Seleccionar Evaluación *
+                  </label>
+                  <select
+                    value={assignmentFormData.evaluation_sche_id}
+                    onChange={(e) =>
+                      setAssignmentFormData((prev) => ({
+                        ...prev,
+                        evaluation_sche_id: parseInt(e.target.value) || 0,
+                      }))
+                    }
+                    className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
+                      assignmentErrors.evaluation_sche_id
+                        ? 'border-red-300 focus:border-red-500'
+                        : 'border-gray-300 focus:border-green-500'
+                    }`}
+                  >
+                    <option value={0}>Seleccione una evaluación</option>
+                    {evaluations
+                      .filter((evaluation) => evaluation.is_active) // ← Aquí está el cambio
+                      .map((evaluation) => (
+                        <option
+                          key={evaluation.evaluation_sche_id}
+                          value={evaluation.evaluation_sche_id}
+                        >
+                          {evaluation.title} (
+                          {evaluation.questions?.length || 0} preguntas)
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Fechas */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {renderFormField(
+                  assignmentErrors.start_date,
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de Inicio *
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={assignmentFormData.start_date}
+                      onChange={(e) =>
+                        setAssignmentFormData((prev) => ({
+                          ...prev,
+                          start_date: e.target.value,
+                        }))
+                      }
+                      className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
+                        assignmentErrors.start_date
+                          ? 'border-red-300 focus:border-red-500'
+                          : 'border-gray-300 focus:border-green-500'
+                      }`}
+                    />
+                  </div>
+                )}
+
+                {renderFormField(
+                  assignmentErrors.due_date,
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fecha de Vencimiento *
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={assignmentFormData.due_date}
+                      onChange={(e) =>
+                        setAssignmentFormData((prev) => ({
+                          ...prev,
+                          due_date: e.target.value,
+                        }))
+                      }
+                      className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
+                        assignmentErrors.due_date
+                          ? 'border-red-300 focus:border-red-500'
+                          : 'border-gray-300 focus:border-green-500'
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Selección de Aulas */}
+              {renderFormField(
+                assignmentErrors.classroom_ids,
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Seleccionar Aulas *
+                  </label>
+                  <div className="border border-gray-300 rounded-md p-4 max-h-60 overflow-y-auto">
+                    {classrooms && classrooms.length > 0 ? (
+                      <div className="space-y-3">
+                        {classrooms.map((classroom) => (
+                          <div
+                            key={classroom.classroom_id}
+                            className="flex items-center p-3 hover:bg-gray-50 rounded-lg border border-gray-100"
+                          >
+                            <input
+                              type="checkbox"
+                              id={`classroom-${classroom.classroom_id}`}
+                              checked={assignmentFormData.classroom_ids.includes(
+                                classroom.classroom_id
+                              )}
+                              onChange={(e) =>
+                                handleClassroomSelection(
+                                  classroom.classroom_id,
+                                  e.target.checked
+                                )
+                              }
+                              className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                            />
+                            <label
+                              htmlFor={`classroom-${classroom.classroom_id}`}
+                              className="ml-3 flex-1 cursor-pointer"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    Aula: {classroom.code}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    Turno: {classroom.Shift?.name} | Profesor:{' '}
+                                    {classroom.User?.userProfile?.first_name}{' '}
+                                    {classroom.User?.userProfile?.last_name}
+                                  </p>
+                                </div>
+                                <div className="text-xs text-gray-400">
+                                  {classroom.Enterprise?.name}
+                                </div>
+                              </div>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 text-center py-4">
+                        No hay aulas disponibles
+                      </p>
+                    )}
+                  </div>
+                  {assignmentFormData.classroom_ids.length > 0 && (
+                    <p className="mt-2 text-sm text-green-600">
+                      {assignmentFormData.classroom_ids.length} aula(s)
+                      seleccionada(s)
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Botones */}
+            <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleCloseAssignModal}
+                disabled={isAssigning}
+                className="px-6 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={
+                  isAssigning ||
+                  assignmentFormData.classroom_ids.length === 0 ||
+                  !assignmentFormData.evaluation_sche_id
+                }
+                className="px-6 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isAssigning ? (
+                  <span className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                    Asignando...
+                  </span>
+                ) : (
+                  'Asignar Evaluación'
+                )}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
 
       {/* Modal para Crear/Editar Evaluación */}
       {showCreateModal && (
@@ -772,56 +1175,6 @@ const Evaluations: React.FC = () => {
                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                   />
                 </div>
-
-                {renderFormField(
-                  errors.start_date,
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de Inicio *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      required
-                      value={formData.start_date}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          start_date: e.target.value,
-                        }))
-                      }
-                      className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.start_date
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
-                      }`}
-                    />
-                  </div>
-                )}
-
-                {renderFormField(
-                  errors.due_date,
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Fecha de Fin *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      required
-                      value={formData.due_date}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          due_date: e.target.value,
-                        }))
-                      }
-                      className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors ${
-                        errors.due_date
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
-                      }`}
-                    />
-                  </div>
-                )}
               </div>
 
               <div className="mt-4 space-y-4">
@@ -936,9 +1289,7 @@ const Evaluations: React.FC = () => {
                             {index + 1}
                           </span>
                           <span className="text-sm font-medium text-gray-900 truncate">
-                            {question.question_text.length > 60
-                              ? `${question.question_text.slice(0, 60)}...`
-                              : question.question_text}
+                            {getQuestionDisplayText(question)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-4 text-xs text-gray-500">
@@ -946,7 +1297,7 @@ const Evaluations: React.FC = () => {
                             {getQuestionTypeLabel(question.question_type)}
                           </span>
                           <span className="bg-blue-100 px-2 py-1 rounded text-blue-800">
-                            {question.points} pts
+                            {question.points || 0} pts
                           </span>
                           {question.question_type !== 'open_ended' && (
                             <span>

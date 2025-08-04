@@ -76,7 +76,7 @@ const EvaluationsList = () => {
             }
 
             return {
-              id: assignment.assignment_id.toString(),
+              id: assignment.evaluation_sche_id.toString(),
               title: evaluation.title,
               description: evaluation.description,
               duration_minutes: evaluation.duration_minutes,
