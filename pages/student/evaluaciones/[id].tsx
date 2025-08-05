@@ -75,6 +75,13 @@ const TakeEvaluation = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [questionStartTime, setQuestionStartTime] = useState<number>(
+    Date.now()
+  );
+  const [questionTimes, setQuestionTimes] = useState<{ [key: number]: number }>(
+    {}
+  );
+
   let name = '';
   let uri_picture = '';
   let userId: number | null = null;
@@ -102,6 +109,25 @@ const TakeEvaluation = () => {
 
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+
+  // Cuando cambias de pregunta
+  const changeQuestion = (newIndex: number) => {
+    const currentTime = Date.now();
+    const timeSpent = Math.round((currentTime - questionStartTime) / 1000);
+
+    // Guardar tiempo de la pregunta actual
+    if (evaluation) {
+      const currentQuestionId =
+        evaluation.questions[currentQuestionIndex].question_sche_id;
+      setQuestionTimes((prev) => ({
+        ...prev,
+        [currentQuestionId]: (prev[currentQuestionId] || 0) + timeSpent,
+      }));
+    }
+
+    setCurrentQuestionIndex(newIndex);
+    setQuestionStartTime(currentTime);
   };
 
   // Fetch evaluation data from API
@@ -291,9 +317,10 @@ const TakeEvaluation = () => {
     try {
       // Formatear respuestas para el backend
       const formattedAnswers = answers.map((answer) => ({
-        question_id: answer.question_id, // Esto se mapea a question_sche_id en el backend
+        question_sche_id: answer.question_id, // Esto se mapea a question_sche_id en el backend
         selected_option_id: answer.selected_option_id,
         answer_text: answer.answer_text,
+        time_spent_seconds: questionTimes[answer.question_id] || 30, // ✅ Tiempo rea
       }));
 
       console.log('Enviando evaluación:', {

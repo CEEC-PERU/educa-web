@@ -216,6 +216,25 @@ const Evaluations: React.FC = () => {
     }
   };
 
+  // Función para navegar a la página de estudiantes asignados
+  const handleViewStudents = (evaluationId: number) => {
+    router.push(`/supervisor/evaluations/${evaluationId}/students`);
+  };
+
+  // Función para manejar el clic en la tarjeta de evaluación
+  const handleEvaluationClick = (
+    evaluation: Evaluation,
+    event: React.MouseEvent
+  ) => {
+    // Verificar si el clic fue en un botón de acción
+    const target = event.target as HTMLElement;
+    const isActionButton = target.closest('button');
+
+    if (!isActionButton && evaluation.evaluation_sche_id) {
+      handleViewStudents(evaluation.evaluation_sche_id);
+    }
+  };
+
   // Validación del formulario de asignación
   const validateAssignmentForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
@@ -720,7 +739,8 @@ const Evaluations: React.FC = () => {
                   Evaluaciones Programadas
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">
-                  Gestiona las evaluaciones para tus estudiantes
+                  Gestiona las evaluaciones para tus estudiantes. Haz clic en
+                  una evaluación para ver estudiantes asignados.
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
@@ -752,32 +772,45 @@ const Evaluations: React.FC = () => {
                   {evaluations.map((evaluation) => (
                     <div
                       key={evaluation.evaluation_sche_id}
-                      className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300"
+                      onClick={(e) => handleEvaluationClick(evaluation, e)}
+                      className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300 cursor-pointer relative group"
                     >
+                      {/* Indicador visual de clickeable */}
+                      <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <EyeIcon className="h-4 w-4 text-blue-500" />
+                      </div>
+
                       <div className="flex items-start justify-between mb-4">
                         <div className="bg-blue-100 p-3 rounded-full">
                           <AcademicCapIcon className="h-6 w-6 text-blue-600" />
                         </div>
                         <div className="flex space-x-2">
                           <button
-                            onClick={() => handleOpenAssignModal(evaluation)}
-                            className="p-1 text-gray-400 hover:text-green-600 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenAssignModal(evaluation);
+                            }}
+                            className="p-1 text-gray-400 hover:text-green-600 transition-colors z-10 relative"
                             title="Asignar evaluación"
                           >
                             <UserGroupIcon className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() => handleEdit(evaluation)}
-                            className="p-1 text-gray-400 hover:text-blue-600 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEdit(evaluation);
+                            }}
+                            className="p-1 text-gray-400 hover:text-blue-600 transition-colors z-10 relative"
                             title="Editar evaluación"
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>
                           <button
-                            onClick={() =>
-                              handleDelete(evaluation.evaluation_sche_id!)
-                            }
-                            className="p-1 text-gray-400 hover:text-red-600 transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDelete(evaluation.evaluation_sche_id!);
+                            }}
+                            className="p-1 text-gray-400 hover:text-red-600 transition-colors z-10 relative"
                             title="Eliminar evaluación"
                           >
                             <TrashIcon className="h-4 w-4" />
@@ -840,6 +873,13 @@ const Evaluations: React.FC = () => {
                             {evaluation.is_active ? 'Activa' : 'Inactiva'}
                           </span>
                         </div>
+                      </div>
+
+                      {/* Indicador de click en hover */}
+                      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-xs text-blue-500 font-medium">
+                          Click para ver estudiantes
+                        </span>
                       </div>
                     </div>
                   ))}

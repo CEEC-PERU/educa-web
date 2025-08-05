@@ -147,10 +147,7 @@ const EvaluationsList = () => {
   };
 
   const canTakeEvaluation = (evaluation: Evaluation) => {
-    return (
-      evaluation.status === 'pending' &&
-      evaluation.total_attempts < evaluation.max_attempts
-    );
+    return evaluation.total_attempts < evaluation.max_attempts;
   };
 
   if (loading) {
