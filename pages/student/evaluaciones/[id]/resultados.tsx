@@ -9,6 +9,7 @@ import {
   ArrowLeftIcon,
   TrophyIcon,
 } from '@heroicons/react/24/solid';
+import { API_EVALUATIONS_R } from '../../../../utils/Endpoints';
 import { Calendar, Target, Award } from 'lucide-react';
 import Navbar from '../../../../components/Navbar';
 import SidebarDrawer from '../../../../components/student/DrawerNavigation';
@@ -91,7 +92,7 @@ const EvaluationResults = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:4100/api/evaluations/scheduled/attempt/${attempt_id}/results`
+          `${API_EVALUATIONS_R}/scheduled/attempt/${attempt_id}/results`
         );
 
         if (!response.ok) {
@@ -562,16 +563,12 @@ const EvaluationResults = () => {
             <div className="text-center space-y-4">
               <div className="flex justify-center gap-4">
                 <Link href="/student/evaluaciones">
-                  <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
+                  <button className="px-6 py-3 bg-brand-200  text-white rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
                     Volver a Evaluaciones
                   </button>
                 </Link>
 
-                <Link href="/student/evaluaciones/historial">
-                  <button className="px-6 py-3 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200 font-medium">
-                    Ver Historial
-                  </button>
-                </Link>
+                
               </div>
 
               {!results.passed && (

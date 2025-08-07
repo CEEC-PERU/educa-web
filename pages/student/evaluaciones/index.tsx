@@ -10,117 +10,30 @@ import {
   ApiEvaluation,
   Evaluation,
 } from '../../../interfaces/EvaluationModule/Evaluation';
+
+// Hooks personalizados
+import { useEvaluationsList } from '../../../hooks/resultado/useEvaluationList';
+import { useEvaluationUI } from '../../../hooks/ui/useEvaluationUI';
+
+import { formatDate , getStatusColor , canTakeEvaluation} from '../../../services/evaluationmodule/evaluation';
+
 import { CheckCircleIcon } from '@heroicons/react/24/outline';
 import { Profile } from '../../../interfaces/User/UserInterfaces';
 import { useAuth } from '../../../context/AuthContext';
 
 const EvaluationsList = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { profileInfo, user } = useAuth();
-  const router = useRouter();
-
-  let name = '';
-  let uri_picture = '';
-
-  if (profileInfo) {
-    const profile = profileInfo as Profile;
-    name = profile.first_name;
-    uri_picture = profile.profile_picture!;
-  }
-  const userInfo = user as { id: number; enterprise_id: number };
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
-  // Fetch evaluations from API
-  useEffect(() => {
-    const fetchEvaluations = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        // Get user ID from profile or use default (you may need to adjust this)
-        const userId = userInfo.id;
-
-        const response = await fetch(
-          `http://localhost:4100/api/evaluations/assignment/student/${userId}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`Error fetching evaluations: ${response.status}`);
-        }
-
-        const apiData: ApiAssignment[] = await response.json();
-
-        // Transform API data to component format
-        const transformedEvaluations: Evaluation[] = apiData.map(
-          (assignment) => {
-            const { evaluation } = assignment;
-
-            // Determine status based on assignment status and dates
-            let status: 'pending' | 'completed' | 'overdue' = 'pending';
-            const currentDate = new Date();
-            const dueDate = new Date(
-              assignment.due_date_override || evaluation.due_date
-            );
-
-            if (assignment.status === 'completed') {
-              status = 'completed';
-            } else if (currentDate > dueDate) {
-              status = 'overdue';
-            } else {
-              status = 'pending';
-            }
-
-            return {
-              id: assignment.evaluation_sche_id.toString(),
-              title: evaluation.title,
-              description: evaluation.description,
-              duration_minutes: evaluation.duration_minutes,
-              total_points: evaluation.total_points,
-              due_date: assignment.due_date_override || evaluation.due_date,
-              course_name: evaluation.title, // Using title as course name since course_name is not in API
-              status,
-
-              max_attempts: evaluation.max_attempts,
-              passing_score: evaluation.passing_score,
-              instructions: evaluation.instructions,
-              total_attempts: evaluation.total_attempts,
-              can_attempt: evaluation.can_attempt,
-              attempts_remaining: evaluation.attempts_remaining,
-            };
-          }
-        );
-
-        setEvaluations(transformedEvaluations);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        console.error('Error fetching evaluations:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (profileInfo) {
-      fetchEvaluations();
-    }
-  }, [profileInfo]);
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'completed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'overdue':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
+    const { 
+    evaluations, 
+    loading, 
+    error, 
+    stats 
+  } = useEvaluationsList();
+    const { 
+    isDrawerOpen, 
+    toggleSidebar, 
+    userProfile 
+  } = useEvaluationUI();
+ 
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -135,20 +48,6 @@ const EvaluationsList = () => {
     }
   };
 
-  const formatDueDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const canTakeEvaluation = (evaluation: Evaluation) => {
-    return evaluation.total_attempts < evaluation.max_attempts;
-  };
 
   if (loading) {
     return (
@@ -157,7 +56,7 @@ const EvaluationsList = () => {
           <Navbar
             bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
             borderColor="border border-stone-300"
-            user={uri_picture ? { profilePicture: uri_picture } : undefined}
+            user={userProfile.uri_picture ? { profilePicture: userProfile.uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />
           <SidebarDrawer
@@ -183,7 +82,7 @@ const EvaluationsList = () => {
           <Navbar
             bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
             borderColor="border border-stone-300"
-            user={uri_picture ? { profilePicture: uri_picture } : undefined}
+      user={userProfile.uri_picture ? { profilePicture: userProfile.uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />
           <SidebarDrawer
@@ -217,7 +116,7 @@ const EvaluationsList = () => {
         <Navbar
           bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
           borderColor="border border-stone-300"
-          user={uri_picture ? { profilePicture: uri_picture } : undefined}
+            user={userProfile.uri_picture ? { profilePicture: userProfile.uri_picture } : undefined}
           toggleSidebar={toggleSidebar}
         />
         <SidebarDrawer
@@ -371,7 +270,7 @@ const EvaluationsList = () => {
                       <div className="flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4 text-gray-400" />
                         <span className="text-sm text-gray-600">
-                          Vence: {formatDueDate(evaluation.due_date)}
+                          Vence: {formatDate(evaluation.due_date)}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -412,7 +311,7 @@ const EvaluationsList = () => {
 
                         {evaluation.status === 'completed' && (
                           <Link
-                            href={`/student/evaluaciones/${evaluation.id}/resultados`}
+                            href={`/student/evaluaciones/historial/${evaluation.id}`}
                           >
                             <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
                               <DocumentTextIcon className="h-4 w-4" />

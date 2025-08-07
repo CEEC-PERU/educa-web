@@ -795,7 +795,8 @@ const Evaluations: React.FC = () => {
                           >
                             <UserGroupIcon className="h-4 w-4" />
                           </button>
-                          <button
+                          
+                          {/*<button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleEdit(evaluation);
@@ -804,7 +805,7 @@ const Evaluations: React.FC = () => {
                             title="Editar evaluación"
                           >
                             <PencilIcon className="h-4 w-4" />
-                          </button>
+                          </button>*/}
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -860,9 +861,9 @@ const Evaluations: React.FC = () => {
 
                       <div className="mt-4 pt-4 border-t border-gray-200">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">
+                          {/*<span className="text-gray-600">
                             {evaluation.questions?.length || 0} pregunta(s)
-                          </span>
+                          </span>*/}
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               evaluation.is_active
@@ -1399,9 +1400,9 @@ const Evaluations: React.FC = () => {
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                       >
                         <option value="single_choice">Selección Única</option>
-                        <option value="multiple_choice">Opción Múltiple</option>
+                        {/*<option value="multiple_choice">Opción Múltiple</option> */}
                         <option value="true_false">Verdadero/Falso</option>
-                        <option value="open_ended">Pregunta Abierta</option>
+                        {/*<option value="open_ended">Pregunta Abierta</option>*/}
                       </select>
                       <p className="mt-1 text-xs text-gray-500">
                         {currentQuestion.question_type === 'single_choice' &&

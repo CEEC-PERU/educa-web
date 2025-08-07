@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
+import { API_EVALUATIONS_R } from '../../../utils/Endpoints';
 import { useAuth } from '../../../context/AuthContext';
 import './../../../app/globals.css';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
@@ -39,7 +40,7 @@ const CorporateUsers: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:4100/api/evaluations/scheduled/results/${user_id}/${evaluation_sche_id}`,
+         `${API_EVALUATIONS_R}/scheduled/results/${user_id}/${evaluation_sche_id}`,
         {
           method: 'GET',
           headers: {

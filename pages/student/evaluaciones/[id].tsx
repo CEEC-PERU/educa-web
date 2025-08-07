@@ -8,6 +8,7 @@ import {
   ArrowRightIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
+import { API_STUDENT_EVALUATION , API_EVALUATIONS_R } from '../../../utils/Endpoints';
 import { AlertTriangle, Clock, FileText } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
@@ -18,7 +19,7 @@ interface Question {
   question_sche_id: number;
   evaluation_sche_id: number;
   question_text: string;
-  question_type: 'multiple_choice' | 'true_false' | 'open_ended';
+  question_type: 'multiple_choice' | 'single_choice' | 'true_false' | 'open_ended';
   points: number;
   order_index: number;
   explanation: string;
@@ -35,7 +36,8 @@ interface QuestionOption {
 
 interface UserAnswer {
   question_id: number;
-  selected_option_id?: number;
+  selected_option_ids?: number[]; // Changed to array for multiple selection
+  selected_option_id?: number; // Keep for single selection backward compatibility
   answer_text?: string;
 }
 
@@ -91,13 +93,10 @@ const TakeEvaluation = () => {
     const profile = profileInfo as Profile;
     name = profile.first_name;
     uri_picture = profile.profile_picture!;
-    // Asegúrate de obtener el user_id correctamente del perfil
     userId = userInfo.id;
   }
 
-  // Si no tienes el user_id en profileInfo, intenta obtenerlo de user
   if (!userId && user) {
-    // Asume que user puede ser un número o un objeto con id
     if (typeof user === 'number') {
       userId = user;
     } else if (typeof user === 'object' && user.id) {
@@ -111,12 +110,10 @@ const TakeEvaluation = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  // Cuando cambias de pregunta
   const changeQuestion = (newIndex: number) => {
     const currentTime = Date.now();
     const timeSpent = Math.round((currentTime - questionStartTime) / 1000);
 
-    // Guardar tiempo de la pregunta actual
     if (evaluation) {
       const currentQuestionId =
         evaluation.questions[currentQuestionIndex].question_sche_id;
@@ -130,7 +127,6 @@ const TakeEvaluation = () => {
     setQuestionStartTime(currentTime);
   };
 
-  // Fetch evaluation data from API
   useEffect(() => {
     const fetchEvaluation = async () => {
       if (!id) return;
@@ -140,7 +136,7 @@ const TakeEvaluation = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:4100/api/evaluations/assignment/evaluations-scheduled/${id}`
+          `${API_STUDENT_EVALUATION}/evaluations-scheduled/${id}`
         );
 
         if (!response.ok) {
@@ -149,13 +145,11 @@ const TakeEvaluation = () => {
 
         const data: EvaluationData = await response.json();
 
-        // Verificar si la evaluación está activa
         if (!data.is_active) {
           setError('Esta evaluación no está disponible');
           return;
         }
 
-        // Verificar si está dentro del período de tiempo
         const now = new Date();
         const startDate = new Date(data.start_date);
         const dueDate = new Date(data.due_date);
@@ -171,7 +165,7 @@ const TakeEvaluation = () => {
         }
 
         setEvaluation(data);
-        setTimeRemaining(data.duration_minutes * 60); // Convert to seconds
+        setTimeRemaining(data.duration_minutes * 60);
       } catch (error) {
         console.error('Error fetching evaluation:', error);
         setError(
@@ -185,7 +179,6 @@ const TakeEvaluation = () => {
     fetchEvaluation();
   }, [id]);
 
-  // Timer effect
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isStarted && timeRemaining > 0) {
@@ -217,7 +210,6 @@ const TakeEvaluation = () => {
 
   const startEvaluation = async () => {
     try {
-      // Validaciones antes de enviar
       if (!evaluation?.evaluation_sche_id) {
         alert('Error: No se ha cargado la evaluación correctamente');
         return;
@@ -236,13 +228,11 @@ const TakeEvaluation = () => {
       });
 
       const response = await fetch(
-        'http://localhost:4100/api/evaluations/scheduled/start-attempt',
+        `${API_EVALUATIONS_R}/scheduled/start-attempt`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // Si tienes autenticación por token, agrégalo aquí
-            // 'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             evaluation_sche_id: evaluation.evaluation_sche_id,
@@ -267,26 +257,75 @@ const TakeEvaluation = () => {
     }
   };
 
+  // Updated to handle both single and multiple choice
   const handleAnswerChange = (
     questionId: number,
     optionId?: number,
-    text?: string
+    text?: string,
+    isMultipleChoice?: boolean
   ) => {
     setAnswers((prev) => {
       const existingIndex = prev.findIndex((a) => a.question_id === questionId);
-      const newAnswer: UserAnswer = {
-        question_id: questionId,
-        selected_option_id: optionId,
-        answer_text: text,
-      };
+      
+      if (text !== undefined) {
+        // Text answer for open-ended questions
+        const newAnswer: UserAnswer = {
+          question_id: questionId,
+          answer_text: text,
+        };
 
-      if (existingIndex >= 0) {
-        const updated = [...prev];
-        updated[existingIndex] = newAnswer;
-        return updated;
-      } else {
-        return [...prev, newAnswer];
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = newAnswer;
+          return updated;
+        } else {
+          return [...prev, newAnswer];
+        }
+      } else if (optionId !== undefined) {
+        if (isMultipleChoice) {
+          // Multiple choice - handle array of selected options
+          const existingAnswer = existingIndex >= 0 ? prev[existingIndex] : null;
+          const currentSelections = existingAnswer?.selected_option_ids || [];
+          
+          let newSelections: number[];
+          if (currentSelections.includes(optionId)) {
+            // Remove if already selected
+            newSelections = currentSelections.filter(id => id !== optionId);
+          } else {
+            // Add to selections
+            newSelections = [...currentSelections, optionId];
+          }
+
+          const newAnswer: UserAnswer = {
+            question_id: questionId,
+            selected_option_ids: newSelections,
+          };
+
+          if (existingIndex >= 0) {
+            const updated = [...prev];
+            updated[existingIndex] = newAnswer;
+            return updated;
+          } else {
+            return [...prev, newAnswer];
+          }
+        } else {
+          // Single choice - replace selection
+          const newAnswer: UserAnswer = {
+            question_id: questionId,
+            selected_option_id: optionId,
+          };
+
+          if (existingIndex >= 0) {
+            const updated = [...prev];
+            updated[existingIndex] = newAnswer;
+            return updated;
+          } else {
+            return [...prev, newAnswer];
+          }
+        }
       }
+
+      return prev;
     });
   };
 
@@ -294,9 +333,26 @@ const TakeEvaluation = () => {
     return answers.find((a) => a.question_id === questionId);
   };
 
+  const isOptionSelected = (questionId: number, optionId: number, isMultipleChoice: boolean) => {
+    const answer = getCurrentAnswer(questionId);
+    if (!answer) return false;
+
+    if (isMultipleChoice) {
+      return answer.selected_option_ids?.includes(optionId) || false;
+    } else {
+      return answer.selected_option_id === optionId;
+    }
+  };
+
   const isQuestionAnswered = (questionId: number) => {
     const answer = getCurrentAnswer(questionId);
-    return answer && (answer.selected_option_id || answer.answer_text?.trim());
+    if (!answer) return false;
+
+    return !!(
+      answer.selected_option_id || 
+      (answer.selected_option_ids && answer.selected_option_ids.length > 0) ||
+      answer.answer_text?.trim()
+    );
   };
 
   const getAnsweredCount = () => {
@@ -315,12 +371,12 @@ const TakeEvaluation = () => {
   const submitEvaluation = async (timeExpired = false) => {
     setIsSubmitting(true);
     try {
-      // Formatear respuestas para el backend
       const formattedAnswers = answers.map((answer) => ({
-        question_sche_id: answer.question_id, // Esto se mapea a question_sche_id en el backend
+        question_sche_id: answer.question_id,
         selected_option_id: answer.selected_option_id,
+        selected_option_ids: answer.selected_option_ids, // Include multiple selections
         answer_text: answer.answer_text,
-        time_spent_seconds: questionTimes[answer.question_id] || 30, // ✅ Tiempo rea
+        time_spent_seconds: questionTimes[answer.question_id] || 30,
       }));
 
       console.log('Enviando evaluación:', {
@@ -330,7 +386,7 @@ const TakeEvaluation = () => {
       });
 
       const response = await fetch(
-        'http://localhost:4100/api/evaluations/scheduled/submit',
+        `${API_EVALUATIONS_R}/scheduled/submit`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -346,7 +402,6 @@ const TakeEvaluation = () => {
       console.log('Respuesta del envío:', data);
 
       if (data.success) {
-        // Redirigir a resultados
         router.push(
           `/student/evaluaciones/${id}/resultados?attempt_id=${attemptId}`
         );
@@ -361,32 +416,19 @@ const TakeEvaluation = () => {
     }
   };
 
-  // Función opcional para guardar progreso
-  const saveAnswerProgress = async (
-    questionId: number,
-    optionId?: number,
-    text?: string
-  ) => {
-    if (!attemptId) return;
-
-    try {
-      await fetch(
-        'http://localhost:4100/api/evaluations/scheduled/save-answer',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            attempt_id: attemptId,
-            question_sche_id: questionId,
-            option_sche_id: optionId,
-            answer_text: text,
-            time_spent_seconds: 0, // Puedes calcular el tiempo real aquí
-          }),
-        }
-      );
-    } catch (error) {
-      console.error('Error saving progress:', error);
-      // No mostrar error al usuario, es solo para guardar progreso
+  // Helper function to get question type display name
+  const getQuestionTypeLabel = (type: string) => {
+    switch (type) {
+      case 'multiple_choice':
+        return 'Selección múltiple';
+      case 'single_choice':
+        return 'Selección única';
+      case 'true_false':
+        return 'Verdadero/Falso';
+      case 'open_ended':
+        return 'Respuesta abierta';
+      default:
+        return 'Selección única';
     }
   };
 
@@ -431,7 +473,6 @@ const TakeEvaluation = () => {
     );
   }
 
-  // Verificar que tenemos userId antes de mostrar la interfaz
   if (!userId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -513,7 +554,6 @@ const TakeEvaluation = () => {
                   </div>
                 </div>
 
-                {/* Mostrar información adicional de la evaluación */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <p className="text-sm text-gray-600">
@@ -552,6 +592,9 @@ const TakeEvaluation = () => {
                         </li>
                         <li>• Revisa todas tus respuestas antes de enviar</li>
                         <li>
+                          • Para preguntas de selección múltiple, puedes elegir más de una opción
+                        </li>
+                        <li>
                           • Puntuación mínima para aprobar:{' '}
                           {evaluation.passing_score} puntos
                         </li>
@@ -578,6 +621,7 @@ const TakeEvaluation = () => {
   }
 
   const currentQuestion = evaluation.questions[currentQuestionIndex];
+  const isMultipleChoice = currentQuestion.question_type === 'multiple_choice';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -659,12 +703,26 @@ const TakeEvaluation = () => {
               {/* Question */}
               <div className="mb-8">
                 <div className="flex items-start justify-between mb-4">
-                  <h2 className="text-xl font-semibold text-gray-900 flex-1">
-                    {currentQuestion.question_text}
-                  </h2>
-                  <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded">
-                    {currentQuestion.points} pts
-                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        {currentQuestion.question_text}
+                      </h2>
+                      <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2 py-1 rounded">
+                        {currentQuestion.points} pts
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        {getQuestionTypeLabel(currentQuestion.question_type)}
+                      </span>
+                      {isMultipleChoice && (
+                        <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
+                          Puedes seleccionar múltiples opciones
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {/* Answer options */}
@@ -690,41 +748,67 @@ const TakeEvaluation = () => {
                     currentQuestion.options.map((option) => (
                       <label
                         key={option.option_sche_id}
-                        className="flex items-center p-4 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
+                        className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                          isOptionSelected(
+                            currentQuestion.question_sche_id,
+                            option.option_sche_id,
+                            isMultipleChoice
+                          )
+                            ? 'border-brand-200 bg-brand-50'
+                            : 'border-gray-300 hover:bg-gray-50'
+                        }`}
                       >
                         <input
-                          type="radio"
-                          name={`question_${currentQuestion.question_sche_id}`}
-                          value={option.option_sche_id}
-                          checked={
-                            getCurrentAnswer(currentQuestion.question_sche_id)
-                              ?.selected_option_id === option.option_sche_id
+                          type={isMultipleChoice ? 'checkbox' : 'radio'}
+                          name={
+                            isMultipleChoice
+                              ? undefined
+                              : `question_${currentQuestion.question_sche_id}`
                           }
+                          value={option.option_sche_id}
+                          checked={isOptionSelected(
+                            currentQuestion.question_sche_id,
+                            option.option_sche_id,
+                            isMultipleChoice
+                          )}
                           onChange={() =>
                             handleAnswerChange(
                               currentQuestion.question_sche_id,
-                              option.option_sche_id
+                              option.option_sche_id,
+                              undefined,
+                              isMultipleChoice
                             )
                           }
-                          className="h-4 w-4 text-brand-200 focus:ring-brand-200 border-gray-300"
+                          className={`h-4 w-4 text-brand-200 focus:ring-brand-200 border-gray-300 ${
+                            isMultipleChoice ? 'rounded' : 'rounded-full'
+                          }`}
                         />
-                        <span className="ml-3 text-gray-900">
+                        <span className="ml-3 text-gray-900 flex-1">
                           {option.option_text}
                         </span>
                       </label>
                     ))
                   )}
                 </div>
+
+                {/* Show selected count for multiple choice */}
+                {isMultipleChoice && (
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                    <p className="text-sm text-blue-700">
+                      {(() => {
+                        const answer = getCurrentAnswer(currentQuestion.question_sche_id);
+                        const selectedCount = answer?.selected_option_ids?.length || 0;
+                        return `${selectedCount} opción${selectedCount !== 1 ? 'es' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
+                      })()}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Navigation */}
               <div className="flex justify-between items-center">
                 <button
-                  onClick={() =>
-                    setCurrentQuestionIndex(
-                      Math.max(0, currentQuestionIndex - 1)
-                    )
-                  }
+                  onClick={() => changeQuestion(Math.max(0, currentQuestionIndex - 1))}
                   disabled={currentQuestionIndex === 0}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -744,7 +828,7 @@ const TakeEvaluation = () => {
                   ) : (
                     <button
                       onClick={() =>
-                        setCurrentQuestionIndex(
+                        changeQuestion(
                           Math.min(
                             evaluation.questions.length - 1,
                             currentQuestionIndex + 1
@@ -766,23 +850,33 @@ const TakeEvaluation = () => {
                   Navegación rápida:
                 </h3>
                 <div className="grid grid-cols-10 gap-2">
-                  {evaluation.questions.map((_, index) => (
+                  {evaluation.questions.map((question, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentQuestionIndex(index)}
-                      className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                      onClick={() => changeQuestion(index)}
+                      className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors duration-200 relative ${
                         index === currentQuestionIndex
                           ? 'bg-brand-200 text-white'
-                          : isQuestionAnswered(
-                              evaluation.questions[index].question_sche_id
-                            )
+                          : isQuestionAnswered(question.question_sche_id)
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
+                      title={`Pregunta ${index + 1} - ${getQuestionTypeLabel(question.question_type)}`}
                     >
                       {index + 1}
+                      {question.question_type === 'multiple_choice' && (
+                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-amber-400 rounded-full text-xs flex items-center justify-center text-white font-bold">
+                          M
+                        </span>
+                      )}
                     </button>
                   ))}
+                </div>
+                <div className="mt-2 text-xs text-gray-500">
+                  <span className="inline-flex items-center gap-1">
+                    <span className="w-3 h-3 bg-amber-400 rounded-full inline-block"></span>
+                    M = Selección múltiple
+                  </span>
                 </div>
               </div>
             </div>
