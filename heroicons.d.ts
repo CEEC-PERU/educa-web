@@ -26,7 +26,7 @@ declare module '@heroicons/react/24/solid' {
   export const VideoCameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const PaperAirplaneIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const CheckIcon: ComponentType<SVGProps<SVGSVGElement>>;
-
+ export const CalendarIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const LockClosedIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const PuzzlePieceIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const DocumentIcon: ComponentType<SVGProps<SVGSVGElement>>;
@@ -34,4 +34,13 @@ declare module '@heroicons/react/24/solid' {
   export const CameraIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const TrashIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const CheckCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ClockIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const TrophyIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ChevronLeftIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ArrowLeftIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const FlagIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const FlagIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ExclamationTriangleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const QuestionMarkCircleIcon: ComponentType<SVGProps<SVGSVGElement>>;
+  export const ArrowRightIcon: ComponentType<SVGProps<SVGSVGElement>>;
 }

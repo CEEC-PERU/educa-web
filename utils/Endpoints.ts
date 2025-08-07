@@ -159,3 +159,8 @@ export const API_RESPONSE = `${baseURL}/api/resultado`;
 
 //materiales
 export const API_MATERIALS = `${baseURL}/api/coursematerials`;
+
+export const API_STUDENT_EVALUATION = `${baseURL}/api/evaluations/assignment`;
+export const API_EVALUATIONS_R = `${baseURL}/api/evaluations`;
+
+export const API_EVALUATIONMODULE = `${baseURL}/api/evaluationsmodule`;

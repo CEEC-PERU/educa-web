@@ -77,6 +77,15 @@ const DrawerNavigation: React.FC<{
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/student/evaluaciones')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <DocumentArrowUpIcon className="h-6 w-6" />
+                {isDrawerOpen && <span className="ml-2">Evaluaciones</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleNavigation('/student/notas')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >

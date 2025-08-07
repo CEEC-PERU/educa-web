@@ -111,6 +111,15 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/supervisor/evaluations')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <BookOpenIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Evaluaciones</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleNavigation('/supervisor/sesion')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
