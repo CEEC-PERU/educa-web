@@ -1,5 +1,5 @@
 import axios from './../axios';
-import { API_STUDENT_EVALUATION } from '../../utils/Endpoints';
+import { API_STUDENT_EVALUATION , API_EVALUATIONS_R } from '../../utils/Endpoints';
 import {
   ApiAssignment,
   ApiEvaluation,
@@ -34,7 +34,7 @@ export const getEvaluationAttemptsStudent = async (
 ): Promise<EvaluationAttemptsResponse> => {
   try {
     const response = await axios.get<EvaluationAttemptsResponse>(
-      `/evaluations/scheduled/results/${userId}/${evaluationId}`
+      `${API_EVALUATIONS_R}/scheduled/results/${userId}/${evaluationId}`
     );
     return response.data;
   } catch (error) {
@@ -47,7 +47,7 @@ export const getEvaluationAttemptsStudent = async (
 export const getStudentEvaluations = async (userId: number): Promise<ApiAssignment[]> => {
   try {
     const response = await axios.get<ApiAssignment[]>(
-      `evaluations/assignment/student/${userId}`
+      `${API_EVALUATIONS_R}/evaluations/assignment/student/${userId}`
     );
     return response.data;
   } catch (error) {
