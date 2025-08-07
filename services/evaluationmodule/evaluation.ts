@@ -47,7 +47,7 @@ export const getEvaluationAttemptsStudent = async (
 export const getStudentEvaluations = async (userId: number): Promise<ApiAssignment[]> => {
   try {
     const response = await axios.get<ApiAssignment[]>(
-      `${API_EVALUATIONS_R}/evaluations/assignment/student/${userId}`
+      `${API_EVALUATIONS_R}/assignment/student/${userId}`
     );
     return response.data;
   } catch (error) {
