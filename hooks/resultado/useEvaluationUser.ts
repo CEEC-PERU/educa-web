@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
-import { getCuestionarioByUser } from '../../../../../services/evaluationmodule/evaluation';
-import { EvaluationAssignment } from '../../../../../interfaces/EvaluationModule/EvaluationStudent';
+import { getCuestionarioByUser } from '../../services/evaluationmodule/evaluation';
+import { EvaluationAssignment } from '../../interfaces/EvaluationModule/EvaluationStudent';
 
 export const useEvaluationUsers = () => {
   const router = useRouter();

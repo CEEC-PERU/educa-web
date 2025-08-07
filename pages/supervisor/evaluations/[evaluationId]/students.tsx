@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from '../../../../components/Navbar';
 import Sidebar from '../../../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../../../context/AuthContext';
-import { useEvaluationUsers } from '../[evaluationId]/hooks/useEvaluationUser';
+import { useEvaluationUsers } from '../../../../hooks/resultado/useEvaluationUser';
 import { UsersList } from '../../../../components/Evaluation/UserList';
 import { UserDetails } from '../../../../components/Evaluation/UserDetail';
 import './../../../../app/globals.css';

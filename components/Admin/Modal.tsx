@@ -1,7 +1,8 @@
 import React from 'react';
 
 interface ModalProps {
-  isOpen: boolean;
+  isOpen?: boolean;    // ✅ Hacer opcional
+  show?: boolean;      // ✅ Agregar show como alternativa
   onClose: () => void;
   title: string;
   children: React.ReactNode;
@@ -10,12 +11,16 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({
   isOpen,
+  show,
   onClose,
   title,
   children,
   size = 'md',
 }) => {
-  if (!isOpen) return null;
+  // ✅ Usar show o isOpen, dando prioridad a isOpen
+  const modalIsOpen = isOpen !== undefined ? isOpen : show;
+  
+  if (!modalIsOpen) return null;
 
   // Definir tamaños del modal
   const sizeClasses = {
@@ -41,7 +46,7 @@ const Modal: React.FC<ModalProps> = ({
       }
     };
 
-    if (isOpen) {
+    if (modalIsOpen) {
       document.addEventListener('keydown', handleEscape);
       // Prevenir scroll del body cuando el modal está abierto
       document.body.style.overflow = 'hidden';
@@ -51,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({
       document.removeEventListener('keydown', handleEscape);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, onClose]);
+  }, [modalIsOpen, onClose]);
 
   return (
     <div
