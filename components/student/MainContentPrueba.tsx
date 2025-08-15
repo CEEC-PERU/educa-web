@@ -774,32 +774,60 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             ></iframe>
           </div>
         ) : (
-          <div className="flex flex-col items-center">
-            <video
-              key={sessionVideo}
-              controls
-              className="w-full h-full"
-              controlsList="nodownload"
-              style={{ maxWidth: '100%' }}
-              onEnded={handleVideoEnd}
-              ref={videoRef}
-            >
-              <source src={sessionVideo} type="video/mp4" />
-            </video>
+             // Video player responsive
+          <div className="flex flex-col items-center w-full h-full">
+            {/* Mobile: Vertical video like reel */}
+            <div className="block sm:hidden w-full flex justify-center">
+              <div className="w-full max-w-sm">
+                <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '9/16' }}>
+                  <video
+                    key={sessionVideo}
+                    controls
+                    controlsList="nodownload"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="w-full h-full object-contain"
+                    playsInline
+                    onEnded={handleVideoEnd}
+                    ref={videoRef}
+                  >
+                    <source src={sessionVideo} type="video/mp4" />
+                  </video>
+                </div>
+              </div>
+            </div>
+
+            {/* Tablet and Desktop: Horizontal video */}
+            <div className="hidden sm:block w-full">
+              <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                <video
+                  key={sessionVideo}
+                  controls
+                  controlsList="nodownload"
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="w-full h-full object-contain"
+                  playsInline
+                  onEnded={handleVideoEnd}
+                  ref={videoRef}
+                >
+                  <source src={sessionVideo} type="video/mp4" />
+                </video>
+              </div>
+            </div>
           </div>
         )
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         showStartMessage ? (
-          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-6 rounded-lg shadow-lg">
+          
+            <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-3 sm:p-4 md:p-6 rounded-lg shadow-lg">
             <h1
-              className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
+              className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-yellow-400 mb-4 sm:mb-6 font-extrabold animate-pulse text-center leading-tight ${
                 isFinalEvaluation ? '' : 'hidden'
               }`}
             >
               EVALUACIÓN FINAL
             </h1>
             <p
-              className={`text-4xl text-white mb-8 ${
+              className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white mb-6 sm:mb-8 text-center px-2 ${
                 isFinalEvaluation ? '' : 'hidden'
               }`}
             >
@@ -819,8 +847,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             >
               Para finalizar el módulo, ¡Inicia la Evaluación!
             </p>
-            <p
-              className={`text-xl text-white mb-8 text-center ${
+           
+              <p
+              className={`text-sm sm:text-base md:text-lg lg:text-xl text-white mb-6 sm:mb-8 text-center px-4 ${
                 isFinalEvaluation ? 'hidden' : ''
               }`}
             >
@@ -836,7 +865,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   : 'https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png'
               }
               alt="Evaluation"
-              className="mb-6 w-64 h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
+              className="mb-4 sm:mb-6 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
             />
             <div>
               {enableSecondAttempt === false && attemptCountCourse === 1 ? (
@@ -938,32 +967,33 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             </div>
 
             {!evaluationCompleted ? (
-              <div className="flex flex-col items-center text-center w-full max-w-4xl space-y-6">
-                <h3 className="text-brandmc-100 text4xl md:text-5xl pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-6 mt-6 ">
+ <div className="flex flex-col items-center text-center w-full max-w-6xl space-y-4 sm:space-y-6">
+                 {/* Question Title */}
+                <h3 className="text-brandmc-100 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 sm:pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-4 sm:mb-6 px-2">
                   {evaluationQuestions[currentQuestion]?.question_text}
                 </h3>
                 <div className="flex w-full space-x-8">
-                  {/* Pregunta e imagen */}
-                  <div className="w-1/2">
+                  {/* Question Image */}
+                  <div className="w-full lg:w-1/2 flex justify-center order-1 lg:order-1">
                     {evaluationQuestions[currentQuestion]?.image && (
                       <img
                         src={evaluationQuestions[currentQuestion]?.image}
                         alt="Imagen relacionada con la pregunta"
-                        className="w-full md:w-4/5 rounded-lg shadow-lg justify-center h-100 pt-10"
+                        className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:w-4/5 rounded-lg shadow-lg h-auto object-contain"
                       />
                     )}
                   </div>
 
                   {/* Opciones de respuesta */}
-                  <div className="w-1/2 space-y-4">
+                 <div className="w-full lg:w-1/2 space-y-3 sm:space-y-4 order-2 lg:order-2">
                     {/* Pregunta de opción múltiple */}
                     {evaluationQuestions[currentQuestion]?.type_id === 1 && (
-                      <ul className="space-y-3">
+                           <ul className="space-y-2 sm:space-y-3">
                         {evaluationQuestions[currentQuestion]?.options.map(
                           (option, idx) => (
                             <li
                               key={idx}
-                              className="flex items-center space-x-3"
+                              className="flex items-start space-x-2 sm:space-x-3"
                             >
                               <input
                                 type="checkbox"
@@ -1002,12 +1032,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
                     {/* Pregunta de opción única */}
                     {evaluationQuestions[currentQuestion]?.type_id === 4 && (
-                      <ul className="space-y-3">
+                       <ul className="space-y-2 sm:space-y-3">
                         {evaluationQuestions[currentQuestion]?.options.map(
                           (option, idx) => (
                             <li key={idx}>
                               <button
-                                className={`p-6 text-xl font-bold rounded-r-lg w-full  transition-all duration-300 px-10  ${
+                                className={`p-3 sm:p-4 md:p-6 text-sm sm:text-base md:text-lg lg:text-xl font-bold rounded-lg w-full transition-all duration-300 px-4 sm:px-6 md:px-8 lg:px-10 ${
                                   selectedOption === option.option_id
                                     ? isCorrect
                                       ? 'bg-green-500 border-green-600'
