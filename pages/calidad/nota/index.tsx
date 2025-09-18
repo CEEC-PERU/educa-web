@@ -189,7 +189,7 @@ const NotaCourses: React.FC = () => {
                   key={classroom.shift_id}
                   value={classroom.classroom_id.toString()}
                 >
-                  {`${classroom.code} - ${classroom.Shift.name} - (${classroom.User.userProfile.first_name} - ${classroom.User.userProfile.last_name})`}
+                  {`${classroom.code} - ${classroom.Shift?.name} - (${classroom.User?.userProfile?.first_name} - ${classroom.User?.userProfile?.last_name})`}
                 </option>
               ))}
             </select>
@@ -432,7 +432,7 @@ const NotaCourses: React.FC = () => {
                         xaxis: {
                           categories: currentCourseData.map(
                             (user: any) =>
-                              `${user.userProfile.first_name} ${user.userProfile.last_name}`
+                              `${user.userProfile?.first_name} ${user.userProfile?.last_name}`
                           ),
                         },
                       }}
@@ -460,7 +460,7 @@ const NotaCourses: React.FC = () => {
                         xaxis: {
                           categories: currentCourseData.map(
                             (user: any) =>
-                              `${user.userProfile.first_name} ${user.userProfile.last_name}`
+                              `${user.userProfile?.first_name} ${user.userProfile?.last_name}`
                           ),
                         },
                       }}
