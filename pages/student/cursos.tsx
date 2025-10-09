@@ -14,7 +14,7 @@ import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity';
-import Footter from '../../components/Footter';
+import Footer from '@/components/student/Footer';
 Modal.setAppElement('#__next');
 
 const StudentIndex: React.FC = () => {
@@ -23,8 +23,16 @@ const StudentIndex: React.FC = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>();
   const { categories } = useCategoriesl();
   const [showAllCategories, setShowAllCategories] = useState(false);
-  const categoriesToShow = showAllCategories ? categories : categories.slice(0, 10);
-  const hasMoreCategories = categories.length > 10;
+  const ALLOWED_CATEGORIES = [66, 67, 68, 87, 88, 89, 90, 91];
+  const filteredCategories = categories.filter((category) =>
+    ALLOWED_CATEGORIES.includes(category.category_id)
+  );
+
+  const categoriesToShow = showAllCategories
+    ? filteredCategories
+    : filteredCategories.slice(0, 5);
+  const hasMoreCategories = filteredCategories.length > 5;
+
   console.log(courseStudent);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
@@ -150,7 +158,9 @@ const StudentIndex: React.FC = () => {
                 <button
                   key={category.category_id}
                   className={`bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-white/30 transition-all duration-300 text-sm ${
-                    selectedCategoryId === category.category_id ? 'bg-white/40 ring-2 ring-white' : ''
+                    selectedCategoryId === category.category_id
+                      ? 'bg-white/40 ring-2 ring-white'
+                      : ''
                   }`}
                   onClick={() => handleCategorySelect(category.category_id)}
                 >
@@ -159,7 +169,9 @@ const StudentIndex: React.FC = () => {
                     alt={category.name}
                     className="w-4 h-4 object-contain"
                   />
-                  <span className="text-white font-medium">{category.name}</span>
+                  <span className="text-white font-medium">
+                    {category.name}
+                  </span>
                 </button>
               ))}
               {hasMoreCategories && (
@@ -168,10 +180,9 @@ const StudentIndex: React.FC = () => {
                   onClick={() => setShowAllCategories(!showAllCategories)}
                 >
                   <span className="text-white font-medium">
-                    {showAllCategories 
-                      ? 'Ver menos ↑' 
-                      : `+${categories.length - 10} más ↓`
-                    }
+                    {showAllCategories
+                      ? 'Ver menos ↑'
+                      : `+${filteredCategories.length - 5} más ↓`}
                   </span>
                 </button>
               )}
@@ -251,50 +262,7 @@ const StudentIndex: React.FC = () => {
             </div>
           </Modal>
         )}
-
-        {/* Footer Section */}
-        <div
-          className="bg-no-repeat bg-cover bg-brand-100"
-          style={{
-            backgroundImage:
-              "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
-            height: '500px',
-          }}
-        >
-          <div className="container mx-auto grid grid-cols-4 gap-4 pt-60 pl-40 text-white">
-            <div className="flex justify-center ">
-              <img
-                src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
-                alt="Logo"
-                className="h-30"
-              />
-            </div>
-            <div className="pl-40">
-              <h3 className="font-semibold text-lg ">PÁGINAS</h3>
-              <ul>
-                <li>INICIO</li>
-                <li>RECURSOS</li>
-                <li>BENEFICIOS</li>
-                <li>SUSCRÍBETE</li>
-              </ul>
-            </div>
-            <div className="pl-20">
-              <h3 className="font-semibold text-lg ">LINKS</h3>
-              <ul>
-                <li>TÉRMINOS Y CONDICIONES</li>
-                <li>POLÍTICA DE PRIVACIDAD</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
-              <ul>
-                <li>+51 9912785156</li>
-                <li>administrador.app@ceec.com.pe</li>
-                <li>MAGDALENA DEL MAR - LIMA</li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        <Footer />
       </div>
     </ProtectedRoute>
   );
