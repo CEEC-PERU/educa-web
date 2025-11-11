@@ -129,15 +129,6 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/supervisor/certificates')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <AcademicCapIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Certificados</span>}
-              </button>
-            </li>
-            <li>
-              <button
                 onClick={() => handleNavigation('/supervisor/materials')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >

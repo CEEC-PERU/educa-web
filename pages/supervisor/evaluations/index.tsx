@@ -795,7 +795,7 @@ const Evaluations: React.FC = () => {
                           >
                             <UserGroupIcon className="h-4 w-4" />
                           </button>
-                          
+
                           {/*<button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1111,6 +1111,7 @@ const Evaluations: React.FC = () => {
           onClose={handleCloseModal}
           title={editingEvaluation ? 'Editar Evaluación' : 'Nueva Evaluación'}
           size="xl"
+          closeOnBackdropClick={false}
         >
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Información Básica */}

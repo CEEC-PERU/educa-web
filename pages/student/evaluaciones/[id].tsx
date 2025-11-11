@@ -8,7 +8,10 @@ import {
   ArrowRightIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
-import { API_STUDENT_EVALUATION , API_EVALUATIONS_R } from '../../../utils/Endpoints';
+import {
+  API_STUDENT_EVALUATION,
+  API_EVALUATIONS_R,
+} from '../../../utils/Endpoints';
 import { AlertTriangle, Clock, FileText } from 'lucide-react';
 import Navbar from '../../../components/Navbar';
 import SidebarDrawer from '../../../components/student/DrawerNavigation';
@@ -19,7 +22,11 @@ interface Question {
   question_sche_id: number;
   evaluation_sche_id: number;
   question_text: string;
-  question_type: 'multiple_choice' | 'single_choice' | 'true_false' | 'open_ended';
+  question_type:
+    | 'multiple_choice'
+    | 'single_choice'
+    | 'true_false'
+    | 'open_ended';
   points: number;
   order_index: number;
   explanation: string;
@@ -136,7 +143,7 @@ const TakeEvaluation = () => {
         setError(null);
 
         const response = await fetch(
-          `${API_STUDENT_EVALUATION}/evaluations-scheduled/${id}`
+          `${API_STUDENT_EVALUATION}/evaluations-scheduled/${id}?user_id=${userId}`
         );
 
         if (!response.ok) {
@@ -177,7 +184,7 @@ const TakeEvaluation = () => {
     };
 
     fetchEvaluation();
-  }, [id]);
+  }, [id, userId]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -266,7 +273,7 @@ const TakeEvaluation = () => {
   ) => {
     setAnswers((prev) => {
       const existingIndex = prev.findIndex((a) => a.question_id === questionId);
-      
+
       if (text !== undefined) {
         // Text answer for open-ended questions
         const newAnswer: UserAnswer = {
@@ -284,13 +291,14 @@ const TakeEvaluation = () => {
       } else if (optionId !== undefined) {
         if (isMultipleChoice) {
           // Multiple choice - handle array of selected options
-          const existingAnswer = existingIndex >= 0 ? prev[existingIndex] : null;
+          const existingAnswer =
+            existingIndex >= 0 ? prev[existingIndex] : null;
           const currentSelections = existingAnswer?.selected_option_ids || [];
-          
+
           let newSelections: number[];
           if (currentSelections.includes(optionId)) {
             // Remove if already selected
-            newSelections = currentSelections.filter(id => id !== optionId);
+            newSelections = currentSelections.filter((id) => id !== optionId);
           } else {
             // Add to selections
             newSelections = [...currentSelections, optionId];
@@ -333,7 +341,11 @@ const TakeEvaluation = () => {
     return answers.find((a) => a.question_id === questionId);
   };
 
-  const isOptionSelected = (questionId: number, optionId: number, isMultipleChoice: boolean) => {
+  const isOptionSelected = (
+    questionId: number,
+    optionId: number,
+    isMultipleChoice: boolean
+  ) => {
     const answer = getCurrentAnswer(questionId);
     if (!answer) return false;
 
@@ -349,7 +361,7 @@ const TakeEvaluation = () => {
     if (!answer) return false;
 
     return !!(
-      answer.selected_option_id || 
+      answer.selected_option_id ||
       (answer.selected_option_ids && answer.selected_option_ids.length > 0) ||
       answer.answer_text?.trim()
     );
@@ -385,18 +397,15 @@ const TakeEvaluation = () => {
         time_expired: timeExpired,
       });
 
-      const response = await fetch(
-        `${API_EVALUATIONS_R}/scheduled/submit`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            attempt_id: attemptId,
-            answers: formattedAnswers,
-            time_expired: timeExpired,
-          }),
-        }
-      );
+      const response = await fetch(`${API_EVALUATIONS_R}/scheduled/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          attempt_id: attemptId,
+          answers: formattedAnswers,
+          time_expired: timeExpired,
+        }),
+      });
 
       const data = await response.json();
       console.log('Respuesta del envío:', data);
@@ -592,7 +601,8 @@ const TakeEvaluation = () => {
                         </li>
                         <li>• Revisa todas tus respuestas antes de enviar</li>
                         <li>
-                          • Para preguntas de selección múltiple, puedes elegir más de una opción
+                          • Para preguntas de selección múltiple, puedes elegir
+                          más de una opción
                         </li>
                         <li>
                           • Puntuación mínima para aprobar:{' '}
@@ -796,9 +806,14 @@ const TakeEvaluation = () => {
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                     <p className="text-sm text-blue-700">
                       {(() => {
-                        const answer = getCurrentAnswer(currentQuestion.question_sche_id);
-                        const selectedCount = answer?.selected_option_ids?.length || 0;
-                        return `${selectedCount} opción${selectedCount !== 1 ? 'es' : ''} seleccionada${selectedCount !== 1 ? 's' : ''}`;
+                        const answer = getCurrentAnswer(
+                          currentQuestion.question_sche_id
+                        );
+                        const selectedCount =
+                          answer?.selected_option_ids?.length || 0;
+                        return `${selectedCount} opción${
+                          selectedCount !== 1 ? 'es' : ''
+                        } seleccionada${selectedCount !== 1 ? 's' : ''}`;
                       })()}
                     </p>
                   </div>
@@ -808,7 +823,9 @@ const TakeEvaluation = () => {
               {/* Navigation */}
               <div className="flex justify-between items-center">
                 <button
-                  onClick={() => changeQuestion(Math.max(0, currentQuestionIndex - 1))}
+                  onClick={() =>
+                    changeQuestion(Math.max(0, currentQuestionIndex - 1))
+                  }
                   disabled={currentQuestionIndex === 0}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -861,7 +878,9 @@ const TakeEvaluation = () => {
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
-                      title={`Pregunta ${index + 1} - ${getQuestionTypeLabel(question.question_type)}`}
+                      title={`Pregunta ${index + 1} - ${getQuestionTypeLabel(
+                        question.question_type
+                      )}`}
                     >
                       {index + 1}
                       {question.question_type === 'multiple_choice' && (
