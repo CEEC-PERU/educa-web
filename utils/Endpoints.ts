@@ -165,3 +165,7 @@ export const API_STUDENT_EVALUATION = `${baseURL}/api/evaluations/assignment`;
 export const API_EVALUATIONS_R = `${baseURL}/api/evaluations`;
 
 export const API_EVALUATIONMODULE = `${baseURL}/api/evaluationsmodule`;
+
+//certificates
+
+export const API_CERTIFICATES = `${baseURL}/api/certifications`;
