@@ -61,6 +61,7 @@ export interface UserOption {
 export interface AssignmentFormData {
   certification_id: number;
   classroom_ids: number[];
+  assigned_by: number;
   start_date: string;
   due_date: string;
   is_randomized: boolean;
@@ -76,4 +77,35 @@ export interface AssignmentFormProps {
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onClose: () => void;
+}
+
+export interface ApiCertification {
+  certification_id: number;
+  created_by: number;
+  enterprise_id: number;
+  title: string;
+  description: string;
+  instructions: string;
+  duration_in_minutes: number;
+  total_questions: number;
+  due_date: string;
+  max_attempts: number;
+  passing_percentage: number;
+  show_results_immediately: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiAssignment {
+  assignment_id: number;
+  certification_id: number;
+  classroom_id: number;
+  assigned_by: number;
+  assignet_at: string;
+  status: string;
+  due_date_override: string | null;
+  created_at: string;
+  updated_at: string;
+  certification: ApiCertification;
 }

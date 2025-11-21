@@ -20,22 +20,41 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
   const [selectedClassrooms, setSelectedClassrooms] = useState<number[]>(
     formData.classroom_ids
   );
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: string;
+  }>({});
   const { classrooms } = useClassroomBySupervisor();
-  const renderFormField = (
-    error: string | undefined,
-    children: React.ReactNode
-  ) => (
-    <div className="space-y-1">
-      {children}
-      {error && <p className="text-sm text-red-600">{error}</p>}
-    </div>
-  );
+  const renderFormField = (field: string, children: React.ReactNode) => {
+    const allErrors = getAllErrors();
+    const error = allErrors[field];
+
+    return (
+      <div className="space-y-1">
+        {children}
+        {error && <p className="text-sm text-red-600">{error}</p>}
+      </div>
+    );
+  };
 
   const updateFormData = (field: string, value: any) => {
     onFormDataChange({
       ...formData,
       [field]: value,
     });
+
+    if (validationErrors[field]) {
+      setValidationErrors((prev) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    onSubmit(e);
   };
 
   const handleClassroomToggle = (classroomId: number) => {
@@ -51,8 +70,99 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     (cert) => cert.certification_id === formData.certification_id
   );
 
+  useEffect(() => {
+    const validateDates = () => {
+      const newErrors: { [key: string]: string } = {};
+
+      if (formData.start_date && formData.due_date) {
+        const startDate = new Date(formData.start_date);
+        const dueDate = new Date(formData.due_date);
+        const now = new Date();
+
+        // Validar que start_date no sea en el pasado (con tolerancia de 1 minuto)
+        if (startDate < new Date(now.getTime() - 60000)) {
+          newErrors.start_date = 'La fecha de inicio no puede ser en el pasado';
+        }
+
+        // Validar que due_date sea después de start_date (con tolerancia de 1 minuto)
+        if (dueDate <= new Date(startDate.getTime() + 60000)) {
+          newErrors.due_date =
+            'La fecha límite debe ser posterior a la fecha de inicio';
+        }
+      }
+
+      setValidationErrors((prev) => ({ ...prev, ...newErrors }));
+    };
+
+    validateDates();
+  }, [formData.start_date, formData.due_date]);
+
+  const validateForm = (): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    // Validar certificado seleccionado
+    if (!formData.certification_id) {
+      newErrors.certification_id = 'Debe seleccionar un certificado';
+    }
+
+    // Validar aulas seleccionadas
+    if (selectedClassrooms.length === 0) {
+      newErrors.classroom_ids = 'Debe seleccionar al menos una aula';
+    }
+
+    // Validar fechas
+    if (!formData.start_date) {
+      newErrors.start_date = 'La fecha de inicio es requerida';
+    }
+
+    if (!formData.due_date) {
+      newErrors.due_date = 'La fecha límite es requerida';
+    }
+
+    if (formData.start_date && formData.due_date) {
+      const startDate = new Date(formData.start_date);
+      const dueDate = new Date(formData.due_date);
+      const now = new Date();
+
+      if (isNaN(startDate.getTime())) {
+        newErrors.start_date = 'Fecha de inicio inválida';
+      }
+
+      if (isNaN(dueDate.getTime())) {
+        newErrors.due_date = 'Fecha límite inválida';
+      }
+
+      if (startDate < new Date(now.getTime() - 60000)) {
+        newErrors.start_date = 'La fecha de inicio no puede ser en el pasado';
+      }
+
+      if (dueDate <= new Date(startDate.getTime() + 60000)) {
+        newErrors.due_date =
+          'La fecha límite debe ser posterior a la fecha de inicio';
+      }
+    }
+
+    // Validar cantidad de preguntas si se especifica
+    if (
+      formData.questions_count !== undefined &&
+      formData.questions_count !== null
+    ) {
+      if (formData.questions_count <= 0) {
+        newErrors.questions_count = 'Debe ser mayor que 0';
+      }
+      // Aquí deberías validar contra el total de preguntas del certificado
+    }
+
+    setValidationErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const getAllErrors = () => {
+    return { ...validationErrors, ...errors };
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {errors.general && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-md">
           <p className="text-sm text-red-600">{errors.general}</p>
@@ -67,7 +177,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
         </h3>
 
         {renderFormField(
-          errors.certification_id,
+          'certification_id',
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Certificado *
@@ -79,7 +189,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
                 updateFormData('certification_id', parseInt(e.target.value))
               }
               className={`block w-full focus:outline-none rounded-md shadow-sm p-2 border ${
-                errors.certification_id
+                getAllErrors().certification_id
                   ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
                   : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
               } focus:ring-2 transition-colors`}
@@ -288,7 +398,8 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
           disabled={
             isSubmitting ||
             selectedClassrooms.length === 0 ||
-            !formData.certification_id
+            !formData.certification_id ||
+            Object.keys(getAllErrors()).some((key) => getAllErrors()[key])
           }
           className="px-6 py-2 text-sm font-medium text-white bg-green-600 border border-transparent rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors disabled:opacity-50"
         >

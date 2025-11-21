@@ -40,6 +40,7 @@ const CertificatesPage: React.FC = () => {
       classroom_ids: [],
       start_date: getDate(new Date()).now.toISOString().slice(0, 16),
       due_date: getDate(new Date()).nextWeek.toISOString().slice(0, 16),
+      assigned_by: 0,
       is_randomized: true,
       questions_count: 0,
       is_active: true,
@@ -95,6 +96,24 @@ const CertificatesPage: React.FC = () => {
     setErrors({});
   };
 
+  const resetAssignmentForm = () => {
+    const now = new Date();
+    const nextWeek = new Date(now);
+    nextWeek.setDate(now.getDate() + 7);
+
+    setAssignmentFormData({
+      certification_id: 0,
+      classroom_ids: [],
+      start_date: now.toISOString().slice(0, 16),
+      due_date: nextWeek.toISOString().slice(0, 16),
+      assigned_by: 0,
+      is_randomized: true,
+      questions_count: undefined,
+      is_active: true,
+    });
+    setAssignmentErrors({});
+  };
+
   const resetCurrentQuestion = () => {
     setCurrentQuestion({
       question_text: '',
@@ -112,13 +131,118 @@ const CertificatesPage: React.FC = () => {
 
   const handleCloseAssignModal = () => {
     setShowAssignModal(false);
+    resetAssignmentForm();
   };
 
-  const handleAssignCertificate = (e: React.FormEvent) => {
+  const handleAssignCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
-    // plantilla de toma de valores
-    const data = assignmentFormData;
-    console.log('Asignando certificado con datos:', data);
+    setAssignmentErrors({});
+    setIsAssigningCertificate(true);
+
+    try {
+      // Validaciones adicionales en el frontend
+      if (assignmentFormData.classroom_ids.length === 0) {
+        setAssignmentErrors({
+          classroom_ids: 'Debe seleccionar al menos una aula',
+        });
+        setIsAssigningCertificate(false);
+        return;
+      }
+
+      if (!assignmentFormData.certification_id) {
+        setAssignmentErrors({
+          certification_id: 'Debe seleccionar un certificado',
+        });
+        setIsAssigningCertificate(false);
+        return;
+      }
+
+      // Validar fechas
+      const startDate = new Date(assignmentFormData.start_date);
+      const dueDate = new Date(assignmentFormData.due_date);
+      const now = new Date();
+
+      if (startDate < new Date(now.getTime() - 60000)) {
+        setAssignmentErrors({
+          start_date: 'La fecha de inicio no puede ser en el pasado',
+        });
+        setIsAssigningCertificate(false);
+        return;
+      }
+
+      if (dueDate <= new Date(startDate.getTime() + 60000)) {
+        setAssignmentErrors({
+          due_date: 'La fecha límite debe ser posterior a la fecha de inicio',
+        });
+        setIsAssigningCertificate(false);
+        return;
+      }
+
+      if (!userInfo || !userInfo.id) {
+        throw new Error('Información de usuario no disponible');
+      }
+
+      const requestData = {
+        certification_id: assignmentFormData.certification_id,
+        classroom_ids: assignmentFormData.classroom_ids,
+        assigned_by: userInfo.id,
+        start_date: assignmentFormData.start_date,
+        due_date: assignmentFormData.due_date,
+        questions_count: assignmentFormData.questions_count || null,
+        is_randomized: assignmentFormData.is_randomized,
+        is_active: assignmentFormData.is_active,
+      };
+      console.log('Request Data:', requestData);
+
+      const response = await fetch(`${API_CERTIFICATES}/assign`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Error al asignar certificado');
+      }
+
+      console.log('Certificado asignado:', result);
+      handleCloseAssignModal();
+      alert('Certificado asignado exitosamente');
+
+      // Opcional: recargar datos si necesitas actualizar alguna lista
+    } catch (error: any) {
+      console.error('Error:', error);
+
+      // Mapear errores específicos del backend
+      if (error.message.includes('already assigned')) {
+        setAssignmentErrors({
+          general:
+            'El certificado ya está asignado a una o más aulas seleccionadas',
+        });
+      } else if (error.message.includes('Certification not found')) {
+        setAssignmentErrors({
+          certification_id: 'Certificado no encontrado o inactivo',
+        });
+      } else if (error.message.includes('classroom IDs are invalid')) {
+        setAssignmentErrors({
+          classroom_ids: 'Una o más aulas seleccionadas son inválidas',
+        });
+      } else if (error.message.includes('Questions count')) {
+        setAssignmentErrors({ questions_count: error.message });
+      } else if (error.message.includes('start date')) {
+        setAssignmentErrors({ start_date: 'Fecha de inicio inválida' });
+      } else if (error.message.includes('due date')) {
+        setAssignmentErrors({ due_date: 'Fecha límite inválida' });
+      } else {
+        setAssignmentErrors({ general: error.message });
+      }
+    } finally {
+      setIsAssigningCertificate(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
