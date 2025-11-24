@@ -1,28 +1,33 @@
-import Navbar from '@/components/Navbar';
-import React, { useState } from 'react';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
-import './../../../app/globals.css';
+import Navbar from "@/components/Navbar";
+import React, { useState } from "react";
+import Sidebar from "../../../components/supervisor/SibebarSupervisor";
+import "./../../../app/globals.css";
 import {
   CalendarIcon,
   ClockIcon,
   PlusCircleIcon,
   StarIcon,
-} from 'lucide-react';
-import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
-import Modal from '../../../components/Admin/Modal';
-import { API_CERTIFICATES } from '../../../utils/Endpoints';
-import { useAuth } from '../../../context/AuthContext';
-import CertificationForm from '../../../components/supervisor/CertificationForm';
+} from "lucide-react";
+import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import Modal from "../../../components/Admin/Modal";
+import { API_CERTIFICATES } from "../../../utils/Endpoints";
+import { useAuth } from "../../../context/AuthContext";
+import CertificationForm from "../../../components/supervisor/CertificationForm";
 import {
   CertificationFormData,
   Question,
   Certification,
   UserInfo,
-} from '../../../interfaces/Certification';
-import { useCertifications } from '@/hooks/useCertification';
-import { AcademicCapIcon, TrashIcon } from '@heroicons/react/24/solid';
-import { AssignmentFormData } from '../../../interfaces/Certification';
-import AssignmentForm from '../../../components/supervisor/AssignmentForm';
+} from "../../../interfaces/Certification";
+import { useCertifications } from "@/hooks/useCertification";
+import { AcademicCapIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { AssignmentFormData } from "../../../interfaces/Certification";
+import AssignmentForm from "../../../components/supervisor/AssignmentForm";
+import {
+  fetchWithTimeout,
+  handleApiResponse,
+  ApiError,
+} from "../../../utils/apiHelpers";
 
 const getDate = (date: Date) => {
   const now = new Date(date);
@@ -43,7 +48,6 @@ const CertificatesPage: React.FC = () => {
       assigned_by: 0,
       is_randomized: true,
       questions_count: 0,
-      is_active: true,
     });
   const [assignmentErrors, setAssignmentErrors] = useState<{
     [key: string]: string;
@@ -51,9 +55,9 @@ const CertificatesPage: React.FC = () => {
   const [isAssigningCertificate, setIsAssigningCertificate] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [formData, setFormData] = useState<CertificationFormData>({
-    title: '',
-    description: '',
-    instructions: '',
+    title: "",
+    description: "",
+    instructions: "",
     duration_in_minutes: 60,
     max_attempts: 1,
     passing_percentage: 70,
@@ -62,7 +66,7 @@ const CertificatesPage: React.FC = () => {
     questions: [],
   });
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
-    question_text: '',
+    question_text: "",
     type_id: 4,
     points_value: 1,
     options: [],
@@ -82,9 +86,9 @@ const CertificatesPage: React.FC = () => {
   // Reset form
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
-      instructions: '',
+      title: "",
+      description: "",
+      instructions: "",
       duration_in_minutes: 60,
       max_attempts: 1,
       passing_percentage: 70,
@@ -109,14 +113,13 @@ const CertificatesPage: React.FC = () => {
       assigned_by: 0,
       is_randomized: true,
       questions_count: undefined,
-      is_active: true,
     });
     setAssignmentErrors({});
   };
 
   const resetCurrentQuestion = () => {
     setCurrentQuestion({
-      question_text: '',
+      question_text: "",
       type_id: 1,
       points_value: 1,
       options: [],
@@ -140,46 +143,17 @@ const CertificatesPage: React.FC = () => {
     setIsAssigningCertificate(true);
 
     try {
-      // Validaciones adicionales en el frontend
-      if (assignmentFormData.classroom_ids.length === 0) {
-        setAssignmentErrors({
-          classroom_ids: 'Debe seleccionar al menos una aula',
-        });
-        setIsAssigningCertificate(false);
-        return;
-      }
-
+      // Validaciones básicas del frontend
       if (!assignmentFormData.certification_id) {
-        setAssignmentErrors({
-          certification_id: 'Debe seleccionar un certificado',
-        });
-        setIsAssigningCertificate(false);
-        return;
+        throw new Error("Debe seleccionar un certificado");
       }
 
-      // Validar fechas
-      const startDate = new Date(assignmentFormData.start_date);
-      const dueDate = new Date(assignmentFormData.due_date);
-      const now = new Date();
-
-      if (startDate < new Date(now.getTime() - 60000)) {
-        setAssignmentErrors({
-          start_date: 'La fecha de inicio no puede ser en el pasado',
-        });
-        setIsAssigningCertificate(false);
-        return;
+      if (assignmentFormData.classroom_ids.length === 0) {
+        throw new Error("Debe seleccionar al menos una aula");
       }
 
-      if (dueDate <= new Date(startDate.getTime() + 60000)) {
-        setAssignmentErrors({
-          due_date: 'La fecha límite debe ser posterior a la fecha de inicio',
-        });
-        setIsAssigningCertificate(false);
-        return;
-      }
-
-      if (!userInfo || !userInfo.id) {
-        throw new Error('Información de usuario no disponible');
+      if (!userInfo?.id) {
+        throw new Error("Información de usuario no disponible");
       }
 
       const requestData = {
@@ -190,56 +164,64 @@ const CertificatesPage: React.FC = () => {
         due_date: assignmentFormData.due_date,
         questions_count: assignmentFormData.questions_count || null,
         is_randomized: assignmentFormData.is_randomized,
-        is_active: assignmentFormData.is_active,
       };
-      console.log('Request Data:', requestData);
 
-      const response = await fetch(`${API_CERTIFICATES}/assign`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+      console.log("Enviando asignación:", requestData);
+
+      //peticion con timeout
+      const response = await fetchWithTimeout(
+        `${API_CERTIFICATES}/assign`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+          body: JSON.stringify(requestData),
         },
-        body: JSON.stringify(requestData),
-      });
+        10000 // 10 segundos timeout
+      );
 
-      const result = await response.json();
+      //MANEJO DE RESPUESTA
+      const result = await handleApiResponse(response);
 
-      if (!response.ok) {
-        throw new Error(result.message || 'Error al asignar certificado');
-      }
-
-      console.log('Certificado asignado:', result);
+      console.log("Certificado asignado exitosamente:", result);
       handleCloseAssignModal();
-      alert('Certificado asignado exitosamente');
 
-      // Opcional: recargar datos si necesitas actualizar alguna lista
+      showNotification(
+        `Certificado asignado a ${
+          result.data?.total_assigned ||
+          result.total_assigned ||
+          assignmentFormData.classroom_ids.length
+        } aula(s)`,
+        "success"
+      );
     } catch (error: any) {
-      console.error('Error:', error);
+      console.error("Error en asignación:", error);
 
-      // Mapear errores específicos del backend
-      if (error.message.includes('already assigned')) {
-        setAssignmentErrors({
-          general:
-            'El certificado ya está asignado a una o más aulas seleccionadas',
-        });
-      } else if (error.message.includes('Certification not found')) {
-        setAssignmentErrors({
-          certification_id: 'Certificado no encontrado o inactivo',
-        });
-      } else if (error.message.includes('classroom IDs are invalid')) {
-        setAssignmentErrors({
-          classroom_ids: 'Una o más aulas seleccionadas son inválidas',
-        });
-      } else if (error.message.includes('Questions count')) {
-        setAssignmentErrors({ questions_count: error.message });
-      } else if (error.message.includes('start date')) {
-        setAssignmentErrors({ start_date: 'Fecha de inicio inválida' });
-      } else if (error.message.includes('due date')) {
-        setAssignmentErrors({ due_date: 'Fecha límite inválida' });
-      } else {
-        setAssignmentErrors({ general: error.message });
+      //MANEJO ESPECÍFICO DE ERRORES
+      let errorMessage = error.message || "Error al asignar el certificado";
+
+      if (error instanceof ApiError) {
+        // Ya viene con un mensaje descriptivo del utility
+      } else if (
+        error.message.includes("Failed to fetch") ||
+        error.message.includes("NetworkError")
+      ) {
+        errorMessage =
+          "Error de conexión. Verifique su internet e intente nuevamente.";
+      } else if (
+        error.message.includes("timeout") ||
+        error.message.includes("tardó demasiado")
+      ) {
+        errorMessage =
+          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.";
+      } else if (error.message.includes("500")) {
+        errorMessage =
+          "Error interno del servidor. El equipo técnico ha sido notificado.";
       }
+
+      setAssignmentErrors({ general: errorMessage });
     } finally {
       setIsAssigningCertificate(false);
     }
@@ -252,13 +234,13 @@ const CertificatesPage: React.FC = () => {
 
     try {
       if (formData.questions.length === 0) {
-        setErrors({ questions: 'Debe agregar al menos una pregunta' });
+        setErrors({ questions: "Debe agregar al menos una pregunta" });
         setIsSubmitting(false);
         return;
       }
 
       if (!userInfo || !userInfo.enterprise_id || !userInfo.id) {
-        throw new Error('Información de usuario no disponible');
+        throw new Error("Información de usuario no disponible");
       }
 
       const requestData = {
@@ -268,10 +250,10 @@ const CertificatesPage: React.FC = () => {
       };
 
       const response = await fetch(`${API_CERTIFICATES}/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
         body: JSON.stringify(requestData),
       });
@@ -279,21 +261,21 @@ const CertificatesPage: React.FC = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || 'Error al crear certificación');
+        throw new Error(result.message || "Error al crear certificación");
       }
 
-      console.log('Certificación creada:', result.data);
+      console.log("Certificación creada:", result.data);
       handleCloseModal();
       reload();
-      alert('Certificación creada exitosamente');
+      alert("Certificación creada exitosamente");
     } catch (error: any) {
-      console.error('Error:', error);
-      if (error.message.includes('Title is required')) {
-        setErrors({ title: 'El título es requerido' });
-      } else if (error.message.includes('already exists')) {
-        setErrors({ title: 'Ya existe una certificación con este título' });
-      } else if (error.message.includes('At least one question is required')) {
-        setErrors({ questions: 'Debe agregar al menos una pregunta' });
+      console.error("Error:", error);
+      if (error.message.includes("Title is required")) {
+        setErrors({ title: "El título es requerido" });
+      } else if (error.message.includes("already exists")) {
+        setErrors({ title: "Ya existe una certificación con este título" });
+      } else if (error.message.includes("At least one question is required")) {
+        setErrors({ questions: "Debe agregar al menos una pregunta" });
       } else {
         setErrors({ general: error.message });
       }
@@ -306,7 +288,7 @@ const CertificatesPage: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!currentQuestion.question_text.trim()) {
-      newErrors.questions = 'El texto de la pregunta es requerido';
+      newErrors.questions = "El texto de la pregunta es requerido";
     }
 
     if (
@@ -314,18 +296,18 @@ const CertificatesPage: React.FC = () => {
       currentQuestion.options.length < 2
     ) {
       newErrors.questions =
-        'Las preguntas de opción deben tener al menos 2 opciones';
+        "Las preguntas de opción deben tener al menos 2 opciones";
     }
 
     if (
       [1, 2].includes(currentQuestion.type_id) &&
       !currentQuestion.options.some((opt) => opt.is_correct)
     ) {
-      newErrors.questions = 'Debe haber al menos una opción correcta';
+      newErrors.questions = "Debe haber al menos una opción correcta";
     }
 
     if (currentQuestion.options.some((opt) => !opt.option_text.trim())) {
-      newErrors.questions = 'Todas las opciones deben tener texto';
+      newErrors.questions = "Todas las opciones deben tener texto";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -348,7 +330,7 @@ const CertificatesPage: React.FC = () => {
     });
 
     resetCurrentQuestion();
-    setErrors({ ...errors, questions: '' });
+    setErrors({ ...errors, questions: "" });
   };
 
   const removeQuestion = (index: number) => {
@@ -360,30 +342,30 @@ const CertificatesPage: React.FC = () => {
     //template
   };
 
-  const showNotification = (message: string, type: 'success' | 'error') => {
+  const showNotification = (message: string, type: "success" | "error") => {
     alert(message);
   };
 
   const handleDeleteCertificate = async (certificationId: number) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta evaluación?')) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta evaluación?")) {
       try {
         const response = await fetch(`${API_CERTIFICATES}/${certificationId}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('userToken')}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         });
 
         if (response.ok) {
           // Refrescar la lista de evaluaciones después de eliminar
           reload();
-          showNotification('Evaluación eliminada exitosamente', 'success');
+          showNotification("Evaluación eliminada exitosamente", "success");
         } else {
-          showNotification('Error al eliminar la evaluación', 'error');
+          showNotification("Error al eliminar la evaluación", "error");
         }
       } catch (error) {
-        console.error('Error deleting evaluation:', error);
-        showNotification('Error al eliminar la evaluación', 'error');
+        console.error("Error deleting evaluation:", error);
+        showNotification("Error al eliminar la evaluación", "error");
       }
     }
   };
@@ -501,13 +483,13 @@ const CertificatesPage: React.FC = () => {
                           <div className="flex items-center text-sm text-gray-600">
                             <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                             <span className="truncate">
-                              Creada:{' '}
+                              Creada:{" "}
                               {new Date(cert.created_at).toLocaleDateString(
-                                'es-ES',
+                                "es-ES",
                                 {
-                                  day: '2-digit',
-                                  month: '2-digit',
-                                  year: 'numeric',
+                                  day: "2-digit",
+                                  month: "2-digit",
+                                  year: "numeric",
                                 }
                               )}
                             </span>
@@ -520,11 +502,11 @@ const CertificatesPage: React.FC = () => {
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               cert.is_active
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
+                                ? "bg-green-100 text-green-800"
+                                : "bg-red-100 text-red-800"
                             }`}
                           >
-                            {cert.is_active ? 'Activo' : 'Inactivo'}
+                            {cert.is_active ? "Activo" : "Inactivo"}
                           </span>
                         </div>
                       </div>
@@ -543,7 +525,7 @@ const CertificatesPage: React.FC = () => {
           isOpen={showCreateModal}
           onClose={handleCloseModal}
           title={
-            editingCertificate ? 'Editar Certificado' : 'Crear Certificado'
+            editingCertificate ? "Editar Certificado" : "Crear Certificado"
           }
           size="xl"
           closeOnBackdropClick={false}

@@ -169,3 +169,4 @@ export const API_EVALUATIONMODULE = `${baseURL}/api/evaluationsmodule`;
 //certificates
 
 export const API_CERTIFICATES = `${baseURL}/api/certifications`;
+export const API_STUDENT_CERTIFICATIONS = `${baseURL}/api/student/certification-assignments`;

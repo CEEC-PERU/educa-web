@@ -66,14 +66,26 @@ export interface AssignmentFormData {
   due_date: string;
   is_randomized: boolean;
   questions_count?: number;
-  is_active: boolean;
+}
+
+export interface AssignmentFormErrors {
+  general?: string;
+  backendDetails?: string;
+  errorType?: string;
+  certification_id?: string;
+  classroom_ids?: string;
+  start_date?: string;
+  due_date?: string;
+  questions_count?: string;
+  is_randomized?: string;
+  [key: string]: string | undefined;
 }
 
 export interface AssignmentFormProps {
   formData: AssignmentFormData;
   onFormDataChange: (data: AssignmentFormData) => void;
   availableCertifications: CertificationOption[];
-  errors: { [key: string]: string };
+  errors: AssignmentFormErrors;
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   onClose: () => void;
