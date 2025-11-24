@@ -143,7 +143,7 @@ const TakeEvaluation = () => {
         setError(null);
 
         const response = await fetch(
-          `${API_STUDENT_EVALUATION}/evaluations-scheduled/${id}?user_id=${userId}`
+          `${API_STUDENT_EVALUATION}/evaluations-scheduled/${id}`
         );
 
         if (!response.ok) {
@@ -184,7 +184,7 @@ const TakeEvaluation = () => {
     };
 
     fetchEvaluation();
-  }, [id, userId]);
+  }, [id]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;

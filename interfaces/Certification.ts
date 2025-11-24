@@ -121,3 +121,11 @@ export interface ApiAssignment {
   updated_at: string;
   certification: ApiCertification;
 }
+
+// start examen
+
+export interface UserAnswer {
+  question_id: number;
+  selected_options: number[];
+  answer_text?: string;
+}

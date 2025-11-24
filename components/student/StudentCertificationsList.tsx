@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   ClockIcon,
   CalendarIcon,
@@ -8,21 +8,23 @@ import {
   EyeIcon,
   CheckCircleIcon,
   XCircleIcon,
-} from "@heroicons/react/24/outline";
-import { PendingCertification } from "../../interfaces/StudentCertification";
-import { useStudentCertifications } from "../../hooks/useStudentCertification";
+} from '@heroicons/react/24/outline';
+import { PendingCertification } from '../../interfaces/StudentCertification';
+import { useStudentCertifications } from '../../hooks/useStudentCertification';
 
 interface StudentCertificationsListProps {
   onStartExam: (assignmentId: number) => void;
   onViewResults: (assignmentId: number) => void;
+  userId: number;
 }
 
 const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
   onStartExam,
   onViewResults,
+  userId,
 }) => {
   const { pendingCertifications, loading, error, fetchPendingCertifications } =
-    useStudentCertifications();
+    useStudentCertifications(userId);
 
   const [localLoading, setLocalLoading] = useState(false);
 
@@ -35,19 +37,19 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
     try {
       await fetchPendingCertifications();
     } catch (error) {
-      console.error("Error loading certifications:", error);
+      console.error('Error loading certifications:', error);
     } finally {
       setLocalLoading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("es-ES", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -172,7 +174,7 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
               <div className="flex items-center text-sm text-gray-500 mb-2">
                 <UserIcon className="h-4 w-4 mr-2" />
                 <span>
-                  {certification.classroom.name} -{" "}
+                  {certification.classroom.name} -{' '}
                   {certification.classroom.code}
                 </span>
               </div>
@@ -189,10 +191,10 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
                 <div className="flex items-center text-sm text-gray-600">
                   <CalendarIcon className="h-4 w-4 mr-2" />
                   <span>
-                    Hasta:{" "}
+                    Hasta:{' '}
                     {certification.assignment_details.due_date
                       ? formatDate(certification.assignment_details.due_date)
-                      : "Sin fecha límite"}
+                      : 'Sin fecha límite'}
                   </span>
                 </div>
               </div>
@@ -205,7 +207,7 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
                     {certification.certification.max_attempts}
                   </span>
                   <span>
-                    Restantes:{" "}
+                    Restantes:{' '}
                     {certification.student_progress.attempts_remaining}
                   </span>
                 </div>
@@ -218,11 +220,11 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
                       <span
                         className={`ml-1 font-medium ${
                           certification.student_progress.latest_attempt.passed
-                            ? "text-green-600"
-                            : "text-red-600"
+                            ? 'text-green-600'
+                            : 'text-red-600'
                         }`}
                       >
-                        {certification.student_progress.latest_attempt.score}{" "}
+                        {certification.student_progress.latest_attempt.score}{' '}
                         puntos
                       </span>
                     )}

@@ -1,15 +1,15 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from 'react';
 import {
   PendingCertification,
   ExamData,
   AnswerSubmission,
   AttemptResult,
   StudentAttempt,
-} from "../interfaces/StudentCertification";
-import { API_STUDENT_CERTIFICATIONS } from "../utils/Endpoints";
-import { fetchWithTimeout, handleApiResponse } from "../utils/apiHelpers";
+} from '../interfaces/StudentCertification';
+import { API_STUDENT_CERTIFICATIONS } from '../utils/Endpoints';
+import { fetchWithTimeout, handleApiResponse } from '../utils/apiHelpers';
 
-export const useStudentCertifications = () => {
+export const useStudentCertifications = (studentId: number) => {
   const [pendingCertifications, setPendingCertifications] = useState<
     PendingCertification[]
   >([]);
@@ -23,24 +23,31 @@ export const useStudentCertifications = () => {
   const [submissionLoading, setSubmissionLoading] = useState(false);
   const [submissionError, setSubmissionError] = useState<string | null>(null);
 
-  // 🎯 OBTENER CERTIFICACIONES PENDIENTES
+  // OBTENER CERTIFICACIONES PENDIENTES
   const fetchPendingCertifications = useCallback(async () => {
+    if (!studentId) {
+      setPendingCertifications([]);
+      setLoading(false);
+      setError(null);
+      return [];
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const token = localStorage.getItem("userToken");
+      const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No se encontró el token de autenticación");
+        throw new Error('No se encontró el token de autenticación');
       }
 
       const response = await fetchWithTimeout(
-        `${API_STUDENT_CERTIFICATIONS}/pending`,
+        `${API_STUDENT_CERTIFICATIONS}/pending/${studentId}`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -51,32 +58,42 @@ export const useStudentCertifications = () => {
       return result.data || [];
     } catch (error: any) {
       const errorMessage =
-        error.message || "Error al cargar certificaciones pendientes";
+        error.message || 'Error al cargar certificaciones pendientes';
       setError(errorMessage);
       throw error;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [studentId]);
 
-  // 🎯 INICIAR INTENTO DE EXAMEN
+  useEffect(() => {
+    if (studentId) {
+      fetchPendingCertifications();
+    } else {
+      setPendingCertifications([]);
+      setError(null);
+      setLoading(false);
+    }
+  }, [studentId, fetchPendingCertifications]);
+
+  //  INICIAR INTENTO DE EXAMEN
   const startExamAttempt = useCallback(async (assignmentId: number) => {
     setExamLoading(true);
     setExamError(null);
 
     try {
-      const token = localStorage.getItem("userToken");
+      const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No se encontró el token de autenticación");
+        throw new Error('No se encontró el token de autenticación');
       }
 
       const response = await fetchWithTimeout(
         `${API_STUDENT_CERTIFICATIONS}/attempt/start`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ assignment_id: assignmentId }),
         }
@@ -87,7 +104,7 @@ export const useStudentCertifications = () => {
       setCurrentExam(result.data);
       return result.data;
     } catch (error: any) {
-      const errorMessage = error.message || "Error al iniciar el examen";
+      const errorMessage = error.message || 'Error al iniciar el examen';
       setExamError(errorMessage);
       throw error;
     } finally {
@@ -95,25 +112,25 @@ export const useStudentCertifications = () => {
     }
   }, []);
 
-  // 🎯 ENVIAR RESPUESTAS
+  //  ENVIAR RESPUESTAS
   const submitExamAttempt = useCallback(
     async (attemptId: number, answers: AnswerSubmission[]) => {
       setSubmissionLoading(true);
       setSubmissionError(null);
 
       try {
-        const token = localStorage.getItem("userToken");
+        const token = localStorage.getItem('userToken');
         if (!token) {
-          throw new Error("No se encontró el token de autenticación");
+          throw new Error('No se encontró el token de autenticación');
         }
 
         const response = await fetchWithTimeout(
           `${API_STUDENT_CERTIFICATIONS}/attempt/submit`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
               Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               attempt_id: attemptId,
@@ -127,7 +144,7 @@ export const useStudentCertifications = () => {
         setCurrentExam(null); // Limpiar examen actual
         return result.data;
       } catch (error: any) {
-        const errorMessage = error.message || "Error al enviar las respuestas";
+        const errorMessage = error.message || 'Error al enviar las respuestas';
         setSubmissionError(errorMessage);
         throw error;
       } finally {
@@ -137,21 +154,21 @@ export const useStudentCertifications = () => {
     []
   );
 
-  // 🎯 OBTENER RESULTADOS
+  // OBTENER RESULTADOS
   const getAttemptResults = useCallback(async (attemptId: number) => {
     try {
-      const token = localStorage.getItem("userToken");
+      const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No se encontró el token de autenticación");
+        throw new Error('No se encontró el token de autenticación');
       }
 
       const response = await fetchWithTimeout(
         `${API_STUDENT_CERTIFICATIONS}/attempt/${attemptId}/results`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -159,26 +176,26 @@ export const useStudentCertifications = () => {
       const result = await handleApiResponse(response);
       return result.data;
     } catch (error: any) {
-      const errorMessage = error.message || "Error al obtener resultados";
+      const errorMessage = error.message || 'Error al obtener resultados';
       throw error;
     }
   }, []);
 
-  // 🎯 OBTENER INTENTOS DEL ESTUDIANTE
+  // OBTENER INTENTOS DEL ESTUDIANTE
   const getStudentAttempts = useCallback(async (assignmentId: number) => {
     try {
-      const token = localStorage.getItem("userToken");
+      const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No se encontró el token de autenticación");
+        throw new Error('No se encontró el token de autenticación');
       }
 
       const response = await fetchWithTimeout(
         `${API_STUDENT_CERTIFICATIONS}/assignment/${assignmentId}/attempts`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -186,26 +203,26 @@ export const useStudentCertifications = () => {
       const result = await handleApiResponse(response);
       return result.data || [];
     } catch (error: any) {
-      const errorMessage = error.message || "Error al obtener intentos";
+      const errorMessage = error.message || 'Error al obtener intentos';
       throw error;
     }
   }, []);
 
-  // 🎯 ABANDONAR INTENTO
+  // ABANDONAR INTENTO
   const abandonAttempt = useCallback(async (attemptId: number) => {
     try {
-      const token = localStorage.getItem("userToken");
+      const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error("No se encontró el token de autenticación");
+        throw new Error('No se encontró el token de autenticación');
       }
 
       const response = await fetchWithTimeout(
         `${API_STUDENT_CERTIFICATIONS}/attempt/abandon`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({ attempt_id: attemptId }),
         }
@@ -215,12 +232,12 @@ export const useStudentCertifications = () => {
       setCurrentExam(null); // Limpiar examen actual
       return result;
     } catch (error: any) {
-      const errorMessage = error.message || "Error al abandonar el intento";
+      const errorMessage = error.message || 'Error al abandonar el intento';
       throw error;
     }
   }, []);
 
-  // 🎯 LIMPIAR ESTADOS
+  // LIMPIAR ESTADOS
   const clearCurrentExam = useCallback(() => {
     setCurrentExam(null);
     setExamError(null);
