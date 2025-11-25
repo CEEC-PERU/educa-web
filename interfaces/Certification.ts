@@ -1,14 +1,17 @@
-export interface Option {
-  option_text: string;
-  is_correct: boolean;
-  option_order: number;
-}
-
 export interface Question {
+  question_id: number;
   question_text: string;
   type_id: number;
   points_value: number;
   options: Option[];
+}
+
+export interface Option {
+  option_id: number;
+  question_id: number;
+  option_text: string;
+  is_correct: boolean;
+  option_order: number;
 }
 
 export interface Certification {
