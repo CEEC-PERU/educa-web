@@ -36,7 +36,8 @@ interface Question {
 }
 
 interface CertificationData {
-  certification_class_id: number;
+  assignment_id: number;
+  certification_sche_id: number;
   title: string;
   description: string;
   instructions: string;
@@ -71,6 +72,7 @@ const TakeCertificationExam = () => {
   const [certification, setCertification] = useState<CertificationData | null>(
     null
   );
+  const [attemptId, setAttemptId] = useState<number | null>(null);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [studentAnswers, setStudentAnswers] = useState<StudentAnswer[]>([]);
@@ -105,10 +107,12 @@ const TakeCertificationExam = () => {
     }
   }
 
+  //handler para abrir y cerrar el sidebar
   const toggleSidebar = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  //handler para cambiar de pregunta en el examen
   const changeQuestion = (newIndex: number) => {
     const currentTime = Date.now();
     const timeSpent = Math.round((currentTime - questionStarterTime) / 1000);
@@ -125,14 +129,112 @@ const TakeCertificationExam = () => {
     setQuestionStarterTime(currentTime);
   };
 
-  const startEvaluation = () => {
-    alert('Iniciando examen de certificación...');
-    setIsStarted(true);
+  //handler para iniciar la evaluación
+  const startEvaluation = async () => {
+    try {
+      if (!certification?.certification_sche_id) {
+        alert('No se ha cargado la certificación correctamente.');
+        return;
+      }
+
+      if (!userId) {
+        alert('Usuario no identificado. Por favor, inicia sesión.');
+        return;
+      }
+
+      const response = await fetch(
+        `${API_STUDENT_CERTIFICATIONS}/attempt/start`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            certification_sche_id: certification.certification_sche_id,
+            assignment_id: certification.assignment_id,
+            user_id: userId,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setAttemptId(data.data.attempt_id);
+      } else {
+        alert(data.message || 'Error al iniciar la evaluación.');
+      }
+    } catch (error) {
+      console.error('Error starting evaluation:', error);
+      alert(
+        'Ocurrió un error al iniciar la evaluación. Por favor, intenta nuevamente.'
+      );
+    } finally {
+      setIsStarted(true);
+    }
   };
 
-  const submitEvaluation = async () => {
+  //handler para manejar las respuestas de elección simple
+  const handleSingleChoiceAnswer = (questionId: number, optionId: number) => {
+    setStudentAnswers((prev) => {
+      const existingAnswerIndex = prev.findIndex(
+        (ans) => ans.question_id === questionId
+      );
+
+      const newAnswer: StudentAnswer = {
+        question_id: questionId,
+        selected_option_ids: [optionId],
+      };
+
+      if (existingAnswerIndex >= 0) {
+        const updatedAnswers = [...prev];
+        updatedAnswers[existingAnswerIndex] = newAnswer;
+        return updatedAnswers;
+      } else {
+        return [...prev, newAnswer];
+      }
+    });
+  };
+
+  //handler para enviar la evaluación
+  const submitEvaluation = async (timeExpired = false) => {
     setIsSubmitting(true);
     try {
+      const respuestasFormat = studentAnswers.map((answer) => ({
+        question_id: answer.question_id,
+        selected_option_ids: answer.selected_option_ids,
+        answer_text: answer.answer_text || '',
+        time_spent_seconds: questionsTimes[answer.question_id] || 0,
+      }));
+
+      console.log('Submitting Answers:', respuestasFormat);
+
+      const response = await fetch(
+        `${API_STUDENT_CERTIFICATIONS}/attempt/submit`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            attempt_id: attemptId,
+            user_id: userId,
+            answers: respuestasFormat,
+            time_expired: timeExpired,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log('Submit Attempt Response:', data);
+
+      if (data.success) {
+        router.push(
+          `/student/certificaciones/exam/${id}/resultados?attempt_id=${attemptId}`
+        );
+      } else {
+        alert(data.message || 'Error al enviar la evaluación.');
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.error('Error submitting evaluation:', error);
       alert(
@@ -140,7 +242,12 @@ const TakeCertificationExam = () => {
       );
     } finally {
       setIsSubmitting(false);
+      setShowConfirmSubmit(false);
     }
+  };
+
+  const getStudentAnswer = (questionId: number): StudentAnswer | null => {
+    return studentAnswers.find((ans) => ans.question_id === questionId) || null;
   };
 
   useEffect(() => {
@@ -160,6 +267,7 @@ const TakeCertificationExam = () => {
         }
 
         const data: CertificationData = await response.json();
+        console.log('------------------------------------------');
         console.log('Certification Data:', data);
 
         if (!data.is_active) {
@@ -193,6 +301,7 @@ const TakeCertificationExam = () => {
     fetchCertification();
   }, [id]);
 
+  //contador regresivo para el examen
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isStarted && timeRemaining > 0) {
@@ -209,6 +318,7 @@ const TakeCertificationExam = () => {
     return () => clearInterval(interval);
   }, [isStarted, timeRemaining]);
 
+  //método auxiliar para darle formato a la fecha
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -222,6 +332,7 @@ const TakeCertificationExam = () => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
+  //handler para manejar tiempo expirado y enviar la evaluación de forma automática
   const handleTimeExpired = () => {
     alert(
       'El tiempo para completar el examen ha expirado. La evaluación se enviará automáticamente.'
@@ -229,6 +340,7 @@ const TakeCertificationExam = () => {
     submitEvaluation();
   };
 
+  //método auxiliar para obtener la etiqueta del tipo de pregunta
   const getQuestionTypeLabel = (type: string) => {
     switch (type) {
       case '1':
@@ -526,26 +638,48 @@ const TakeCertificationExam = () => {
                     {currentQuestion.type_id === 1 ? (
                       // Selección simple
                       <div>
-                        {currentQuestion.options.map((option) => (
-                          <div
-                            key={option.option_id}
-                            className="flex items-center gap-3"
-                          >
-                            <input
-                              type="radio"
-                              name={`question_${currentQuestion.question_id}`}
-                              className="h-5 w-5 text-blue-600 border-gray-300"
-                            />
-                            <label className="text-gray-800">
-                              {option.option_text}
-                            </label>
-                          </div>
-                        ))}
+                        {currentQuestion.options.map((option) => {
+                          const studentAnswer = getStudentAnswer(
+                            currentQuestion.question_id
+                          );
+                          const isSelected =
+                            studentAnswer?.selected_option_ids.includes(
+                              option.option_id
+                            ) || false;
+                          return (
+                            <div
+                              key={option.option_id}
+                              className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer mt-2"
+                              onClick={() =>
+                                handleSingleChoiceAnswer(
+                                  currentQuestion.question_id,
+                                  option.option_id
+                                )
+                              }
+                            >
+                              <input
+                                type="radio"
+                                name={`question_${currentQuestion.question_id}`}
+                                checked={isSelected}
+                                onChange={() =>
+                                  handleSingleChoiceAnswer(
+                                    currentQuestion.question_id,
+                                    option.option_id
+                                  )
+                                }
+                                className="h-5 w-5 text-blue-600 border-gray-300"
+                              />
+                              <label className="text-gray-800 flex-1 cursor-pointer">
+                                {option.option_text}
+                              </label>
+                            </div>
+                          );
+                        })}
                       </div>
                     ) : null}
                   </div>
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center mt-2">
                     <button
                       onClick={() =>
                         changeQuestion(Math.max(0, currentQuestionIndex - 1))

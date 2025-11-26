@@ -53,6 +53,7 @@ export const useStudentCertifications = (studentId: number) => {
       );
 
       const result = await handleApiResponse(response);
+      console.log('Certificaciones pendientes obtenidas:', result.data);
 
       setPendingCertifications(result.data || []);
       return result.data || [];
