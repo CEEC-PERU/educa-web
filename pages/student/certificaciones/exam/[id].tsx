@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Profile } from '@/interfaces/User/UserInterfaces';
 import Navbar from '@/components/Navbar';
 import SidebarDrawer from '@/components/student/DrawerNavigation';
-import { Question, Option } from '@/interfaces/Certification';
 import {
   AlertTriangle,
   CheckIcon,
@@ -19,6 +18,22 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/solid';
+
+interface QuestionOption {
+  option_id: number;
+  question_id: number;
+  option_text: string;
+  is_correct: boolean;
+  option_order: number;
+}
+
+interface Question {
+  question_id: number;
+  question_text: string;
+  type_id: number;
+  points_value: number;
+  options: QuestionOption[];
+}
 
 interface CertificationData {
   certification_class_id: number;
