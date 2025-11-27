@@ -81,9 +81,7 @@ const CertificationsList = () => {
 
   //  MANEJAR VISUALIZACIÓN DE RESULTADOS
   const handleViewResults = (assignmentId: number) => {
-    // Aquí iría la navegación al historial de intentos
-    console.log('Viendo resultados para assignment:', assignmentId);
-    // navigate(`/student/certifications/history/${assignmentId}`);
+    router.push(`/student/certificaciones/historial/${assignmentId}`);
   };
 
   //  FORMATEAR FECHA
