@@ -5,11 +5,52 @@ import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import Link from 'next/link';
 import { ArrowLeftIcon } from 'lucide-react';
 import { useCertificationResult } from '@/hooks/resultado/useCertificationResult';
+import {
+  ErrorStateCertification,
+  LoadingStateCertification,
+  NoResultsStateCertification,
+} from '@/components/Certification/StateComponent';
+import AttemptSelectorCertification from '@/components/Certification/AttemptSelector';
 
 const CertificationResults = () => {
-  const { attempts, loading, error } = useCertificationResult();
+  const { attempts, selectedAttempt, loading, error, selectAttemptById } =
+    useCertificationResult();
+  console.log('Assignment ID from hook:', selectedAttempt);
+  console.log('All attempts from hook:', attempts);
 
   const { isDrawerOpen, toggleSidebar, userProfile } = useEvaluationUI();
+
+  if (loading) {
+    return (
+      <LoadingStateCertification
+        userProfile={userProfile}
+        toggleSidebar={toggleSidebar}
+        isDrawerOpen={isDrawerOpen}
+      />
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorStateCertification
+        error={error}
+        userProfile={userProfile}
+        toggleSidebar={toggleSidebar}
+        isDrawerOpen={isDrawerOpen}
+      />
+    );
+  }
+
+  if (!selectedAttempt) {
+    return (
+      <NoResultsStateCertification
+        userProfile={userProfile}
+        toggleSidebar={toggleSidebar}
+        isDrawerOpen={isDrawerOpen}
+      />
+    );
+  }
+
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
@@ -33,7 +74,7 @@ const CertificationResults = () => {
         <div className="pt-16">
           <div
             className={`transition-all duration-300 ${
-              isDrawerOpen ? 'ml-64' : ''
+              isDrawerOpen ? 'lg:ml-64' : 'lg:ml-16'
             }`}
           >
             <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -45,10 +86,18 @@ const CertificationResults = () => {
                   </button>
                 </Link>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Historial de Certificación
+                  Historial de Intentos
                 </h1>
-                <h2 className="text-xl text-gray-600"></h2>
+                <h2 className="text-xl text-gray-600">
+                  {selectedAttempt?.certification.title}
+                </h2>
               </div>
+
+              <AttemptSelectorCertification
+                attempts={attempts}
+                selectedAttempt={selectedAttempt}
+                onSelectAttempt={selectAttemptById}
+              />
 
               <div className="mt-8 flex justify-center gap-4">
                 <Link href="/student/certificaciones">

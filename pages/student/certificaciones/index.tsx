@@ -213,6 +213,12 @@ const CertificationsList = () => {
             )}
           </div>
 
+          <div className="flex items-center text-sm text-gray-600">
+            <span>
+              Inicia: {formatDate(certification.assignment_details.start_date)}
+            </span>
+          </div>
+
           {certification.assignment_details.due_date && (
             <div
               className={`flex items-center text-sm ${
