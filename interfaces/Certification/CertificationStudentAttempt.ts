@@ -37,24 +37,12 @@ export interface CertificationQuestion {
   options: CertificationOption[];
 }
 
-export interface Certification {
-  certification_id: number;
-  title: string;
-  description: string;
-  duration_in_minutes: number;
-  max_attempts: number;
-  passing_percentage: number;
-  show_results_immediately: boolean;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface CertificationAttempt {
   attempt_id: number;
   assignment_id: number;
   user_id: number;
   attempt_number: number;
+  status: "in_progress" | "completed" | "abandoned";
   started_at: string;
   completed_at: string;
   submitted_at: string;
@@ -65,7 +53,12 @@ export interface CertificationAttempt {
   created_at: string;
   updated_at: string;
   answers: CertificationAnswer[];
-  certification: Certification;
+  certification: {
+    title: string;
+    description: string;
+    duration_in_minutes: number;
+    passing_percentage: number;
+  };
 }
 
 export interface CertificationAttemptsResponse {

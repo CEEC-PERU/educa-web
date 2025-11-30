@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import SidebarDrawer from '../../../components/student/DrawerNavigation';
-import Navbar from '../../../components/Navbar';
-import { useEvaluationUI } from '../../../hooks/ui/useEvaluationUI';
-import { ClockIcon, DocumentTextIcon } from '@heroicons/react/24/solid';
-import { CheckCheckIcon, ExpandIcon, PlayIcon, EyeIcon } from 'lucide-react';
-import { useStudentCertifications } from '../../../hooks/useStudentCertification';
-import { PendingCertification } from '../../../interfaces/StudentCertification';
-import { useAuth } from '../../../context/AuthContext';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from "react";
+import SidebarDrawer from "../../../components/student/DrawerNavigation";
+import Navbar from "../../../components/Navbar";
+import { useEvaluationUI } from "../../../hooks/ui/useEvaluationUI";
+import { ClockIcon, DocumentTextIcon } from "@heroicons/react/24/solid";
+import { CheckCheckIcon, ExpandIcon, PlayIcon, EyeIcon } from "lucide-react";
+import { useStudentCertifications } from "../../../hooks/useStudentCertification";
+import { PendingCertification } from "../../../interfaces/StudentCertification";
+import { useAuth } from "../../../context/AuthContext";
+import { useRouter } from "next/router";
 
 const CertificationsList = () => {
   const { user } = useAuth();
@@ -27,7 +26,7 @@ const CertificationsList = () => {
 
   useEffect(() => {
     if (userInfo?.id) {
-      console.log('Fetching certifications for user ID:', userInfo.id);
+      console.log("Fetching certifications for user ID:", userInfo.id);
       fetchPendingCertifications();
     }
   }, [userInfo?.id, fetchPendingCertifications]);
@@ -46,7 +45,7 @@ const CertificationsList = () => {
 
       const completed = pendingCertifications.filter(
         (cert) =>
-          cert.student_progress.latest_attempt?.status === 'completed' &&
+          cert.student_progress.latest_attempt?.status === "completed" &&
           cert.student_progress.latest_attempt.passed
       ).length;
 
@@ -65,17 +64,8 @@ const CertificationsList = () => {
     }
   }, [pendingCertifications]);
 
-  // CARGAR CERTIFICACIONES AL INICIAR
-
   //  MANEJAR INICIO DE EXAMEN
   const handleStartExam = (assignmentId: number) => {
-    // Aquí iría la navegación al componente de examen
-    //console.log('Iniciando examen para assignment:', assignmentId);
-    // navigate(`/student/certifications/exam/${assignmentId}`);
-    /*
-    <Link href={`/student/certificaciones/exam/${assignmentId}`}>
-      <h1>examen</h1>
-    </Link>;*/
     router.push(`/student/certificaciones/exam/${assignmentId}`);
   };
 
@@ -86,12 +76,12 @@ const CertificationsList = () => {
 
   //  FORMATEAR FECHA
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Date(dateString).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -114,7 +104,7 @@ const CertificationsList = () => {
 
     if (
       !student_progress.can_start_new_attempt &&
-      student_progress.latest_attempt?.status === 'in_progress'
+      student_progress.latest_attempt?.status === "in_progress"
     ) {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -159,19 +149,19 @@ const CertificationsList = () => {
       <div
         key={certification.assignment_id}
         className={`bg-white rounded-lg shadow-sm border ${
-          isExpired ? 'border-red-200' : 'border-gray-200'
+          isExpired ? "border-red-200" : "border-gray-200"
         } p-6 hover:shadow-md transition-shadow duration-200`}
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div
             className={`p-2 rounded-lg ${
-              isExpired ? 'bg-red-100' : 'bg-blue-100'
+              isExpired ? "bg-red-100" : "bg-blue-100"
             }`}
           >
             <DocumentTextIcon
               className={`h-6 w-6 ${
-                isExpired ? 'text-red-600' : 'text-blue-600'
+                isExpired ? "text-red-600" : "text-blue-600"
               }`}
             />
           </div>
@@ -222,7 +212,7 @@ const CertificationsList = () => {
           {certification.assignment_details.due_date && (
             <div
               className={`flex items-center text-sm ${
-                isExpired ? 'text-red-600' : 'text-gray-600'
+                isExpired ? "text-red-600" : "text-gray-600"
               }`}
             >
               <span>
@@ -251,8 +241,8 @@ const CertificationsList = () => {
                 <span
                   className={`ml-1 font-medium ${
                     certification.student_progress.latest_attempt.passed
-                      ? 'text-green-600'
-                      : 'text-red-600'
+                      ? "text-green-600"
+                      : "text-red-600"
                   }`}
                 >
                   {certification.student_progress.latest_attempt.score} puntos
@@ -309,7 +299,7 @@ const CertificationsList = () => {
       <div className="pt-16">
         <div
           className={`transition-all duration-300 ${
-            isDrawerOpen ? 'lg:ml-64' : 'lg:ml-16'
+            isDrawerOpen ? "lg:ml-64" : "lg:ml-16"
           }`}
         >
           <div className="container mx-auto px-4 py-8">
@@ -336,7 +326,7 @@ const CertificationsList = () => {
                       Certificaciones Pendientes
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '-' : stats.pending}
+                      {loading ? "-" : stats.pending}
                     </p>
                   </div>
                 </div>
@@ -353,7 +343,7 @@ const CertificationsList = () => {
                       Certificaciones Completadas
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '-' : stats.completed}
+                      {loading ? "-" : stats.completed}
                     </p>
                   </div>
                 </div>
@@ -370,7 +360,7 @@ const CertificationsList = () => {
                       Certificaciones Expiradas
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '-' : stats.expired}
+                      {loading ? "-" : stats.expired}
                     </p>
                   </div>
                 </div>
@@ -387,7 +377,7 @@ const CertificationsList = () => {
                       Total de Certificaciones
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {loading ? '-' : stats.total}
+                      {loading ? "-" : stats.total}
                     </p>
                   </div>
                 </div>
