@@ -1,6 +1,6 @@
-import React from 'react';
-import { PlusCircleIcon, XCircleIcon } from 'lucide-react';
-import { Question, Option } from '../../interfaces/Certification';
+import React from "react";
+import { PlusCircleIcon, XCircleIcon } from "lucide-react";
+import { Question, Option } from "../../interfaces/Certification";
 
 interface QuestionFormProps {
   currentQuestion: Question;
@@ -13,50 +13,68 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   currentQuestion,
   onQuestionChange,
   onAddQuestion,
-  errors
+  errors,
 }) => {
   const addOption = () => {
     if (currentQuestion.options.length >= 6) {
-      alert('Máximo 6 opciones por pregunta');
+      alert("Máximo 6 opciones por pregunta");
       return;
     }
 
     const newOption: Option = {
-      option_text: '',
+      option_text: "",
       is_correct: false,
-      option_order: currentQuestion.options.length + 1
+      option_order: currentQuestion.options.length + 1,
     };
 
     onQuestionChange({
       ...currentQuestion,
-      options: [...currentQuestion.options, newOption]
+      options: [...currentQuestion.options, newOption],
     });
   };
 
   const updateOption = (index: number, field: string, value: any) => {
     const updatedOptions = [...currentQuestion.options];
     updatedOptions[index] = { ...updatedOptions[index], [field]: value };
-    
-    if (field === 'is_correct' && value === true && currentQuestion.type_id === 1) {
+
+    // Para opción simple, cuando se marca una como correcta, desmarcar las demás
+    if (field === "is_correct" && value === true) {
       updatedOptions.forEach((opt, i) => {
         if (i !== index) opt.is_correct = false;
       });
     }
-    
+
     onQuestionChange({
       ...currentQuestion,
-      options: updatedOptions
+      options: updatedOptions,
     });
   };
 
   const removeOption = (index: number) => {
-    const updatedOptions = currentQuestion.options.filter((_, i) => i !== index)
+    if (currentQuestion.options.length <= 2) {
+      alert("Mínimo 2 opciones por pregunta");
+      return;
+    }
+
+    const updatedOptions = currentQuestion.options
+      .filter((_, i) => i !== index)
       .map((opt, i) => ({ ...opt, option_order: i + 1 }));
-    
+
     onQuestionChange({
       ...currentQuestion,
-      options: updatedOptions
+      options: updatedOptions,
     });
+  };
+
+  // Validar si se puede agregar la pregunta
+  const canAddQuestion = () => {
+    return (
+      currentQuestion.question_text.trim() !== "" &&
+      currentQuestion.points_value > 0 &&
+      currentQuestion.options.length >= 2 &&
+      currentQuestion.options.some((opt) => opt.is_correct) &&
+      currentQuestion.options.every((opt) => opt.option_text.trim() !== "")
+    );
   };
 
   return (
@@ -76,7 +94,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       {/* formulario para agregar nueva pregunta */}
       <div className="border-t border-gray-200 pt-6">
         <h4 className="font-medium text-gray-700 mb-4">
-          Agregar Nueva Pregunta
+          Agregar Nueva Pregunta (Opción Simple)
         </h4>
 
         <div className="space-y-4">
@@ -87,34 +105,33 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             <textarea
               value={currentQuestion.question_text}
               rows={3}
-              onChange={(e) => onQuestionChange({ 
-                ...currentQuestion, 
-                question_text: e.target.value 
-              })}
+              onChange={(e) =>
+                onQuestionChange({
+                  ...currentQuestion,
+                  question_text: e.target.value,
+                })
+              }
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
               placeholder="Ingrese el texto de la pregunta"
             />
+            {errors.question_text && (
+              <p className="text-sm text-red-600 mt-1">
+                {errors.question_text}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Tipo de Pregunta *
+                Tipo de Pregunta
               </label>
-              <select
-                value={currentQuestion.type_id}
-                onChange={(e) => onQuestionChange({ 
-                  ...currentQuestion, 
-                  type_id: parseInt(e.target.value),
-                  options: currentQuestion.type_id === parseInt(e.target.value) ? 
-                          currentQuestion.options : []
-                })}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-              >
-                <option value={1}>Opción Simple</option>
-                <option value={2}>Opción Múltiple</option>
-                <option value={3}>Verdadero/Falso</option>
-              </select>
+              <input
+                type="text"
+                value="Opción Simple"
+                readOnly
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-gray-100 focus:outline-none"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -124,113 +141,147 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 type="number"
                 min="1"
                 value={currentQuestion.points_value}
-                onChange={(e) => onQuestionChange({ 
-                  ...currentQuestion, 
-                  points_value: parseInt(e.target.value) || 1 
-                })}
+                onChange={(e) =>
+                  onQuestionChange({
+                    ...currentQuestion,
+                    points_value: parseInt(e.target.value) || 1,
+                  })
+                }
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                 placeholder="Ingrese la puntuación de la pregunta"
               />
+              {errors.points_value && (
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.points_value}
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Opciones para preguntas de tipo opción */}
-          {[1, 2].includes(currentQuestion.type_id) && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Opciones *
-                </label>
-                <button
-                  type="button"
-                  onClick={addOption}
-                  className="text-sm text-blue-600 hover:underline flex items-center"
+          {/* Opciones para preguntas de tipo opción simple */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label className="block text-sm font-medium text-gray-700">
+                Opciones de Respuesta *
+                <span className="text-xs text-gray-500 ml-2">
+                  (Selecciona la respuesta correcta)
+                </span>
+              </label>
+              <button
+                type="button"
+                onClick={addOption}
+                disabled={currentQuestion.options.length >= 6}
+                className="text-sm text-blue-600 hover:text-blue-800 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <PlusCircleIcon className="h-4 w-4 mr-1" />
+                Añadir Opción
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {currentQuestion.options.map((option, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-3 p-3 bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
                 >
-                  <PlusCircleIcon className="h-4 w-4 mr-1" />
-                  Agregar Opción
-                </button>
-              </div>
-              
-              <div className="space-y-2">
-                {currentQuestion.options.map((option, index) => (
-                  <div key={index} className="flex items-center space-x-2 p-2 bg-white border rounded">
-                    <input
-                      type={currentQuestion.type_id === 1 ? "radio" : "checkbox"}
-                      name="correct-option"
-                      checked={option.is_correct}
-                      onChange={(e) => updateOption(index, 'is_correct', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                    />
-                    <input
-                      type="text"
-                      value={option.option_text}
-                      onChange={(e) => updateOption(index, 'option_text', e.target.value)}
-                      className="flex-1 border border-gray-300 rounded px-3 py-1 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      placeholder={`Opción ${index + 1}`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeOption(index)}
-                      className="text-red-600 hover:text-red-800 p-1"
-                    >
-                      <XCircleIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                ))}
-                {currentQuestion.options.length === 0 && (
-                  <p className="text-sm text-gray-500 text-center py-2">
-                    Agregue al menos 2 opciones
+                  <input
+                    type="radio"
+                    name="correct-option"
+                    checked={option.is_correct}
+                    onChange={(e) =>
+                      updateOption(index, "is_correct", e.target.checked)
+                    }
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500"
+                  />
+                  <input
+                    type="text"
+                    value={option.option_text}
+                    onChange={(e) =>
+                      updateOption(index, "option_text", e.target.value)
+                    }
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
+                    placeholder={`Escribe la opción ${index + 1}`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeOption(index)}
+                    disabled={currentQuestion.options.length <= 2}
+                    className="text-red-600 hover:text-red-800 p-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    title={
+                      currentQuestion.options.length <= 2
+                        ? "Mínimo 2 opciones requeridas"
+                        : "Eliminar opción"
+                    }
+                  >
+                    <XCircleIcon className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+
+              {currentQuestion.options.length === 0 && (
+                <div className="text-center py-4 border-2 border-dashed border-gray-300 rounded-lg">
+                  <p className="text-sm text-gray-500">
+                    No hay opciones agregadas
+                  </p>
+                  <button
+                    type="button"
+                    onClick={addOption}
+                    className="mt-2 text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center mx-auto"
+                  >
+                    <PlusCircleIcon className="h-4 w-4 mr-1" />
+                    Agregar primera opción
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {errors.options && (
+              <p className="text-sm text-red-600 mt-2">{errors.options}</p>
+            )}
+
+            {/* Información de validación */}
+            <div className="mt-3 space-y-1">
+              {currentQuestion.options.length < 2 && (
+                <p className="text-xs text-red-600">
+                  ✗ Se requieren al menos 2 opciones
+                </p>
+              )}
+              {currentQuestion.options.length >= 2 &&
+                !currentQuestion.options.some((opt) => opt.is_correct) && (
+                  <p className="text-xs text-red-600">
+                    ✗ Selecciona una opción como correcta
                   </p>
                 )}
-              </div>
+              {currentQuestion.options.some(
+                (opt) => !opt.option_text.trim()
+              ) && (
+                <p className="text-xs text-red-600">
+                  ✗ Todas las opciones deben tener texto
+                </p>
+              )}
+              {canAddQuestion() && (
+                <p className="text-xs text-green-600">
+                  ✓ La pregunta está lista para agregar
+                </p>
+              )}
             </div>
-          )}
-
-          {/* Opciones predefinidas para Verdadero/Falso */}
-          {currentQuestion.type_id === 3 && currentQuestion.options.length === 0 && (
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 p-2 bg-white border rounded">
-                <input
-                  type="radio"
-                  name="true-false"
-                  checked={currentQuestion.options[0]?.is_correct || false}
-                  onChange={() => onQuestionChange({
-                    ...currentQuestion,
-                    options: [
-                      { option_text: 'Verdadero', is_correct: true, option_order: 1 },
-                      { option_text: 'Falso', is_correct: false, option_order: 2 }
-                    ]
-                  })}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                />
-                <label className="flex-1 text-sm">Verdadero</label>
-              </div>
-              <div className="flex items-center space-x-2 p-2 bg-white border rounded">
-                <input
-                  type="radio"
-                  name="true-false"
-                  checked={currentQuestion.options[1]?.is_correct || false}
-                  onChange={() => onQuestionChange({
-                    ...currentQuestion,
-                    options: [
-                      { option_text: 'Verdadero', is_correct: false, option_order: 1 },
-                      { option_text: 'Falso', is_correct: true, option_order: 2 }
-                    ]
-                  })}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500"
-                />
-                <label className="flex-1 text-sm">Falso</label>
-              </div>
-            </div>
-          )}
+          </div>
 
           <button
             type="button"
             onClick={onAddQuestion}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            disabled={!canAddQuestion()}
+            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
             Agregar Pregunta al Certificado
           </button>
+
+          {/* Indicadores de estado */}
+          <div className="text-xs text-gray-500 space-y-1">
+            <p>• Tipo: Opción Simple (solo una respuesta correcta)</p>
+            <p>• Mínimo: 2 opciones, Máximo: 6 opciones</p>
+            <p>• Una opción debe marcarse como correcta</p>
+          </div>
         </div>
       </div>
     </div>
