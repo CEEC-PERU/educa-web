@@ -1,7 +1,10 @@
-import React from 'react';
-import { CheckCircleIcon, XCircleIcon } from 'lucide-react';
-import { CertificationFormData, Question } from '../../interfaces/Certification';
-import QuestionForm from './QuestionForm';
+import React from "react";
+import { CheckCircleIcon, XCircleIcon } from "lucide-react";
+import {
+  CertificationFormData,
+  Question,
+} from "../../interfaces/Certification";
+import QuestionForm from "./QuestionForm";
 
 interface CertificationFormProps {
   formData: CertificationFormData;
@@ -28,7 +31,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
   isSubmitting,
   editingCertificate,
   onSubmit,
-  onClose
+  onClose,
 }) => {
   const renderFormField = (
     error: string | undefined,
@@ -43,7 +46,15 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
   const updateFormData = (field: string, value: any) => {
     onFormDataChange({
       ...formData,
-      [field]: value
+      [field]: value,
+    });
+  };
+
+  const handleAddMultipleQuestions = (questions: Question[]) => {
+    const updatedQuestions = [...formData.questions, ...questions];
+    onFormDataChange({
+      ...formData,
+      questions: updatedQuestions,
     });
   };
 
@@ -54,7 +65,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
           <p className="text-sm text-red-600">{errors.general}</p>
         </div>
       )}
-      
+
       <div className="bg-gray-50 p-6 rounded-lg border">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
           <CheckCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
@@ -71,11 +82,11 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                 type="text"
                 required
                 value={formData.title}
-                onChange={(e) => updateFormData('title', e.target.value)}
+                onChange={(e) => updateFormData("title", e.target.value)}
                 className={`block w-full focus:outline-none rounded-md shadow-sm p-2 border ${
                   errors.title
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
                 placeholder="Ingrese el título del certificado"
               />
@@ -93,11 +104,16 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                 required
                 min="1"
                 value={formData.duration_in_minutes}
-                onChange={(e) => updateFormData('duration_in_minutes', parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  updateFormData(
+                    "duration_in_minutes",
+                    parseInt(e.target.value) || 0
+                  )
+                }
                 className={`block w-full focus:outline-none rounded-md shadow-sm p-2 border ${
                   errors.duration_in_minutes
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
                 placeholder="Ingrese la duración en minutos"
               />
@@ -116,11 +132,16 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                 min="1"
                 max="100"
                 value={formData.passing_percentage}
-                onChange={(e) => updateFormData('passing_percentage', parseInt(e.target.value) || 0)}
+                onChange={(e) =>
+                  updateFormData(
+                    "passing_percentage",
+                    parseInt(e.target.value) || 0
+                  )
+                }
                 className={`block w-full focus:outline-none rounded-md shadow-sm p-2 border ${
                   errors.passing_percentage
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                    : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
                 placeholder="Ingrese la puntuación mínima para aprobar"
               />
@@ -148,7 +169,9 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
               required
               min="1"
               value={formData.max_attempts}
-              onChange={(e) => updateFormData('max_attempts', parseInt(e.target.value) || 1)}
+              onChange={(e) =>
+                updateFormData("max_attempts", parseInt(e.target.value) || 1)
+              }
               className="block w-full focus:outline-none rounded-md shadow-sm p-2 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
               placeholder="Ingrese la cantidad máxima de intentos"
             />
@@ -162,7 +185,8 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
             <textarea
               value={formData.description}
               rows={3}
-              onChange={(e) => updateFormData('description', e.target.value)}
+              required
+              onChange={(e) => updateFormData("description", e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
               placeholder="Ingrese una descripción para el certificado"
             />
@@ -175,7 +199,8 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
             <textarea
               value={formData.instructions}
               rows={3}
-              onChange={(e) => updateFormData('instructions', e.target.value)}
+              required
+              onChange={(e) => updateFormData("instructions", e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
               placeholder="Ingrese las instrucciones para el certificado"
             />
@@ -186,7 +211,9 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
               <input
                 type="checkbox"
                 checked={formData.show_results_immediately}
-                onChange={(e) => updateFormData('show_results_immediately', e.target.checked)}
+                onChange={(e) =>
+                  updateFormData("show_results_immediately", e.target.checked)
+                }
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label className="ml-2 block text-sm text-gray-700">
@@ -197,7 +224,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
               <input
                 type="checkbox"
                 checked={formData.is_active}
-                onChange={(e) => updateFormData('is_active', e.target.checked)}
+                onChange={(e) => updateFormData("is_active", e.target.checked)}
                 className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <label className="ml-2 block text-sm text-gray-700">
@@ -221,15 +248,21 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
             Preguntas agregadas: {formData.questions.length}
           </h4>
           {formData.questions.map((question, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-white border rounded-lg">
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-white border rounded-lg"
+            >
               <div className="flex-1">
                 <p className="text-sm font-medium">{question.question_text}</p>
                 <p className="text-xs text-gray-500">
-                  Tipo: {question.type_id === 1 ? 'Opción simple' : 
-                        question.type_id === 2 ? 'Opción múltiple' : 
-                        'Verdadero/Falso'} | 
-                  Puntos: {question.points_value} | 
-                  Opciones: {question.options.length}
+                  Tipo:{" "}
+                  {question.type_id === 1
+                    ? "Opción simple"
+                    : question.type_id === 2
+                    ? "Opción múltiple"
+                    : "Verdadero/Falso"}{" "}
+                  | Puntos: {question.points_value} | Opciones:{" "}
+                  {question.options.length}
                 </p>
               </div>
               <button
@@ -252,6 +285,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
           currentQuestion={currentQuestion}
           onQuestionChange={onCurrentQuestionChange}
           onAddQuestion={onAddQuestion}
+          onAddMultipleQuestions={handleAddMultipleQuestions}
           errors={errors}
         />
       </div>
@@ -271,7 +305,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
           disabled={isSubmitting || formData.questions.length === 0}
           className="px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? 'Creando...' : 'Crear Certificación'}
+          {isSubmitting ? "Creando..." : "Crear Certificación"}
         </button>
       </div>
     </form>

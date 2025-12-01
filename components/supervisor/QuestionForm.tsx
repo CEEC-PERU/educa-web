@@ -1,11 +1,13 @@
-import React from "react";
-import { PlusCircleIcon, XCircleIcon } from "lucide-react";
+import React, { useState } from "react";
+import { PlusCircleIcon, XCircleIcon, FileSpreadsheet } from "lucide-react";
 import { Question, Option } from "../../interfaces/Certification";
+import ExcelUploader from "../Certification/ExcelUploader";
 
 interface QuestionFormProps {
   currentQuestion: Question;
   onQuestionChange: (question: Question) => void;
   onAddQuestion: () => void;
+  onAddMultipleQuestions: (questions: Question[]) => void;
   errors: { [key: string]: string };
 }
 
@@ -13,8 +15,11 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
   currentQuestion,
   onQuestionChange,
   onAddQuestion,
+  onAddMultipleQuestions,
   errors,
 }) => {
+  const [showExcelUploader, setShowExcelUploader] = useState(false);
+
   const addOption = () => {
     if (currentQuestion.options.length >= 6) {
       alert("Máximo 6 opciones por pregunta");
@@ -83,7 +88,25 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
         <h3 className="text-lg font-semibold text-gray-800">
           Preguntas del Certificado
         </h3>
+        <button
+          type="button"
+          onClick={() => setShowExcelUploader(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
+        >
+          <FileSpreadsheet className="h-4 w-4" />
+          Cargar desde Excel
+        </button>
       </div>
+
+      {showExcelUploader && (
+        <ExcelUploader
+          onQuestionsLoaded={(questions) => {
+            onAddMultipleQuestions(questions);
+            setShowExcelUploader(false);
+          }}
+          onClose={() => setShowExcelUploader(false)}
+        />
+      )}
 
       {errors.questions && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
@@ -140,6 +163,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               <input
                 type="number"
                 min="1"
+                readOnly
                 value={currentQuestion.points_value}
                 onChange={(e) =>
                   onQuestionChange({

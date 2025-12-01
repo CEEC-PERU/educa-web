@@ -75,7 +75,7 @@ const TakeCertificationExam = () => {
   const [isStarted, setIsStarted] = useState(false);
   const [isStartingEvaluation, setIsStartingEvaluation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isNavigating, setIsNavigating] = useState(false); // Para controlar salidas voluntarias
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // Datos del Examen
   const [certification, setCertification] = useState<CertificationData | null>(
@@ -92,7 +92,7 @@ const TakeCertificationExam = () => {
   }>({});
   const [timeRemaining, setTimeRemaining] = useState(0);
 
-  // Refs para mantener valores frescos
+  // Mantener ref actualizado
   const timeRemainingRef = useRef<number>(0);
 
   let name = "";
@@ -117,7 +117,7 @@ const TakeCertificationExam = () => {
     }
   }
 
-  // Actualizar refs cuando cambian los valores
+  // Mantener ref actualizado
   useEffect(() => {
     timeRemainingRef.current = timeRemaining;
   }, [timeRemaining]);
@@ -126,7 +126,7 @@ const TakeCertificationExam = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  // --- LÓGICA DE TIEMPOS Y NAVEGACIÓN ---
+  // tiempos y navegación entre preguntas
 
   const changeQuestion = (newIndex: number) => {
     const currentTime = Date.now();
@@ -212,7 +212,7 @@ const TakeCertificationExam = () => {
     });
   };
 
-  // --- FUNCIÓN ABANDON ATTACT CORREGIDA ---
+  // abandonar intento
   const abandonAttempt = useCallback(async () => {
     if (!attemptId || !userId) {
       console.warn("Missing attemptId or userId for abandon");
@@ -243,7 +243,7 @@ const TakeCertificationExam = () => {
     }
   }, [attemptId, userId]);
 
-  // --- SUBMIT EVALUATION CORREGIDA ---
+  // enviar datos de la evaluación
   const submitEvaluation = useCallback(
     async (timeExpired = false) => {
       if (isSubmitting) return;
@@ -392,7 +392,7 @@ const TakeCertificationExam = () => {
     return () => clearInterval(interval);
   }, [isStarted, timeRemaining, isSubmitting, handleTimeExpired]);
 
-  // --- PROTECCIÓN DE NAVEGACIÓN CORREGIDA - SIN BUCLE ---
+  // navegación y abandono
   useEffect(() => {
     if (!isStarted || isSubmitting) return;
 
@@ -416,11 +416,10 @@ const TakeCertificationExam = () => {
       }
     };
 
-    // 2. Protección contra navegación interna - CORREGIDA
+    // protección contra navegación interna
     const handleRouteChangeStart = async (url: string) => {
       if (isNavigating || isSubmitting) return;
 
-      // Permitir navegación a resultados
       if (url.includes("/resultados")) return;
 
       const confirmExit = window.confirm(
@@ -437,13 +436,13 @@ const TakeCertificationExam = () => {
           await router.push("/student/certificaciones");
         } catch (error) {
           console.error("Navigation error:", error);
-          setIsNavigating(false); // RESET CRÍTICO EN CASO DE ERROR
+          setIsNavigating(false);
           alert("Error al salir del examen. Intenta nuevamente.");
         }
       }
     };
 
-    // 3. Manejo del botón atrás - CORREGIDA
+    // manejo de botón atrás del navegador
     const handlePopState = async (event: PopStateEvent) => {
       if (isNavigating || isSubmitting) return;
 
@@ -460,13 +459,13 @@ const TakeCertificationExam = () => {
           await router.push("/student/certificaciones");
         } catch (error) {
           console.error("Popstate navigation error:", error);
-          setIsNavigating(false); // RESET CRÍTICO EN CASO DE ERROR
+          setIsNavigating(false);
           alert("Error al salir del examen. Intenta nuevamente.");
         }
       }
     };
 
-    // Agregar event listeners
+    // event listeners para evitar navegación no deseada
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.addEventListener("popstate", handlePopState);
     router.events.on("routeChangeStart", handleRouteChangeStart);
@@ -513,8 +512,6 @@ const TakeCertificationExam = () => {
     }
   };
 
-  // --- RENDERS ---
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -552,7 +549,7 @@ const TakeCertificationExam = () => {
     );
   }
 
-  // Pantalla de Inicio (Instrucciones)
+  // Pantalla de Inicio
   if (!isStarted) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -615,11 +612,26 @@ const TakeCertificationExam = () => {
                     <AlertTriangle className="h-6 w-6 text-yellow-600 mt-1 mr-3" />
                     <div>
                       <h3 className="font-semibold text-yellow-800 mb-2">
-                        Instrucciones Importantes
+                        Asegúrate de leer todas las instrucciones antes de
+                        comenzar el examen.
                       </h3>
                       <p className="text-yellow-700 mb-4">
-                        {certification.instructions}
+                        {certification ? certification.instructions : ""}
                       </p>
+                      <ul className="text-yellow-700 text-sm space-y-1">
+                        <li>
+                          • Una vez iniciada, no podrás pausar la evaluación
+                        </li>
+                        <li>• Guarda tus respuestas frecuentemente</li>
+                        <li>
+                          • Asegúrate de tener conexión estable a internet
+                        </li>
+                        <li>• Revisa todas tus respuestas antes de enviar</li>
+                        <li>
+                          • Para preguntas de selección múltiple, puedes elegir
+                          más de una opción
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
