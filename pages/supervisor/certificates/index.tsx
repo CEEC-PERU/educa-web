@@ -8,7 +8,10 @@ import {
   PlusCircleIcon,
   StarIcon,
 } from "lucide-react";
-import { ClipboardDocumentListIcon } from "@heroicons/react/24/outline";
+import {
+  ClipboardDocumentListIcon,
+  EyeIcon,
+} from "@heroicons/react/24/outline";
 import Modal from "../../../components/Admin/Modal";
 import { API_CERTIFICATES } from "../../../utils/Endpoints";
 import { useAuth } from "../../../context/AuthContext";
@@ -28,6 +31,7 @@ import {
   handleApiResponse,
   ApiError,
 } from "../../../utils/apiHelpers";
+import { useRouter } from "next/router";
 
 const getDate = (date: Date) => {
   const now = new Date(date);
@@ -37,6 +41,7 @@ const getDate = (date: Date) => {
 };
 
 const CertificatesPage: React.FC = () => {
+  const router = useRouter();
   const [showSideBar, setShowSidebar] = useState(true);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignmentFormData, setAssignmentFormData] =
@@ -338,8 +343,23 @@ const CertificatesPage: React.FC = () => {
     setFormData({ ...formData, questions: updatedQuestions });
   };
 
-  const handleDownloadTemplate = () => {
-    //template
+  const handleViewStudents = (certificationId: number) => {
+    //redirigir a la pagina de estudiantes con el id del certificado
+    //window.location.href = `/supervisor/certificates/${certificationId}/details`;
+    router.push(`/supervisor/certificates/${certificationId}/details`);
+  };
+  const handleCertificationClick = (
+    cert: Certification,
+    e: React.MouseEvent
+  ) => {
+    // verificar si el clic fue en un botón de acción
+    const target = e.target as HTMLElement;
+    const isActionButton = target.closest("button");
+
+    if (!isActionButton && cert.certification_id) {
+      //carga de estudiantes
+      handleViewStudents(cert.certification_id);
+    }
   };
 
   const showNotification = (message: string, type: "success" | "error") => {
@@ -436,8 +456,14 @@ const CertificatesPage: React.FC = () => {
                   {certifications.map((cert) => (
                     <div
                       key={cert.certification_id}
+                      onClick={(e) => handleCertificationClick(cert, e)}
                       className="border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300 cursor-pointer relative group"
                     >
+                      {/* clickleable */}
+                      <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <EyeIcon className="h-4 w-4 text-blue-500" />
+                      </div>
+
                       <div className="flex items-start justify-between mb-4">
                         <div className="bg-blue-100 p-3 rounded-full">
                           <AcademicCapIcon className="h-6 w-6 text-blue-600" />
@@ -509,6 +535,13 @@ const CertificatesPage: React.FC = () => {
                             {cert.is_active ? "Activo" : "Inactivo"}
                           </span>
                         </div>
+                      </div>
+
+                      {/* Indicador de click en hover */}
+                      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-xs text-blue-500 font-medium">
+                          Click para ver estudiantes
+                        </span>
                       </div>
                     </div>
                   ))}
