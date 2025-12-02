@@ -1,12 +1,13 @@
 import React from 'react';
 
 interface ModalProps {
-  isOpen?: boolean;    // ✅ Hacer opcional
-  show?: boolean;      // ✅ Agregar show como alternativa
+  isOpen?: boolean; // ✅ Hacer opcional
+  show?: boolean; // ✅ Agregar show como alternativa
   onClose: () => void;
   title: string;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  closeOnBackdropClick?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,10 +17,11 @@ const Modal: React.FC<ModalProps> = ({
   title,
   children,
   size = 'md',
+  closeOnBackdropClick = true,
 }) => {
   // ✅ Usar show o isOpen, dando prioridad a isOpen
   const modalIsOpen = isOpen !== undefined ? isOpen : show;
-  
+
   if (!modalIsOpen) return null;
 
   // Definir tamaños del modal
@@ -33,7 +35,7 @@ const Modal: React.FC<ModalProps> = ({
 
   // Manejar click en el overlay para cerrar el modal
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && closeOnBackdropClick) {
       onClose();
     }
   };
