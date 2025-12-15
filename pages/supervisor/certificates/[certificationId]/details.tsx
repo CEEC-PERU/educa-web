@@ -287,6 +287,9 @@ const CertificationStudents: React.FC = () => {
                           Puntuación
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Porcentaje para aprobar
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Intentos
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -325,7 +328,7 @@ const CertificationStudents: React.FC = () => {
                                     : "text-red-600"
                                 }`}
                               >
-                                {student.score}%
+                                {student.score}
                                 {student.passed
                                   ? " (Aprobado)"
                                   : " (Reprobado)"}
@@ -333,6 +336,9 @@ const CertificationStudents: React.FC = () => {
                             ) : (
                               <span className="text-gray-500">N/A</span>
                             )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {certificationInfo?.passing_score || "N/A"}%
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {student.attempts_count}
