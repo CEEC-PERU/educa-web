@@ -97,11 +97,11 @@ const DrawerNavigation: React.FC<{
                   <li>
                     <button
                       onClick={() =>
-                        handleNavigation('/student/contenido-adicional')
+                        handleNavigation('/student/capacitaciones')
                       }
                       className="flex items-center p-3 pl-12 text-white hover:bg-brand-200 w-full text-left text-sm"
                     >
-                      Contenido adicional
+                      Capacitaciones
                     </button>
                   </li>
                 </ul>
