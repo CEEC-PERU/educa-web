@@ -1,12 +1,3 @@
-//creación de programas de capacitación
-export interface TrainingCreateFormData {
-  enterprise_id: number;
-  title: string;
-  description: string;
-  total_days: number;
-  created_by: number;
-}
-
 // Respuesta que recibo al crear el programa
 export interface TrainingProgram {
   program_id: number;
@@ -15,13 +6,44 @@ export interface TrainingProgram {
   description: string;
   total_days: number;
   created_by: number;
-  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
-// Update de programa de capacitación
-export interface UpdateTrainingProgramData {
+// Días
+export interface TrainingDay {
+  day_id: number;
+  program_id: number;
+  day_number: number;
+  title: string;
+  description: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Contenido
+export interface TrainingContent {
+  content_id: number;
+  day_id: number;
+  title: string;
+  content_type: 'scorm' | 'video' | 'pdf' | 'audio';
+  s3_key: string;
+  order_index: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// Crear programa de formación
+export interface CreateProgramData {
+  enterprise_id: number;
+  title: string;
+  description: string;
+  total_days: number;
+  created_by: number;
+}
+
+export interface UpdateProgramData {
   title?: string;
   description?: string;
 }

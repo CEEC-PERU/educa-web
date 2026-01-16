@@ -1,8 +1,9 @@
 import Navbar from '@/components/Navbar';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import './../../../app/globals.css';
 import Modal from '../../../components/Admin/Modal';
+//import { getAllProgramsBySupervisor } from '@/services/training/training';
 //import { useRouter } from 'next/router';
 
 const TrainingsPage: React.FC = () => {
