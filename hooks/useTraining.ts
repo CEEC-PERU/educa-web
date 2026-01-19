@@ -21,9 +21,14 @@ export const useTrainings = (supervisorId: number | undefined) => {
         const data = await getAllProgramsBySupervisor(supervisorId, token);
         setTrainings(data);
         setError(null);
-      } catch (err) {
-        setError('Error al cargar los programas de formación');
-        console.error(err);
+      } catch (err: any) {
+        if (err.response && err.response.status === 404) {
+          setTrainings([]);
+          setError(null);
+        } else {
+          setError('Error al cargar los programas de formación');
+          console.error(err);
+        }
       } finally {
         setLoading(false);
       }
