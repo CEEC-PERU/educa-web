@@ -6,6 +6,7 @@ export interface TrainingProgram {
   description: string;
   total_days: number;
   created_by: number;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -41,9 +42,23 @@ export interface CreateProgramData {
   description: string;
   total_days: number;
   created_by: number;
+  is_active: boolean;
 }
 
 export interface UpdateProgramData {
   title?: string;
   description?: string;
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+}
+
+export interface UserInfo {
+  id: number;
+  enterprise_id: number;
+  dni: string;
+  role: number;
 }

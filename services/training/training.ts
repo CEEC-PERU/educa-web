@@ -1,7 +1,9 @@
 import api from '@/services/api';
 import {
+  ApiResponse,
   CreateProgramData,
   TrainingProgram,
+  TrainingDay,
   UpdateProgramData,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS } from '@/utils/Endpoints';
@@ -9,7 +11,7 @@ import { API_TRAININGS } from '@/utils/Endpoints';
 // gestion de programas de formación
 export const createProgram = async (
   data: CreateProgramData,
-  token: string
+  token: string,
 ): Promise<{ success: boolean; data: string }> => {
   try {
     const response = await api.post(`${API_TRAININGS}/programs`, data, {
@@ -25,18 +27,18 @@ export const createProgram = async (
 
 export const getAllProgramsBySupervisor = async (
   supervisorId: number,
-  token: string
-): Promise<TrainingProgram[] | null> => {
+  token: string,
+): Promise<TrainingProgram[]> => {
   try {
-    const response = await api.get(
+    const response = await api.get<ApiResponse<TrainingProgram[]>>(
       `${API_TRAININGS}/programs/supervisor/${supervisorId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
-    return response.data;
+    return response.data.data || [];
   } catch (error) {
     throw error;
   }
@@ -44,7 +46,7 @@ export const getAllProgramsBySupervisor = async (
 
 export const getProgramById = async (
   programId: number,
-  token: string
+  token: string,
 ): Promise<TrainingProgram | null> => {
   try {
     const response = await api.get(`${API_TRAININGS}/programs/${programId}`, {
@@ -61,7 +63,7 @@ export const getProgramById = async (
 export const updateProgram = async (
   programId: number,
   data: UpdateProgramData,
-  token: string
+  token: string,
 ): Promise<{ success: boolean; data: string }> => {
   try {
     const response = await api.put(
@@ -71,7 +73,7 @@ export const updateProgram = async (
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -81,7 +83,7 @@ export const updateProgram = async (
 
 export const deleteProgram = async (
   programId: number,
-  token: string
+  token: string,
 ): Promise<{ success: boolean; data: string }> => {
   try {
     const response = await api.delete(
@@ -90,9 +92,30 @@ export const deleteProgram = async (
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ======================= GESTIÓN DE DÍAS DE FORMACIÓN =========================
+
+export const getTrainingDaysByProgram = async (
+  programId: number,
+  token: string,
+): Promise<TrainingDay[]> => {
+  try {
+    const response = await api.get<ApiResponse<TrainingDay[]>>(
+      `${API_TRAININGS}/programs/${programId}/days`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data || [];
   } catch (error) {
     throw error;
   }

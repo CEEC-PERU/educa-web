@@ -3,22 +3,77 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import './../../../app/globals.css';
 import Modal from '../../../components/Admin/Modal';
-//import { getAllProgramsBySupervisor } from '@/services/training/training';
-//import { useRouter } from 'next/router';
+import { useAuth } from '@/context/AuthContext';
+import { UserInfo } from '@/interfaces/Training/Training';
+import { useTrainings } from '@/hooks/useTraining';
+import { TrainingProgram } from '@/interfaces/Training/Training';
+import TrainingCard from '@/components/Training/TrainingCard';
+import EmptyState from '@/components/Training/EmptyState';
+import { useRouter } from 'next/router';
+import TrainingForm from '@/components/Training/TrainingForm';
+import { deleteProgram } from '@/services/training/training';
 
 const TrainingsPage: React.FC = () => {
-  //const router = useRouter();
+  const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
-
   //revisar el estado con el que inicia ya que tiene que un objeto definido
-  const [editingTraining, setEditingTraining] = useState(null);
+  const [editingTraining, setEditingTraining] =
+    useState<TrainingProgram | null>(null);
 
-  const handleCloseModal = () => {
+  const { user } = useAuth();
+  //obtenemos el enterprise_id y id del usuario logueado, pero carga después de renderizar
+  const userInfo = user as UserInfo;
+
+  const { trainings, loading, error, refetch } = useTrainings(userInfo?.id);
+
+  const handleCloseCreateModal = () => {
     setShowCreateModal(false);
+    setEditingTraining(null);
   };
 
+  const handleFormSuccess = async () => {
+    await refetch();
+    handleCloseCreateModal();
+  };
+
+  const handleViewTrainingDays = (programId: number) => {
+    router.push(`/supervisor/trainings/${programId}/days`);
+  };
+
+  const handleTrainingClick = (
+    training: TrainingProgram,
+    e: React.MouseEvent,
+  ) => {
+    const target = e.target as HTMLElement;
+    const isActiveButton = target.closest('button');
+
+    if (!isActiveButton && training.program_id) {
+      handleViewTrainingDays(training.program_id);
+    }
+  };
+
+  const handleEditTraining = (training: TrainingProgram) => {
+    setEditingTraining(training);
+    setShowCreateModal(true);
+  };
+
+  const handleDeleteTraining = (training: TrainingProgram) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar el programa')) {
+      deleteProgram(
+        training.program_id,
+        localStorage.getItem('userToken') || '',
+      )
+        .then(async () => {
+          await refetch();
+        })
+        .catch((error) => {
+          console.error('Error al eliminar el programa:', error);
+          alert('Ocurrió un error al eliminar el programa.');
+        });
+    }
+  };
   return (
     <div className="relative min-h-screen flex flex-col bg-gray-50">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -55,9 +110,30 @@ const TrainingsPage: React.FC = () => {
                 </button>
               </div>
             </div>
-
-            <div className="bg-white rounded-lg shadow-md p-6">
-              {/* ========================= MAIN CONTENT ========================= */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-red-600">{error}</p>
+                </div>
+              ) : trainings.length === 0 ? (
+                <EmptyState onAction={() => setShowCreateModal(true)} />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {trainings.map((training) => (
+                    <TrainingCard
+                      key={training.program_id}
+                      training={training}
+                      onClick={handleTrainingClick}
+                      onEdit={handleEditTraining}
+                      onDelete={handleDeleteTraining}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </main>
@@ -65,7 +141,7 @@ const TrainingsPage: React.FC = () => {
       {showCreateModal && (
         <Modal
           isOpen={showCreateModal}
-          onClose={handleCloseModal}
+          onClose={handleCloseCreateModal}
           title={
             editingTraining
               ? 'Editar programa de formación'
@@ -74,7 +150,11 @@ const TrainingsPage: React.FC = () => {
           size="xl"
           closeOnBackdropClick={false}
         >
-          Dato
+          <TrainingForm
+            training={editingTraining || undefined}
+            onSuccess={handleFormSuccess}
+            onCancel={handleCloseCreateModal}
+          />
         </Modal>
       )}
 
