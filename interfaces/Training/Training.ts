@@ -17,10 +17,8 @@ export interface TrainingDay {
   program_id: number;
   day_number: number;
   title: string;
-  description: string;
+  completion_threshold: number;
   order_index: number;
-  created_at: string;
-  updated_at: string;
 }
 
 // Contenido

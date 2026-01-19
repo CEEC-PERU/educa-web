@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getTrainingDaysByProgram } from '@/services/training/training';
+import { getTrainingDaysByProgram } from '@/services/training/trainingService';
 import { useAuth } from '@/context/AuthContext';
 import { TrainingDay } from '@/interfaces/Training/Training';
 

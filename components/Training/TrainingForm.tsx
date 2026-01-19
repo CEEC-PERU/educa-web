@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { TrainingProgram, UserInfo } from '@/interfaces/Training/Training';
-import { createProgram, updateProgram } from '@/services/training/training';
+import {
+  createProgram,
+  updateProgram,
+} from '@/services/training/trainingService';
 import { useAuth } from '@/context/AuthContext';
 
 interface TrainingFormProps {

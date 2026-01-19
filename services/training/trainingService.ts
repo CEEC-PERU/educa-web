@@ -120,3 +120,66 @@ export const getTrainingDaysByProgram = async (
     throw error;
   }
 };
+
+export const createTrainingDay = async (
+  programId: number,
+  data: { title: string },
+  token: string,
+): Promise<void> => {
+  try {
+    const response = await api.post(
+      `${API_TRAININGS}/programs/${programId}/days`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  } catch (error) {
+    console.error('Error creating training day:', error);
+    throw error;
+  }
+};
+
+export const updateTrainingDay = async (
+  programId: number,
+  dayId: number,
+  data: { title: string },
+  token: string,
+): Promise<void> => {
+  try {
+    await api.patch(
+      `${API_TRAININGS}/programs/${programId}/days/${dayId}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  } catch (error) {
+    console.error('Error updating training day:', error);
+    throw error;
+  }
+};
+
+export const deleteTrainingDay = async (
+  programId: number,
+  dayId: number,
+  token: string,
+): Promise<{ success: boolean; data: string }> => {
+  try {
+    const response = await api.delete(
+      `${API_TRAININGS}/programs/${programId}/days/${dayId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

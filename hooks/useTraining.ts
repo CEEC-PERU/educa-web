@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAllProgramsBySupervisor } from '@/services/training/training';
+import { getAllProgramsBySupervisor } from '@/services/training/trainingService';
 import { TrainingProgram } from '@/interfaces/Training/Training';
 import { useAuth } from '../context/AuthContext';
 

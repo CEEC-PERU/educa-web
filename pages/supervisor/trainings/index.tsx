@@ -11,7 +11,7 @@ import TrainingCard from '@/components/Training/TrainingCard';
 import EmptyState from '@/components/Training/EmptyState';
 import { useRouter } from 'next/router';
 import TrainingForm from '@/components/Training/TrainingForm';
-import { deleteProgram } from '@/services/training/training';
+import { deleteProgram } from '@/services/training/trainingService';
 
 const TrainingsPage: React.FC = () => {
   const router = useRouter();
@@ -101,13 +101,13 @@ const TrainingsPage: React.FC = () => {
                 >
                   Crear Nuevo Programa
                 </button>
-
+                {/* POR IMPLEMENTAR, YA QUE FALTA MIGRAR LOS COURSESTUDENTS A CLASSROOMSTUDENTS
                 <button
                   onClick={() => setShowAssignModal(true)}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
                 >
                   Asignar Programa
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
