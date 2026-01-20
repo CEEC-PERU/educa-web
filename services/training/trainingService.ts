@@ -217,3 +217,23 @@ export const getTrainingContentsByDay = async (
     throw error;
   }
 };
+
+export const deleteTrainingContentsById = async (
+  dayId: number,
+  contentId: number,
+  token: string,
+): Promise<{ success: boolean; data: string }> => {
+  try {
+    const response = await api.delete(
+      `${API_TRAININGS}/days/${dayId}/contents/${contentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

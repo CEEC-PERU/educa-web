@@ -4,10 +4,12 @@ import { MdOutlineWebAsset, MdAudiotrack } from 'react-icons/md';
 import { FaVideo, FaRegFilePdf, FaLock, FaUnlock } from 'react-icons/fa';
 import { BiCalendar } from 'react-icons/bi';
 import { HiOutlineArrowRight } from 'react-icons/hi';
+import { IoTrash } from 'react-icons/io5';
 
 interface TrainingContentCardProps {
   content: TrainingContent;
   onView?: () => void;
+  onDelete?: (content: TrainingContent) => void;
 }
 
 const contentTypeConfig = {
@@ -48,6 +50,7 @@ const contentTypeConfig = {
 const TrainingContentCard: React.FC<TrainingContentCardProps> = ({
   content,
   onView,
+  onDelete,
 }) => {
   const config = contentTypeConfig[content.content_type];
   const Icon = config.icon;
@@ -102,6 +105,16 @@ const TrainingContentCard: React.FC<TrainingContentCardProps> = ({
                 year: 'numeric',
               })}
             </span>
+
+            {/* acciones */}
+            {onDelete && (
+              <button
+                onClick={() => onDelete(content)}
+                className="ml-auto text-red-500 hover:text-red-700 text-sm font-medium"
+              >
+                <IoTrash className="inline-block mr-1 w-5 h-5" />
+              </button>
+            )}
           </div>
         </div>
 

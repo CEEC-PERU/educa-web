@@ -17,6 +17,8 @@ export default function DayDetailPage() {
 
   const openCreateModal = () => {};
 
+  const openDeleteModal = (content: TrainingContent) => {};
+
   return (
     <div className="relative min-h-screen flex flex-col">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -75,6 +77,7 @@ export default function DayDetailPage() {
                   <TrainingContentCard
                     key={content.content_id}
                     content={content}
+                    onDelete={openDeleteModal}
                   />
                 ))}
               </div>
