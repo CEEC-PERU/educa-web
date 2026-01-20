@@ -4,6 +4,7 @@ import {
   CreateProgramData,
   TrainingProgram,
   TrainingDay,
+  TrainingContent,
   UpdateProgramData,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS } from '@/utils/Endpoints';
@@ -125,7 +126,7 @@ export const createTrainingDay = async (
   programId: number,
   data: { title: string },
   token: string,
-): Promise<void> => {
+): Promise<{ success: boolean; data: string }> => {
   try {
     const response = await api.post(
       `${API_TRAININGS}/programs/${programId}/days`,
@@ -136,6 +137,7 @@ export const createTrainingDay = async (
         },
       },
     );
+    return response.data;
   } catch (error) {
     console.error('Error creating training day:', error);
     throw error;
@@ -149,6 +151,7 @@ export const updateTrainingDay = async (
   token: string,
 ): Promise<void> => {
   try {
+    /*
     await api.patch(
       `${API_TRAININGS}/programs/${programId}/days/${dayId}`,
       data,
@@ -157,7 +160,17 @@ export const updateTrainingDay = async (
           Authorization: `Bearer ${token}`,
         },
       },
+    );*/
+    const update = await api.patch(
+      `${API_TRAININGS}/programs/${programId}/days/${dayId}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
+    return update.data;
   } catch (error) {
     console.error('Error updating training day:', error);
     throw error;
@@ -179,6 +192,27 @@ export const deleteTrainingDay = async (
       },
     );
     return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// ======================= GESTIÓN DE CONTENIDOS DE FORMACIÓN ========================
+
+export const getTrainingContentsByDay = async (
+  dayId: number,
+  token: string,
+): Promise<TrainingContent[]> => {
+  try {
+    const response = await api.get<ApiResponse<TrainingContent[]>>(
+      `${API_TRAININGS}/days/${dayId}/contents`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data || [];
   } catch (error) {
     throw error;
   }

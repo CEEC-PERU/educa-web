@@ -28,6 +28,7 @@ export interface TrainingContent {
   title: string;
   content_type: 'scorm' | 'video' | 'pdf' | 'audio';
   s3_key: string;
+  is_mandatory: boolean;
   order_index: number;
   created_at: string;
   updated_at: string;
