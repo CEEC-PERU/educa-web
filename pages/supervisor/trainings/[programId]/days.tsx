@@ -201,62 +201,64 @@ const TrainingDaysPage: React.FC = () => {
       )}
 
       {/* Modal de Confirmación de Eliminación */}
-      <Modal
-        isOpen={isModalDeleteOpen}
-        onClose={closeDeleteModal}
-        title="Confirmar Eliminación"
-        size="sm"
-      >
-        <div className="space-y-4">
-          <p className="text-gray-700">
-            ¿Estás seguro de que deseas eliminar el día{' '}
-            <span className="font-semibold">"{selectedDay?.title}"</span>?
-          </p>
-          <p className="text-sm text-gray-500">
-            Esta acción no se puede deshacer y se eliminarán todos los
-            contenidos asociados.
-          </p>
+      {isModalDeleteOpen && (
+        <Modal
+          isOpen={isModalDeleteOpen}
+          onClose={closeDeleteModal}
+          title="Confirmar Eliminación"
+          size="sm"
+        >
+          <div className="space-y-4">
+            <p className="text-gray-700">
+              ¿Estás seguro de que deseas eliminar el día{' '}
+              <span className="font-semibold">"{selectedDay?.title}"</span>?
+            </p>
+            <p className="text-sm text-gray-500">
+              Esta acción no se puede deshacer y se eliminarán todos los
+              contenidos asociados.
+            </p>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-            <button
-              onClick={closeDeleteModal}
-              disabled={isDeleting}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={confirmDelete}
-              disabled={isDeleting}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center"
-            >
-              {isDeleting && (
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              )}
-              {isDeleting ? 'Eliminando...' : 'Eliminar'}
-            </button>
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <button
+                onClick={closeDeleteModal}
+                disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={isDeleting}
+                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center"
+              >
+                {isDeleting && (
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                )}
+                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      )}
     </ProtectedRoute>
   );
 };

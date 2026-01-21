@@ -237,3 +237,25 @@ export const deleteTrainingContentsById = async (
     throw error;
   }
 };
+
+export const uploadTrainingContent = async (
+  dayId: number,
+  formData: FormData,
+  token: string,
+): Promise<{ success: boolean; data: string }> => {
+  try {
+    const response = await api.post(
+      `${API_TRAININGS}/days/${dayId}/contents`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
