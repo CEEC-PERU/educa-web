@@ -7,7 +7,7 @@ import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { useAuth } from '@/context/AuthContext';
 import ScreenSecurity from '@/components/ScreenSecurity';
 import React, { useState, useEffect } from 'react';
-import ScormPlayer from '@/components/student/ScormPlayer';
+//import ScormPlayer from '@/components/student/ScormPlayer';
 
 const CapacitacionesIndex: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -44,11 +44,6 @@ const CapacitacionesIndex: React.FC = () => {
             <div className="w-full max-w-screen-lg">
               <div className="flex flex-wrap gap-2">
                 <h1>Contenido Adicional</h1>
-                <ScormPlayer
-                  contentId="scorm-content-123"
-                  studentId="student-456"
-                  scormUrl="https://example.com/path/to/scorm/content/index.html"
-                />
               </div>
             </div>
           </div>
