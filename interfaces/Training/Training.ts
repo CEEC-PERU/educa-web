@@ -61,3 +61,21 @@ export interface UserInfo {
   dni: string;
   role: number;
 }
+
+// Asignación de programa
+export interface TrainingAssignment {
+  assignment_id: number;
+  program_id: number;
+  classroom_id: number;
+  assigned_by: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Campaña
+export interface Classroom {
+  classroom_id: number;
+  code: string;
+  enterprise_id: number;
+}

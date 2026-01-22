@@ -17,7 +17,7 @@ const TrainingsPage: React.FC = () => {
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showAssignModal, setShowAssignModal] = useState(false);
+  //const [showAssignModal, setShowAssignModal] = useState(false);
   //revisar el estado con el que inicia ya que tiene que un objeto definido
   const [editingTraining, setEditingTraining] =
     useState<TrainingProgram | null>(null);
@@ -158,6 +158,7 @@ const TrainingsPage: React.FC = () => {
         </Modal>
       )}
 
+      {/*
       {showAssignModal && (
         <Modal
           isOpen={showAssignModal}
@@ -168,7 +169,7 @@ const TrainingsPage: React.FC = () => {
         >
           Dato
         </Modal>
-      )}
+      )}*/}
     </div>
   );
 };

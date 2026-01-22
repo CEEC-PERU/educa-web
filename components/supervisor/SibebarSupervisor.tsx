@@ -9,6 +9,7 @@ import {
   ArrowRightStartOnRectangleIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
+import { IoIosArrowDown } from 'react-icons/io';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
@@ -26,6 +27,11 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
+  const [isCapacitacionesOpen, setIsCapacitacionesOpen] = useState(false);
+
+  const toggleCapacitacionesDropwdown = () => {
+    setIsCapacitacionesOpen(!isCapacitacionesOpen);
+  };
 
   let name = '';
   let uri_picture = '';
@@ -136,6 +142,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
                 {isOpen && <span className="ml-2">Certificados</span>}
               </button>
             </li>
+            {/*
             <li>
               <button
                 onClick={() => handleNavigation('/supervisor/trainings')}
@@ -144,6 +151,43 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
                 <TagIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Programas de Formación</span>}
               </button>
+            </li>*/}
+            <li>
+              {/* dropdown de capacitaiones */}
+              <button
+                onClick={toggleCapacitacionesDropwdown}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <TagIcon className="h-6 w-6" />
+                {isOpen && (
+                  <span className="ml-2">
+                    Programas de Formación
+                    <IoIosArrowDown className="inline ml-1 h-2 w-2" />
+                  </span>
+                )}
+              </button>
+              {isCapacitacionesOpen && (
+                <ul className="bg-blue-500">
+                  <li>
+                    <button
+                      onClick={() => handleNavigation('/supervisor/trainings')}
+                      className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                    >
+                      {isOpen && <span className="ml-2">Programas</span>}
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={() =>
+                        handleNavigation('/supervisor/trainings/assignments')
+                      }
+                      className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                    >
+                      {isOpen && <span className="ml-2">Asignaciones</span>}
+                    </button>
+                  </li>
+                </ul>
+              )}
             </li>
             <li>
               <button

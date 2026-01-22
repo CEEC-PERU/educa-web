@@ -6,8 +6,10 @@ import {
   TrainingDay,
   TrainingContent,
   UpdateProgramData,
+  TrainingAssignment,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS } from '@/utils/Endpoints';
+import { Classroom } from '@/interfaces/Classroom';
 
 // gestion de programas de formación
 export const createProgram = async (
@@ -256,6 +258,69 @@ export const uploadTrainingContent = async (
     );
     return response.data;
   } catch (error) {
+    throw error;
+  }
+};
+
+// ======================= GESTIÓN DE ASIGNACIONES DE FORMACIÓN ========================
+
+export const getAllAssignmentsBySupervisor = async (
+  supervisorId: number,
+  token: string,
+): Promise<TrainingAssignment[]> => {
+  try {
+    const response = await api.get<ApiResponse<TrainingAssignment[]>>(
+      `${API_TRAININGS}/programs/supervisor/${supervisorId}/assignments`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data || [];
+  } catch (error) {
+    console.error('Error fetching assignments:', error);
+    throw error;
+  }
+};
+
+export const getAllClassrooms = async (
+  supervisorId: number,
+  token: string,
+): Promise<Classroom[]> => {
+  try {
+    const response = await api.get<ApiResponse<Classroom[]>>(
+      `${API_TRAININGS}/classrooms/supervisor/${supervisorId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data || [];
+  } catch (error) {
+    console.error('Error fetching classrooms:', error);
+    throw error;
+  }
+};
+
+export const assignStudentsToProgram = async (
+  programId: number,
+  classroomId: number,
+  token: string,
+): Promise<{ success: boolean; data: string }> => {
+  try {
+    const response = await api.post(
+      `${API_TRAININGS}/programs/${programId}/classrooms/${classroomId}/assign`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error assigning students to program:', error);
     throw error;
   }
 };
