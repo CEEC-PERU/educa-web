@@ -79,3 +79,23 @@ export interface Classroom {
   code: string;
   enterprise_id: number;
 }
+
+// ===================== STUDENT ============
+
+export interface Progress {
+  completed_contents: number;
+  progress_percentage: number;
+}
+
+export interface MyProgramsResponse {
+  program_id: number;
+  title: string;
+  description: string;
+  total_days: number;
+  progress: Progress;
+}
+
+export interface MyProgramApiResponse {
+  success: boolean;
+  data: MyProgramsResponse[];
+}

@@ -174,3 +174,4 @@ export const API_STUDENT_CERTIFICATIONS = `${baseURL}/api/student/certification-
 //trainings
 
 export const API_TRAININGS = `${baseURL}/api/trainings`;
+export const API_TRAININGS_STUDENT = `${baseURL}/api/student/trainings`;
