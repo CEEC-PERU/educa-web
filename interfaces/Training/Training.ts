@@ -64,13 +64,22 @@ export interface UserInfo {
 
 // Asignación de programa
 export interface TrainingAssignment {
+  /*
   assignment_id: number;
   program_id: number;
   classroom_id: number;
   assigned_by: number;
   is_active: boolean;
   created_at: string;
-  updated_at: string;
+  updated_at: string;*/
+
+  assignmentId: number;
+  programId: number;
+  programTitle: string;
+  classroomId: number;
+  classroomCode: string;
+  isActive: boolean;
+  assignedAt: string;
 }
 
 // Campaña

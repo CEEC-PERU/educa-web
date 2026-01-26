@@ -312,6 +312,7 @@ export const assignStudentsToProgram = async (
   try {
     const response = await api.post(
       `${API_TRAININGS}/programs/${programId}/classrooms/${classroomId}/assign`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -321,6 +322,27 @@ export const assignStudentsToProgram = async (
     return response.data;
   } catch (error) {
     console.error('Error assigning students to program:', error);
+    throw error;
+  }
+};
+
+export const deleteTrainingAssignment = async (
+  programId: number,
+  classroomId: number,
+  token: string,
+): Promise<{ success: boolean; data: string }> => {
+  try {
+    const response = await api.delete(
+      `${API_TRAININGS}/programs/${programId}/classrooms/${classroomId}/remove`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting training assignment:', error);
     throw error;
   }
 };
