@@ -7,6 +7,7 @@ import {
   TrainingContent,
   UpdateProgramData,
   TrainingAssignment,
+  StudentAssignment,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS } from '@/utils/Endpoints';
 import { Classroom } from '@/interfaces/Classroom';
@@ -343,6 +344,26 @@ export const deleteTrainingAssignment = async (
     return response.data;
   } catch (error) {
     console.error('Error deleting training assignment:', error);
+    throw error;
+  }
+};
+
+export const getStudentAssignments = async (
+  programId: number,
+  token: string,
+): Promise<StudentAssignment[]> => {
+  try {
+    const response = await api.get<ApiResponse<StudentAssignment[]>>(
+      `${API_TRAININGS}/programs/${programId}/assigned-students`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data || [];
+  } catch (error) {
+    console.error('Error fetching student assignments:', error);
     throw error;
   }
 };

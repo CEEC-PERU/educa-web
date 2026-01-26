@@ -9,8 +9,10 @@ import { TrainingAssignment, UserInfo } from '@/interfaces/Training/Training';
 import TrainingAssignmentCard from '@/components/Training/TrainingAssignmentCard';
 import TrainingAssignmentForm from '@/components/Training/TrainingAssignmentForm';
 import { deleteTrainingAssignment } from '@/services/training/trainingService';
+import { useRouter } from 'next/router';
 
 const AssignmentsPage: React.FC = () => {
+  const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(true);
   const { token } = useAuth();
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -42,6 +44,10 @@ const AssignmentsPage: React.FC = () => {
   const closeDeleteModal = () => {
     setIsModalDeleteOpen(false);
     setSelectedAssignment(null);
+  };
+
+  const handleDetailAssignment = (assignment: TrainingAssignment) => {
+    router.push(`/supervisor/trainings/assignments/${assignment.programId}`);
   };
 
   const confirmDelete = async () => {
@@ -114,8 +120,8 @@ const AssignmentsPage: React.FC = () => {
                     <TrainingAssignmentCard
                       key={assignment.assignmentId}
                       assignment={assignment}
-                      onClick={() => {}}
                       onDelete={openDeleteModal}
+                      onDetail={handleDetailAssignment}
                     />
                   ))}
                 </div>

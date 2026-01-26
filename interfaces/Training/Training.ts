@@ -82,6 +82,25 @@ export interface TrainingAssignment {
   assignedAt: string;
 }
 
+// Estudiantes asignados
+export interface StudentClassroom {
+  id: number;
+  name: string;
+}
+
+export interface StudentProgress {
+  total_contents: number;
+  completed_contents: number;
+  progress_percentage: number;
+}
+
+export interface StudentAssignment {
+  student_id: number;
+  dni: string;
+  classroom: StudentClassroom;
+  progress: StudentProgress;
+}
+
 // Campaña
 export interface Classroom {
   classroom_id: number;

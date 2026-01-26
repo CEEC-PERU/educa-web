@@ -11,8 +11,9 @@ import { LuTrash } from 'react-icons/lu';
 
 interface TrainingAssignmentCardProps {
   assignment: TrainingAssignment;
-  onClick: (assignment: TrainingAssignment, e: React.MouseEvent) => void;
+  //onClick: (assignment: TrainingAssignment, e: React.MouseEvent) => void;
   onDelete?: (assignment: TrainingAssignment) => void;
+  onDetail?: (assignment: TrainingAssignment) => void;
 }
 
 const formatearFecha = (fechaISO: string): string => {
@@ -26,8 +27,8 @@ const formatearFecha = (fechaISO: string): string => {
 
 const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
   assignment,
-  onClick,
   onDelete,
+  onDetail,
 }) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -38,11 +39,17 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
     }
   };
 
+  const handleDetail = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    if (onDetail) {
+      onDetail(assignment);
+    }
+  };
+
   return (
-    <div
-      onClick={(e) => onClick(assignment, e)}
-      className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-blue-400 transition-all duration-300 cursor-pointer overflow-hidden"
-    >
+    <div className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-blue-400 transition-all duration-300 cursor-pointer overflow-hidden">
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -127,10 +134,8 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
         {/* Acción */}
         <button
           className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 group-hover:shadow-lg"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick(assignment, e);
-          }}
+          type="button"
+          onClick={handleDetail}
         >
           <span>Ver Detalles</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
