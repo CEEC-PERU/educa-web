@@ -3,7 +3,7 @@ import { getMyPrograms } from '@/services/training/trainingStudentService';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-export const useMyTrainings = (studentId: number | undefined) => {
+export const useMyTrainings = () => {
   const [myTrainings, setMyTrainings] = useState<MyProgramsResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,14 +11,14 @@ export const useMyTrainings = (studentId: number | undefined) => {
 
   useEffect(() => {
     const fetchMyTrainings = async () => {
-      if (!studentId || !token) {
+      if (!token) {
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        const data = await getMyPrograms(studentId, token);
+        const data = await getMyPrograms(token);
         setMyTrainings(data);
         setError(null);
       } catch (err: any) {
@@ -34,14 +34,14 @@ export const useMyTrainings = (studentId: number | undefined) => {
       }
     };
     fetchMyTrainings();
-  }, [studentId, token]);
+  }, [token]);
 
   const refetch = async () => {
-    if (!studentId || !token) return;
+    if (!token) return;
 
     try {
       setLoading(true);
-      const data = await getMyPrograms(studentId, token);
+      const data = await getMyPrograms(token);
       setMyTrainings(data);
       setError(null);
     } catch (err) {

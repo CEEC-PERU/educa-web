@@ -119,11 +119,41 @@ export interface MyProgramsResponse {
   program_id: number;
   title: string;
   description: string;
+  classroom: {
+    classroom_id: number;
+    code: string;
+  };
   total_days: number;
-  progress: Progress;
 }
 
 export interface MyProgramApiResponse {
   success: boolean;
   data: MyProgramsResponse[];
+}
+
+export interface MyProgramContent {
+  content_id: number;
+  title: string;
+  content_type: 'pdf' | 'video' | 'scorm' | 'audio';
+  order_index: number;
+  is_mandatory: boolean;
+  progress_percentage: string;
+  status: 'not_started' | 'in_progress' | 'completed';
+}
+
+export interface MyProgramDay {
+  day_id: number;
+  day_number: number;
+  title: string;
+  is_unlocked: boolean;
+  completion_percentage: number;
+  contents: MyProgramContent[];
+}
+
+export interface MyProgramDetailsResponse {
+  program_id: number;
+  title: string;
+  description: string;
+  overall_progress: number;
+  days: MyProgramDay[];
 }
