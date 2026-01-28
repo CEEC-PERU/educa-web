@@ -1,10 +1,10 @@
-import { MyProgramsResponse } from '@/interfaces/Training/Training';
+import { MyProgram } from '@/interfaces/Training/Training';
 import { getMyPrograms } from '@/services/training/trainingStudentService';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 export const useMyTrainings = () => {
-  const [myTrainings, setMyTrainings] = useState<MyProgramsResponse[]>([]);
+  const [myTrainings, setMyTrainings] = useState<MyProgram[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth();
