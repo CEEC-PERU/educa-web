@@ -121,11 +121,10 @@ const MyTrainingsPage: React.FC = () => {
     e: React.MouseEvent,
     dayId: number,
     contentId: number,
-    contentType: string,
   ) => {
     e.stopPropagation();
     router.push(
-      `/student/trainings/${programId}/days/${dayId}/contents/${contentId}/${contentType}`,
+      `/student/trainings/${programId}/days/${dayId}/contents/${contentId}`,
     );
   };
 
@@ -324,7 +323,6 @@ const MyTrainingsPage: React.FC = () => {
                                       e,
                                       day.day_id,
                                       content.content_id,
-                                      content.content_type,
                                     )
                                   }
                                   className="group flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-blue-300 transition-all cursor-pointer"

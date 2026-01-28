@@ -39,9 +39,9 @@ const DayContentsModal: React.FC<DayContentsModalProps> = ({
     }
   };
 
-  const handleContentClick = (contentId: number, contentType: string) => {
+  const handleContentClick = (contentId: number) => {
     router.push(
-      `/student/trainings/${programId}/days/${day.day_id}/contents/${contentId}/${contentType}`,
+      `/student/trainings/${programId}/days/${day.day_id}/contents/${contentId}`,
     );
     onClose();
   };
@@ -88,9 +88,7 @@ const DayContentsModal: React.FC<DayContentsModalProps> = ({
           {day.contents.map((content, index) => (
             <div
               key={content.content_id}
-              onClick={() =>
-                handleContentClick(content.content_id, content.content_type)
-              }
+              onClick={() => handleContentClick(content.content_id)}
               className="group relative bg-white border-2 border-gray-200 hover:border-blue-400 rounded-xl p-4 cursor-pointer transition-all hover:shadow-lg"
             >
               {/* Número */}
