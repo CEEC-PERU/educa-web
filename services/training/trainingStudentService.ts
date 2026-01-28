@@ -1,14 +1,12 @@
 import api from '@/services/api';
 import {
   MyProgramApiResponse,
-  MyProgramsResponse,
-  MyProgramDetailsResponse,
+  MyProgram,
+  MyProgramDetails,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS_STUDENT } from '@/utils/Endpoints';
 
-export const getMyPrograms = async (
-  token: string,
-): Promise<MyProgramsResponse[]> => {
+export const getMyPrograms = async (token: string): Promise<MyProgram[]> => {
   try {
     const response = await api.get<MyProgramApiResponse>(
       `${API_TRAININGS_STUDENT}/student/programs`,
@@ -27,7 +25,7 @@ export const getMyPrograms = async (
 export const getMyProgramDetails = async (
   programId: number,
   token: string,
-): Promise<MyProgramDetailsResponse> => {
+): Promise<MyProgramDetails> => {
   try {
     const response = await api.get(
       `${API_TRAININGS_STUDENT}/student/programs/${programId}`,

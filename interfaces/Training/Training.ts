@@ -64,15 +64,6 @@ export interface UserInfo {
 
 // Asignación de programa
 export interface TrainingAssignment {
-  /*
-  assignment_id: number;
-  program_id: number;
-  classroom_id: number;
-  assigned_by: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;*/
-
   assignmentId: number;
   programId: number;
   programTitle: string;
@@ -105,36 +96,24 @@ export interface StudentAssignment {
 export interface Classroom {
   classroom_id: number;
   code: string;
-  enterprise_id: number;
+  enterprise_id?: number;
 }
 
 // ===================== STUDENT ============
 
-export interface Progress {
-  completed_contents: number;
-  progress_percentage: number;
-}
-
-export interface MyProgramsResponse {
+export interface MyProgram {
   program_id: number;
   title: string;
   description: string;
-  classroom: {
-    classroom_id: number;
-    code: string;
-  };
+  classroom: Classroom;
   total_days: number;
-}
-
-export interface MyProgramApiResponse {
-  success: boolean;
-  data: MyProgramsResponse[];
 }
 
 export interface MyProgramContent {
   content_id: number;
   title: string;
-  content_type: 'pdf' | 'video' | 'scorm' | 'audio';
+  content_type: 'scorm' | 'video' | 'pdf' | 'audio';
+  s3_key: string;
   order_index: number;
   is_mandatory: boolean;
   progress_percentage: string;
@@ -150,7 +129,12 @@ export interface MyProgramDay {
   contents: MyProgramContent[];
 }
 
-export interface MyProgramDetailsResponse {
+export interface MyProgramApiResponse {
+  success: boolean;
+  data: MyProgram[];
+}
+
+export interface MyProgramDetails {
   program_id: number;
   title: string;
   description: string;

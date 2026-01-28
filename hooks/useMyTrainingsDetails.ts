@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { getMyProgramDetails } from '@/services/training/trainingStudentService';
-import { MyProgramDetailsResponse } from '@/interfaces/Training/Training';
+import { MyProgramDetails } from '@/interfaces/Training/Training';
 
 export const useMyTrainingsDetails = (programId: number) => {
   const [myTrainingDetails, setMyTrainingDetails] =
-    useState<MyProgramDetailsResponse | null>(null);
+    useState<MyProgramDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { token } = useAuth();

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SidebarDrawer from '@/components/student/DrawerNavigation';
 import Navbar from '@/components/Navbar';
 import { useEvaluationUI } from '@/hooks/ui/useEvaluationUI';
 import { useMyTrainingsDetails } from '@/hooks/useMyTrainingsDetails';
 import { useRouter } from 'next/router';
+import { MyProgramDay } from '@/interfaces/Training/Training';
+import DayContentsModal from '@/components/Training/DayContentsModal';
 import {
   BookOpen,
   CheckCircle2,
@@ -14,11 +16,14 @@ import {
   Video,
   Monitor,
   ChevronRight,
+  Eye,
 } from 'lucide-react';
 
 const MyTrainingsPage: React.FC = () => {
   const router = useRouter();
   const { isDrawerOpen, toggleSidebar, userProfile } = useEvaluationUI();
+  const [selectedDay, setSelectedDay] = useState<MyProgramDay | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const programId = Number(router.query.programId);
 
   const { myTrainingDetails, loading, error, refetch } =
@@ -102,6 +107,26 @@ const MyTrainingsPage: React.FC = () => {
           label: 'Sin iniciar',
         };
     }
+  };
+
+  const handleViewDayContents = (e: React.MouseEvent, day: MyProgramDay) => {
+    e.stopPropagation();
+    if (day.is_unlocked) {
+      setSelectedDay(day);
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleContentClick = (
+    e: React.MouseEvent,
+    dayId: number,
+    contentId: number,
+    contentType: string,
+  ) => {
+    e.stopPropagation();
+    router.push(
+      `/student/trainings/${programId}/days/${dayId}/contents/${contentId}/${contentType}`,
+    );
   };
 
   return (
@@ -235,7 +260,7 @@ const MyTrainingsPage: React.FC = () => {
                         className={`p-5 ${day.is_unlocked ? 'bg-gradient-to-r from-blue-50 to-purple-50' : 'bg-gray-50'}`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center gap-3 flex-1">
                             <div
                               className={`p-3 rounded-lg ${day.is_unlocked ? 'bg-white' : 'bg-gray-200'}`}
                             >
@@ -245,7 +270,7 @@ const MyTrainingsPage: React.FC = () => {
                                 <Lock className="w-6 h-6 text-gray-400" />
                               )}
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <h2 className="text-xl font-bold text-gray-900">
                                 {day.title}
                               </h2>
@@ -254,8 +279,21 @@ const MyTrainingsPage: React.FC = () => {
                                 contenido(s)
                               </p>
                             </div>
+
+                            {day.is_unlocked && (
+                              <button
+                                onClick={(e) => handleViewDayContents(e, day)}
+                                className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-blue-200 text-blue-600 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all font-medium"
+                              >
+                                <Eye className="w-4 h-4" />
+                                <span className="hidden sm:inline">
+                                  Ver todo
+                                </span>
+                              </button>
+                            )}
                           </div>
-                          <div className="text-right">
+
+                          <div className="text-right ml-4">
                             <div className="text-2xl font-bold text-gray-900">
                               {day.completion_percentage}%
                             </div>
@@ -264,6 +302,7 @@ const MyTrainingsPage: React.FC = () => {
                             </div>
                           </div>
                         </div>
+
                         <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-500"
@@ -272,22 +311,23 @@ const MyTrainingsPage: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Lista de Contenidos */}
                       <div className="p-5">
                         {day.is_unlocked ? (
                           <div className="space-y-3">
-                            {day.contents.map((content) => {
+                            {day.contents.slice(0, 3).map((content) => {
                               const status = getStatusConfig(content.status);
                               return (
                                 <div
                                   key={content.content_id}
-                                  className="group flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-blue-300 transition-all cursor-pointer"
-                                  onClick={() =>
-                                    console.log(
-                                      'Abrir contenido:',
+                                  onClick={(e) =>
+                                    handleContentClick(
+                                      e,
+                                      day.day_id,
                                       content.content_id,
+                                      content.content_type,
                                     )
                                   }
+                                  className="group flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 hover:border-blue-300 transition-all cursor-pointer"
                                 >
                                   <div className="flex items-center gap-4 flex-1">
                                     <div className="p-3 bg-white rounded-lg border border-gray-200 group-hover:border-blue-300 transition-colors">
@@ -305,7 +345,10 @@ const MyTrainingsPage: React.FC = () => {
                                         </span>
                                         <span className="text-xs text-gray-500">
                                           Progreso:{' '}
-                                          {content.progress_percentage}%
+                                          {parseFloat(
+                                            content.progress_percentage,
+                                          ).toFixed(0)}
+                                          %
                                         </span>
                                         {content.is_mandatory && (
                                           <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-200">
@@ -319,6 +362,16 @@ const MyTrainingsPage: React.FC = () => {
                                 </div>
                               );
                             })}
+
+                            {day.contents.length > 3 && (
+                              <button
+                                onClick={(e) => handleViewDayContents(e, day)}
+                                className="w-full py-3 text-center text-blue-600 hover:text-blue-700 font-medium text-sm border-t border-gray-200 mt-3 pt-3 hover:bg-blue-50 transition-colors rounded-b-lg"
+                              >
+                                Ver los {day.contents.length - 3} contenidos
+                                restantes →
+                              </button>
+                            )}
                           </div>
                         ) : (
                           <div className="text-center py-8 text-gray-500">
@@ -339,6 +392,11 @@ const MyTrainingsPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <DayContentsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        day={selectedDay}
+      />
     </div>
   );
 };
