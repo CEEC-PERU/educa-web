@@ -24,7 +24,7 @@ const CapacitacionesPage: React.FC = () => {
   return (
     <ProtectedRoute>
       <div className="relative min-h-screen flex flex-col bg-gray-50">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
+        <Navbar bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300" />
 
         <div className="flex flex-1 pt-16">
           <SidebarDrawer

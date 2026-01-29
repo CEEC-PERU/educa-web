@@ -113,7 +113,6 @@ export interface MyProgramContent {
   content_id: number;
   title: string;
   content_type: 'scorm' | 'video' | 'pdf' | 'audio';
-  s3_key: string;
   order_index: number;
   is_mandatory: boolean;
   progress_percentage: string;
@@ -140,4 +139,20 @@ export interface MyProgramDetails {
   description: string;
   overall_progress: number;
   days: MyProgramDay[];
+}
+
+export interface MyContentDetails {
+  day_id: number;
+  content_id: number;
+  day_number: number;
+  title: string;
+  content_type: 'pdf' | 'video' | 'scorm' | 'audio';
+  content_url: string;
+  progress_percentage: number;
+  last_position?: number;
+  status: 'not_started' | 'in_progress' | 'completed';
+  is_mandatory: boolean;
+  is_unlocked: boolean;
+  is_started: boolean;
+  is_completed: boolean;
 }
