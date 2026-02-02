@@ -106,7 +106,7 @@ const StudentIndex: React.FC = () => {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         const data = await response.json();
         setIsSignatureModalOpen(data.showModal);
@@ -230,7 +230,7 @@ const StudentIndex: React.FC = () => {
           error.name === 'DevicesNotFoundError'
         ) {
           alert(
-            'No se ha detectado ninguna cámara en tu dispositivo. Conéctate desde un dispositivo móvil con cámara.'
+            'No se ha detectado ninguna cámara en tu dispositivo. Conéctate desde un dispositivo móvil con cámara.',
           );
         } else if (
           error.name === 'NotAllowedError' ||
@@ -239,7 +239,7 @@ const StudentIndex: React.FC = () => {
           alert('Por favor, permite el acceso a la cámara para continuar.');
         } else {
           alert(
-            'Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.'
+            'Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.',
           );
         }
       } else {
@@ -336,7 +336,7 @@ const StudentIndex: React.FC = () => {
     const photoFile = dataURLToFile(photo, `${name}_${lastName}_photo.jpg`);
     const signatureFile = dataURLToFile(
       signature,
-      `${name}_${lastName}_signature.jpg`
+      `${name}_${lastName}_signature.jpg`,
     );
     const pdfFile = pdfToFile(pdf, `${name}_${lastName}.pdf`);
 
@@ -746,7 +746,8 @@ const StudentIndex: React.FC = () => {
             {/* Primera columna: Logo */}
             <div className="flex justify-center">
               <img
-                src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
+                //src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
+                src="https://res.cloudinary.com/dk2red18f/image/upload/v1770061358/WEB_EDUCA/Logo_A365_pq8vkk.png"
                 alt="Logo"
                 className="h-20 lg:h-30"
               />
