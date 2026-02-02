@@ -8,6 +8,7 @@ import {
   UpdateProgramData,
   TrainingAssignment,
   StudentAssignment,
+  ProgramValidation,
 } from '@/interfaces/Training/Training';
 import { API_TRAININGS } from '@/utils/Endpoints';
 import { Classroom } from '@/interfaces/Classroom';
@@ -367,3 +368,25 @@ export const getStudentAssignments = async (
     throw error;
   }
 };
+
+// Validar programa antes de asignar
+export const validateProgramForAssignment = async (
+  programId: number,
+  token: string,
+): Promise<ProgramValidation> => {
+  try {
+    const response = await api.get<ApiResponse<ProgramValidation>>(
+      `${API_TRAININGS}/programs/${programId}/validate`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data.data!;
+  } catch (error) {
+    console.error('Error validating program:', error);
+    throw error;
+  }
+};
+

@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { debounce } from "lodash";
-import { useAuth } from "@/context/AuthContext";
-import { MyContentDetails } from "@/interfaces/Training/Training";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { debounce } from 'lodash';
+import { useAuth } from '@/context/AuthContext';
+import { MyContentDetails } from '@/interfaces/Training/Training';
 import {
   completeContent,
   getMyContentDetails,
   updateContentProgress,
-} from "@/services/training/trainingStudentService";
+} from '@/services/training/trainingStudentService';
 
 export const useContentProgress = (
   programId: number,
@@ -42,7 +42,7 @@ export const useContentProgress = (
           setContent(null);
           setError(null);
         } else {
-          setError("Error al cargar el contenido");
+          setError('Error al cargar el contenido');
           console.error(err);
         }
       } finally {
@@ -60,16 +60,16 @@ export const useContentProgress = (
 
       try {
         await updateContentProgress(contentId, progressData, token);
-        console.log("Progreso sincronizado con backend");
+        console.log('Progreso sincronizado con backend');
       } catch (error) {
-        console.error("Error al sincronizar progreso:", error);
+        console.error('Error al sincronizar progreso:', error);
         // Guardar en localStorage como fallback
         localStorage.setItem(
           `progress_${contentId}`,
           JSON.stringify(progressData),
         );
       }
-    }, 3000),
+    }, 5000),
     [token, contentId],
   );
 
@@ -84,8 +84,8 @@ export const useContentProgress = (
     const roundedProgress = Math.round(progressPercentage * 100) / 100;
 
     // Determinar status con tipo explícito
-    const newStatus: "completed" | "in_progress" | "not_started" =
-      roundedProgress >= 100 ? "completed" : "in_progress";
+    const newStatus: 'completed' | 'in_progress' | 'not_started' =
+      roundedProgress >= 100 ? 'completed' : 'in_progress';
 
     // Actualizar estado local con tipos correctos
     const newProgress: MyContentDetails = {
@@ -118,15 +118,15 @@ export const useContentProgress = (
       const completedContent: MyContentDetails = {
         ...content,
         is_completed: true,
-        status: "completed" as const,
+        status: 'completed' as const,
         progress_percentage: 100,
       };
       setContent(completedContent);
 
-      console.log("Contenido completado");
+      console.log('Contenido completado');
     } catch (error: any) {
-      console.error("Error al completar contenido:", error);
-      setError(error?.message || "Error al completar el contenido");
+      console.error('Error al completar contenido:', error);
+      setError(error?.message || 'Error al completar el contenido');
     }
   };
 

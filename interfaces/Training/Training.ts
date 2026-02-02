@@ -161,3 +161,23 @@ export interface MyContentDetails {
     [key: string]: any;
   };
 }
+
+// ===================== VALIDACIÓN DE PROGRAMAS ============
+
+export interface ProgramValidationWarning {
+  type: string;
+  day_number?: number;
+  day_title?: string;
+  message: string;
+}
+
+export interface ProgramValidation {
+  canAssign: boolean;
+  hasWarnings: boolean;
+  warnings: ProgramValidationWarning[];
+  daysSummary: {
+    total_days: number;
+    days_with_content: number;
+    days_without_content: number;
+  };
+}
