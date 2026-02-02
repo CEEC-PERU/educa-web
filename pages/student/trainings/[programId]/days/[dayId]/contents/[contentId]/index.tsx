@@ -1,15 +1,16 @@
-import React from 'react';
-import { useRouter } from 'next/router';
+import React from "react";
+import { useRouter } from "next/router";
 //import { useAuth } from '@/context/AuthContext';
-import Navbar from '@/components/Navbar';
-import SidebarDrawer from '@/components/student/DrawerNavigation';
-import { useEvaluationUI } from '@/hooks/ui/useEvaluationUI';
-import { useContentProgress } from '@/hooks/useContentProgress';
-import ContentHeader from '@/components/Training/ContentNavigation/ContentHeader';
-import dynamic from 'next/dynamic';
+import Navbar from "@/components/Navbar";
+import SidebarDrawer from "@/components/student/DrawerNavigation";
+import { useEvaluationUI } from "@/hooks/ui/useEvaluationUI";
+import { useContentProgress } from "@/hooks/useContentProgress";
+import ContentHeader from "@/components/Training/ContentNavigation/ContentHeader";
+import { baseURL } from "@/utils/Endpoints";
+import dynamic from "next/dynamic";
 
 const PDFViewer = dynamic(
-  () => import('@/components/Training/ContentViewer/PDFViewer'),
+  () => import("@/components/Training/ContentViewer/PDFViewer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -23,8 +24,23 @@ const PDFViewer = dynamic(
   },
 );
 
+const AudioPlayer = dynamic(
+  () => import("@/components/Training/ContentViewer/AudioPlayer"),
+  {
+    loading: () => (
+      <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Cargando reproductor de audio...</p>
+        </div>
+      </div>
+    ),
+    ssr: false,
+  },
+);
+
 const VideoPlayer = dynamic(
-  () => import('@/components/Training/ContentViewer/VideoPlayer'),
+  () => import("@/components/Training/ContentViewer/VideoPlayer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -39,7 +55,7 @@ const VideoPlayer = dynamic(
 );
 
 const ScormPlayer = dynamic(
-  () => import('@/components/Training/ContentViewer/ScormPlayer'),
+  () => import("@/components/Training/ContentViewer/ScormPlayer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -119,57 +135,53 @@ const ContentViewerPage: React.FC = () => {
     }
 
     switch (content.content_type) {
-      case 'pdf':
+      case "pdf":
         return (
           <div className="h-[calc(100vh-12rem)] bg-gray-800">
             <PDFViewer url={content.content_url} onComplete={markAsCompleted} />
           </div>
         );
 
-      case 'video':
+      case "video":
         return (
           <div className="h-[calc(100vh-12rem)] bg-black flex items-center justify-center">
             <VideoPlayer
               url={content.content_url}
               onProgress={(progress) => {
-                updateProgress(progress.played * 100, progress.playedSeconds);
+                updateProgress(
+                  progress.played,
+                  Math.floor(progress.playedSeconds),
+                );
               }}
               onEnded={markAsCompleted}
             />
           </div>
         );
 
-      case 'audio':
+      case "audio":
         return (
-          <div className="h-[calc(100vh-12rem)] bg-black flex items-center justify-center">
-            <VideoPlayer
+          <div className="h-[calc(100vh-12rem)] bg-gradient-to-br from-gray-900 to-gray-800">
+            <AudioPlayer
               url={content.content_url}
               onProgress={(progress) => {
-                updateProgress(progress.played * 100, progress.playedSeconds);
+                // progress.played ya viene en porcentaje (0-100)
+                updateProgress(
+                  progress.played,
+                  Math.floor(progress.playedSeconds),
+                );
               }}
               onEnded={markAsCompleted}
             />
           </div>
         );
 
-      case 'scorm':
+      case "scorm":
         return (
           <div className="h-[calc(100vh-8rem)]">
             <ScormPlayer
               scormUrl={content.content_url}
-              scormData={{
-                lesson_status:
-                  content.status === 'completed' ? 'completed' : 'incomplete',
-                progress_measure: content.progress_percentage / 100,
-              }}
-              onDataChange={(data) => {
-                if (data.progress_measure) {
-                  updateProgress(data.progress_measure * 100);
-                }
-                if (data.completion_status === 'completed') {
-                  markAsCompleted();
-                }
-              }}
+              contentId={content.content_id}
+              onComplete={markAsCompleted}
             />
           </div>
         );
@@ -215,7 +227,7 @@ const ContentViewerPage: React.FC = () => {
       <div className="pt-16">
         <div
           className={`transition-all duration-300 ${
-            isDrawerOpen ? 'lg:ml-64' : 'lg:ml-16'
+            isDrawerOpen ? "lg:ml-64" : "lg:ml-16"
           }`}
         >
           {content && (

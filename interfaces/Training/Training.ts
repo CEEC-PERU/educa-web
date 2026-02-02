@@ -26,7 +26,7 @@ export interface TrainingContent {
   content_id: number;
   day_id: number;
   title: string;
-  content_type: 'scorm' | 'video' | 'pdf' | 'audio';
+  content_type: "scorm" | "video" | "pdf" | "audio";
   s3_key: string;
   is_mandatory: boolean;
   order_index: number;
@@ -112,11 +112,11 @@ export interface MyProgram {
 export interface MyProgramContent {
   content_id: number;
   title: string;
-  content_type: 'scorm' | 'video' | 'pdf' | 'audio';
+  content_type: "scorm" | "video" | "pdf" | "audio";
   order_index: number;
   is_mandatory: boolean;
   progress_percentage: string;
-  status: 'not_started' | 'in_progress' | 'completed';
+  status: "not_started" | "in_progress" | "completed";
 }
 
 export interface MyProgramDay {
@@ -146,13 +146,18 @@ export interface MyContentDetails {
   content_id: number;
   day_number: number;
   title: string;
-  content_type: 'pdf' | 'video' | 'scorm' | 'audio';
+  content_type: "pdf" | "video" | "scorm" | "audio";
   content_url: string;
   progress_percentage: number;
   last_position?: number;
-  status: 'not_started' | 'in_progress' | 'completed';
+  status: "not_started" | "in_progress" | "completed";
   is_mandatory: boolean;
   is_unlocked: boolean;
   is_started: boolean;
   is_completed: boolean;
+  metadata?: {
+    pages?: number;
+    duration?: number;
+    [key: string]: any;
+  };
 }

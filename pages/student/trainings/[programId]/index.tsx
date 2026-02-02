@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import SidebarDrawer from '@/components/student/DrawerNavigation';
-import Navbar from '@/components/Navbar';
-import { useEvaluationUI } from '@/hooks/ui/useEvaluationUI';
-import { useMyTrainingsDetails } from '@/hooks/useMyTrainingsDetails';
-import { useRouter } from 'next/router';
-import { MyProgramDay } from '@/interfaces/Training/Training';
-import DayContentsModal from '@/components/Training/DayContentsModal';
+import React, { useState } from "react";
+import SidebarDrawer from "@/components/student/DrawerNavigation";
+import Navbar from "@/components/Navbar";
+import { useEvaluationUI } from "@/hooks/ui/useEvaluationUI";
+import { useMyTrainingsDetails } from "@/hooks/useMyTrainingsDetails";
+import { useRouter } from "next/router";
+import { MyProgramDay } from "@/interfaces/Training/Training";
+import DayContentsModal from "@/components/Training/DayContentsModal";
 import {
   BookOpen,
   CheckCircle2,
@@ -17,7 +17,7 @@ import {
   Monitor,
   ChevronRight,
   Eye,
-} from 'lucide-react';
+} from "lucide-react";
 
 const MyTrainingsPage: React.FC = () => {
   const router = useRouter();
@@ -63,7 +63,7 @@ const MyTrainingsPage: React.FC = () => {
             ID de programa inválido
           </h2>
           <button
-            onClick={() => router.push('/student/capacitaciones')}
+            onClick={() => router.push("/student/capacitaciones")}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Volver a Capacitaciones
@@ -75,11 +75,11 @@ const MyTrainingsPage: React.FC = () => {
 
   const getContentIcon = (type: string) => {
     switch (type) {
-      case 'pdf':
+      case "pdf":
         return <FileText className="w-5 h-5" />;
-      case 'video':
+      case "video":
         return <Video className="w-5 h-5" />;
-      case 'scorm':
+      case "scorm":
         return <Monitor className="w-5 h-5" />;
       default:
         return <BookOpen className="w-5 h-5" />;
@@ -88,23 +88,23 @@ const MyTrainingsPage: React.FC = () => {
 
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return {
-          color: 'bg-green-50 text-green-700 border-green-200',
+          color: "bg-green-50 text-green-700 border-green-200",
           icon: <CheckCircle2 className="w-4 h-4" />,
-          label: 'Completado',
+          label: "Completado",
         };
-      case 'in_progress':
+      case "in_progress":
         return {
-          color: 'bg-blue-50 text-blue-700 border-blue-200',
+          color: "bg-blue-50 text-blue-700 border-blue-200",
           icon: <Play className="w-4 h-4" />,
-          label: 'En progreso',
+          label: "En progreso",
         };
       default:
         return {
-          color: 'bg-gray-50 text-gray-600 border-gray-200',
+          color: "bg-gray-50 text-gray-600 border-gray-200",
           icon: <Clock className="w-4 h-4" />,
-          label: 'Sin iniciar',
+          label: "Sin iniciar",
         };
     }
   };
@@ -149,7 +149,7 @@ const MyTrainingsPage: React.FC = () => {
 
       <div className="pt-16">
         <div
-          className={`transition-all duration-300 ${isDrawerOpen ? 'lg:ml-64' : 'lg:ml-16'}`}
+          className={`transition-all duration-300 ${isDrawerOpen ? "lg:ml-64" : "lg:ml-16"}`}
         >
           <div className="container mx-auto px-4 py-8">
             {loading ? (
@@ -197,7 +197,7 @@ const MyTrainingsPage: React.FC = () => {
                 <div className="mb-6">
                   <nav className="flex items-center gap-2 text-sm text-gray-600">
                     <button
-                      onClick={() => router.push('/student/capacitaciones')}
+                      onClick={() => router.push("/student/capacitaciones")}
                       className="hover:text-blue-600 transition-colors"
                     >
                       Capacitaciones
@@ -250,18 +250,18 @@ const MyTrainingsPage: React.FC = () => {
                       key={day.day_id}
                       className={`bg-white rounded-xl shadow-sm border ${
                         day.is_unlocked
-                          ? 'border-gray-200'
-                          : 'border-gray-300 opacity-60'
+                          ? "border-gray-200"
+                          : "border-gray-300 opacity-60"
                       } overflow-hidden`}
                     >
                       {/* Header del Día */}
                       <div
-                        className={`p-5 ${day.is_unlocked ? 'bg-gradient-to-r from-blue-50 to-purple-50' : 'bg-gray-50'}`}
+                        className={`p-5 ${day.is_unlocked ? "bg-gradient-to-r from-blue-50 to-purple-50" : "bg-gray-50"}`}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3 flex-1">
                             <div
-                              className={`p-3 rounded-lg ${day.is_unlocked ? 'bg-white' : 'bg-gray-200'}`}
+                              className={`p-3 rounded-lg ${day.is_unlocked ? "bg-white" : "bg-gray-200"}`}
                             >
                               {day.is_unlocked ? (
                                 <BookOpen className="w-6 h-6 text-blue-600" />
@@ -274,7 +274,7 @@ const MyTrainingsPage: React.FC = () => {
                                 {day.title}
                               </h2>
                               <p className="text-sm text-gray-600">
-                                Día {day.day_number} • {day.contents.length}{' '}
+                                Día {day.day_number} • {day.contents.length}{" "}
                                 contenido(s)
                               </p>
                             </div>
@@ -294,7 +294,7 @@ const MyTrainingsPage: React.FC = () => {
 
                           <div className="text-right ml-4">
                             <div className="text-2xl font-bold text-gray-900">
-                              {day.completion_percentage}%
+                              {day.completion_percentage ?? 0}%
                             </div>
                             <div className="text-xs text-gray-500">
                               completado
@@ -305,7 +305,9 @@ const MyTrainingsPage: React.FC = () => {
                         <div className="mt-4 w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${day.completion_percentage}%` }}
+                            style={{
+                              width: `${day.completion_percentage ?? 0}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
@@ -342,7 +344,7 @@ const MyTrainingsPage: React.FC = () => {
                                           {status.icon} {status.label}
                                         </span>
                                         <span className="text-xs text-gray-500">
-                                          Progreso:{' '}
+                                          Progreso:{" "}
                                           {parseFloat(
                                             content.progress_percentage,
                                           ).toFixed(0)}
