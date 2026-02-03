@@ -4,6 +4,7 @@ import { AppProps } from 'next/app';
 import ProtectedRoute from '../components/Auth/ProtectedRoute';
 import SessionTimeoutNotification from '../components/SessionTimeOutNotification';
 import './../app/globals.css';
+import EnterpriseStylesProvider from '@/context/EnterpriseStylesContext';
 function MyApp({ Component, pageProps }: AppProps) {
   const protectedRoutes = [
     '/home',
@@ -16,14 +17,16 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <AuthProvider>
-      {protectedRoutes.includes(Component.name) ? (
-        <ProtectedRoute>
+      <EnterpriseStylesProvider>
+        {protectedRoutes.includes(Component.name) ? (
+          <ProtectedRoute>
+            <Component {...pageProps} />
+            <SessionTimeoutNotification />
+          </ProtectedRoute>
+        ) : (
           <Component {...pageProps} />
-          <SessionTimeoutNotification />
-        </ProtectedRoute>
-      ) : (
-        <Component {...pageProps} />
-      )}
+        )}
+      </EnterpriseStylesProvider>
     </AuthProvider>
   );
 }

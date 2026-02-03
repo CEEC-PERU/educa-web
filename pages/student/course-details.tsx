@@ -60,8 +60,6 @@ const CourseDetails = () => {
       <div>
         <div className="relative z-10">
           <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
             user={user ? { profilePicture: uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />
@@ -107,7 +105,10 @@ const CourseDetails = () => {
               <div className="order-1 lg:order-2 w-full flex justify-center">
                 {/* Mobile: Vertical video like reel */}
                 <div className="block sm:hidden w-full max-w-sm">
-                  <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '9/16' }}>
+                  <div
+                    className="relative w-full bg-black rounded-lg overflow-hidden"
+                    style={{ aspectRatio: '9/16' }}
+                  >
                     <video
                       controls
                       controlsList="nodownload"
@@ -115,14 +116,20 @@ const CourseDetails = () => {
                       className="w-full h-full object-contain"
                       playsInline
                     >
-                      <source src={courseDetails.intro_video} type="video/mp4" />
+                      <source
+                        src={courseDetails.intro_video}
+                        type="video/mp4"
+                      />
                     </video>
                   </div>
                 </div>
 
                 {/* Tablet and Desktop: Horizontal video */}
                 <div className="hidden sm:block w-full">
-                  <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <div
+                    className="relative w-full bg-black rounded-lg overflow-hidden"
+                    style={{ aspectRatio: '16/9' }}
+                  >
                     <video
                       controls
                       controlsList="nodownload"
@@ -130,7 +137,10 @@ const CourseDetails = () => {
                       className="w-full h-full object-contain"
                       playsInline
                     >
-                      <source src={courseDetails.intro_video} type="video/mp4" />
+                      <source
+                        src={courseDetails.intro_video}
+                        type="video/mp4"
+                      />
                     </video>
                   </div>
                 </div>
@@ -185,17 +195,17 @@ const CourseDetails = () => {
                     onClick={navigateToCourseDetails}
                   >
                     <span>Empezar el curso</span>
-                    <svg 
-                      className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
                       />
                     </svg>
                   </button>
@@ -219,17 +229,17 @@ const CourseDetails = () => {
                     onClick={navigateToCourseDetails}
                   >
                     <span>Ver catálogo de cursos</span>
-                    <svg 
-                      className="w-4 h-4 transition-transform group-hover:translate-x-1" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
                       />
                     </svg>
                   </button>
@@ -303,7 +313,10 @@ const CourseDetails = () => {
               Temario
             </h1>
             {courseDetail.map((courseDetails) => (
-              <div key={courseDetails.course_id} className="space-y-3 sm:space-y-4">
+              <div
+                key={courseDetails.course_id}
+                className="space-y-3 sm:space-y-4"
+              >
                 {courseDetails.courseModules.map((module) => (
                   <div
                     key={module.module_id}
@@ -322,7 +335,7 @@ const CourseDetails = () => {
                     <div className="ml-6 sm:ml-8 space-y-2">
                       {module.moduleSessions.map((session) => (
                         <div
-                          key={ module.module_id}
+                          key={module.module_id}
                           className="flex items-start"
                         >
                           <img
@@ -347,10 +360,7 @@ const CourseDetails = () => {
             </h1>
             <div className="bg-gradient-to-r border-2 border-brandblanco-200 rounded-lg from-brand-100 via-brand-200 to-brand-300 p-3 sm:p-4 lg:p-6">
               {courseDetail.map((courseDetails) => (
-                <div
-                  key={courseDetails.course_id}
-                  className="w-full"
-                >
+                <div key={courseDetails.course_id} className="w-full">
                   <div className="text-white">
                     <div className="flex items-start">
                       <img

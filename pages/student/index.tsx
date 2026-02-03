@@ -361,7 +361,7 @@ const StudentIndex: React.FC = () => {
     <ProtectedRoute>
       <div>
         <ScreenSecurity />
-        {/* MODAL FIRMA DIGITAL */}
+        {/* MODAL FIRMA DIGITAL
         <Modal
           isOpen={isSignatureModalOpen}
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
@@ -385,7 +385,7 @@ const StudentIndex: React.FC = () => {
                     Complete su información de verificación
                   </p>
                 </div>
-                {/* INFORMACIÓN CONSENTIMIENTO */}
+              
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
                   <div className="flex items-start">
                     <div className="flex-shrink-0 mt-1">
@@ -405,7 +405,7 @@ const StudentIndex: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                {/* FIRMA DIGITAL MEJORADA */}
+                
                 <div className="space-y-5">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -464,7 +464,7 @@ const StudentIndex: React.FC = () => {
                     </div>
                   )}
                 </div>
-                {/* FOTO Y CONSENTIMIENTO */}
+              
                 <div className="space-y-5">
                   <div className="flex items-center">
                     <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
@@ -597,13 +597,10 @@ const StudentIndex: React.FC = () => {
               </div>
             )}
           </div>
-        </Modal>
-
+        </Modal> */}
         {/* El resto del contenido */}
         <div className="relative z-10">
           <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
             user={user ? { profilePicture: uri_picture } : undefined}
             toggleSidebar={toggleSidebar}
           />

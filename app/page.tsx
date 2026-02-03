@@ -19,7 +19,7 @@ import './globals.css';
 
 export default function Home() {
   const [formType, setFormType] = useState<'company' | 'individual'>(
-    'individual'
+    'individual',
   );
   const [showSplash, setShowSplash] = useState(true);
 
@@ -39,11 +39,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
 
-      <Navbar
-        bgColor="bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800 "
-        paddingtop="pt-8"
-      />
-
+      <Navbar />
       <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-60 bg-brand-500 overflow-hidden">
         {/* Fondo con animación de desvanecimiento */}
         <div
