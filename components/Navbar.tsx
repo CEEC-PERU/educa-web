@@ -4,7 +4,6 @@ import {
   AcademicCapIcon,
   ChevronDownIcon,
   ChevronRightIcon,
- 
 } from '@heroicons/react/24/solid';
 
 interface NavbarProps {
@@ -54,13 +53,15 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
           <div className={`ml-2 flex items-center space-x-2`}>
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
+              //src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770061358/WEB_EDUCA/Logo_A365_pq8vkk.png"
               alt="EducaWeb Logo"
               className="h-8 sm:h-10"
             />
+            {/*
             <span className={`${textColor} font-bold text-base sm:text-lg`}>
               MentorMind
-            </span>
+            </span>*/}
           </div>
         </div>
 
