@@ -1,221 +1,93 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { debounce } from "lodash";
-import { useAuth } from "@/context/AuthContext";
-import { trackScormData } from "@/services/training/trainingStudentService";
+"use client";
+
+import React from "react";
+import { useScormPlayer } from "@/hooks/useScormPlayer";
 
 interface ScormPlayerProps {
   scormUrl: string;
   contentId: number;
+  onProgress?: (progress: number) => void;
   onComplete?: () => void;
 }
 
 const ScormPlayer: React.FC<ScormPlayerProps> = ({
   scormUrl,
   contentId,
+  onProgress,
   onComplete,
 }) => {
-  const { token } = useAuth();
-  const [scormData, setScormData] = useState({
-    completion_status: "",
-    success_status: "",
-    progress_measure: 0,
+  const { scormUrl: processedUrl, isInitialized, error } = useScormPlayer({
+    contentUrl: scormUrl,
+    contentId,
+    onProgress,
+    onComplete,
   });
 
-  const syncScormData = useCallback(
-    debounce(async (data: any) => {
-      if (!token || !contentId) return;
-      try {
-        await trackScormData(contentId, data, token);
-      } catch (error) {
-        console.error("Error saving SCORM data:", error);
-      }
-    }, 2000),
-    [token, contentId],
-  );
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full bg-red-50">
+        <div className="text-center p-8 max-w-lg">
+          <div className="text-6xl mb-4">⚠️</div>
+          <h2 className="text-xl font-bold text-red-600 mb-2">
+            Error al cargar contenido SCORM
+          </h2>
+          <p className="text-gray-700 mb-4">{error}</p>
+          <details className="text-left bg-white p-4 rounded border text-sm">
+            <summary className="cursor-pointer font-semibold">
+              Detalles técnicos
+            </summary>
+            <p className="text-gray-500 mt-2 break-all">
+              <strong>URL Original:</strong>
+              <br />
+              {scormUrl}
+            </p>
+            <p className="text-gray-500 mt-2 break-all">
+              <strong>URL Procesada:</strong>
+              <br />
+              {processedUrl}
+            </p>
+          </details>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const API = {
-      LMSInitialize: () => "true",
-
-      LMSFinish: () => {
-        if (token && contentId) {
-          trackScormData(contentId, scormData, token).catch((err: any) =>
-            console.error("Error saving final SCORM data:", err),
-          );
-        }
-
-        if (
-          scormData.completion_status === "completed" ||
-          scormData.completion_status === "passed" ||
-          scormData.success_status === "passed"
-        ) {
-          onComplete?.();
-        }
-
-        return "true";
-      },
-
-      LMSGetValue: (key: string) => {
-        const valueMap: any = {
-          "cmi.core.lesson_status":
-            scormData.completion_status || "not attempted",
-          "cmi.core.score.raw": scormData.progress_measure * 100 || 0,
-          "cmi.completion_status": scormData.completion_status || "unknown",
-          "cmi.success_status": scormData.success_status || "unknown",
-          "cmi.score.scaled": scormData.progress_measure || 0,
-        };
-        return valueMap[key] || "";
-      },
-
-      LMSSetValue: (key: string, value: string) => {
-        const updates: any = {};
-
-        if (key === "cmi.core.lesson_status") {
-          updates.completion_status = value;
-          if (value === "completed" || value === "passed") {
-            if (token && contentId) {
-              trackScormData(
-                contentId,
-                { ...scormData, completion_status: value },
-                token,
-              )
-                .then(() => onComplete?.())
-                .catch((err: any) => console.error("Error:", err));
-            }
-          }
-        }
-
-        if (key === "cmi.core.score.raw") {
-          updates.progress_measure = parseInt(value) / 100;
-          updates.score_raw = parseInt(value);
-        }
-
-        if (key === "cmi.completion_status") {
-          updates.completion_status = value;
-          if (value === "completed") {
-            if (token && contentId) {
-              trackScormData(
-                contentId,
-                { ...scormData, completion_status: value },
-                token,
-              )
-                .then(() => onComplete?.())
-                .catch((err: any) => console.error("Error:", err));
-            }
-          }
-        }
-
-        if (key === "cmi.success_status") {
-          updates.success_status = value;
-          if (value === "passed") {
-            if (token && contentId) {
-              trackScormData(
-                contentId,
-                { ...scormData, success_status: value },
-                token,
-              )
-                .then(() => onComplete?.())
-                .catch((err: any) => console.error("Error:", err));
-            }
-          }
-        }
-
-        if (key === "cmi.score.scaled") {
-          updates.score_scaled = parseFloat(value);
-          updates.progress_measure = parseFloat(value);
-        }
-
-        if (key === "cmi.progress_measure") {
-          updates.progress_measure = parseFloat(value);
-        }
-
-        const newScormData = { ...scormData, ...updates };
-        setScormData(newScormData);
-        syncScormData(newScormData);
-
-        return "true";
-      },
-
-      LMSCommit: () => {
-        if (token && contentId) {
-          trackScormData(contentId, scormData, token).catch((err: any) =>
-            console.error("Error on commit:", err),
-          );
-        }
-        return "true";
-      },
-
-      LMSGetLastError: () => 0,
-      LMSGetErrorString: () => "No Error",
-      LMSGetDiagnostic: () => "No Error",
-    };
-
-    const API_1484_11 = {
-      Initialize: () => "true",
-
-      Terminate: () => {
-        if (token && contentId) {
-          trackScormData(contentId, scormData, token).catch((err: any) =>
-            console.error("Error on terminate:", err),
-          );
-        }
-
-        if (
-          scormData.completion_status === "completed" ||
-          scormData.success_status === "passed"
-        ) {
-          onComplete?.();
-        }
-
-        return "true";
-      },
-
-      GetValue: API.LMSGetValue,
-      SetValue: API.LMSSetValue,
-      Commit: API.LMSCommit,
-      GetLastError: API.LMSGetLastError,
-      GetErrorString: API.LMSGetErrorString,
-      GetDiagnostic: API.LMSGetDiagnostic,
-    };
-
-    (window as any).API = API;
-    (window as any).API_1484_11 = API_1484_11;
-
-    if (window.top && window.top !== window) {
-      (window.top as any).API = API;
-      (window.top as any).API_1484_11 = API_1484_11;
-    }
-
-    return () => {
-      delete (window as any).API;
-      delete (window as any).API_1484_11;
-    };
-  }, [onComplete, scormData, token, contentId, syncScormData]);
+  if (!processedUrl) {
+    return (
+      <div className="flex items-center justify-center h-full bg-gray-100">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Preparando contenido SCORM...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {scormData.progress_measure > 0 && (
-        <div className="bg-gray-800 px-4 py-2">
-          <div className="flex items-center justify-between text-white text-sm">
-            <span>Progreso SCORM</span>
-            <span className="font-semibold">
-              {(scormData.progress_measure * 100).toFixed(1)}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-            <div
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${scormData.progress_measure * 100}%` }}
-            />
-          </div>
+    <div className="relative w-full h-full bg-white">
+      {/* Indicador de inicialización */}
+      {!isInitialized && (
+        <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white text-center py-1 text-sm z-10">
+          <span className="inline-block animate-pulse">
+            Inicializando contenido SCORM...
+          </span>
         </div>
       )}
 
+      {/* Indicador cuando está inicializado */}
+      {isInitialized && (
+        <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-center py-1 text-sm z-10 transition-opacity duration-500">
+          <span>✓ SCORM conectado</span>
+        </div>
+      )}
+
+      {/* iframe del contenido SCORM */}
       <iframe
-        src={scormUrl}
-        className="flex-1 w-full border-none"
-        allow="autoplay; fullscreen"
-        title="Contenido SCORM"
+        src={processedUrl}
+        className={`w-full h-full border-0 ${isInitialized ? "pt-7" : "pt-7"}`}
+        title={`Contenido SCORM ${contentId}`}
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals allow-top-navigation"
+        allow="fullscreen; autoplay"
       />
     </div>
   );

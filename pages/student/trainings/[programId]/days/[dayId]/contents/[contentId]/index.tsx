@@ -181,6 +181,9 @@ const ContentViewerPage: React.FC = () => {
             <ScormPlayer
               scormUrl={content.content_url}
               contentId={content.content_id}
+              onProgress={(progress) => {
+                updateProgress(progress, 0);
+              }}
               onComplete={markAsCompleted}
             />
           </div>
