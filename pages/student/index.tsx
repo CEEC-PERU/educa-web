@@ -23,6 +23,9 @@ import {
   PaperAirplaneIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
+import { MdOutlinePersonAdd } from 'react-icons/md';
+import { FaRegCircleCheck } from 'react-icons/fa6';
+import { FaMoneyCheck } from 'react-icons/fa6';
 
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
@@ -640,6 +643,7 @@ const StudentIndex: React.FC = () => {
                       className="h-12 w-12 ml-2"
                       alt="Icon"
                     />*/}
+                    <MdOutlinePersonAdd className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Curso inscritos</p>
                 </div>
@@ -654,6 +658,7 @@ const StudentIndex: React.FC = () => {
                       className="h-12 w-12 ml-2"
                       alt="Icon"
                     />*/}
+                    <FaRegCircleCheck className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Curso completado</p>
                 </div>
@@ -668,6 +673,7 @@ const StudentIndex: React.FC = () => {
                       className="h-12 w-12 ml-2"
                       alt="Icon"
                     />*/}
+                    <FaMoneyCheck className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Diploma Obtenido</p>
                 </div>
