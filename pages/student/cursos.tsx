@@ -25,7 +25,7 @@ const StudentIndex: React.FC = () => {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const ALLOWED_CATEGORIES = [66, 67, 68, 87, 88, 89, 90, 91];
   const filteredCategories = categories.filter((category) =>
-    ALLOWED_CATEGORIES.includes(category.category_id)
+    ALLOWED_CATEGORIES.includes(category.category_id),
   );
 
   const categoriesToShow = showAllCategories
@@ -140,12 +140,12 @@ const StudentIndex: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-10 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 pt-10 pb-10 p-4">
           <div className="w-full max-w-screen-lg mt-8">
             <div className="flex flex-wrap gap-2 mb-6">
               {/* Todos */}
               <button
-                className={`bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-white/30 transition-all duration-300 text-sm ${
+                className={`bg-gray-950/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-gray-800/30 transition-all duration-300 text-sm ${
                   !selectedCategoryId ? 'bg-white/40 ring-2 ring-white' : ''
                 }`}
                 onClick={() => handleCategorySelect(undefined)}
@@ -157,7 +157,7 @@ const StudentIndex: React.FC = () => {
               {categoriesToShow.map((category) => (
                 <button
                   key={category.category_id}
-                  className={`bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-white/30 transition-all duration-300 text-sm ${
+                  className={`bg-gray-500/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-gray-800/30 transition-all duration-300 text-sm ${
                     selectedCategoryId === category.category_id
                       ? 'bg-white/40 ring-2 ring-white'
                       : ''
@@ -176,7 +176,7 @@ const StudentIndex: React.FC = () => {
               ))}
               {hasMoreCategories && (
                 <button
-                  className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full px-4 py-2 hover:bg-white/40 transition-all duration-300 text-sm"
+                  className="bg-gray-500/30 backdrop-blur-sm border border-white/40 rounded-full px-4 py-2 hover:bg-gray-800/40 transition-all duration-300 text-sm"
                   onClick={() => setShowAllCategories(!showAllCategories)}
                 >
                   <span className="text-white font-medium">
