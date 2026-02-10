@@ -32,17 +32,17 @@ const CourseCard: React.FC<CourseCardProps> = ({
         alt={name}
       />
       <div className={`px-4 py-3 ${isJuegosIndex ? 'w-2/3' : ''}`}>
-        <div className="bg-brandm365-100 rounded font-bold text-md mb-2 text-white p-2">
+        <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-2">
           {categoria}
         </div>
         <div className="font-bold text-md mb-2 text-white">{name}</div>
-        <p className="text-brandtext365-100 text-base">Por: {profesor}</p>
+        <p className="text-brandrosado-800 text-base">Por: {profesor}</p>
         <p className="text-white text-sm overflow-hidden line-clamp-3">
           {description}
         </p>
         <div className="flex justify-end mt-3">
           <button
-            className="bg-brandb365-500 text-white px-3 py-2 rounded hover:bg-brandhover365-700 border-2 border-brandborder365-400"
+            className="bg-brandmora-500 text-white px-3 py-2 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400"
             onClick={onClick}
           >
             Detalles del curso

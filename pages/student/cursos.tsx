@@ -208,13 +208,13 @@ const StudentIndex: React.FC = () => {
                 alt={selectedCourse.name}
               />
               <div className="px-6 py-4">
-                <div className="bg-brandm365-100 rounded font-bold text-md mb-2 text-white p-4">
+                <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-4">
                   {selectedCourse.courseCategory.name}
                 </div>
                 <div className="font-bold text-md mb-2 text-black">
                   {selectedCourse.name}
                 </div>
-                <p className="text-brandtext365-100 text-base mb-4">
+                <p className="text-brandrosado-800 text-base mb-4">
                   Por: {selectedCourse.courseProfessor.full_name}
                 </p>
                 <p className="text-black text-sm mb-4">
@@ -222,7 +222,7 @@ const StudentIndex: React.FC = () => {
                 </p>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="bg-brandm365-100 text-white px-4 rounded hover:bg-brandazul-600 border-2 flex items-center"
+                    className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
                     onClick={navigateToCourseDetails}
                   >
                     Detalles del curso{' '}
