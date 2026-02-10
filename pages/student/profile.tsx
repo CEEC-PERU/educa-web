@@ -56,7 +56,7 @@ const StudentProfile: React.FC = () => {
         toggleSidebar={toggleSidebar}
       />
 
-      <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 pt-16">
+      <div className="min-h-screen w-full flex flex-col items-center justify-start bg-brandazul-600 pt-16">
         <div className="relative w-full max-w-full lg:max-w-4xl mx-auto mb-8">
           <img
             src={enterprise?.enterprise.image_fondo}
@@ -83,7 +83,7 @@ const StudentProfile: React.FC = () => {
             </p>
             <button
               onClick={handleEditClick}
-              className="bg-brandrosado-800 text-white px-4 py-2 rounded-full hover:bg-brandmorado-700"
+              className="bg-brandm365-100 text-white px-4 py-2 rounded-full hover:bg-branda365-800"
             >
               Editar
             </button>
