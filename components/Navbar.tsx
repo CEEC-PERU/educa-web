@@ -37,7 +37,7 @@ const Navbar: React.FC<NavbarProps> = ({
     <nav
       role="navigation"
       aria-label="Main navigation"
-      className={`bg-white ${navbarHeight} fixed top-0 left-0 w-full z-50 ${borderColor}`}
+      className={`${bgColor} ${navbarHeight} fixed top-0 left-0 w-full z-50 ${borderColor}`}
     >
       <div
         className={`container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8 ${paddingtop}`}
@@ -53,10 +53,13 @@ const Navbar: React.FC<NavbarProps> = ({
           )}
           <div className={`ml-2 flex items-center space-x-2`}>
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
               alt="EducaWeb Logo"
               className="h-8 sm:h-10"
             />
+            <span className={`${textColor} font-bold text-base sm:text-lg`}>
+              MentorMind
+            </span>
           </div>
         </div>
 
@@ -78,7 +81,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <div className="flex items-center space-x-2">
               <Link href="/student">
                 <button className="p-2 hover:bg-white/20 rounded-full">
-                  <AcademicCapIcon className="h-5 w-5 text-red-500" />
+                  <AcademicCapIcon className="h-5 w-5 text-white" />
                 </button>
               </Link>
               <Link href="/student">
@@ -90,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </Link>
               <Link href="/student">
                 <button className="p-2 hover:bg-white/20 rounded-full">
-                  <ChevronDownIcon className="h-5 w-5 text-red-500 " />
+                  <ChevronDownIcon className="h-5 w-5 text-white " />
                 </button>
               </Link>
             </div>
