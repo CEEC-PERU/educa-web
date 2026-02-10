@@ -14,8 +14,7 @@ import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity';
-//import Footter from '../../components/Footter';
-import Footer from '@/components/student/Footer';
+import Footter from '../../components/Footter';
 Modal.setAppElement('#__next');
 
 const StudentIndex: React.FC = () => {
@@ -234,7 +233,7 @@ const StudentIndex: React.FC = () => {
             </div>
           </Modal>
         )}
-        <Footer />
+        <Footter />
       </div>
     </ProtectedRoute>
   );
