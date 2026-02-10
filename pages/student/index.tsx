@@ -23,6 +23,9 @@ import {
   PaperAirplaneIcon,
   CheckIcon,
 } from '@heroicons/react/24/solid';
+import { MdOutlinePersonAdd } from 'react-icons/md';
+import { FaRegCircleCheck } from 'react-icons/fa6';
+import { FaMoneyCheck } from 'react-icons/fa6';
 
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
@@ -613,16 +616,16 @@ const StudentIndex: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#f7f7f7] pt-40 pb-10 p-4">
           <div className="relative flex flex-col lg:flex-row items-center text-left w-full text-white px-4 lg:px-40">
             <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
-              <p className="text-5xl lg:text-7xl font-bold mb-4 text-brandrosado-800">
+              <p className="text-5xl lg:text-7xl font-bold mb-4 text-brandtext365-100">
                 Hola, {name}
               </p>
-              <p className="mb-4 text-5xl lg:text-7xl text-white font-bold">
+              <p className="mb-4 text-5xl lg:text-7xl text-black font-bold">
                 ¡Qué bueno verte!
               </p>
-              <p className="mb-4 text-lg lg:text-base text-white py-8">
+              <p className="mb-4 text-lg lg:text-base text-black py-8">
                 Este es tu portal de aprendizaje, explora tus cursos y potencia
                 tu desarrollo profesional.
               </p>
@@ -631,40 +634,46 @@ const StudentIndex: React.FC = () => {
               <div className="bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                   <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
+                    <p className="text-brandtext365-100 text-4xl lg:text-7xl">
                       {coursescount?.data?.totalCourses}
                     </p>
+                    {/*
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png"
                       className="h-12 w-12 ml-2"
                       alt="Icon"
-                    />
+                    />*/}
+                    <MdOutlinePersonAdd className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Curso inscritos</p>
                 </div>
                 <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                   <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
+                    <p className="text-brandtext365-100 text-4xl lg:text-7xl">
                       {coursescount?.data?.completedCourses}
                     </p>
+                    {/*
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png"
                       className="h-12 w-12 ml-2"
                       alt="Icon"
-                    />
+                    />*/}
+                    <FaRegCircleCheck className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Curso completado</p>
                 </div>
                 <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
                   <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
+                    <p className="text-brandtext365-100 text-4xl lg:text-7xl">
                       1
                     </p>
+                    {/*
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png"
                       className="h-12 w-12 ml-2"
                       alt="Icon"
-                    />
+                    />*/}
+                    <FaMoneyCheck className="h-12 w-12 ml-2" />
                   </div>
                   <p className="text-white p-3">Diploma Obtenido</p>
                 </div>
@@ -707,13 +716,13 @@ const StudentIndex: React.FC = () => {
                 alt={selectedCourse.name}
               />
               <div className="px-6 py-4">
-                <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-4">
+                <div className="bg-brandm365-100 rounded font-bold text-md mb-2 text-white p-4">
                   {selectedCourse.courseCategory.name}
                 </div>
                 <div className="font-bold text-md mb-2 text-black">
                   {selectedCourse.name}
                 </div>
-                <p className="text-brandrosado-800 text-base mb-4">
+                <p className="text-brandtext365-100 text-base mb-4">
                   Por: {selectedCourse.courseProfessor.full_name}
                 </p>
                 <p className="text-black text-sm mb-4">
@@ -721,7 +730,7 @@ const StudentIndex: React.FC = () => {
                 </p>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
+                    className="bg-brandm365-100 text-white px-4 rounded hover:bg-brandazul-600 border-2 flex items-center"
                     onClick={navigateToCourseDetails}
                   >
                     Detalles del curso{' '}
@@ -737,8 +746,6 @@ const StudentIndex: React.FC = () => {
         <div
           className="bg-no-repeat bg-cover bg-brand-100"
           style={{
-            backgroundImage:
-              "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
             height: '500px',
           }}
         >

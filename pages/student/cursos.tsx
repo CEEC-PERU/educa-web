@@ -25,7 +25,7 @@ const StudentIndex: React.FC = () => {
   const [showAllCategories, setShowAllCategories] = useState(false);
   const ALLOWED_CATEGORIES = [66, 67, 68, 87, 88, 89, 90, 91];
   const filteredCategories = categories.filter((category) =>
-    ALLOWED_CATEGORIES.includes(category.category_id)
+    ALLOWED_CATEGORIES.includes(category.category_id),
   );
 
   const categoriesToShow = showAllCategories
@@ -140,13 +140,13 @@ const StudentIndex: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-10 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r bg-[#f7f7f7] pt-10 pb-10 p-4">
           <div className="w-full max-w-screen-lg mt-8">
             <div className="flex flex-wrap gap-2 mb-6">
               {/* Todos */}
               <button
-                className={`bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-white/30 transition-all duration-300 text-sm ${
-                  !selectedCategoryId ? 'bg-white/40 ring-2 ring-white' : ''
+                className={`bg-brandm365-100 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-[#618dcf] transition-all duration-300 text-sm ${
+                  !selectedCategoryId ? 'bg-brandm365-100' : ''
                 }`}
                 onClick={() => handleCategorySelect(undefined)}
               >
@@ -157,18 +157,19 @@ const StudentIndex: React.FC = () => {
               {categoriesToShow.map((category) => (
                 <button
                   key={category.category_id}
-                  className={`bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-white/30 transition-all duration-300 text-sm ${
+                  className={`bg-[#98b4e1] backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-[#618dcf] transition-all duration-300 text-sm ${
                     selectedCategoryId === category.category_id
-                      ? 'bg-white/40 ring-2 ring-white'
+                      ? 'bg-brandm365-100'
                       : ''
                   }`}
                   onClick={() => handleCategorySelect(category.category_id)}
                 >
+                  {/*
                   <img
                     src={category.logo}
                     alt={category.name}
                     className="w-4 h-4 object-contain"
-                  />
+                  />*/}
                   <span className="text-white font-medium">
                     {category.name}
                   </span>
@@ -176,7 +177,7 @@ const StudentIndex: React.FC = () => {
               ))}
               {hasMoreCategories && (
                 <button
-                  className="bg-white/30 backdrop-blur-sm border border-white/40 rounded-full px-4 py-2 hover:bg-white/40 transition-all duration-300 text-sm"
+                  className="bg-[#98b4e1] backdrop-blur-sm border border-white/40 rounded-full px-4 py-2 hover:bg-[#618dcf] transition-all duration-300 text-sm"
                   onClick={() => setShowAllCategories(!showAllCategories)}
                 >
                   <span className="text-white font-medium">
@@ -237,13 +238,13 @@ const StudentIndex: React.FC = () => {
                 alt={selectedCourse.name}
               />
               <div className="px-6 py-4">
-                <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-4">
+                <div className="bg-brandm365-100 rounded font-bold text-md mb-2 text-white p-4">
                   {selectedCourse.courseCategory.name}
                 </div>
                 <div className="font-bold text-md mb-2 text-black">
                   {selectedCourse.name}
                 </div>
-                <p className="text-brandrosado-800 text-base mb-4">
+                <p className="text-brandtext365-100 text-base mb-4">
                   Por: {selectedCourse.courseProfessor.full_name}
                 </p>
                 <p className="text-black text-sm mb-4">
@@ -251,7 +252,7 @@ const StudentIndex: React.FC = () => {
                 </p>
                 <div className="flex justify-end mt-4">
                   <button
-                    className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
+                    className="bg-brandm365-100 text-white px-4 rounded hover:bg-brandazul-600 border-2 flex items-center"
                     onClick={navigateToCourseDetails}
                   >
                     Detalles del curso{' '}

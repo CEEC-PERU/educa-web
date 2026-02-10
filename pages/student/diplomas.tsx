@@ -47,7 +47,7 @@ const Diplomas: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+        <div className="min-h-screen bg-brandazul-600">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Columna 1: Contenido principal */}
@@ -67,7 +67,7 @@ const Diplomas: React.FC = () => {
                     onClick={() =>
                       window.open(
                         'https://res.cloudinary.com/dk2red18f/image/upload/v1721844303/WEB_EDUCA/DIPLOMA/uzmb7q4f42vipmncvtht.pdf',
-                        '_blank'
+                        '_blank',
                       )
                     }
                   >
@@ -79,7 +79,7 @@ const Diplomas: React.FC = () => {
               {/* Columna 2: Imagen descriptiva */}
               <div className="flex justify-center lg:justify-end">
                 <img
-                  src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273141/WEB_EDUCA/gy7xwx0d7banshaqmitz.png"
+                  src="https://res.cloudinary.com/dk2red18f/image/upload/v1770061358/WEB_EDUCA/Logo_A365_pq8vkk.png"
                   className="w-full max-w-xs h-auto object-contain"
                   alt="Imagen descriptiva"
                 />
