@@ -47,7 +47,7 @@ const Diplomas: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+        <div className="min-h-screen bg-brandazul-600">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
               {/* Columna 1: Contenido principal */}

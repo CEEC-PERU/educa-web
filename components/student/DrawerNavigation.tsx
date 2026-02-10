@@ -38,7 +38,7 @@ const DrawerNavigation: React.FC<{
       } lg:translate-x-0 lg:w-64`}
     >
       <div
-        className={`bg-brandmorado-700 h-full rounded-r-lg text-white transition-width transform ${
+        className={`bg-brandazul-600 h-full rounded-r-lg text-white transition-width transform ${
           isDrawerOpen ? 'w-64' : 'w-16'
         }`}
       >
@@ -47,7 +47,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <HomeIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Home</span>}
@@ -56,7 +56,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/profile')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <img
                   src={uri_picture}
@@ -69,7 +69,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/cursos')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <ComputerDesktopIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Cursos</span>}
@@ -78,7 +78,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/evaluaciones')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <DocumentArrowUpIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Evaluaciones</span>}
@@ -87,7 +87,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/certificaciones')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <DocumentIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Certificaciones</span>}
@@ -96,7 +96,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/notas')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <DocumentIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Notas</span>}
@@ -105,7 +105,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/diplomas')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <DocumentArrowUpIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Mis Diplomas</span>}
@@ -115,7 +115,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={() => handleNavigation('/student/juegos')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <PuzzlePieceIcon className="h-6 w-6" />
                 {isDrawerOpen && (
@@ -126,7 +126,7 @@ const DrawerNavigation: React.FC<{
             <li>
               <button
                 onClick={logout}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="flex items-center p-4 text-white hover:bg-branda365-800 w-full text-left"
               >
                 <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
                 {isDrawerOpen && <span className="ml-2">Cerrar Sesión</span>}

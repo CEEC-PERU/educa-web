@@ -45,7 +45,7 @@ const Home: React.FC = () => {
   }>({});
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>(
-    {}
+    {},
   );
   const { createSession_Progress, session_progress } = useSesionProgress();
   const { createCourseTimeStart } = useCourseTime();
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
         endTime: endTime,
         duration: timer, // Incluye el tiempo transcurrido
       }).catch((error: any) =>
-        console.error('Error al registrar el tiempo de inicio:', error)
+        console.error('Error al registrar el tiempo de inicio:', error),
       );
     };
 
@@ -138,7 +138,7 @@ const Home: React.FC = () => {
   const handleSelect = (
     sessionName: string,
     evaluation?: ModuleEvaluation | Question[],
-    moduleId?: number
+    moduleId?: number,
   ) => {
     setSelectedModuleId(moduleId || null);
 
@@ -151,12 +151,12 @@ const Home: React.FC = () => {
       });
     } else {
       const module = courseData?.[0]?.courseModules.find((m) =>
-        m.moduleSessions.some((s) => s.name === sessionName)
+        m.moduleSessions.some((s) => s.name === sessionName),
       );
 
       if (module) {
         const session = module.moduleSessions.find(
-          (s) => s.name === sessionName
+          (s) => s.name === sessionName,
         );
 
         if (session) {
@@ -176,7 +176,7 @@ const Home: React.FC = () => {
 
   const handleVideoProgress = async (
     progress: number,
-    isCompleted: boolean
+    isCompleted: boolean,
   ) => {
     const progressUpdate = Math.round(progress);
 
@@ -240,8 +240,8 @@ const Home: React.FC = () => {
             toggleSidebar={toggleSidebar}
           />
         </div>
-        <div className="flex flex-col h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
-          <div className="flex flex-grow pt-16 flex-col lg:flex-row relative bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+        <div className="flex flex-col h-screen">
+          <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
             <div
               className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${
                 isDrawerOpen ? 'ml-64' : 'ml-16'
@@ -254,7 +254,7 @@ const Home: React.FC = () => {
                 onProgress={handleVideoProgress}
                 selectedModuleId={selectedModuleId}
                 moduleResults={courseData[0].courseModules.flatMap(
-                  (module) => module.ModuleResults
+                  (module) => module.ModuleResults,
                 )}
                 courseResults={courseData[0].CourseResults}
                 onUpdated={handleEvaluationFinish}
@@ -264,7 +264,7 @@ const Home: React.FC = () => {
               courseModules={courseData[0].courseModules}
               courseEvaluation={courseData[0].Evaluation}
               moduleEvaluations={courseData[0].courseModules.map(
-                (module) => module.moduleEvaluation
+                (module) => module.moduleEvaluation,
               )}
               onSelect={handleSelect}
               videoProgress={videoProgress}
