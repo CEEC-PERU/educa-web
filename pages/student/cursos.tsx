@@ -14,6 +14,7 @@ import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 import { useRouter } from 'next/router';
 import './../../app/globals.css';
 import ScreenSecurity from '../../components/ScreenSecurity';
+//import Footter from '../../components/Footter';
 import Footer from '@/components/student/Footer';
 Modal.setAppElement('#__next');
 
@@ -22,17 +23,6 @@ const StudentIndex: React.FC = () => {
   const { courseStudent, isLoading } = useCourseStudent();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number>();
   const { categories } = useCategoriesl();
-  const [showAllCategories, setShowAllCategories] = useState(false);
-  const ALLOWED_CATEGORIES = [66, 67, 68, 87, 88, 89, 90, 91];
-  const filteredCategories = categories.filter((category) =>
-    ALLOWED_CATEGORIES.includes(category.category_id),
-  );
-
-  const categoriesToShow = showAllCategories
-    ? filteredCategories
-    : filteredCategories.slice(0, 5);
-  const hasMoreCategories = filteredCategories.length > 5;
-
   console.log(courseStudent);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
@@ -140,55 +130,36 @@ const StudentIndex: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r bg-[#f7f7f7] pt-10 pb-10 p-4">
-          <div className="w-full max-w-screen-lg mt-8">
-            <div className="flex flex-wrap gap-2 mb-6">
-              {/* Todos */}
-              <button
-                className={`bg-brandm365-100 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-[#618dcf] transition-all duration-300 text-sm ${
-                  !selectedCategoryId ? 'bg-brandm365-100' : ''
-                }`}
-                onClick={() => handleCategorySelect(undefined)}
-              >
-                <span className="text-white font-medium">Todos</span>
-              </button>
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-10 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+          <div className="w-full max-w-screen-lg mt-8 flex gap-4 overflow-x-auto scrollbar-hide overflow-auto">
+            <button
+              className="text-white whitespace-nowrap p-4 rounded-lg flex-shrink-0 cursor-pointer"
+              onClick={() => handleCategorySelect(undefined)} // Mostrar todos los cursos cuando se hace clic en "TODOS"
+            >
+              Todos
+            </button>
 
-              {/* Categorías */}
-              {categoriesToShow.map((category) => (
+            {categories.map((category) => (
+              <div
+                key={category.category_id}
+                className="flex items-center space-x-2"
+              >
+                {/* Mostrar el logo junto con el nombre de la categoría */}
+                <img
+                  src={category.logo}
+                  alt={category.name}
+                  className="h-6 w-6"
+                />
                 <button
-                  key={category.category_id}
-                  className={`bg-[#98b4e1] backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 flex items-center space-x-1.5 hover:bg-[#618dcf] transition-all duration-300 text-sm ${
-                    selectedCategoryId === category.category_id
-                      ? 'bg-brandm365-100'
-                      : ''
-                  }`}
-                  onClick={() => handleCategorySelect(category.category_id)}
+                  className="text-white whitespace-nowrap pr-8 rounded-lg flex-shrink-0 cursor-pointer"
+                  onClick={() => handleCategorySelect(category.category_id)} // Filtrar cursos por categoría
                 >
-                  {/*
-                  <img
-                    src={category.logo}
-                    alt={category.name}
-                    className="w-4 h-4 object-contain"
-                  />*/}
-                  <span className="text-white font-medium">
-                    {category.name}
-                  </span>
+                  {category.name}
                 </button>
-              ))}
-              {hasMoreCategories && (
-                <button
-                  className="bg-[#98b4e1] backdrop-blur-sm border border-white/40 rounded-full px-4 py-2 hover:bg-[#618dcf] transition-all duration-300 text-sm"
-                  onClick={() => setShowAllCategories(!showAllCategories)}
-                >
-                  <span className="text-white font-medium">
-                    {showAllCategories
-                      ? 'Ver menos ↑'
-                      : `+${filteredCategories.length - 5} más ↓`}
-                  </span>
-                </button>
-              )}
-            </div>
+              </div>
+            ))}
           </div>
+
           <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
             {selectedCategoryId
               ? courseStudentCategory?.map((courseStudent) => (

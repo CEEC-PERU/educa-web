@@ -15,7 +15,7 @@ export default function Footer() {
           <section className="flex justify-center md:justify-start">
             <img
               //src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770061358/WEB_EDUCA/Logo_A365_pq8vkk.png"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
               alt="Logo"
               className="h-24 md:h-28 lg:h-32 object-contain"
             />

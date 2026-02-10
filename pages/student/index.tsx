@@ -754,7 +754,7 @@ const StudentIndex: React.FC = () => {
             <div className="flex justify-center">
               <img
                 //src="https://res.cloudinary.com/dk2red18f/image/upload/v1724350020/WEB_EDUCA/fcnjkq9hugpf6zo6pubs.png"
-                src="https://res.cloudinary.com/dk2red18f/image/upload/v1770061358/WEB_EDUCA/Logo_A365_pq8vkk.png"
+                src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
                 alt="Logo"
                 className="h-20 lg:h-30"
               />
@@ -773,7 +773,7 @@ const StudentIndex: React.FC = () => {
 
             {/* Tercera columna */}
             <div className="pl-0 lg:pl-10">
-              <h3 className="font-semibold text-lg">LINKS</h3>
+              <h3 className="font-semibold text-lg">LINK</h3>
               <ul>
                 <li>TÉRMINOS Y CONDICIONES</li>
                 <li>POLÍTICA DE PRIVACIDAD</li>
