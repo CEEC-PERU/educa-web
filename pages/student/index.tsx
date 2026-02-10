@@ -766,7 +766,7 @@ const StudentIndex: React.FC = () => {
 
             {/* Tercera columna */}
             <div className="pl-0 lg:pl-10">
-              <h3 className="font-semibold text-lg">LINKS</h3>
+              <h3 className="font-semibold text-lg">LINK</h3>
               <ul>
                 <li>TÉRMINOS Y CONDICIONES</li>
                 <li>POLÍTICA DE PRIVACIDAD</li>
