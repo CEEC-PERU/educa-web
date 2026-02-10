@@ -72,14 +72,14 @@ const CourseDetails = () => {
         </div>
 
         {/* Hero Section - Mobile First Design */}
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-2 sm:p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4">
           {courseDetail.map((courseDetails) => (
             <div
               key={courseDetails.course_id}
               className="w-full max-w-screen-lg mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 p-2 sm:p-4"
             >
               {/* Text Content */}
-              <div className="text-white order-2 lg:order-1">
+              <div className="text-black order-2 lg:order-1">
                 <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 sm:mb-6 lg:mb-8 leading-tight">
                   {courseDetails.name}
                 </h1>
@@ -93,7 +93,7 @@ const CourseDetails = () => {
                     alt={courseDetails.courseProfessor.full_name}
                   />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-brandrosa-500 font-bold break-words">
+                    <p className="text-sm sm:text-base md:text-lg lg:text-xl text-brandtext365-100 font-bold break-words">
                       {courseDetails.courseProfessor.full_name}
                     </p>
                     <p className="text-xs sm:text-sm md:text-base leading-relaxed">
@@ -107,7 +107,10 @@ const CourseDetails = () => {
               <div className="order-1 lg:order-2 w-full flex justify-center">
                 {/* Mobile: Vertical video like reel */}
                 <div className="block sm:hidden w-full max-w-sm">
-                  <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '9/16' }}>
+                  <div
+                    className="relative w-full bg-black rounded-lg overflow-hidden"
+                    style={{ aspectRatio: '9/16' }}
+                  >
                     <video
                       controls
                       controlsList="nodownload"
@@ -115,14 +118,20 @@ const CourseDetails = () => {
                       className="w-full h-full object-contain"
                       playsInline
                     >
-                      <source src={courseDetails.intro_video} type="video/mp4" />
+                      <source
+                        src={courseDetails.intro_video}
+                        type="video/mp4"
+                      />
                     </video>
                   </div>
                 </div>
 
                 {/* Tablet and Desktop: Horizontal video */}
                 <div className="hidden sm:block w-full">
-                  <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+                  <div
+                    className="relative w-full bg-black rounded-lg overflow-hidden"
+                    style={{ aspectRatio: '16/9' }}
+                  >
                     <video
                       controls
                       controlsList="nodownload"
@@ -130,7 +139,10 @@ const CourseDetails = () => {
                       className="w-full h-full object-contain"
                       playsInline
                     >
-                      <source src={courseDetails.intro_video} type="video/mp4" />
+                      <source
+                        src={courseDetails.intro_video}
+                        type="video/mp4"
+                      />
                     </video>
                   </div>
                 </div>
@@ -140,14 +152,14 @@ const CourseDetails = () => {
         </div>
 
         {/* Course Description Section */}
-        <div className="min-h-screen flex flex-col items-center justify-center bg-brand-100 p-2 sm:p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4">
           {courseDetail.map((courseDetails) => (
             <div
               key={courseDetails.courseCategory.name}
               className="w-full max-w-screen-lg mx-auto flex flex-col lg:grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 p-2 sm:p-4"
             >
               {/* Course Description */}
-              <div className="text-white">
+              <div className="text-black">
                 <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">
                   Descripción del curso
                 </h1>
@@ -163,13 +175,14 @@ const CourseDetails = () => {
                       key={module.module_id}
                       className="flex items-start mb-2 sm:mb-3"
                     >
+                      {/*
                       <img
                         src="https://res.cloudinary.com/dk2red18f/image/upload/v1720132228/WEB_EDUCA/WEB-IMAGENES/mfhd6gr1moprougfd1ig.png"
                         className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 mt-1 flex-shrink-0"
                         alt="Module icon"
-                      />
+                      />*/}
                       <p className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">
-                        {module.name}
+                        - {module.name}
                       </p>
                     </div>
                   ))}
@@ -181,28 +194,28 @@ const CourseDetails = () => {
                 {/* Start Course Button with Arrow */}
                 <div className="bg-transparent border border-gray-300 rounded-lg p-3 sm:p-4">
                   <button
-                    className="w-full sm:w-auto bg-brandmora-500 text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-lg hover:bg-brandmorado-700 border-2 sm:border-4 border-brandborder-400 flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 hover:scale-105 group"
+                    className="w-full sm:w-auto bg-brandm365-100 text-blue px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-lg hover:bg-brandazul-600 hover:text-white border-2 sm:border-4 flex items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base lg:text-lg font-medium transition-all duration-300 hover:scale-105 group"
                     onClick={navigateToCourseDetails}
                   >
                     <span>Empezar el curso</span>
-                    <svg 
-                      className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
                       />
                     </svg>
                   </button>
                 </div>
 
                 {/* Catalog Access Card */}
-                <div className="bg-gradient-to-r from-brand-300 via-brand-200 to-brandazul-200 border-gray-300 rounded-lg p-3 sm:p-4">
+                <div className="bg-brandazul-600 border-gray-300 rounded-lg p-3 sm:p-4">
                   <div className="flex items-start mb-3">
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197722/WEB_EDUCA/ICONOS/gbm5c8g3wy1mzxncwany.png"
@@ -215,21 +228,21 @@ const CourseDetails = () => {
                     </p>
                   </div>
                   <button
-                    className="w-full sm:w-auto bg-brandmora-500 text-white px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-lg hover:bg-brandmorado-700 border-2 sm:border-4 border-brandborder-400 flex items-center justify-center gap-2 text-sm sm:text-base font-medium transition-all duration-300 hover:scale-105 group"
+                    className="w-full sm:w-auto bg-brandm365-100 text-blue px-3 sm:px-4 lg:px-6 py-2 sm:py-3 rounded-lg hover:bg-brandazul-600 hover:text-white border-2 sm:border-4 flex items-center justify-center gap-2 text-sm sm:text-base font-medium transition-all duration-300 hover:scale-105 group"
                     onClick={navigateToCourseDetails}
                   >
                     <span>Ver catálogo de cursos</span>
-                    <svg 
-                      className="w-4 h-4 transition-transform group-hover:translate-x-1" 
-                      fill="none" 
-                      stroke="currentColor" 
+                    <svg
+                      className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                      fill="none"
+                      stroke="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
                       />
                     </svg>
                   </button>
@@ -243,7 +256,7 @@ const CourseDetails = () => {
                       className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 flex-shrink-0"
                       alt="Students icon"
                     />
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-black">
                       10 Estudiantes
                     </p>
                   </div>
@@ -253,7 +266,7 @@ const CourseDetails = () => {
                       className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 flex-shrink-0"
                       alt="Duration icon"
                     />
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-black">
                       Duración: 1h
                     </p>
                   </div>
@@ -263,7 +276,7 @@ const CourseDetails = () => {
                       className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 flex-shrink-0"
                       alt="Lessons icon"
                     />
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-black">
                       4 Lecciones
                     </p>
                   </div>
@@ -273,7 +286,7 @@ const CourseDetails = () => {
                       className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 flex-shrink-0"
                       alt="Level icon"
                     />
-                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-white">
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-black">
                       Nivel Intermedio
                     </p>
                   </div>
@@ -298,23 +311,27 @@ const CourseDetails = () => {
           ) : null}
 
           {/* Course Curriculum Section */}
-          <div className="w-full bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 pb-12 sm:pb-16 lg:pb-20 px-2 sm:px-4 lg:px-8 xl:px-60">
-            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 text-white pt-12 sm:pt-16 lg:pt-20">
+          <div className="w-full bg-gradient-to-r pb-12 sm:pb-16 lg:pb-20 px-2 sm:px-4 lg:px-8 xl:px-60">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 text-black pt-12 sm:pt-16 lg:pt-20">
               Temario
             </h1>
             {courseDetail.map((courseDetails) => (
-              <div key={courseDetails.course_id} className="space-y-3 sm:space-y-4">
+              <div
+                key={courseDetails.course_id}
+                className="space-y-3 sm:space-y-4"
+              >
                 {courseDetails.courseModules.map((module) => (
                   <div
                     key={module.module_id}
                     className="bg-brandazul-600 p-3 sm:p-4 lg:p-6 border border-gray-300 rounded-lg text-white"
                   >
                     <div className="flex items-start mb-3 sm:mb-4">
+                      {/*
                       <img
                         src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/rp2dudec5uvmkpq2e9rw.png"
                         className="w-4 h-6 sm:w-5 sm:h-8 lg:w-6 lg:h-10 mr-2 sm:mr-3 flex-shrink-0"
                         alt="Module icon"
-                      />
+                      />*/}
                       <p className="text-sm sm:text-base md:text-lg lg:text-xl font-medium">
                         Módulo: {module.name}
                       </p>
@@ -322,16 +339,18 @@ const CourseDetails = () => {
                     <div className="ml-6 sm:ml-8 space-y-2">
                       {module.moduleSessions.map((session) => (
                         <div
-                          key={ module.module_id}
+                          key={module.module_id}
                           className="flex items-start"
                         >
+                          {/*
                           <img
                             src="https://res.cloudinary.com/dk2red18f/image/upload/v1720200323/WEB_EDUCA/ICONOS/pxuankjrczkaks3sei4m.png"
                             className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 mr-2 sm:mr-3 mt-1 flex-shrink-0"
                             alt="Session icon"
-                          />
+                          />*/}
+
                           <p className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">
-                            Sesión: {session.name}
+                            - Sesión: {session.name}
                           </p>
                         </div>
                       ))}
@@ -342,15 +361,12 @@ const CourseDetails = () => {
             ))}
 
             {/* Professor Section */}
-            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 text-white mt-8 sm:mt-12">
+            <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-4 sm:mb-6 text-black mt-8 sm:mt-12">
               Docente
             </h1>
-            <div className="bg-gradient-to-r border-2 border-brandblanco-200 rounded-lg from-brand-100 via-brand-200 to-brand-300 p-3 sm:p-4 lg:p-6">
+            <div className="bg-brandazul-600 border-2 border-brandblanco-200 rounded-lg p-3 sm:p-4 lg:p-6">
               {courseDetail.map((courseDetails) => (
-                <div
-                  key={courseDetails.course_id}
-                  className="w-full"
-                >
+                <div key={courseDetails.course_id} className="w-full">
                   <div className="text-white">
                     <div className="flex items-start">
                       <img
@@ -359,7 +375,7 @@ const CourseDetails = () => {
                         alt={courseDetails.courseProfessor.full_name}
                       />
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-brandrosa-500 font-bold mb-1 sm:mb-2 break-words">
+                        <p className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-brandtext365-100 font-bold mb-1 sm:mb-2 break-words">
                           {courseDetails.courseProfessor.full_name}
                         </p>
                         <p className="text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed">

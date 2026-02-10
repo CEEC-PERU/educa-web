@@ -52,7 +52,7 @@ const JuegosIndex: React.FC = () => {
           />
         </div>
 
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-40 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-brandazul-600 pt-40 pb-40 p-4">
           <div className="flex flex-col lg:flex-row items-center p-8 rounded-lg shadow-md w-full max-w-screen-lg pb-20">
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1721710871/WEB_EDUCA/fdlrrlouggyv3b7yvaag.gif"
