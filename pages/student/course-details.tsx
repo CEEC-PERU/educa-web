@@ -91,7 +91,7 @@ const CourseDetails = () => {
                     alt={courseDetails.courseProfessor.full_name}
                   />
                   <div>
-                    <p className="text-lg lg:text-xl text-brandrosa-500 font-bold">
+                    <p className="text-lg lg:text-xl text-white font-bold">
                       {courseDetails.courseProfessor.full_name}
                     </p>
                     <p className="text-xs lg:text-sm">
