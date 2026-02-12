@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import Modal from 'react-modal';
-import { useAuth } from '../../context/AuthContext';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/student/DrawerNavigation';
-import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/User/UserInterfaces';
-import { useCourseStudent } from '../../hooks/useCourseStudents';
-import CourseCard from '../../components/student/CourseCard';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import Modal from "react-modal";
+import { useAuth } from "../../context/AuthContext";
+import ProtectedRoute from "../../components/Auth/ProtectedRoute";
+import SidebarDrawer from "../../components/student/DrawerNavigation";
+import Navbar from "../../components/Navbar";
+import { Profile } from "../../interfaces/User/UserInterfaces";
+import { useCourseStudent } from "../../hooks/useCourseStudents";
+import CourseCard from "../../components/student/CourseCard";
+import { useRouter } from "next/router";
 
-import './../../app/globals.css';
+import "./../../app/globals.css";
 
-Modal.setAppElement('#__next');
+Modal.setAppElement("#__next");
 
 const Diplomas: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  let name = '';
-  let uri_picture = '';
+  let name = "";
+  let uri_picture = "";
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -58,7 +58,7 @@ const Diplomas: React.FC = () => {
 
                 <div className="bg-white p-6 rounded-lg shadow-lg">
                   <img
-                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1721844303/WEB_EDUCA/DIPLOMA/zus1a1zbfsi5qstfslol.png"
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1770871986/WEB_EDUCA/DIPLOMA/Certificado_Reconocimiento_rrn1dp.jpg"
                     className="w-full h-auto object-contain rounded-md mb-4 border-4 border-brand-100"
                     alt="Diploma"
                   />
@@ -66,8 +66,8 @@ const Diplomas: React.FC = () => {
                     className="w-full bg-brand-300 text-white px-4 py-2 rounded-lg hover:bg-brand-200"
                     onClick={() =>
                       window.open(
-                        'https://res.cloudinary.com/dk2red18f/image/upload/v1721844303/WEB_EDUCA/DIPLOMA/uzmb7q4f42vipmncvtht.pdf',
-                        '_blank',
+                        "https://res.cloudinary.com/dk2red18f/image/upload/v1770871997/WEB_EDUCA/DIPLOMA/Certificado_Reconocimiento_t6a0s4.pdf",
+                        "_blank",
                       )
                     }
                   >
