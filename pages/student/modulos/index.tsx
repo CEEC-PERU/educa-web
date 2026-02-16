@@ -64,6 +64,30 @@ const Home: React.FC = () => {
   }
 
   useEffect(() => {
+    if (
+      courseData &&
+      courseData.length > 0 &&
+      courseData[0].courseModules.length > 0
+    ) {
+      // Obtener el primer módulo
+      const firstModule = courseData[0].courseModules[0];
+
+      // Verificar si el módulo tiene sesiones
+      if (firstModule.moduleSessions && firstModule.moduleSessions.length > 0) {
+        const firstSession = firstModule.moduleSessions[0];
+
+        // Seleccionar automáticamente la primera sesión
+        setSelectedModuleId(firstModule.module_id);
+        setSelectedSession({
+          video: firstSession.video_enlace,
+          session_id: firstSession.session_id,
+          module_id: firstModule.module_id,
+        });
+      }
+    }
+  }, [courseData]);
+
+  useEffect(() => {
     let timer = 0; // Contador en segundos
     const startTime = new Date(); // Hora exacta de inicio
 
