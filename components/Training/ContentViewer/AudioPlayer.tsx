@@ -1,16 +1,18 @@
-import React, { useRef, useState } from "react";
-import { PlayIcon, PauseIcon } from "@heroicons/react/20/solid";
+import React, { useRef, useState } from 'react';
+import { PlayIcon, PauseIcon } from '@heroicons/react/20/solid';
 
 interface AudioPlayerProps {
   url: string;
   onProgress: (state: { played: number; playedSeconds: number }) => void;
   onEnded: () => void;
+  allowSeekForward?: boolean;
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({
   url,
   onProgress,
   onEnded,
+  allowSeekForward = false,
 }) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -52,6 +54,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Solo permitir seek si está habilitado
+    if (!allowSeekForward) return;
+
     const audio = audioRef.current;
     if (audio) {
       const newTime = (parseFloat(e.target.value) / 100) * audio.duration;
@@ -69,7 +74,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -112,7 +117,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
             max="100"
             value={progress}
             onChange={handleSeek}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            disabled={!allowSeekForward}
+            className={`w-full h-2 bg-gray-700 rounded-lg appearance-none ${
+              allowSeekForward
+                ? 'cursor-pointer'
+                : 'cursor-not-allowed opacity-75'
+            } accent-blue-500`}
             style={{
               background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${progress}%, #374151 ${progress}%, #374151 100%)`,
             }}

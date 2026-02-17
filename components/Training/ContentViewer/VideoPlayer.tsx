@@ -7,6 +7,7 @@ import {
   MediaPlayerInstance,
   MediaTimeUpdateEventDetail,
   MediaTimeUpdateEvent,
+  MediaRateChangeEvent,
 } from '@vidstack/react';
 import {
   defaultLayoutIcons,
@@ -27,6 +28,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const player = useRef<MediaPlayerInstance>(null);
   const lastSavedProgress = useRef<number>(0);
 
+  // --- LÓGICA DE VELOCIDAD ---
+  const handleRateChange = (detail: number, event: MediaRateChangeEvent) => {
+    const MAX_SPEED = 1.5;
+
+    // Si la nueva velocidad es mayor a 1.5
+    if (detail > MAX_SPEED && player.current) {
+      // Forzamos a que sea 1.5
+      player.current.playbackRate = MAX_SPEED;
+    }
+  };
+
   const handleTimeUpdate = (
     detail: MediaTimeUpdateEventDetail,
     event: MediaTimeUpdateEvent,
@@ -36,13 +48,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
     if (duration > 0) {
       const currentProgress = (currentTime / duration) * 100;
-
       if (
         currentProgress - lastSavedProgress.current >= 1 ||
         currentProgress === 100
       ) {
         lastSavedProgress.current = currentProgress;
-
         onProgress({
           played: currentProgress,
           playedSeconds: currentTime,
@@ -58,6 +68,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         title="Capacitación MentorMind"
         src={url}
         onTimeUpdate={handleTimeUpdate}
+        onRateChange={handleRateChange} // <-- Escuchamos el cambio de velocidad
         onEnded={() => {
           lastSavedProgress.current = 100;
           onEnded();
@@ -67,12 +78,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         <MediaProvider>
           <video
-            controlsList="nodownload"
+            controlsList="nodownload noplaybackrate" // Intenta ocultar el menú nativo en algunos navegadores
             onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full"
           />
         </MediaProvider>
-        <DefaultVideoLayout icons={defaultLayoutIcons} />
+
+        <DefaultVideoLayout
+          icons={defaultLayoutIcons}
+          slots={{
+            beforeTimeSlider: null,
+            timeSlider: null,
+            afterTimeSlider: null,
+          }}
+        />
       </MediaPlayer>
     </div>
   );
