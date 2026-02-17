@@ -75,6 +75,15 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
             </li>
             <li>
               <button
+                onClick={() => handleNavigation('/content/flashcards')}
+                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+              >
+                <CubeIcon className="h-6 w-6" />
+                {isOpen && <span className="ml-2">Flashcards</span>}
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={() => handleNavigation('/content/professors')}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
