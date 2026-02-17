@@ -1,4 +1,5 @@
-import { Session } from './Session'; // Asegúrate de que existe la interfaz Session
+import { Session } from './Session';
+import { Flashcard } from './Flashcard';
 export interface Module {
   module_id: number;
   name: string;
@@ -7,5 +8,6 @@ export interface Module {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  moduleSessions?: Session[]; 
+  moduleSessions?: Session[];
+  moduleFlashcards?: Flashcard[];
 }
