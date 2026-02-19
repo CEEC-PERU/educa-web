@@ -14,7 +14,11 @@ import { Module } from '@/interfaces/Module';
 import { ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { getModulesByCourseId } from '@/services/courses/courseService';
 import ButtonComponent from '@/components/ButtonComponent';
-import { Flashcard } from '@/interfaces/Flashcard';
+import { deleteFlashcard } from '@/services/flashcards/flashcardService';
+import { TrashIcon } from '@heroicons/react/24/solid';
+import useModal from '@/hooks/ui/useModal';
+import ModalConfirmation from '@/components/ModalConfirmation';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const FlashcardsPage: React.FC = () => {
   const router = useRouter();
@@ -23,16 +27,21 @@ const FlashcardsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [selectedFlashcard, setSelectedFlashcard] = useState<Flashcard | null>(
+  const [selectedFlashcard, setSelectedFlashcard] = useState<any>(null);
+  const [modules, setModules] = useState<Module[]>([]);
+  const [flashcardToDelete, setFlashcardToDelete] = useState<number | null>(
     null,
   );
-  const [modules, setModules] = useState<Module[]>([]);
+  const {
+    isVisible: isFlashcardModalVisible,
+    showModal: showFlashcardModal,
+    hideModal: hideFlashcardModal,
+  } = useModal();
 
   useEffect(() => {
     const fetchModules = async () => {
       try {
         const [modulesData] = await Promise.all([
-          //necesito cambiar el servicio para traer el modulo con las flashcards
           getModulesByCourseId(Number(id)),
         ]);
         setModules(modulesData);
@@ -48,6 +57,34 @@ const FlashcardsPage: React.FC = () => {
       setTimeout(() => setSuccessMessage(null), 5000);
     }
   }, [id, router.query.success]);
+
+  const handleDeleteFlashcard = async () => {
+    if (flashcardToDelete !== null) {
+      try {
+        await deleteFlashcard(flashcardToDelete);
+        setModules(
+          modules.map((module) => ({
+            ...module,
+            moduleFlashcards:
+              module.moduleFlashcards?.filter(
+                (flashcard) => flashcard.flashcard_id !== flashcardToDelete,
+              ) || [],
+          })),
+        );
+        setSuccessMessage('Flashcard eliminada exitosamente');
+        setTimeout(() => setSuccessMessage(null), 5000);
+        setFlashcardToDelete(null);
+        hideFlashcardModal();
+      } catch (error) {
+        console.error('Error al eliminar la flashcard:', error);
+        setError('Hubo un error al eliminar la flashcard');
+      }
+    }
+  };
+
+  const handleCloseFlashcard = () => {
+    setSelectedFlashcard(null);
+  };
 
   return (
     <ProtectedRoute>
@@ -146,9 +183,38 @@ const FlashcardsPage: React.FC = () => {
                   </div>
                 ))}
               </div>
+              {selectedFlashcard && (
+                <aside className="w-3/5 bg-white p-4 border-l border-gray-300 shadow-lg ml-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-xl font-bold">
+                      {selectedFlashcard.question}
+                    </h2>
+                    <div className="flex items-center space-x-2">
+                      {/* mostrar las respuestas correctas e incorrectas */}
+
+                      <button
+                        onClick={() => {
+                          setFlashcardToDelete(selectedFlashcard.flashcard_id);
+                          showFlashcardModal();
+                        }}
+                      >
+                        <TrashIcon className="w-5 h-5 text-red-500 hover:text-red-700" />
+                      </button>
+                      <button onClick={handleCloseFlashcard}>
+                        <XMarkIcon className="w-5 h-5 text-gray-500 cursor-pointer" />
+                      </button>
+                    </div>
+                  </div>
+                </aside>
+              )}
             </div>
           </main>
         </div>
+        <ModalConfirmation
+          show={isFlashcardModalVisible}
+          onClose={hideFlashcardModal}
+          onConfirm={handleDeleteFlashcard}
+        />
       </div>
     </ProtectedRoute>
   );
