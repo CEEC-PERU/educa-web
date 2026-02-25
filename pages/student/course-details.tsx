@@ -172,8 +172,9 @@ const CourseDetails = () => {
                     Ver catálogo de cursos
                   </button>
                 </div>
-                {/*
+
                 <div className="bg-transparent border border-gray-300 rounded p-4 mt-4">
+                  {/*
                   <div className="flex items-center mb-2">
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/lrnfzdnkubtj6f6nonhi.png"
@@ -194,6 +195,7 @@ const CourseDetails = () => {
                       Duración: 1h
                     </p>
                   </div>
+                  */}
                   <div className="flex items-center mb-2">
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/usna5kpyfkorticwhawp.png"
@@ -215,7 +217,6 @@ const CourseDetails = () => {
                     </p>
                   </div>
                 </div>
-                */}
               </div>
             </div>
           ))}
