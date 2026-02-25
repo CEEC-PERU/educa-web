@@ -5,6 +5,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   // se emplea un rewrite para redirigir las solicitudes al CDN
+  /*
   async rewrites() {
     return [
       {
@@ -12,7 +13,7 @@ const nextConfig = {
         destination: "https://cdn.mentormind.com.pe/:path*",
       },
     ];
-  },
+  },*/
 };
 
 export default nextConfig;
