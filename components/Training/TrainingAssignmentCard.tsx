@@ -6,8 +6,8 @@ import {
   Clock,
   CheckCircle2,
   ArrowRight,
+  PowerOff,
 } from 'lucide-react';
-import { LuTrash } from 'react-icons/lu';
 
 interface TrainingAssignmentCardProps {
   assignment: TrainingAssignment;
@@ -82,15 +82,15 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
           </div>
 
           <div className="ml-4 flex items-center gap-2">
-            {/* Botón Eliminar */}
+            {/* Botón Desactivar */}
             {onDelete && (
               <button
                 type="button"
                 onClick={handleDelete}
-                className="w-9 h-9 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors group/btn z-10"
-                title="Eliminar asignación"
+                className="w-9 h-9 rounded-lg bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors group/btn z-10"
+                title="Desactivar asignación"
               >
-                <LuTrash className="w-4 h-4 text-red-600 group-hover/btn:scale-110 transition-transform" />
+                <PowerOff className="w-4 h-4 text-amber-600 group-hover/btn:scale-110 transition-transform" />
               </button>
             )}
           </div>

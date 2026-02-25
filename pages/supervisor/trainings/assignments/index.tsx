@@ -64,9 +64,9 @@ const AssignmentsPage: React.FC = () => {
       closeDeleteModal();
       await refetch();
     } catch (error) {
-      console.error('Error al intentar eliminar la asignación:', error);
+      console.error('Error al intentar desactivar la asignación:', error);
       alert(
-        'Hubo un error al eliminar la asignación. Por favor, inténtalo de nuevo.',
+        'Hubo un error al desactivar la asignación. Por favor, inténtalo de nuevo.',
       );
     } finally {
       setIsDeleting(false);
@@ -149,17 +149,18 @@ const AssignmentsPage: React.FC = () => {
         <Modal
           isOpen={isModalDeleteOpen}
           onClose={closeDeleteModal}
-          title="Confirmar Eliminación"
+          title="Desactivar Asignación"
           size="md"
         >
           <div className="space-y-4">
             <p className="text-gray-700">
-              ¿Estás seguro de que deseas eliminar esta asignación?
+              ¿Estás seguro de que deseas desactivar esta asignación?
             </p>
 
             <p className="text-sm text-gray-500">
-              Esta acción no se puede deshacer. Una vez eliminada, la asignación
-              será removida del sistema.
+              La asignación pasará a estado inactivo y los estudiantes ya no
+              podrán ver el programa. Si vuelves a asignar el mismo programa
+              a la misma campaña, se reactivará automáticamente.
             </p>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
@@ -173,7 +174,7 @@ const AssignmentsPage: React.FC = () => {
               <button
                 onClick={confirmDelete}
                 disabled={isDeleting}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center"
+                className="px-4 py-2 text-sm font-medium text-white bg-amber-600 rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors flex items-center"
               >
                 {isDeleting && (
                   <svg
@@ -197,7 +198,7 @@ const AssignmentsPage: React.FC = () => {
                     ></path>
                   </svg>
                 )}
-                {isDeleting ? 'Eliminando...' : 'Eliminar'}
+                {isDeleting ? 'Desactivando...' : 'Desactivar'}
               </button>
             </div>
           </div>
