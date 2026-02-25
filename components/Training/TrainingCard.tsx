@@ -1,8 +1,8 @@
-import React from 'react';
-import { TrainingProgram } from '@/interfaces/Training/Training';
-import { CalendarIcon, BookOpenIcon } from '@heroicons/react/24/outline';
-import { LuPencil, LuTrash } from 'react-icons/lu';
-import { EyeIcon } from 'lucide-react';
+import React from "react";
+import { TrainingProgram } from "@/interfaces/Training/Training";
+import { CalendarIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { LuPencil, LuTrash } from "react-icons/lu";
+import { EyeIcon } from "lucide-react";
 
 interface TrainingCardProps {
   training: TrainingProgram;
@@ -43,11 +43,11 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
             className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap
             ${
               training.is_active === true
-                ? 'bg-green-100 text-green-800'
-                : 'bg-gray-100 text-gray-800'
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
             }`}
           >
-            {training.is_active === true ? 'Activo' : 'Inactivo'}
+            {training.is_active === true ? "Activo" : "Inactivo"}
           </span>
         </div>
       </div>
@@ -80,6 +80,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
             <span className="hidden sm:inline">Editar</span>
           </button>
         )}
+        {/*
         {onDelete && (
           <button
             onClick={(e) => {
@@ -91,7 +92,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
             <LuTrash className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Eliminar</span>
           </button>
-        )}
+        )}*/}
       </div>
     </div>
   );
