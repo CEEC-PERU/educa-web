@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { useAuth } from '../../context/AuthContext';
 import { Profile } from '../../interfaces/User/UserInterfaces';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 
 const DrawerNavigation: React.FC<{
   isDrawerOpen: boolean;
@@ -17,6 +18,11 @@ const DrawerNavigation: React.FC<{
 }> = ({ isDrawerOpen, toggleSidebar }) => {
   const router = useRouter();
   const { logout, profileInfo } = useAuth();
+  const [isCursosOpen, setIsCursosOpen] = useState(false);
+
+  const toggleCursosDropdown = () => {
+    setIsCursosOpen(!isCursosOpen);
+  };
 
   let name = '';
   let uri_picture = '';
@@ -68,12 +74,38 @@ const DrawerNavigation: React.FC<{
             </li>
             <li>
               <button
-                onClick={() => handleNavigation('/student/cursos')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                onClick={
+                  isDrawerOpen
+                    ? toggleCursosDropdown
+                    : () => handleNavigation('/student/cursos')
+                }
+                className="flex items-center justify-between p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <ComputerDesktopIcon className="h-6 w-6" />
-                {isDrawerOpen && <span className="ml-2">Cursos</span>}
+                <div className="flex items-center">
+                  <ComputerDesktopIcon className="h-6 w-6" />
+                  {isDrawerOpen && <span className="ml-2">Cursos</span>}
+                </div>
+                {isDrawerOpen &&
+                  (isCursosOpen ? (
+                    <ChevronUpIcon className="h-4 w-4" />
+                  ) : (
+                    <ChevronDownIcon className="h-4 w-4" />
+                  ))}
               </button>
+              {isDrawerOpen && isCursosOpen && (
+                <ul className="bg-brandmorado-800">
+                  <li>
+                    <button
+                      onClick={() =>
+                        handleNavigation('/student/capacitaciones')
+                      }
+                      className="flex items-center p-3 pl-12 text-white hover:bg-brand-200 w-full text-left text-sm"
+                    >
+                      Capacitaciones
+                    </button>
+                  </li>
+                </ul>
+              )}
             </li>
             <li>
               <button

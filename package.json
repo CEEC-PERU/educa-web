@@ -16,6 +16,7 @@
     "@nivo/bar": "^0.87.0",
     "@nivo/line": "^0.87.0",
     "@nivo/pie": "^0.87.0",
+    "@vidstack/react": "^1.12.13",
     "axios": "^1.7.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
