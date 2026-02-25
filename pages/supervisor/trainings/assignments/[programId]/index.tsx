@@ -11,6 +11,7 @@ import {
   Clock,
   Award,
   TrendingUp,
+  Download,
 } from 'lucide-react';
 
 const TrainingAssignmentStudentsPage: React.FC = () => {
@@ -51,6 +52,30 @@ const TrainingAssignmentStudentsPage: React.FC = () => {
     };
   };
 
+  const exportToCSV = () => {
+    const headers = ['DNI', 'Campaña', 'Contenidos Completados', 'Total Contenidos', 'Progreso (%)'];
+    const rows = studentAssignments.map((s) => [
+      s.dni,
+      `"${(s.classroom.name || '').replace(/"/g, '""')}"`,
+      s.progress.completed_contents,
+      s.progress.total_contents,
+      s.progress.progress_percentage,
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const BOM = '\uFEFF';
+    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0, 10);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `estudiantes_programa_${programId}_${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="relative min-h-screen flex flex-col bg-gray-50">
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
@@ -81,24 +106,35 @@ const TrainingAssignmentStudentsPage: React.FC = () => {
                     )}
                   </p>
                 </div>
-                <button
-                  onClick={refetch}
-                  disabled={loading}
-                  className="mt-4 sm:mt-0 inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 transition-all shadow-sm"
-                >
-                  <svg
-                    className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
+                <div className="flex items-center gap-3 mt-4 sm:mt-0">
+                  {!loading && studentAssignments.length > 0 && (
+                    <button
+                      onClick={exportToCSV}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl text-sm font-medium text-white hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm hover:shadow-md"
+                    >
+                      <Download className="w-4 h-4" />
+                      Exportar CSV
+                    </button>
+                  )}
+                  <button
+                    onClick={refetch}
+                    disabled={loading}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-400 disabled:opacity-50 transition-all shadow-sm"
                   >
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  {loading ? 'Actualizando...' : 'Actualizar'}
-                </button>
+                    <svg
+                      className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`}
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    {loading ? 'Actualizando...' : 'Actualizar'}
+                  </button>
+                </div>
               </div>
 
               {/* Stats cards - Solo si hay datos */}
