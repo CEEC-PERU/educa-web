@@ -34,7 +34,7 @@ const CardCarousel: React.FC = () => {
             slidesPerView: 3,
             spaceBetween: 20,
           },
-          1280: {
+          1440: {
             slidesPerView: 4,
             spaceBetween: 20,
           },

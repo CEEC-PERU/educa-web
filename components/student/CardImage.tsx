@@ -43,12 +43,12 @@ const CardImage: React.FC<CardImageProps> = ({
   const displayImage = image || imageUrl;
 
   return (
-    <div className={`relative flex flex-col w-full max-w-sm sm:max-w-md lg:max-w-lg ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-2 my-4`}>
-      <div className={`relative mx-4 mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
+    <div className={`relative flex flex-col w-full ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-1 lg:mx-2 my-4`}>
+      <div className={`relative mx-2 lg:mx-4 mt-2 lg:mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
           alt={displayName}
-          className={`w-full h-48 object-cover ${isCircular ? 'rounded-full' : ''}`}
+          className={`w-full h-32 md:h-36 lg:h-48 object-cover ${isCircular ? 'rounded-full' : ''}`}
         />
          
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60">
@@ -59,27 +59,27 @@ const CardImage: React.FC<CardImageProps> = ({
         >
         </button>
       </div>
-      <div className="p-4">
+      <div className="p-2 lg:p-4">
       <img
           src="https://res.cloudinary.com/dk2red18f/image/upload/v1724344210/WEB_EDUCA/wcetlngqtjvr13hrc0l6.png"
-          className={` h-3  justify-left mb-5 `}
+          className={` h-2 lg:h-3 justify-left mb-2 lg:mb-5 `}
         />
          <div className=" flex justify-center">
           <ButtonComponent 
             buttonLabel={` ${buttonLabel}`}
             backgroundColor="bg-blue-700" 
             textColor="text-white" 
-            fontSize="text-xs" 
+            fontSize="text-[10px] lg:text-xs" 
             buttonSize="p-2"
             onClick={() => onButtonClick && onButtonClick(id)}
             navigateTo="/login" // Nueva prop para navegación
           />
         </div>
-        <div className="flex items-center justify-center mb-3 pt-4">
+        <div className="flex items-center justify-center mb-2 lg:mb-3 pt-2 lg:pt-4">
           
         
             {/* Título */}
-            <h5 className={`block font-sans text-xl text-center antialiased font-bold leading-snug tracking-normal ${textColor} truncate`}>
+            <h5 className={`block font-sans text-sm lg:text-xl text-center antialiased font-bold leading-snug tracking-normal ${textColor} line-clamp-2`}>
             {displayName}
           </h5>
         </div>
@@ -87,23 +87,23 @@ const CardImage: React.FC<CardImageProps> = ({
         
 
         {/* Usuarios */}
-        <p className="text-sm text-gray-500 mb-2">
+        <p className="text-xs lg:text-sm text-gray-500 mb-1 lg:mb-2">
           👥 {usuarios}
         </p>
-        <p className="flex justify-center items-center gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
+        <p className="flex justify-center items-center gap-1 lg:gap-1.5 font-sans text-base font-normal leading-relaxed text-blue-gray-900 antialiased">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-3 w-3 lg:h-5 lg:w-5 text-yellow-700">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd"></path>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-3 w-3 lg:h-5 lg:w-5 text-yellow-700">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd"></path>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-3 w-3 lg:h-5 lg:w-5 text-yellow-700">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd"></path>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-3 w-3 lg:h-5 lg:w-5 text-yellow-700">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd"></path>
             </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-5 w-5 text-yellow-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="-mt-0.5 h-3 w-3 lg:h-5 lg:w-5 text-yellow-700">
               <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd"></path>
             </svg>
            
