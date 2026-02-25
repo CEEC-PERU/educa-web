@@ -1,14 +1,14 @@
-import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import CourseMaterials from '../../components/student/CourseMaterials';
-import { useAuth } from '../../context/AuthContext';
-import { Profile } from '../../interfaces/User/UserInterfaces';
-import SidebarDrawer from '../../components/student/DrawerNavigation';
-import { useCourseDetail } from '../../hooks/courses/useCourseDetail';
-import { useCoursesMaterials } from '../../hooks/courses/courseMaterial';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import React, { useState } from 'react';
-import './../../app/globals.css';
+import { useRouter } from "next/router";
+import Navbar from "../../components/Navbar";
+import CourseMaterials from "../../components/student/CourseMaterials";
+import { useAuth } from "../../context/AuthContext";
+import { Profile } from "../../interfaces/User/UserInterfaces";
+import SidebarDrawer from "../../components/student/DrawerNavigation";
+import { useCourseDetail } from "../../hooks/courses/useCourseDetail";
+import { useCoursesMaterials } from "../../hooks/courses/courseMaterial";
+import ProtectedRoute from "../../components/Auth/ProtectedRoute";
+import React, { useState } from "react";
+import "./../../app/globals.css";
 
 //datos
 const CourseDetails = () => {
@@ -18,12 +18,12 @@ const CourseDetails = () => {
 
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
-    : parseInt(course_id || '0');
+    : parseInt(course_id || "0");
   const { coursesMaterials } = useCoursesMaterials(courseIdNumber);
   const { courseDetail, isLoading } = useCourseDetail(courseIdNumber);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  let name = '';
-  let uri_picture = '';
+  let name = "";
+  let uri_picture = "";
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -33,7 +33,7 @@ const CourseDetails = () => {
 
   const navigateToCourseDetails = () => {
     router.push({
-      pathname: '/student/modulos/',
+      pathname: "/student/modulos/",
       query: { course_id: courseIdNumber },
     });
   };
@@ -45,8 +45,8 @@ const CourseDetails = () => {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const npsScore = formData.get('nps-score');
-    const feedback = formData.get('feedback');
+    const npsScore = formData.get("nps-score");
+    const feedback = formData.get("feedback");
 
     // Handle form submission logic here, such as sending data to an API.
     console.log({ npsScore, feedback });
@@ -155,7 +155,7 @@ const CourseDetails = () => {
                   Empezar el curso
                 </button>
 
-                <div className="bg-gradient-to-r from-brand-300 via-brand-200 to-brandazul-200 border-gray-300 rounded p-4 mt-4">
+                <div className="bg-gradient-to-r from-brand-300 via-brand-200 to-brandazul-200 border-gray-300 rounded p-4 mt-10">
                   <img
                     src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197722/WEB_EDUCA/ICONOS/gbm5c8g3wy1mzxncwany.png"
                     className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
@@ -172,7 +172,7 @@ const CourseDetails = () => {
                     Ver catálogo de cursos
                   </button>
                 </div>
-
+                {/*
                 <div className="bg-transparent border border-gray-300 rounded p-4 mt-4">
                   <div className="flex items-center mb-2">
                     <img
@@ -215,6 +215,7 @@ const CourseDetails = () => {
                     </p>
                   </div>
                 </div>
+                */}
               </div>
             </div>
           ))}
