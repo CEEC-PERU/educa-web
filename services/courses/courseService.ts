@@ -16,7 +16,8 @@ export const getCourse = async (id: string): Promise<Course> => {
 export const addCourse = async (
   course: Omit<Course, 'course_id' | 'created_at' | 'updated_at'>,
   videoFile: File,
-  imageFile: File
+  imageFile: File,
+  presentationVideoFile?: File
 ): Promise<void> => {
   const formData = new FormData();
 
@@ -28,6 +29,9 @@ export const addCourse = async (
   // Agrega los archivos al FormData
   formData.append('video', videoFile);
   formData.append('image', imageFile);
+  if (presentationVideoFile) {
+    formData.append('presentation_video', presentationVideoFile);
+  }
 
   await axios.post(API_COURSES, formData, {
     headers: {

@@ -1,25 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import { getCategories } from '../../services/categoryService';
-import { getProfessors } from '../../services/professorService';
-import { getCourse, updateCourse } from '../../services/courses/courseService';
-import { uploadVideo } from '../../services/videoService';
-import { uploadImage } from '../../services/imageService';
-import { getAvailableEvaluations } from '../../services/evaluationService';
-import { Category } from '../../interfaces/Category';
-import { Professor } from '../../interfaces/Professor';
-import { Evaluation } from '../../interfaces/Evaluation';
-import { Course } from '../../interfaces/Courses/Course';
-import MediaUploadPreview from '../../components/MediaUploadPreview';
-import FormField from '../../components/FormField';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import ActionButtons from '../../components/Content/ActionButtons';
-import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import Loader from '../../components/Loader';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Navbar from "@components/Navbar";
+import Sidebar from "@components/Content/SideBar";
+import { getCategories } from "@services/categoryService";
+import { getProfessors } from "@services/professorService";
+import { getCourse, updateCourse } from "@services/courses/courseService";
+import { uploadVideo } from "@services/videoService";
+import { uploadImage } from "@services/imageService";
+import { getAvailableEvaluations } from "@services/evaluationService";
+import { Category } from "@/interfaces/Category";
+import { Professor } from "@/interfaces/Professor";
+import { Evaluation } from "@/interfaces/Evaluation";
+import { Course } from "@/interfaces/Courses/Course";
+import MediaUploadPreview from "@components/MediaUploadPreview";
+import FormField from "@components/FormField";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import ActionButtons from "@components/Content/ActionButtons";
+import "./../../app/globals.css";
+import AlertComponent from "@components/AlertComponent";
+import ProtectedRoute from "@components/Auth/ProtectedRoute";
+import Loader from "@components/Loader";
 
 const EditCourse: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -31,19 +31,21 @@ const EditCourse: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [presentationVideoFile, setPresentationVideoFile] = useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [formData, setFormData] = useState<
-    Omit<Course, 'course_id' | 'created_at' | 'updated_at'>
+    Omit<Course, "course_id" | "created_at" | "updated_at">
   >({
-    name: '',
-    description_short: '',
-    description_large: '',
+    name: "",
+    description_short: "",
+    description_large: "",
     category_id: 0,
     professor_id: 0,
-    intro_video: '',
-    duration_video: '',
-    image: '',
-    duration_course: '',
+    intro_video: "",
+    presentation_professor: "",
+    duration_video: "",
+    image: "",
+    duration_course: "",
     evaluation_id: 0,
     is_active: true,
   });
@@ -65,14 +67,14 @@ const EditCourse: React.FC = () => {
         setProfessors(professorsRes);
 
         const currentEvaluation = availableEvaluations.find(
-          (evaluation) => evaluation.evaluation_id === courseRes.evaluation_id
+          (evaluation) => evaluation.evaluation_id === courseRes.evaluation_id,
         );
         const updatedEvaluations = currentEvaluation
           ? [
               currentEvaluation,
               ...availableEvaluations.filter(
                 (evaluation) =>
-                  evaluation.evaluation_id !== courseRes.evaluation_id
+                  evaluation.evaluation_id !== courseRes.evaluation_id,
               ),
             ]
           : availableEvaluations;
@@ -86,6 +88,7 @@ const EditCourse: React.FC = () => {
           category_id: courseRes.category_id,
           professor_id: courseRes.professor_id,
           intro_video: courseRes.intro_video,
+          presentation_professor: courseRes.presentation_professor ?? "",
           duration_video: courseRes.duration_video,
           image: courseRes.image,
           duration_course: courseRes.duration_course,
@@ -94,7 +97,7 @@ const EditCourse: React.FC = () => {
         });
         setLoading(false);
       } catch (error) {
-        setError('Error fetching data');
+        setError("Error fetching data");
         setLoading(false);
       }
     };
@@ -105,23 +108,27 @@ const EditCourse: React.FC = () => {
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
+    localStorage.setItem("sidebarState", JSON.stringify(!showSidebar));
   };
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
     setFormData((prevState) => ({
       ...prevState,
-      [id]: type === 'checkbox' ? checked : value,
+      [id]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleVideoUpload = (file: File) => {
     setVideoFile(file);
+  };
+
+  const handlePresentationVideoUpload = (file: File) => {
+    setPresentationVideoFile(file);
   };
 
   const handleImageUpload = (file: File) => {
@@ -133,26 +140,32 @@ const EditCourse: React.FC = () => {
     setFormLoading(true);
     try {
       let videoUrl = formData.intro_video;
+      let presentationVideoUrl = formData.presentation_professor;
       let imageUrl = formData.image;
 
       if (videoFile) {
-        videoUrl = await uploadVideo(videoFile, 'Cursos/Videos');
+        videoUrl = await uploadVideo(videoFile, "Cursos/Videos");
+      }
+
+      if (presentationVideoFile) {
+        presentationVideoUrl = await uploadVideo(presentationVideoFile, "Cursos/Videos");
       }
 
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile, 'Cursos/Images');
+        imageUrl = await uploadImage(imageFile, "Cursos/Images");
       }
 
       await updateCourse(id as string, {
         ...formData,
         intro_video: videoUrl,
+        presentation_professor: presentationVideoUrl,
         image: imageUrl,
       });
-      setSuccess('Curso actualizado exitosamente');
+      setSuccess("Curso actualizado exitosamente");
       setTimeout(() => setSuccess(null), 3000);
     } catch (error) {
-      setError('Error updating course');
-      console.error('Error updating course:', error);
+      setError("Error updating course");
+      console.error("Error updating course:", error);
     } finally {
       setFormLoading(false);
     }
@@ -162,10 +175,10 @@ const EditCourse: React.FC = () => {
     try {
       // Lógica para eliminar el curso
       // await deleteCourse(id as string);
-      router.push('/content');
+      router.push("/content");
     } catch (error) {
-      setError('Error deleting course');
-      console.error('Error deleting course:', error);
+      setError("Error deleting course");
+      console.error("Error deleting course:", error);
     }
   };
 
@@ -185,7 +198,7 @@ const EditCourse: React.FC = () => {
           <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
           <main
             className={`p-6 flex-grow ${
-              showSidebar ? 'ml-20' : ''
+              showSidebar ? "ml-20" : ""
             } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}
           >
             <form
@@ -267,7 +280,7 @@ const EditCourse: React.FC = () => {
                 value={formData.professor_id.toString()}
                 onChange={handleChange}
                 options={[
-                  { value: '', label: 'Seleccionar Profesor' },
+                  { value: "", label: "Seleccionar Profesor" },
                   ...professors.map((professor) => ({
                     value: professor.professor_id.toString(),
                     label: professor.full_name,
@@ -281,7 +294,7 @@ const EditCourse: React.FC = () => {
                 value={formData.evaluation_id.toString()}
                 onChange={handleChange}
                 options={[
-                  { value: '', label: 'Seleccionar Evaluación' },
+                  { value: "", label: "Seleccionar Evaluación" },
                   ...evaluations.map((evaluation) => ({
                     value: evaluation.evaluation_id.toString(),
                     label: evaluation.name,
@@ -306,7 +319,23 @@ const EditCourse: React.FC = () => {
                   onMediaUpload={handleVideoUpload}
                   accept="video/*"
                   label="Subir Video"
+                  inputId="mediaUpload-intro_video"
                   initialPreview={formData.intro_video}
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="presentation_professor"
+                  className="block text-sm font-medium mb-4 text-blue-400"
+                >
+                  Video de Presentación del Profesor
+                </label>
+                <MediaUploadPreview
+                  onMediaUpload={handlePresentationVideoUpload}
+                  accept="video/*"
+                  label="Subir Video"
+                  inputId="mediaUpload-presentation_professor"
+                  initialPreview={formData.presentation_professor}
                 />
               </div>
               <FormField

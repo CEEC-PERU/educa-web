@@ -174,28 +174,6 @@ const CourseDetails = () => {
                 </div>
 
                 <div className="bg-transparent border border-gray-300 rounded p-4 mt-4">
-                  {/*
-                  <div className="flex items-center mb-2">
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/lrnfzdnkubtj6f6nonhi.png"
-                      className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
-                      alt="Module icon"
-                    />
-                    <p className="text-sm lg:text-base text-white">
-                      10 Estudiantes
-                    </p>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/aztzll0keyleiitexmex.png"
-                      className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
-                      alt="Module icon"
-                    />
-                    <p className="text-sm lg:text-base text-white">
-                      Duración: 1h
-                    </p>
-                  </div>
-                  */}
                   <div className="flex items-center mb-2">
                     <img
                       src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/usna5kpyfkorticwhawp.png"
@@ -304,12 +282,22 @@ const CourseDetails = () => {
                         </p>
                       </div>
                     </div>
+                    {courseDetails.presentation_professor && (
+                      <div className="mt-4">
+                        <video
+                          controls
+                          controlsList="nodownload"
+                          onContextMenu={(e) => e.preventDefault()}
+                          className="rounded-lg w-full"
+                        >
+                          <source src={courseDetails.presentation_professor} type="video/mp4" />
+                        </video>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* NPS Survey Form */}
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ export interface Course {
   duration_course: string;
   duration_video: string; // Añadido basado en el modelo
   intro_video: string;
+  presentation_professor?: string;
   image: string;
   category_id: number;
   professor_id: number;

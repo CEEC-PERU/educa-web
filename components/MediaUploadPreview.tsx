@@ -9,6 +9,7 @@ interface MediaUploadPreviewProps {
   onMediaUpload: (file: File) => void;
   accept: string;
   label: string;
+  inputId?: string;
   initialPreview?: string;
   inputRef?: React.RefObject<HTMLInputElement>;
   clearMediaPreview?: boolean;
@@ -25,6 +26,7 @@ const MediaUploadPreview = forwardRef<
       onMediaUpload,
       accept,
       label,
+      inputId,
       initialPreview,
       inputRef,
       clearMediaPreview,
@@ -81,7 +83,7 @@ const MediaUploadPreview = forwardRef<
         <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
           <div className="flex items-center space-x-1 rtl:space-x-reverse sm:pe-4">
             <label
-              htmlFor={`mediaUpload-${label}`}
+              htmlFor={inputId ?? `mediaUpload-${label}`}
               className="p-2 text-blue-700 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-blue-500 dark:hover:text-white dark:hover:bg-gray-600 mb-2"
             >
               {isImage ? (
@@ -114,7 +116,7 @@ const MediaUploadPreview = forwardRef<
               <span className="sr-only">{label}</span>
             </label>
             <input
-              id={`mediaUpload-${label}`}
+              id={inputId ?? `mediaUpload-${label}`}
               type="file"
               accept={accept}
               onChange={handleMediaChange}
