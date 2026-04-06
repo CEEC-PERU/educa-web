@@ -21,7 +21,7 @@ import AlertComponent from '../../../../components/AlertComponent';
 
 interface FormData
   extends Omit<Course, 'course_id' | 'created_at' | 'updated_at'> {
-  [key: string]: string | boolean | number;
+  [key: string]: string | boolean | number | undefined;
 }
 
 import './../../../../app/globals.css';
