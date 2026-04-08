@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useProfile } from '../hooks/user/useProfile';
 import { useRouter } from 'next/router';
-import { Profile, UserInfo } from '../interfaces/User/UserInterfaces';
-import Loader from '@/components/Loader';
 import './../app/globals.css';
 
 const ProfilePage: React.FC = () => {
-  const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(
-    null
-  );
   const [first_name, setFirstName] = useState('');
   const [last_name, setLastName] = useState('');
   const [phone, setPhone] = useState('');
@@ -18,12 +13,13 @@ const ProfilePage: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [selectedProfilePicture, setSelectedProfilePicture] = useState<string>(
-    'https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg'
+    'https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg',
   );
   const { user, token, refreshProfile } = useAuth();
-  const { updateProfile, error, isLoading } = useProfile();
+  const { updateProfile } = useProfile();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isSubmittingRef = useRef(false);
   const router = useRouter();
 
   // Validar contraseña
@@ -43,7 +39,6 @@ const ProfilePage: React.FC = () => {
     }
   }, [password, confirmPassword]);
 
-  // Verificar usuario después de todos los hooks
   if (!user || typeof user !== 'object' || !('role' in user)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -58,7 +53,11 @@ const ProfilePage: React.FC = () => {
   const handleProfileUpdate = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    // Validar campos obligatorios
+    if (isSubmittingRef.current) return;
+    isSubmittingRef.current = true;
+    setIsSubmitting(true);
+
+    // campos obligatorios
     if (
       !first_name ||
       !last_name ||
@@ -78,8 +77,6 @@ const ProfilePage: React.FC = () => {
       setIsSubmitting(false);
       return;
     }
-
-    setIsSubmitting(true);
 
     const profileData = {
       first_name,
@@ -128,9 +125,10 @@ const ProfilePage: React.FC = () => {
     } catch (error) {
       console.error('Error updating profile:', error);
       setErrorMessage(
-        'Error al actualizar el perfil, por favor intente nuevamente.'
+        'Error al actualizar el perfil, por favor intente nuevamente.',
       );
     } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -285,7 +283,7 @@ const ProfilePage: React.FC = () => {
                   type="button"
                   onClick={() =>
                     handleProfilePictureChange(
-                      'https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg'
+                      'https://res.cloudinary.com/dk2red18f/image/upload/v1718040983/WEB_EDUCA/AVATAR/cagm8f55ydbdsn8ugzss.jpg',
                     )
                   }
                   className={`p-1 rounded-full ${
@@ -305,7 +303,7 @@ const ProfilePage: React.FC = () => {
                   type="button"
                   onClick={() =>
                     handleProfilePictureChange(
-                      'https://res.cloudinary.com/dk2red18f/image/upload/v1718120214/WEB_EDUCA/AVATAR/tusuov5aganiihzodh7p.jpg'
+                      'https://res.cloudinary.com/dk2red18f/image/upload/v1718120214/WEB_EDUCA/AVATAR/tusuov5aganiihzodh7p.jpg',
                     )
                   }
                   className={`p-1 rounded-full ${
