@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import './../../app/globals.css';
-import { useSesionProgress } from '../../hooks/useProgressSession';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import "./../../app/globals.css";
+import { useSesionProgress } from "../../hooks/useProgressSession";
 import {
   Question,
   ModuleResults,
@@ -10,17 +10,17 @@ import {
   CourseEvaluation,
   ModuleEvaluation,
   CourseResults,
-} from '../../interfaces/StudentModule';
-import { useResultModule } from '../../hooks/resultado/useResultModule';
+} from "../../interfaces/StudentModule";
+import { useResultModule } from "../../hooks/resultado/useResultModule";
 import {
   useCuestionarioStar,
   useCuestionarioNPS,
   useCreateCuestionario,
-} from '../../hooks/useCuestionario';
-import { useResultCourse } from '../../hooks/courses/useCourseResults';
-import { useAuth } from '../../context/AuthContext';
-import NPSForm from './../../components/student/NPSForm';
-import StarForm from './../../components/student/StarForm';
+} from "../../hooks/useCuestionario";
+import { useResultCourse } from "../../hooks/courses/useCourseResults";
+import { useAuth } from "../../context/AuthContext";
+import NPSForm from "./../../components/student/NPSForm";
+import StarForm from "./../../components/student/StarForm";
 
 interface MainContentProps {
   sessionVideosInteractivos?: VideosInteractivo[];
@@ -69,7 +69,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [showNPSForm, setShowNPSForm] = useState(false);
   const [showStarForm, setShowStarForm] = useState(false);
-  const [textAnswer, setTextAnswer] = useState(''); // For open-ended questions
+  const [textAnswer, setTextAnswer] = useState(""); // For open-ended questions
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]); // For multiple choice
   const [evamodulecount, setEvaModCount] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null); // Referencia para el temporizador
@@ -86,22 +86,21 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       score: number | null;
     }[]
   >([]);
-  const [showContinueButton, setShowContinueButton] = useState(false); // Estado para controlar el botón de "Continuar"
-  // Detectar si la sesión es PPTX
-  const isPptx = sessionVideo && sessionVideo.endsWith('.pptx');
+  const [showContinueButton, setShowContinueButton] = useState(false); // Estado de botón CONTINUAR
+  const isPptx = sessionVideo && sessionVideo.endsWith(".pptx");
 
   const estrella_vacia =
-    'https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png';
+    "https://res.cloudinary.com/dk2red18f/image/upload/v1730907469/CEEC/PREQUIZZ/lqcb3aig5blvbpxryatq.png";
   const estrella_llena =
-    'https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png';
+    "https://res.cloudinary.com/dk2red18f/image/upload/v1730907418/CEEC/PREQUIZZ/kqw9stwbaz9tftv5ep77.png";
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const optionColors = [
-    'bg-blue-500',
-    'bg-orange-500',
-    'bg-purple-500',
-    'bg-cyan-500',
+    "bg-blue-500",
+    "bg-orange-500",
+    "bg-purple-500",
+    "bg-cyan-500",
   ];
   // Context
   const { user, token } = useAuth();
@@ -131,11 +130,11 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   useEffect(() => {
     // Actualización automática sin recargar cuando cambia el estado
     if (moduleResults && moduleResults.length > 0) {
-      console.log('Resultados del módulo actualizados', moduleResults);
+      console.log("Resultados del módulo actualizados", moduleResults);
     }
     // Actualización automática sin recargar cuando cambia el estado
     if (courseResults && courseResults.length > 0) {
-      console.log('Resultados del cursos actualizados', courseResults);
+      console.log("Resultados del cursos actualizados", courseResults);
     }
   }, [moduleResults, courseResults]); // Se actualizará cada vez que cambien los resultados del módulo
 
@@ -210,7 +209,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
     // Función para manejar cuando el usuario sale de la ventana o pestaña
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden' && videoRef.current) {
+      if (document.visibilityState === "hidden" && videoRef.current) {
         videoRef.current.pause(); // Pausa automáticamente el video al salir de la ventana
       }
     };
@@ -229,7 +228,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     // Función auxiliar para enviar el progreso de la sesión al servidor
     const sendSessionProgress = async (
       progress: number,
-      isCompleted: boolean
+      isCompleted: boolean,
     ) => {
       const progressUpdate = Math.round(progress);
 
@@ -260,7 +259,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         videoRef.current.pause();
         // Muestra un mensaje de confirmación al usuario (en algunos navegadores)
         e.preventDefault();
-        e.returnValue = ''; // Obligatorio para algunos navegadores modernos
+        e.returnValue = ""; // Obligatorio para algunos navegadores modernos
       }
     };
 
@@ -271,12 +270,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       }
     };
 
-    videoRef.current.addEventListener('timeupdate', handleTimeUpdate);
-    videoRef.current.addEventListener('seeking', handleSeeking);
-    videoRef.current.addEventListener('pause', handlePause); // Escucha el evento "pause" (cuando el usuario pausa el video)
-    document.addEventListener('visibilitychange', handleVisibilityChange); // Detecta cambios de ventana o pestaña
-    window.addEventListener('beforeunload', handleBeforeUnload); // Escucha el evento "beforeunload" (cuando el usuario intenta salir o recargar la página)
-    window.addEventListener('popstate', handlePopState); // Detecta retroceso en el historial del navegador
+    videoRef.current.addEventListener("timeupdate", handleTimeUpdate);
+    videoRef.current.addEventListener("seeking", handleSeeking);
+    videoRef.current.addEventListener("pause", handlePause); // Escucha el evento "pause" (cuando el usuario pausa el video)
+    document.addEventListener("visibilitychange", handleVisibilityChange); // Detecta cambios de ventana o pestaña
+    window.addEventListener("beforeunload", handleBeforeUnload); // Escucha el evento "beforeunload" (cuando el usuario intenta salir o recargar la página)
+    window.addEventListener("popstate", handlePopState); // Detecta retroceso en el historial del navegador
 
     if (videoProgress > 0 && !videoEnded) {
       const duration = videoRef.current!.duration;
@@ -288,13 +287,13 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
     return () => {
       if (videoRef.current) {
-        videoRef.current.removeEventListener('timeupdate', handleTimeUpdate);
-        videoRef.current.removeEventListener('seeking', handleSeeking);
-        videoRef.current.removeEventListener('pause', handlePause); // Elimina el evento "pause"
-        document.addEventListener('visibilitychange', handleVisibilityChange); // Evento para cambiar de pestaña
+        videoRef.current.removeEventListener("timeupdate", handleTimeUpdate);
+        videoRef.current.removeEventListener("seeking", handleSeeking);
+        videoRef.current.removeEventListener("pause", handlePause); // Elimina el evento "pause"
+        document.addEventListener("visibilitychange", handleVisibilityChange); // Evento para cambiar de pestaña
       }
-      window.removeEventListener('beforeunload', handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
-      window.removeEventListener('popstate', handlePopState); // Elimina el evento de retroceso
+      window.removeEventListener("beforeunload", handleBeforeUnload); // Elimina el evento "beforeunload" del objeto window
+      window.removeEventListener("popstate", handlePopState); // Elimina el evento de retroceso
     };
   }, [
     onProgress,
@@ -309,7 +308,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   useEffect(() => {
     if (
       evaluationQuestions?.[currentQuestion]?.type_id === 3 &&
-      textAnswer.trim() !== ''
+      textAnswer.trim() !== ""
     ) {
       setShowContinueButton(true); // Mostrar el botón continuar si el textarea no está vacío
     } else {
@@ -320,9 +319,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const handleNextQuestion = () => {
     if (
       evaluationQuestions?.[currentQuestion]?.type_id === 3 &&
-      textAnswer.trim() === ''
+      textAnswer.trim() === ""
     ) {
-      alert('Por favor, responde la pregunta.');
+      alert("Por favor, responde la pregunta.");
       return;
     }
     if (currentQuestion >= (evaluationQuestions?.length || 0) - 1) {
@@ -332,7 +331,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setCurrentQuestion((prev) => prev + 1);
       setSelectedOption(null);
       setSelectedOptions([]);
-      setTextAnswer('');
+      setTextAnswer("");
       setIsCorrect(null);
     }
   };
@@ -351,7 +350,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     optionId: number,
     optionText: string,
     isCorrect: boolean,
-    score: number
+    score: number,
   ) => {
     setSelectedOption(optionId);
     setIsCorrect(isCorrect);
@@ -364,7 +363,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     if (questionId !== undefined) {
       setAnswers((prevAnswers) => {
         const updatedAnswers = prevAnswers.filter(
-          (answer) => answer.question_id !== questionId
+          (answer) => answer.question_id !== questionId,
         );
         return [
           ...updatedAnswers,
@@ -373,7 +372,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             response: optionId,
             response2: optionText,
             isCorret: isCorrect,
-            isCorrect2: '',
+            isCorrect2: "",
             score: score,
           },
         ];
@@ -382,7 +381,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
     if (isCorrect) {
       setTotalScore(
-        (prev) => prev + (evaluationQuestions?.[currentQuestion]?.score || 0)
+        (prev) => prev + (evaluationQuestions?.[currentQuestion]?.score || 0),
       );
       setCorrectAnswers((prev) => prev + 1); // Increment correct answers count
     }
@@ -392,7 +391,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const handleTextAnswerChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
     setTextAnswer(value);
@@ -405,16 +404,16 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setAnswers((prevAnswers) => {
         // Filtrar respuestas anteriores y agregar la nueva o actualizarla
         const updatedAnswers = prevAnswers.filter(
-          (answer) => answer.question_id !== questionId
+          (answer) => answer.question_id !== questionId,
         );
         return [
           ...updatedAnswers,
           {
             question_id: questionId,
-            response: '',
+            response: "",
             response2: value,
-            isCorret: '',
-            isCorrect2: '',
+            isCorret: "",
+            isCorrect2: "",
             score: evaluationQuestions?.[currentQuestion]?.score || 0,
           },
         ];
@@ -422,27 +421,27 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     }
 
     // Mostrar botón continuar si hay texto en el textarea
-    setShowContinueButton(value.trim() !== '');
+    setShowContinueButton(value.trim() !== "");
   };
 
   const handleMultipleSelect = (
     optionId: number,
     optionText: string,
     isCorrect: boolean,
-    score: number
+    score: number,
   ) => {
     let newSelectedOptions = [...selectedOptions];
     let newOptionTexts =
       (answers.find(
         (answer) =>
           answer.question_id ===
-          evaluationQuestions?.[currentQuestion]?.question_id
+          evaluationQuestions?.[currentQuestion]?.question_id,
       )?.response2 as string[]) || [];
     let OptionCorrect =
       (answers.find(
         (answer) =>
           answer.question_id ===
-          evaluationQuestions?.[currentQuestion]?.question_id
+          evaluationQuestions?.[currentQuestion]?.question_id,
       )?.isCorrect2 as boolean[]) || [];
     // Verificar si la opción ya está seleccionada
     if (selectedOptions.includes(optionId)) {
@@ -465,7 +464,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       setAnswers((prevAnswers) => {
         // Filtrar respuestas anteriores y agregar la nueva o actualizarla
         const updatedAnswers = prevAnswers.filter(
-          (answer) => answer.question_id !== questionId
+          (answer) => answer.question_id !== questionId,
         );
         return [
           ...updatedAnswers,
@@ -477,12 +476,12 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               newSelectedOptions.every(
                 (optId) =>
                   evaluationQuestions?.[currentQuestion]?.options.find(
-                    (opt) => opt.option_id === optId
-                  )?.is_correct
+                    (opt) => opt.option_id === optId,
+                  )?.is_correct,
               ) &&
               newSelectedOptions.length ===
                 evaluationQuestions?.[currentQuestion]?.options.filter(
-                  (opt) => opt.is_correct
+                  (opt) => opt.is_correct,
                 ).length,
             isCorrect2: OptionCorrect,
             score: score,
@@ -508,7 +507,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     // Calcular y mostrar el puntaje total
     const totalScore = answers.reduce((score, answer) => {
       const question = evaluationQuestions?.find(
-        (q) => q.question_id === answer.question_id
+        (q) => q.question_id === answer.question_id,
       );
       if (question?.type_id !== 3 && answer.isCorret) {
         // No contar preguntas type_id === 3
@@ -517,7 +516,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       return score;
     }, 0);
 
-    console.log('Puntaje total:', totalScore);
+    console.log("Puntaje total:", totalScore);
     setTotalScore(totalScore);
     if (onFinish) onFinish();
 
@@ -540,7 +539,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
       };
       createResultModule(moduloResultado);
 
-      console.log('MODULO_RESULTADO', moduloResultado);
+      console.log("MODULO_RESULTADO", moduloResultado);
     } else {
       // Si no hay selectedModuleId, es la evaluación final del curso
       const courseId = Array.isArray(router.query.course_id)
@@ -563,7 +562,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         })),
       };
       createResultCourse(cursoResultado);
-      console.log('CURSO_RESULTADO', cursoResultado);
+      console.log("CURSO_RESULTADO", cursoResultado);
     }
   };
 
@@ -665,7 +664,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   };
 
   const moduleResult = moduleResults?.find(
-    (result) => result.module_id === selectedModuleId
+    (result) => result.module_id === selectedModuleId,
   );
   //numero de intentos
   const hasTwoAttempts =
@@ -693,7 +692,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     moduleResults &&
     moduleResults.filter(
       (result) =>
-        result.puntaje >= 16 && result.evaluation_id == result.evaluation_id
+        result.puntaje >= 16 && result.evaluation_id == result.evaluation_id,
     );
 
   //reutilizar el anterior y validar si en todos los modulos se obtiene la nota mayor a 16
@@ -706,7 +705,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
     // Ordenar por fecha de creación y filtrar el primer resultado por evaluation_id
     const uniqueResults = moduleResults.reduce((acc, result) => {
       const existing = acc.find(
-        (r) => r.evaluation_id === result.evaluation_id
+        (r) => r.evaluation_id === result.evaluation_id,
       );
       if (
         !existing ||
@@ -727,7 +726,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const firstResults = getFirstCreatedAtResults(moduleResults);
   // Filtrar módulos con puntaje mayor o igual a 16
   const modulesWithHighScores = firstResults.filter(
-    (result) => result.puntaje >= 16
+    (result) => result.puntaje >= 16,
   );
   // Verificar si todos los módulos tienen un puntaje mayor o igual a 16
   const allModulesPassed = modulesWithHighScores.length === firstResults.length;
@@ -735,9 +734,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
   const enableSecondAttempt = allModulesPassed;
   // Si no pasa en todos los módulos, solo tiene un intento
   if (enableSecondAttempt) {
-    console.log('Se habilita el segundo intento.');
+    console.log("Se habilita el segundo intento.");
   } else {
-    console.log('Solo tiene un intento.');
+    console.log("Solo tiene un intento.");
   }
 
   // Asegúrate de que courseId tiene el valor correcto del curso que estás filtrando
@@ -759,7 +758,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
           <div className="flex flex-col items-center h-full">
             <iframe
               src={`https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
-                sessionVideo
+                sessionVideo,
               )}`}
               width="100%"
               height="600px"
@@ -767,38 +766,21 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               title="PPTX Viewer"
               allowFullScreen
               style={{
-                background: '#fff',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px #0002',
+                background: "#fff",
+                borderRadius: "12px",
+                boxShadow: "0 2px 8px #0002",
               }}
             ></iframe>
           </div>
         ) : (
-             // Video player responsive
+          // Video player responsive
           <div className="flex flex-col items-center w-full h-full">
-            {/* Mobile: Vertical video like reel */}
-            <div className="block sm:hidden w-full flex justify-center">
-              <div className="w-full max-w-sm">
-                <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '9/16' }}>
-                  <video
-                    key={sessionVideo}
-                    controls
-                    controlsList="nodownload"
-                    onContextMenu={(e) => e.preventDefault()}
-                    className="w-full h-full object-contain"
-                    playsInline
-                    onEnded={handleVideoEnd}
-                    ref={videoRef}
-                  >
-                    <source src={sessionVideo} type="video/mp4" />
-                  </video>
-                </div>
-              </div>
-            </div>
-
-            {/* Tablet and Desktop: Horizontal video */}
-            <div className="hidden sm:block w-full">
-              <div className="relative w-full bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+            <div className="w-full sm:max-w-none max-w-sm mx-auto">
+              <div
+                className="relative w-full bg-black rounded-lg overflow-hidden"
+                style={{ aspectRatio: "var(--video-aspect, 16/9)" }}
+              >
+                <style>{`@media (max-width: 639px) { :root { --video-aspect: 9/16; } }`}</style>
                 <video
                   key={sessionVideo}
                   controls
@@ -817,40 +799,39 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
         )
       ) : evaluationQuestions && evaluationQuestions.length > 0 ? (
         showStartMessage ? (
-          
-            <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-3 sm:p-4 md:p-6 rounded-lg shadow-lg">
+          <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-brandm-500 to-brandmc-100 p-3 sm:p-4 md:p-6 rounded-lg shadow-lg">
             <h1
               className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-yellow-400 mb-4 sm:mb-6 font-extrabold animate-pulse text-center leading-tight ${
-                isFinalEvaluation ? '' : 'hidden'
+                isFinalEvaluation ? "" : "hidden"
               }`}
             >
               EVALUACIÓN FINAL
             </h1>
             <p
               className={`text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white mb-6 sm:mb-8 text-center px-2 ${
-                isFinalEvaluation ? '' : 'hidden'
+                isFinalEvaluation ? "" : "hidden"
               }`}
             >
               Para finalizar el curso, inicia esto
             </p>
             <h1
               className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
-                isFinalEvaluation ? 'hidden' : ''
+                isFinalEvaluation ? "hidden" : ""
               }`}
             >
               ¡Ponte a Prueba!
             </h1>
             <p
               className={`text-4xl text-white mb-8  text-center ${
-                isFinalEvaluation ? 'hidden' : ''
+                isFinalEvaluation ? "hidden" : ""
               }`}
             >
               Para finalizar el módulo, ¡Inicia la Evaluación!
             </p>
-           
-              <p
+
+            <p
               className={`text-sm sm:text-base md:text-lg lg:text-xl text-white mb-6 sm:mb-8 text-center px-4 ${
-                isFinalEvaluation ? 'hidden' : ''
+                isFinalEvaluation ? "hidden" : ""
               }`}
             >
               ¡Tienes 2 Intentos Disponibles! Si obtienes mayor a 16 en el
@@ -861,8 +842,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             <img
               src={
                 isFinalEvaluation
-                  ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png'
-                  : 'https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png'
+                  ? "https://res.cloudinary.com/dk2red18f/image/upload/v1721282668/WEB_EDUCA/WEB-IMAGENES/gpki5vwl5iscesql4vgz.png"
+                  : "https://res.cloudinary.com/dk2red18f/image/upload/v1721282653/WEB_EDUCA/WEB-IMAGENES/iedxcrpplh3wmu5zfctf.png"
               }
               alt="Evaluation"
               className="mb-4 sm:mb-6 w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 xl:w-64 xl:h-64 rounded-full shadow-lg transform hover:scale-110 transition-transform duration-300"
@@ -871,7 +852,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               {enableSecondAttempt === false && attemptCountCourse === 1 ? (
                 <p
                   className={`text-white text-xl mt-4 ${
-                    isFinalEvaluation ? '' : 'hidden'
+                    isFinalEvaluation ? "" : "hidden"
                   }`}
                 >
                   Completaste todos los intentos disponibles
@@ -880,7 +861,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 <button
                   onClick={handleStartEvaluation}
                   className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                    isFinalEvaluation ? '' : 'hidden'
+                    isFinalEvaluation ? "" : "hidden"
                   }`}
                 >
                   Volver a Intentar
@@ -888,7 +869,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               ) : enableSecondAttempt === true && attemptCountCourse === 2 ? (
                 <p
                   className={`text-white text-xl mt-4 ${
-                    isFinalEvaluation ? '' : 'hidden'
+                    isFinalEvaluation ? "" : "hidden"
                   }`}
                 >
                   Completaste todos los intentos disponibles
@@ -897,7 +878,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 <button
                   onClick={handleStartEvaluation}
                   className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                    isFinalEvaluation ? '' : 'hidden'
+                    isFinalEvaluation ? "" : "hidden"
                   }`}
                 >
                   Comenzar Evaluación Final
@@ -909,7 +890,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 {attemptCount >= 2 ? (
                   <p
                     className={`text-white text-xl mt-4 ${
-                      isFinalEvaluation ? 'hidden' : ''
+                      isFinalEvaluation ? "hidden" : ""
                     }`}
                   >
                     Completaste todos los intentos disponibles
@@ -918,7 +899,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   <button
                     onClick={handleStartEvaluation}
                     className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ? 'hidden' : ''
+                      isFinalEvaluation ? "hidden" : ""
                     }`}
                   >
                     Volver a Intentar
@@ -927,7 +908,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   <button
                     onClick={handleStartEvaluation}
                     className={`bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300 ${
-                      isFinalEvaluation ? 'hidden' : ''
+                      isFinalEvaluation ? "hidden" : ""
                     }`}
                   >
                     Comenzar Evaluación
@@ -959,7 +940,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               >
                 <p className="text-white text-xl pt-3 font-bold">
                   {Math.round(
-                    ((currentQuestion + 1) / evaluationQuestions.length) * 100
+                    ((currentQuestion + 1) / evaluationQuestions.length) * 100,
                   )}
                   %
                 </p>
@@ -967,8 +948,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
             </div>
 
             {!evaluationCompleted ? (
- <div className="flex flex-col items-center text-center w-full max-w-6xl space-y-4 sm:space-y-6">
-                 {/* Question Title */}
+              <div className="flex flex-col items-center text-center w-full max-w-6xl space-y-4 sm:space-y-6">
+                {/* Question Title */}
                 <h3 className="text-brandmc-100 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 sm:pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-4 sm:mb-6 px-2">
                   {evaluationQuestions[currentQuestion]?.question_text}
                 </h3>
@@ -985,10 +966,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   </div>
 
                   {/* Opciones de respuesta */}
-                 <div className="w-full lg:w-1/2 space-y-3 sm:space-y-4 order-2 lg:order-2">
+                  <div className="w-full lg:w-1/2 space-y-3 sm:space-y-4 order-2 lg:order-2">
                     {/* Pregunta de opción múltiple */}
                     {evaluationQuestions[currentQuestion]?.type_id === 1 && (
-                           <ul className="space-y-2 sm:space-y-3">
+                      <ul className="space-y-2 sm:space-y-3">
                         {evaluationQuestions[currentQuestion]?.options.map(
                           (option, idx) => (
                             <li
@@ -999,7 +980,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                 type="checkbox"
                                 className="w-5 h-5 text-yellow-500 rounded focus:ring focus:ring-purple-700"
                                 checked={selectedOptions.includes(
-                                  option.option_id
+                                  option.option_id,
                                 )}
                                 onChange={() =>
                                   handleMultipleSelect(
@@ -1007,7 +988,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                     option.option_text,
                                     option.is_correct,
                                     evaluationQuestions?.[currentQuestion]
-                                      ?.score || 0
+                                      ?.score || 0,
                                   )
                                 }
                               />
@@ -1015,7 +996,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                 {option.option_text}
                               </label>
                             </li>
-                          )
+                          ),
                         )}
                       </ul>
                     )}
@@ -1032,7 +1013,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
 
                     {/* Pregunta de opción única */}
                     {evaluationQuestions[currentQuestion]?.type_id === 4 && (
-                       <ul className="space-y-2 sm:space-y-3">
+                      <ul className="space-y-2 sm:space-y-3">
                         {evaluationQuestions[currentQuestion]?.options.map(
                           (option, idx) => (
                             <li key={idx}>
@@ -1040,9 +1021,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                 className={`p-3 sm:p-4 md:p-6 text-sm sm:text-base md:text-lg lg:text-xl font-bold rounded-lg w-full transition-all duration-300 px-4 sm:px-6 md:px-8 lg:px-10 ${
                                   selectedOption === option.option_id
                                     ? isCorrect
-                                      ? 'bg-green-500 border-green-600'
-                                      : 'bg-red-500 border-red-600'
-                                    : 'bg-brandm-500  text-white hover:bg-yellow-400 '
+                                      ? "bg-green-500 border-green-600"
+                                      : "bg-red-500 border-red-600"
+                                    : "bg-brandm-500  text-white hover:bg-yellow-400 "
                                 }`}
                                 onClick={() =>
                                   handleOptionSelect(
@@ -1050,7 +1031,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                     option.option_text,
                                     option.is_correct,
                                     evaluationQuestions?.[currentQuestion]
-                                      ?.score || 0
+                                      ?.score || 0,
                                   )
                                 }
                                 disabled={selectedOption !== null}
@@ -1058,7 +1039,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                                 {option.option_text}
                               </button>
                             </li>
-                          )
+                          ),
                         )}
                       </ul>
                     )}
@@ -1072,8 +1053,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                     onClick={handleNextQuestion}
                   >
                     {currentQuestion < (evaluationQuestions?.length || 0) - 1
-                      ? 'Siguiente'
-                      : 'Finalizar'}
+                      ? "Siguiente"
+                      : "Finalizar"}
                   </button>
                 )}
                 {/*Reacciones para repsuesta incorrecta e incorrecta */}
@@ -1083,15 +1064,15 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                       <div
                         key={idx}
                         className={`absolute text-4xl md:text-6xl ${
-                          isCorrect ? 'text-green-500' : 'text-red-500'
+                          isCorrect ? "text-green-500" : "text-red-500"
                         } animate-float`}
                         style={{
-                          bottom: '0',
+                          bottom: "0",
                           left: `${Math.random() * 100}%`,
                           animationDelay: `${Math.random() * 0.5}s`,
                         }}
                       >
-                        {isCorrect ? '😊' : '😢'}
+                        {isCorrect ? "😊" : "😢"}
                       </div>
                     ))}
                   </div>
@@ -1105,10 +1086,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                     <img
                       src={
                         totalScore >= 16
-                          ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png'
+                          ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006952/CEEC/PREQUIZZ/yyhjjq12kstinufbzvmi.png"
                           : totalScore >= 13
-                          ? 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png'
-                          : 'https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png'
+                            ? "https://res.cloudinary.com/dk2red18f/image/upload/v1709006864/CEEC/PREQUIZZ/drqdrqzjws2ltwqjccek.png"
+                            : "https://res.cloudinary.com/dk2red18f/image/upload/v1709006848/CEEC/PREQUIZZ/ow40gsipk4rpxspixvzm.png"
                       }
                       className="w-60 h-60 rounded-full border-4 border-brandmc-100 shadow-md"
                     />
@@ -1139,10 +1120,10 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   {/* Mensaje final */}
                   <p className="text-2xl font-semibold mb-4 text-brandm-500">
                     {totalScore >= 16
-                      ? '¡Eres realmente el rey del saber!'
+                      ? "¡Eres realmente el rey del saber!"
                       : totalScore >= 13
-                      ? '¡Nada mal, pero puedes mejorar!'
-                      : '¡Necesitas repasar las sesiones!'}
+                        ? "¡Nada mal, pero puedes mejorar!"
+                        : "¡Necesitas repasar las sesiones!"}
                   </p>
 
                   {/* Resumen de resultados */}
@@ -1156,7 +1137,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                         className="w-18 h-18 my-2"
                       />
                       <span className="text-xl">
-                        {finalTime !== null ? Math.floor(finalTime / 60) : 0}{' '}
+                        {finalTime !== null ? Math.floor(finalTime / 60) : 0}{" "}
                         min {finalTime !== null ? finalTime % 60 : 0} s
                       </span>
                     </div>
@@ -1190,8 +1171,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                       onClick={handleReintentarEvaluation}
                       className={`w-full py-3 rounded-lg font-semibold shadow-md transition-transform transform hover:scale-105 ${
                         totalScore >= 16
-                          ? 'bg-brandm-500 text-white'
-                          : 'bg-brandm-500 text-white'
+                          ? "bg-brandm-500 text-white"
+                          : "bg-brandm-500 text-white"
                       }`}
                     >
                       Regresar
@@ -1232,8 +1213,8 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                   onClick={handleNextQuestion}
                 >
                   {currentQuestion < (evaluationQuestions?.length || 0) - 1
-                    ? 'Siguiente'
-                    : 'Finalizar'}
+                    ? "Siguiente"
+                    : "Finalizar"}
                 </button>
               )}
           </div>
