@@ -43,13 +43,15 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
       const worksheet = workbook.Sheets[sheetName];
       const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-      const newUsers = jsonData.slice(1).map((row) => ({
-        dni: row[0]?.toString(),
-        password: row[0]?.toString(),
-        is_active: true,
-        role_id: roleId,
-        enterprise_id: userInfo.enterprise_id,
-      }));
+      const newUsers = jsonData.slice(1)
+        .filter((row) => row[0] != null && row[0].toString().trim() !== '')
+        .map((row) => ({
+          dni: row[0]?.toString(),
+          password: row[0]?.toString(),
+          is_active: true,
+          role_id: roleId,
+          enterprise_id: userInfo.enterprise_id,
+        }));
 
       if (newUsers.length > maxUsersAllowed) {
         setError(`Excede el límite permitido. Solo puede registrar ${maxUsersAllowed} usuarios.`);
@@ -149,15 +151,13 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
     <div className="p-6 bg-white rounded-lg shadow-md max-h-[500px] overflow-y-auto">
       <h1 className="font-bold text-black text-3xl text-center mb-6">Registrar nuevos usuarios</h1>
 
-      <div className="mb-4 flex items-center justify-center space-x-4 text-black font-bold">
+      <div className="mb-2 flex items-center justify-center space-x-4 text-black font-bold">
         <input
           type="file"
           accept=".xlsx, .xls"
           className="w-48 p-2 border rounded-lg shadow-sm"
           onChange={handleFileUpload}
         />
-     
-
 
         <button
           onClick={() => { setShowClassroomAndCourses(true); setShowCourses(false); }}
@@ -166,6 +166,12 @@ const UserForm: React.FC<{ roleId: number; onClose: () => void; onSuccess: () =>
           Asignar Aula / Cursos
         </button>
       </div>
+
+      {users.length > 0 && (
+        <p className="text-center text-sm font-semibold text-green-600 mb-4">
+          {users.length} usuario{users.length !== 1 ? 's' : ''} reconocido{users.length !== 1 ? 's' : ''} del archivo
+        </p>
+      )}
            
    
       <div className="overflow-x-auto">
