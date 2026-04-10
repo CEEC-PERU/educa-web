@@ -774,13 +774,9 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
           </div>
         ) : (
           // Video player responsive
-          <div className="flex flex-col items-center w-full h-full">
-            <div className="w-full sm:max-w-none max-w-sm mx-auto">
-              <div
-                className="relative w-full bg-black rounded-lg overflow-hidden"
-                style={{ aspectRatio: "var(--video-aspect, 16/9)" }}
-              >
-                <style>{`@media (max-width: 639px) { :root { --video-aspect: 9/16; } }`}</style>
+          <div className="flex flex-col items-center w-full">
+            <div className="w-full">
+              <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
                 <video
                   key={sessionVideo}
                   controls
@@ -815,14 +811,14 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
               Para finalizar el curso, inicia esto
             </p>
             <h1
-              className={`text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse ${
+              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-yellow-400 mb-6 font-extrabold animate-pulse text-center ${
                 isFinalEvaluation ? "hidden" : ""
               }`}
             >
               ¡Ponte a Prueba!
             </h1>
             <p
-              className={`text-4xl text-white mb-8  text-center ${
+              className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mb-8 text-center px-2 ${
                 isFinalEvaluation ? "hidden" : ""
               }`}
             >
@@ -953,7 +949,7 @@ const MainContentPrueba: React.FC<MainContentProps> = ({
                 <h3 className="text-brandmc-100 text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl pb-3 sm:pb-5 md:pb-7 font-montserrat font-extrabold leading-tight mb-4 sm:mb-6 px-2">
                   {evaluationQuestions[currentQuestion]?.question_text}
                 </h3>
-                <div className="flex w-full space-x-8">
+                <div className="flex flex-col lg:flex-row w-full lg:space-x-8 space-y-4 lg:space-y-0">
                   {/* Question Image */}
                   <div className="w-full lg:w-1/2 flex justify-center order-1 lg:order-1">
                     {evaluationQuestions[currentQuestion]?.image && (
