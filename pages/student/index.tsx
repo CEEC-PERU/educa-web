@@ -1,16 +1,11 @@
-// Mejoras en la firma digital:
-// - El trazo comienza justo donde se inicia el mouse/touch, evitando "saltos" o líneas desde la esquina superior izquierda.
-// - El canvas se inicializa con un punto en la posición inicial al comenzar el dibujo.
-// - El resto del archivo mantiene su estructura original.
-
-import React, { useState, useEffect, useRef } from 'react';
-import Modal from 'react-modal';
-import { useAuth } from '../../context/AuthContext';
-import SidebarDrawer from '../../components/student/DrawerNavigation';
-import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/User/UserInterfaces';
-import { useCourseStudent } from '../../hooks/useCourseStudents';
-import CourseCard from '../../components/student/CourseCard';
+import React, { useState, useEffect, useRef } from "react";
+import Modal from "react-modal";
+import { useAuth } from "../../context/AuthContext";
+import SidebarDrawer from "../../components/student/DrawerNavigation";
+import Navbar from "../../components/Navbar";
+import { Profile } from "../../interfaces/User/UserInterfaces";
+import { useCourseStudent } from "../../hooks/useCourseStudents";
+import CourseCard from "../../components/student/CourseCard";
 import {
   XCircleIcon,
   ChevronRightIcon,
@@ -22,21 +17,19 @@ import {
   VideoCameraIcon,
   PaperAirplaneIcon,
   CheckIcon,
-} from '@heroicons/react/24/solid';
+} from "@heroicons/react/24/solid";
 
-import { useRouter } from 'next/router';
-import './../../app/globals.css';
-import ScreenSecurity from '../../components/ScreenSecurity';
-import Footter from '../../components/Footter';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { useUserInfo } from '../../hooks/user/useUserInfo';
-import { useCoursesCount } from '../../hooks/user/useUserCourses';
-import { UserInfoData } from '../../interfaces/User/UserInfo';
-import { userInfo } from 'os';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import { API_USER_INFO_SHOWMODAL } from '../../utils/Endpoints';
-Modal.setAppElement('#__next');
+import { useRouter } from "next/router";
+import "./../../app/globals.css";
+import ScreenSecurity from "../../components/ScreenSecurity";
+import Footter from "../../components/Footter";
+import jsPDF from "jspdf";
+import { useUserInfo } from "../../hooks/user/useUserInfo";
+import { useCoursesCount } from "../../hooks/user/useUserCourses";
+import { UserInfoData } from "../../interfaces/User/UserInfo";
+import ProtectedRoute from "../../components/Auth/ProtectedRoute";
+import { API_USER_INFO_SHOWMODAL } from "../../utils/Endpoints";
+Modal.setAppElement("#__next");
 
 const LoadingSpinner = () => (
   <div className="text-center">
@@ -70,7 +63,9 @@ const StudentIndex: React.FC = () => {
   const [filters, setFilters] = useState<any>({});
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(true);
+  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState<
+    boolean | null
+  >(null);
   const [signature, setSignature] = useState<string | null>(null);
 
   // --- Mejoras en la firma digital ---
@@ -87,9 +82,9 @@ const StudentIndex: React.FC = () => {
   const [success, setSuccess] = useState<boolean>(false);
   const { submitUserInfo, loading, error } = useUserInfo();
   const userInfor = user as { id: number };
-  let name = '';
-  let uri_picture = '';
-  let lastName = '';
+  let name = "";
+  let uri_picture = "";
+  let lastName = "";
 
   const [currentStep, setCurrentStep] = useState(1);
   const [consentGiven, setConsentGiven] = useState(false);
@@ -101,9 +96,9 @@ const StudentIndex: React.FC = () => {
         const response = await fetch(
           `${API_USER_INFO_SHOWMODAL}/${userInfor.id}`,
           {
-            method: 'GET',
+            method: "GET",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           },
@@ -111,7 +106,7 @@ const StudentIndex: React.FC = () => {
         const data = await response.json();
         setIsSignatureModalOpen(data.showModal);
       } catch (error) {
-        console.error('Error checking modal status:', error);
+        console.error("Error checking modal status:", error);
       }
     };
 
@@ -132,11 +127,11 @@ const StudentIndex: React.FC = () => {
   const handleStartDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let x, y;
-    if ('touches' in e) {
+    if ("touches" in e) {
       x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
       y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
     } else {
@@ -151,7 +146,7 @@ const StudentIndex: React.FC = () => {
     // Dibuja un punto inicial donde comienza el trazo
     ctx.beginPath();
     ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
-    ctx.fillStyle = '#222'; // color del trazo, puedes personalizar
+    ctx.fillStyle = "#222"; // color del trazo, puedes personalizar
     ctx.fill();
     ctx.beginPath();
     ctx.moveTo(x, y);
@@ -162,11 +157,11 @@ const StudentIndex: React.FC = () => {
     if (!isDrawing || lastX === null || lastY === null) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     let x, y;
-    if ('touches' in e) {
+    if ("touches" in e) {
       x = e.touches[0].clientX - canvas.getBoundingClientRect().left;
       y = e.touches[0].clientY - canvas.getBoundingClientRect().top;
     } else {
@@ -174,7 +169,7 @@ const StudentIndex: React.FC = () => {
       y = e.clientY - canvas.getBoundingClientRect().top;
     }
     ctx.lineTo(x, y);
-    ctx.strokeStyle = '#222'; // color del trazo
+    ctx.strokeStyle = "#222"; // color del trazo
     ctx.lineWidth = 2; // grosor del trazo
     ctx.stroke();
     ctx.beginPath();
@@ -195,7 +190,7 @@ const StudentIndex: React.FC = () => {
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
@@ -204,7 +199,7 @@ const StudentIndex: React.FC = () => {
 
   const saveSignature = () => {
     if (!photo || !canvasRef.current) {
-      alert('Debes tomar una foto y firmar antes de guardar.');
+      alert("Debes tomar una foto y firmar antes de guardar.");
       return;
     }
     const dataURL = canvasRef.current.toDataURL();
@@ -224,38 +219,38 @@ const StudentIndex: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error accessing camera:', error.message);
+        console.error("Error accessing camera:", error.message);
         if (
-          error.name === 'NotFoundError' ||
-          error.name === 'DevicesNotFoundError'
+          error.name === "NotFoundError" ||
+          error.name === "DevicesNotFoundError"
         ) {
           alert(
-            'No se ha detectado ninguna cámara en tu dispositivo. Conéctate desde un dispositivo móvil con cámara.',
+            "No se ha detectado ninguna cámara en tu dispositivo. Conéctate desde un dispositivo móvil con cámara.",
           );
         } else if (
-          error.name === 'NotAllowedError' ||
-          error.name === 'PermissionDeniedError'
+          error.name === "NotAllowedError" ||
+          error.name === "PermissionDeniedError"
         ) {
-          alert('Por favor, permite el acceso a la cámara para continuar.');
+          alert("Por favor, permite el acceso a la cámara para continuar.");
         } else {
           alert(
-            'Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.',
+            "Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.",
           );
         }
       } else {
-        console.error('Unknown error accessing camera:', error);
-        alert('Error desconocido al acceder a la cámara.');
+        console.error("Unknown error accessing camera:", error);
+        alert("Error desconocido al acceder a la cámara.");
       }
     }
   };
 
   const capturePhoto = () => {
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     const video = videoRef.current;
     if (!video) return;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
     setPhoto(canvas.toDataURL());
   };
@@ -286,15 +281,15 @@ const StudentIndex: React.FC = () => {
 
   const navigateToCourseDetails = () => {
     router.push({
-      pathname: '/student/course-details',
+      pathname: "/student/course-details",
       query: { course_id: selectedCourse.course_id },
     });
-    console.log('selectedCourse:', selectedCourse);
-    console.log('selectedCourse.course_id:', selectedCourse?.course_id);
+    console.log("selectedCourse:", selectedCourse);
+    console.log("selectedCourse.course_id:", selectedCourse?.course_id);
   };
 
   const dataURLToFile = (dataUrl: string, fileName: string): File => {
-    const arr = dataUrl.split(',');
+    const arr = dataUrl.split(",");
     const mime = arr[0].match(/:(.*?);/)?.[1];
     const bstr = atob(arr[1]);
     let n = bstr.length;
@@ -306,13 +301,13 @@ const StudentIndex: React.FC = () => {
   };
 
   const pdfToFile = (pdf: jsPDF, fileName: string): File => {
-    const pdfBlob = pdf.output('blob');
-    return new File([pdfBlob], fileName, { type: 'application/pdf' });
+    const pdfBlob = pdf.output("blob");
+    return new File([pdfBlob], fileName, { type: "application/pdf" });
   };
 
   const generatePDF = async () => {
     if (!photo || !signature) {
-      alert('Debes tomar una foto y firmar antes de guardar.');
+      alert("Debes tomar una foto y firmar antes de guardar.");
       return;
     }
 
@@ -320,16 +315,16 @@ const StudentIndex: React.FC = () => {
 
     // Agregar la foto
     const imgDataPhoto = photo;
-    pdf.addImage(imgDataPhoto, 'JPEG', 10, 10, 190, 190);
+    pdf.addImage(imgDataPhoto, "JPEG", 10, 10, 190, 190);
 
     // Agregar la firma
     const imgDataSignature = signature;
-    pdf.addImage(imgDataSignature, 'JPEG', 10, 210, 190, 50);
+    pdf.addImage(imgDataSignature, "JPEG", 10, 210, 190, 50);
 
     pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
 
     if (!photo || !signature || !user) {
-      alert('Debes tomar una foto, firmar, y estar autenticado para guardar.');
+      alert("Debes tomar una foto, firmar, y estar autenticado para guardar.");
       return;
     }
 
@@ -351,9 +346,9 @@ const StudentIndex: React.FC = () => {
       await submitUserInfo(userInfo);
 
       setIsSignatureModalOpen(false);
-      alert('Datos enviados exitosamente');
+      alert("Datos enviados exitosamente");
     } catch (error) {
-      alert('Hubo un error al enviar los datos.');
+      alert("Hubo un error al enviar los datos.");
     }
   };
 
@@ -363,7 +358,7 @@ const StudentIndex: React.FC = () => {
         <ScreenSecurity />
         {/* MODAL FIRMA DIGITAL */}
         <Modal
-          isOpen={isSignatureModalOpen}
+          isOpen={isSignatureModalOpen === true}
           className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
           overlayClassName="fixed inset-0"
         >
@@ -428,7 +423,7 @@ const StudentIndex: React.FC = () => {
                       onTouchStart={handleStartDrawing}
                       onTouchMove={handleDrawing}
                       onTouchEnd={handleStopDrawing}
-                      style={{ touchAction: 'none', cursor: 'crosshair' }}
+                      style={{ touchAction: "none", cursor: "crosshair" }}
                     />
                   </div>
                   <div className="flex space-x-4">
@@ -520,8 +515,8 @@ const StudentIndex: React.FC = () => {
                         onClick={!cameraStream ? startCamera : capturePhoto}
                         className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${
                           !cameraStream
-                            ? 'bg-blue-600 text-white hover:bg-blue-700'
-                            : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            ? "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-indigo-600 text-white hover:bg-indigo-700"
                         } shadow-md hover:shadow-lg`}
                       >
                         {!cameraStream ? (
@@ -566,7 +561,7 @@ const StudentIndex: React.FC = () => {
                     </span>
                     <span className="block text-sm">
                       Acepto el tratamiento de mis datos personales según lo
-                      establecido en la{' '}
+                      establecido en la{" "}
                       <a
                         href="https://www.canva.com/design/DAGnccU5tkw/x9QLqfr8057IgwHGv5sScA/view?utm_content=DAGnccU5tkw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb87bcf2817"
                         target="_blank"
@@ -574,7 +569,7 @@ const StudentIndex: React.FC = () => {
                         className="text-blue-600 hover:text-blue-800 underline"
                       >
                         política de protección de datos
-                      </a>{' '}
+                      </a>{" "}
                       y confirmo que toda la información proporcionada es
                       verídica.
                     </span>
@@ -586,8 +581,8 @@ const StudentIndex: React.FC = () => {
                     disabled={!photo || !signature || !consentGiven}
                     className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${
                       !photo || !signature || !consentGiven
-                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl'
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
                     }`}
                   >
                     <PaperAirplaneIcon className="w-5 h-5 mr-2" />
@@ -724,7 +719,7 @@ const StudentIndex: React.FC = () => {
                     className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
                     onClick={navigateToCourseDetails}
                   >
-                    Detalles del curso{' '}
+                    Detalles del curso{" "}
                     <ChevronRightIcon className="h-5 w-5 ml-2" />
                   </button>
                 </div>
@@ -739,7 +734,7 @@ const StudentIndex: React.FC = () => {
           style={{
             backgroundImage:
               "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
-            height: '500px',
+            height: "500px",
           }}
         >
           <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-20 lg:pt-60 pl-10 lg:pl-40 text-white">
