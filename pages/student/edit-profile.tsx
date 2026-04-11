@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/router';
-import { useUpdatedProfile } from '../../hooks/user/useProfile';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import SidebarDrawer from '../../components/student/DrawerNavigation';
-import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/User/UserInterfaces';
-import { useEnterprise } from '../../hooks/useEnterprise';
-import './../../app/globals.css';
+import React, { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/router";
+import { useUpdatedProfile } from "@/hooks/user/useProfile";
+import ProtectedRoute from "@components/Auth/ProtectedRoute";
+import SidebarDrawer from "@components/student/DrawerNavigation";
+import Navbar from "@components/Navbar";
+import { Profile } from "@/interfaces/User/UserInterfaces";
+import { useEnterprise } from "@/hooks/useEnterprise";
+
 const StudentProfile: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { enterprise, error, isLoading } = useEnterprise();
   const { updateProfile } = useUpdatedProfile();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  let name = '',
-    last_name = '',
-    uri_picture = '',
+  let name = "",
+    last_name = "",
+    uri_picture = "",
     initialPhone,
     initialEmail;
-  let userInfo = { id: 0, dni: '' };
+  let userInfo = { id: 0, dni: "" };
 
   if (user) {
     userInfo = user as { id: number; dni: string };
@@ -35,11 +35,11 @@ const StudentProfile: React.FC = () => {
 
   const [email, setEmail] = useState(initialEmail);
   const [phone, setPhone] = useState(initialPhone);
-  const [alertMessage, setAlertMessage] = useState('');
+  const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
 
   const handleEditClick = () => {
-    router.push('/student/edit-profile');
+    router.push("/student/edit-profile");
   };
 
   const handleSaveClick = async () => {
@@ -49,11 +49,11 @@ const StudentProfile: React.FC = () => {
         email: email,
       };
       await updateProfile(profileData);
-      setAlertMessage('Cambios guardados correctamente');
+      setAlertMessage("Cambios guardados correctamente");
       setShowAlert(true);
     } catch (error) {
-      console.error('Error al guardar cambios:', error);
-      setAlertMessage('Error al guardar cambios');
+      console.error("Error al guardar cambios:", error);
+      setAlertMessage("Error al guardar cambios");
       setShowAlert(true);
     }
   };
