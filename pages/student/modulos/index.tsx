@@ -1,30 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import SidebarPrueba from '../../../components/student/SideBarPrueba';
-import { useAuth } from '../../../context/AuthContext';
-import Navbar from '../../../components/Navbar';
-import MainContentPrueba from '../../../components/student/MainContentPrueba';
-import { Profile } from '../../../interfaces/User/UserInterfaces';
-import {
-  Question,
-  ModuleEvaluation,
-  ModuleSessions,
-  ModuleResults,
-} from '../../../interfaces/StudentModule';
-import { useModuleDetail } from '../../../hooks/useModuleDetail';
-import SidebarDrawer from '../../../components/student/DrawerNavigation';
-import { useSesionProgress } from '../../../hooks/useProgressSession';
-import {
-  useCourseTime,
-  useCourseTimeEnd,
-} from '../../../hooks/courses/useCourseTime';
-import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
-import io from 'socket.io-client';
-import { API_SOCKET_URL } from '../../../utils/Endpoints';
-import './../../../app/globals.css';
-import LoadingIndicator from '../../../components/student/LoadingIndicator';
-import debounce from 'lodash.debounce';
-const socket = io(API_SOCKET_URL);
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import SidebarPrueba from "@components/student/SideBarPrueba";
+import { useAuth } from "@/context/AuthContext";
+import Navbar from "@components/Navbar";
+import MainContentPrueba from "@components/student/MainContentPrueba";
+import { Profile } from "@/interfaces/User/UserInterfaces";
+import { Question, ModuleEvaluation } from "@/interfaces/StudentModule";
+import { useModuleDetail } from "@hooks/useModuleDetail";
+import SidebarDrawer from "@components/student/DrawerNavigation";
+import { useCourseTime } from "@hooks/courses/useCourseTime";
+import ProtectedRoute from "@components/Auth/ProtectedRoute";
+import LoadingIndicator from "@components/student/LoadingIndicator";
 
 const Home: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -33,7 +19,7 @@ const Home: React.FC = () => {
   const userInfo = user as { id: number };
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
-    : parseInt(course_id || '0');
+    : parseInt(course_id || "0");
   const { courseData, isLoading, error, refetch } =
     useModuleDetail(courseIdNumber);
   const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null);
@@ -47,15 +33,9 @@ const Home: React.FC = () => {
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>(
     {},
   );
-  const { createSession_Progress, session_progress } = useSesionProgress();
   const { createCourseTimeStart } = useCourseTime();
-  const { createCourseTimeEnd } = useCourseTimeEnd();
-  const startTimeRef = useRef<Date | null>(null);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [startTime, setStartTime] = useState<Date | null>(null);
-  const [hasEnded, setHasEnded] = useState(false);
-  let name = '';
-  let uri_picture = '';
+  let name = "";
+  let uri_picture = "";
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -91,7 +71,7 @@ const Home: React.FC = () => {
     let timer = 0; // Contador en segundos
     const startTime = new Date(); // Hora exacta de inicio
 
-    console.log('Inicio del curso:', startTime);
+    console.log("Inicio del curso:", startTime);
 
     let interval: NodeJS.Timeout | null = null;
     let isPageVisible = true; // Flag para verificar si la página es visible
@@ -102,7 +82,7 @@ const Home: React.FC = () => {
         if (isPageVisible) {
           // Solo incrementar si la página está visible
           timer += 1;
-          console.log('Tiempo transcurrido (segundos):', timer);
+          console.log("Tiempo transcurrido (segundos):", timer);
         }
       }, 1000);
     };
@@ -111,8 +91,8 @@ const Home: React.FC = () => {
       const endTime = new Date(); // Hora exacta de finalización
       clearInterval(interval!); // Detener el timer
 
-      console.log('Fin del curso:', endTime);
-      console.log('Duración total (segundos):', timer);
+      console.log("Fin del curso:", endTime);
+      console.log("Duración total (segundos):", timer);
 
       // Llamada al backend para registrar el tiempo de la sesión
       createCourseTimeStart({
@@ -122,13 +102,13 @@ const Home: React.FC = () => {
         endTime: endTime,
         duration: timer, // Incluye el tiempo transcurrido
       }).catch((error: any) =>
-        console.error('Error al registrar el tiempo de inicio:', error),
+        console.error("Error al registrar el tiempo de inicio:", error),
       );
     };
 
     // Cuando la página gana o pierde visibilidad
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
+      if (document.visibilityState === "hidden") {
         // Si la pestaña pierde visibilidad, no incrementar el tiempo
         isPageVisible = false;
       } else {
@@ -146,16 +126,16 @@ const Home: React.FC = () => {
     startTimer();
 
     // Registrar la finalización al cerrar la ventana
-    window.addEventListener('beforeunload', handleEndSession);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('popstate', handlePopState); // Detectar retroceso en el historial
+    window.addEventListener("beforeunload", handleEndSession);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("popstate", handlePopState); // Detectar retroceso en el historial
 
     // Cleanup para eliminar el intervalo y el listener
     return () => {
       clearInterval(interval!); // Limpiar el intervalo
-      window.removeEventListener('beforeunload', handleEndSession);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('popstate', handlePopState); // Eliminar el listener del retroceso
+      window.removeEventListener("beforeunload", handleEndSession);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("popstate", handlePopState); // Eliminar el listener del retroceso
     };
   }, [courseIdNumber, userInfo, createCourseTimeStart]);
 
@@ -165,10 +145,11 @@ const Home: React.FC = () => {
     moduleId?: number,
   ) => {
     setSelectedModuleId(moduleId || null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     if (Array.isArray(evaluation)) {
       setSelectedSession({ questions: evaluation, module_id: moduleId });
-    } else if (evaluation && 'questions' in evaluation) {
+    } else if (evaluation && "questions" in evaluation) {
       setSelectedSession({
         questions: evaluation.questions,
         module_id: moduleId,
@@ -227,10 +208,10 @@ const Home: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -266,11 +247,7 @@ const Home: React.FC = () => {
         </div>
         <div className="flex flex-col h-screen">
           <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
-            <div
-              className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0 ${
-                isDrawerOpen ? 'ml-64' : 'ml-16'
-              }`}
-            >
+            <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0`}>
               <MainContentPrueba
                 sessionVideo={selectedSession.video}
                 sessionId={selectedSession.session_id}
