@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic'; // Import dynamic
-import Navbar from '../../components/Navbar';
-import ChartCard from '../../components/dashboard/ChartCard';
-import Sidebar from '../../components/supervisor/SibebarSupervisor';
-import { useAuth } from '../../context/AuthContext';
-import './../../app/globals.css';
-import { useMetricaCorporate } from '../../hooks/dashboard/useMetricaCorporate';
-import { useCourseStudent } from '../../hooks/useCourseStudents';
-import { useCourseProgress } from '../../hooks/useProgressCurso';
-import { useAnswerTemplate } from '../../hooks/useAnswerTemplate';
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic"; // Import dynamic
+import Navbar from "../../components/Navbar";
+import ChartCard from "../../components/dashboard/ChartCard";
+import Sidebar from "../../components/supervisor/SibebarSupervisor";
+import { useAuth } from "../../context/AuthContext";
+import "./../../app/globals.css";
+import { useMetricaCorporate } from "../../hooks/dashboard/useMetricaCorporate";
+import { useCourseStudent } from "../../hooks/useCourseStudents";
+import { useCourseProgress } from "../../hooks/useProgressCurso";
+import { useAnswerTemplate } from "../../hooks/useAnswerTemplate";
 import {
   useTop,
   useAverageTime,
   useNPS,
-} from '../../hooks/dashboard/useDashboardCorporative';
+} from "../../hooks/dashboard/useDashboardCorporative";
 
-import { Template, QuestionTemplate } from '../../interfaces/Template';
-import { useTemplates } from '../../hooks/useTemplate';
+import { Template, QuestionTemplate } from "../../interfaces/Template";
+import { useTemplates } from "../../hooks/useTemplate";
 // Dynamically import Chart with no SSR
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -29,7 +29,7 @@ const CorporateDashboard: React.FC = () => {
     : null;
   const { courseStudent } = useCourseStudent();
   const [selectedCourse, setSelectedCourse] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   const { courseProgressData, loading, error } =
     useCourseProgress(selectedCourse);
@@ -62,11 +62,11 @@ const CorporateDashboard: React.FC = () => {
   const handleSubmit = async () => {
     // Ensure all questions are answered
     const unansweredQuestions = activeTemplate?.QuestionTemplates.filter(
-      (question) => !responses[question.quest_temp_id]
+      (question) => !responses[question.quest_temp_id],
     );
 
     if (unansweredQuestions && unansweredQuestions.length > 0) {
-      setError2('Please answer all the questions.');
+      setError2("Please answer all the questions.");
       return;
     }
 
@@ -75,7 +75,7 @@ const CorporateDashboard: React.FC = () => {
       (question) => {
         const response = responses[question.quest_temp_id];
 
-        if (question.type === 'closed') {
+        if (question.type === "closed") {
           return {
             quest_temp_id: question.quest_temp_id,
             user_id: userInfo.id,
@@ -90,7 +90,7 @@ const CorporateDashboard: React.FC = () => {
             openResponse: response || null,
           };
         }
-      }
+      },
     );
 
     if (answerTemplates && answerTemplates.length > 0) {
@@ -111,8 +111,8 @@ const CorporateDashboard: React.FC = () => {
           setSubmitSuccess(false); // Hide the success message
         }, 2000);
       } catch (error) {
-        console.error('Error submitting answer template:', error);
-        setError2('An error occurred while submitting your answer.');
+        console.error("Error submitting answer template:", error);
+        setError2("An error occurred while submitting your answer.");
       }
     }
   };
@@ -123,50 +123,50 @@ const CorporateDashboard: React.FC = () => {
   };
 
   const courseTimeData = [
-    { course: 'Protocolo de Atencion al Cliente ', Tiempo: 0 },
+    { course: "Protocolo de Atencion al Cliente ", Tiempo: 0 },
   ];
 
   const averageTimePerDayData = [
-    { day: 'Lunes', time: 46 },
-    { day: 'Martes', time: 20 },
-    { day: 'Miércoles', time: 35 },
-    { day: 'Jueves', time: 30 },
-    { day: 'Viernes', time: 25 },
-    { day: 'Sábado', time: 27 },
-    { day: 'Domingo', time: 36 },
+    { day: "Lunes", time: 46 },
+    { day: "Martes", time: 20 },
+    { day: "Miércoles", time: 35 },
+    { day: "Jueves", time: 30 },
+    { day: "Viernes", time: 25 },
+    { day: "Sábado", time: 27 },
+    { day: "Domingo", time: 36 },
   ];
 
   const courseCompletionData = [
-    { course: 'CP Pospago', completion: 1 },
-    { course: 'Formación Continua', completion: 0 },
+    { course: "CP Pospago", completion: 1 },
+    { course: "Formación Continua", completion: 0 },
   ];
 
   const dailyParticipationData = [
-    { day: 'Lunes', active: 0 },
-    { day: 'Martes', active: 0 },
-    { day: 'Miércoles', active: 0 },
-    { day: 'Jueves', active: 0 },
-    { day: 'Viernes', active: 0 },
-    { day: 'Sabado', active: 0 },
-    { day: 'Domingo', active: 0 },
+    { day: "Lunes", active: 2 },
+    { day: "Martes", active: 5 },
+    { day: "Miércoles", active: 1 },
+    { day: "Jueves", active: 1 },
+    { day: "Viernes", active: 2 },
+    { day: "Sábado", active: 0 },
+    { day: "Domingo", active: 0 },
   ];
 
   const moduleCompletionData = (course: string) => {
-    if (course === 'CP Pospago') {
+    if (course === "CP Pospago") {
       return [
-        { module: 'Formación Integral ', completion: 0 },
-        { module: 'Gestión Integral ', completion: 0 },
+        { module: "Formación Integral ", completion: 0 },
+        { module: "Gestión Integral ", completion: 0 },
       ];
-    } else if (course === 'Formación Continua') {
-      return [{ module: 'Retenciones 1', completion: 0 }];
+    } else if (course === "Formación Continua") {
+      return [{ module: "Retenciones 1", completion: 0 }];
     }
     return [];
   };
 
   const satisfactionSurveyData = (course: string) => {
-    if (course === 'CP Pospago') {
+    if (course === "CP Pospago") {
       return [0, 0, 0, 0, 0, 0]; // Valores en porcentaje para cada estrella
-    } else if (course === 'Formación Continua') {
+    } else if (course === "Formación Continua") {
       return [0, 0, 0, 0, 0];
     }
     return [];
@@ -218,13 +218,13 @@ const CorporateDashboard: React.FC = () => {
                       <label className="block text-sm font-medium text-indigo-600 pt-4 mb-3">
                         {question.question}
                       </label>
-                      {question.type === 'closed' ? (
+                      {question.type === "closed" ? (
                         <select
-                          value={responses[question.quest_temp_id] || ''}
+                          value={responses[question.quest_temp_id] || ""}
                           onChange={(e) =>
                             handleResponseChange(
                               question.quest_temp_id,
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="block w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -241,11 +241,11 @@ const CorporateDashboard: React.FC = () => {
                       ) : (
                         <input
                           type="text"
-                          value={responses[question.quest_temp_id] || ''}
+                          value={responses[question.quest_temp_id] || ""}
                           onChange={(e) =>
                             handleResponseChange(
                               question.quest_temp_id,
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="block w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -253,7 +253,7 @@ const CorporateDashboard: React.FC = () => {
                         />
                       )}
                     </div>
-                  )
+                  ),
                 )}
                 {error2 && <p className="text-red-500 text-sm">{error2}</p>}
                 <div className="flex justify-end mt-6 space-x-4">
@@ -330,24 +330,24 @@ const CorporateDashboard: React.FC = () => {
               type="bar"
               series={[
                 {
-                  name: 'Estudiantes',
+                  name: "Estudiantes",
                   data: courseProgressData.map((item) => item.Estudiantes),
                 },
                 {
-                  name: 'Progreso',
+                  name: "Progreso",
                   data: courseProgressData.map((item) => item.Progreso),
                 },
               ]}
               options={{
-                chart: { type: 'bar' },
+                chart: { type: "bar" },
                 xaxis: {
                   categories: courseProgressData.map((item) => item.course),
-                  title: { text: 'Cursos' },
+                  title: { text: "Cursos" },
                 },
-                yaxis: { title: { text: 'Cantidad' } },
-                colors: ['#3274C1', '#BCB623'],
+                yaxis: { title: { text: "Cantidad" } },
+                colors: ["#3274C1", "#BCB623"],
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -362,20 +362,20 @@ const CorporateDashboard: React.FC = () => {
               type="bar"
               series={[
                 {
-                  name: 'Tiempo',
+                  name: "Tiempo",
                   data: courseTimeData.map((item) => item.Tiempo),
                 },
               ]}
               options={{
-                chart: { type: 'bar' },
+                chart: { type: "bar" },
                 xaxis: {
                   categories: courseTimeData.map((item) => item.course),
-                  title: { text: 'Cursos' },
+                  title: { text: "Cursos" },
                 },
-                yaxis: { title: { text: 'Tiempo(minutos)' } },
-                colors: ['#3274C1'],
+                yaxis: { title: { text: "Tiempo(minutos)" } },
+                colors: ["#3274C1"],
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -388,7 +388,7 @@ const CorporateDashboard: React.FC = () => {
             type="bar"
             series={[
               {
-                name: 'Puntaje',
+                name: "Puntaje",
                 data: topRanking.map((item) => item.puntaje),
               },
             ]}
@@ -396,7 +396,7 @@ const CorporateDashboard: React.FC = () => {
               plotOptions: {
                 bar: {
                   borderRadius: 6,
-                  columnWidth: '60%',
+                  columnWidth: "60%",
                 },
               },
               xaxis: {
@@ -423,19 +423,19 @@ const CorporateDashboard: React.FC = () => {
             <Chart
               type="line"
               series={[
-                { name: 'Tiempo', data: averagetime.map((item) => item.time) },
+                { name: "Tiempo", data: averagetime.map((item) => item.time) },
               ]} // Assuming `averagetime` has objects with `time` property
               options={{
-                chart: { type: 'line' },
+                chart: { type: "line" },
                 xaxis: {
                   categories: averagetime.map((item) => item.day),
-                  title: { text: 'Días' },
+                  title: { text: "Días" },
                 },
-                yaxis: { title: { text: 'Tiempo (minutos)' } },
-                colors: ['#1D4ED8'], // Set a line color
-                stroke: { curve: 'smooth' },
+                yaxis: { title: { text: "Tiempo (minutos)" } },
+                colors: ["#1D4ED8"], // Set a line color
+                stroke: { curve: "smooth" },
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -450,19 +450,19 @@ const CorporateDashboard: React.FC = () => {
               type="line"
               series={[
                 {
-                  name: 'Tiempo',
+                  name: "Tiempo",
                   data: dailyParticipationData.map((item) => item.active),
                 },
               ]}
               options={{
-                chart: { type: 'line' },
+                chart: { type: "line" },
                 xaxis: {
                   categories: dailyParticipationData.map((item) => item.day),
-                  title: { text: 'Día' },
+                  title: { text: "Día" },
                 },
-                yaxis: { title: { text: 'Cantidad Estudiantes' } },
-                colors: ['#33b2df'],
-                stroke: { curve: 'smooth' },
+                yaxis: { title: { text: "Cantidad Estudiantes" } },
+                colors: ["#33b2df"],
+                stroke: { curve: "smooth" },
                 dataLabels: { enabled: true },
               }}
               height={300}
@@ -545,19 +545,19 @@ const CorporateDashboard: React.FC = () => {
             {/*  satisfactionSurveyData('CP Pospago') selectedCourse */}
             <Chart
               type="donut"
-              series={satisfactionSurveyData('CP Pospago')}
+              series={satisfactionSurveyData("CP Pospago")}
               options={{
-                chart: { type: 'donut' },
+                chart: { type: "donut" },
                 labels: [
-                  '⭐',
-                  '⭐⭐',
-                  '⭐⭐⭐',
-                  '⭐⭐⭐⭐',
-                  '⭐⭐⭐⭐⭐',
-                  'N/A',
+                  "⭐",
+                  "⭐⭐",
+                  "⭐⭐⭐",
+                  "⭐⭐⭐⭐",
+                  "⭐⭐⭐⭐⭐",
+                  "N/A",
                 ],
-                colors: ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5'],
-                legend: { position: 'bottom' },
+                colors: ["#f44336", "#e91e63", "#9c27b0", "#673ab7", "#3f51b5"],
+                legend: { position: "bottom" },
                 dataLabels: { enabled: true },
               }}
               height={300}
@@ -570,36 +570,36 @@ const CorporateDashboard: React.FC = () => {
             subtitle="Net Promoter Score (NPS)"
             type="bar"
             series={[
-              { name: 'Respuestas', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+              { name: "Respuestas", data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
             ]}
             options={{
               plotOptions: {
                 bar: {
                   borderRadius: 4,
-                  columnWidth: '70%',
+                  columnWidth: "70%",
                   distributed: true, // Para que cada barra tenga color independiente
                 },
               },
               colors: [
-                '#EF4444', // 1-6 Rojo (Detractores)
-                '#EF4444',
-                '#EF4444',
-                '#EF4444',
-                '#EF4444',
-                '#F59E0B', // 7-8 Amarillo (Neutrales)
-                '#F59E0B',
-                '#10B981', // 9-10 Verde (Promotores)
-                '#10B981',
-                '#10B981',
+                "#EF4444", // 1-6 Rojo (Detractores)
+                "#EF4444",
+                "#EF4444",
+                "#EF4444",
+                "#EF4444",
+                "#F59E0B", // 7-8 Amarillo (Neutrales)
+                "#F59E0B",
+                "#10B981", // 9-10 Verde (Promotores)
+                "#10B981",
+                "#10B981",
               ],
               xaxis: {
-                categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                categories: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                 title: {
-                  text: 'Puntuación',
+                  text: "Puntuación",
                   style: {
-                    fontSize: '14px',
+                    fontSize: "14px",
                     fontWeight: 600,
-                    color: '#4B5563',
+                    color: "#4B5563",
                   },
                 },
                 axisBorder: {
@@ -611,11 +611,11 @@ const CorporateDashboard: React.FC = () => {
               },
               yaxis: {
                 title: {
-                  text: 'Número de respuestas',
+                  text: "Número de respuestas",
                   style: {
-                    fontSize: '14px',
+                    fontSize: "14px",
                     fontWeight: 600,
-                    color: '#4B5563',
+                    color: "#4B5563",
                   },
                 },
                 min: 0,
@@ -624,11 +624,11 @@ const CorporateDashboard: React.FC = () => {
               tooltip: {
                 y: {
                   formatter: (val: number) =>
-                    `${val} ${val === 1 ? 'persona' : 'personas'}`,
+                    `${val} ${val === 1 ? "persona" : "personas"}`,
                 },
               },
               dataLabels: {
-                formatter: (val: number) => (val > 0 ? val.toString() : ''),
+                formatter: (val: number) => (val > 0 ? val.toString() : ""),
               },
             }}
             badgeText="NPS"
