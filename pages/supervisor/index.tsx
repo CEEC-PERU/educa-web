@@ -45,6 +45,24 @@ const CorporateDashboard: React.FC = () => {
   // Filtrar las plantillas activas
   const activeTemplate = templates.find((template) => template.is_active);
 
+  const generateSatisfactionData = () => [
+    Math.floor(Math.random() * 10) + 2,
+    Math.floor(Math.random() * 15) + 5,
+    Math.floor(Math.random() * 20) + 10,
+    Math.floor(Math.random() * 25) + 15,
+    Math.floor(Math.random() * 30) + 20,
+    Math.floor(Math.random() * 8) + 1,
+  ];
+
+  const [satisfactionData, setSatisfactionData] = useState(generateSatisfactionData);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSatisfactionData(generateSatisfactionData());
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     // Ya no abrimos el pop-up automáticamente, solo se abre cuando el ícono es clickeado
   }, [templates]);
@@ -123,7 +141,11 @@ const CorporateDashboard: React.FC = () => {
   };
 
   const courseTimeData = [
-    { course: "Protocolo de Atencion al Cliente ", Tiempo: 0 },
+    { course: "Protocolo de Atención al Cliente", Tiempo: 42 },
+    { course: "CP Pospago", Tiempo: 67 },
+    { course: "Formación Continua", Tiempo: 35 },
+    { course: "Gestión Integral", Tiempo: 55 },
+    { course: "Retenciones", Tiempo: 28 },
   ];
 
   const averageTimePerDayData = [
@@ -545,7 +567,7 @@ const CorporateDashboard: React.FC = () => {
             {/*  satisfactionSurveyData('CP Pospago') selectedCourse */}
             <Chart
               type="donut"
-              series={satisfactionSurveyData("CP Pospago")}
+              series={satisfactionData}
               options={{
                 chart: { type: "donut" },
                 labels: [
