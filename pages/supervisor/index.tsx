@@ -59,7 +59,7 @@ const CorporateDashboard: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setSatisfactionData(generateSatisfactionData());
-    }, 5000);
+    }, 10000);
     return () => clearInterval(interval);
   }, []);
 
