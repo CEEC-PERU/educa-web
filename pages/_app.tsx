@@ -1,30 +1,15 @@
-// src/pages/_app.tsx
 import { AuthProvider } from "../context/AuthContext";
-import { AppProps } from "next/app";
-import ProtectedRoute from "../components/Auth/ProtectedRoute";
+import type { AppPropsWithLayout } from "../types/next";
 import SessionTimeoutNotification from "../components/SessionTimeOutNotification";
 import "../app/globals.css";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const protectedRoutes = [
-    "/home",
-    "/contenido/agregarCurso",
-    "/student",
-    "/corporate",
-    "/content",
-    "/admin",
-  ];
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
     <AuthProvider>
-      {protectedRoutes.includes(Component.name) ? (
-        <ProtectedRoute>
-          <Component {...pageProps} />
-          <SessionTimeoutNotification />
-        </ProtectedRoute>
-      ) : (
-        <Component {...pageProps} />
-      )}
+      {getLayout(<Component {...pageProps} />)}
+      <SessionTimeoutNotification />
     </AuthProvider>
   );
 }

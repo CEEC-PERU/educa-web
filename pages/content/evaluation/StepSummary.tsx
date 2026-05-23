@@ -3,7 +3,6 @@ import { Question, Option } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
 import AlertComponent from '../../../components/AlertComponent'; // Importar el componente de alerta
-import './../../../app/globals.css';
 
 interface StepSummaryProps {
   prevStep: () => void;

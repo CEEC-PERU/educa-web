@@ -4,7 +4,6 @@ import { uploadImage } from '../../../services/imageService';
 import MediaUploadPreview from '../../../components/MediaUploadPreview';
 import { PlusIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
-import './../../../app/globals.css';
 
 interface QuestionsContainerProps {
   questions: Question[];

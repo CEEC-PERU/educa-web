@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import Navbar from "@components/Navbar";
-import Sidebar from "@components/Content/SideBar";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
 import MediaUploadPreview from "@components/MediaUploadPreview";
 import FormField from "@components/FormField";
 import ActionButtons from "@components/Content/ActionButtons";
@@ -14,7 +14,6 @@ import { Professor } from "@/interfaces/Professor";
 import { Evaluation } from "@/interfaces/Evaluation";
 import { Course } from "@/interfaces/Courses/Course";
 import Loader from "@components/Loader";
-import ProtectedRoute from "@components/Auth/ProtectedRoute";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import AlertComponent from "@components/AlertComponent";
 
@@ -25,8 +24,7 @@ interface FormData extends Omit<
   [key: string]: string | boolean | number | undefined;
 }
 
-const AddCourse: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const AddCourse: NextPageWithLayout = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -35,7 +33,8 @@ const AddCourse: React.FC = () => {
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"success" | "danger" | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [presentationVideoFile, setPresentationVideoFile] = useState<File | null>(null);
+  const [presentationVideoFile, setPresentationVideoFile] =
+    useState<File | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
   const [formData, setFormData] = useState<FormData>({
@@ -85,11 +84,6 @@ const AddCourse: React.FC = () => {
     };
     fetchCategoriesProfessorsEvaluations();
   }, []);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem("sidebarState", JSON.stringify(!showSidebar));
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -173,7 +167,12 @@ const AddCourse: React.FC = () => {
     }
 
     try {
-      await addCourse(formData, videoFile!, imageFile!, presentationVideoFile ?? undefined);
+      await addCourse(
+        formData,
+        videoFile!,
+        imageFile!,
+        presentationVideoFile ?? undefined,
+      );
       setAlertMessage("Curso creado exitosamente.");
       setAlertType("success");
       setShowAlert(true);
@@ -199,7 +198,8 @@ const AddCourse: React.FC = () => {
         setClearMediaPreview(true);
         if (imageUploadRef.current) imageUploadRef.current.clear();
         if (videoUploadRef.current) videoUploadRef.current.clear();
-        if (presentationVideoUploadRef.current) presentationVideoUploadRef.current.clear();
+        if (presentationVideoUploadRef.current)
+          presentationVideoUploadRef.current.clear();
         setTimeout(() => setClearMediaPreview(false), 500);
       }, 3000);
     } catch (error) {
@@ -233,7 +233,8 @@ const AddCourse: React.FC = () => {
     setClearMediaPreview(true);
     if (imageUploadRef.current) imageUploadRef.current.clear();
     if (videoUploadRef.current) videoUploadRef.current.clear();
-    if (presentationVideoUploadRef.current) presentationVideoUploadRef.current.clear();
+    if (presentationVideoUploadRef.current)
+      presentationVideoUploadRef.current.clear();
     setTimeout(() => setClearMediaPreview(false), 500);
   };
 
@@ -246,242 +247,226 @@ const AddCourse: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow ${
-              showSidebar ? "ml-20" : ""
-            } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}
-          >
-            <div className="max-w-6xl bg-white rounded-lg w-full">
-              {showAlert && (
-                <AlertComponent
-                  type={alertType || "info"}
-                  message={alertMessage || ""}
-                  onClose={() => setShowAlert(false)}
-                />
-              )}
-              <button
-                type="button"
-                onClick={() => router.back()}
-                className="flex items-center text-purple-600 mb-4"
+    <>
+      <div className="max-w-6xl bg-white rounded-lg w-full">
+        {showAlert && (
+          <AlertComponent
+            type={alertType || "info"}
+            message={alertMessage || ""}
+            onClose={() => setShowAlert(false)}
+          />
+        )}
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center text-purple-600 mb-4"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          Volver
+        </button>
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
+        >
+          <div className="space-y-4">
+            <FormField
+              id="name"
+              label="Nombre del Curso"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={!formData.name && touchedFields["name"]}
+              touched={touchedFields["name"]}
+              required
+            />
+            <FormField
+              id="description_short"
+              label="Descripción Corta"
+              type="textarea"
+              value={formData.description_short}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              rows={4}
+              error={
+                !formData.description_short &&
+                touchedFields["description_short"]
+              }
+              touched={touchedFields["description_short"]}
+              required
+            />
+            <FormField
+              id="description_large"
+              label="Descripción Larga"
+              type="textarea"
+              value={formData.description_large}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              rows={4}
+              error={
+                !formData.description_large &&
+                touchedFields["description_large"]
+              }
+              touched={touchedFields["description_large"]}
+              required
+            />
+            <FormField
+              id="category_id"
+              label="Categoría"
+              type="select"
+              value={formData.category_id.toString()}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={[
+                { value: "", label: "Seleccionar Categoría" },
+                ...categories.map((category) => ({
+                  value: category.category_id.toString(),
+                  label: category.name,
+                })),
+              ]}
+              error={formData.category_id === 0 && touchedFields["category_id"]}
+              touched={touchedFields["category_id"]}
+              required
+            />
+            <div>
+              <label
+                htmlFor="image"
+                className="block text-sm font-medium mb-6 text-gray-700"
               >
-                <ArrowLeftIcon className="h-5 w-5 mr-2" />
-                Volver
-              </button>
-              <form
-                onSubmit={handleSubmit}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full"
-              >
-                <div className="space-y-4">
-                  <FormField
-                    id="name"
-                    label="Nombre del Curso"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={!formData.name && touchedFields["name"]}
-                    touched={touchedFields["name"]}
-                    required
-                  />
-                  <FormField
-                    id="description_short"
-                    label="Descripción Corta"
-                    type="textarea"
-                    value={formData.description_short}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    rows={4}
-                    error={
-                      !formData.description_short &&
-                      touchedFields["description_short"]
-                    }
-                    touched={touchedFields["description_short"]}
-                    required
-                  />
-                  <FormField
-                    id="description_large"
-                    label="Descripción Larga"
-                    type="textarea"
-                    value={formData.description_large}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    rows={4}
-                    error={
-                      !formData.description_large &&
-                      touchedFields["description_large"]
-                    }
-                    touched={touchedFields["description_large"]}
-                    required
-                  />
-                  <FormField
-                    id="category_id"
-                    label="Categoría"
-                    type="select"
-                    value={formData.category_id.toString()}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    options={[
-                      { value: "", label: "Seleccionar Categoría" },
-                      ...categories.map((category) => ({
-                        value: category.category_id.toString(),
-                        label: category.name,
-                      })),
-                    ]}
-                    error={
-                      formData.category_id === 0 && touchedFields["category_id"]
-                    }
-                    touched={touchedFields["category_id"]}
-                    required
-                  />
-                  <div>
-                    <label
-                      htmlFor="image"
-                      className="block text-sm font-medium mb-6 text-gray-700"
-                    >
-                      Imagen
-                    </label>
-                    <MediaUploadPreview
-                      ref={imageUploadRef}
-                      onMediaUpload={handleImageUpload}
-                      accept="image/*"
-                      label="Subir imagen"
-                      clearMediaPreview={clearMediaPreview}
-                      error={!imageFile && touchedFields["image"]}
-                      touched={touchedFields["image"]}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <FormField
-                    id="professor_id"
-                    label="Profesor"
-                    type="select"
-                    value={formData.professor_id.toString()}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    options={[
-                      { value: "", label: "Seleccionar Profesor" },
-                      ...professors.map((professor) => ({
-                        value: professor.professor_id.toString(),
-                        label: professor.full_name,
-                      })),
-                    ]}
-                    error={
-                      formData.professor_id === 0 &&
-                      touchedFields["professor_id"]
-                    }
-                    touched={touchedFields["professor_id"]}
-                    required
-                  />
-                  <FormField
-                    id="evaluation_id"
-                    label="Evaluación"
-                    type="select"
-                    value={formData.evaluation_id.toString()}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    options={[
-                      { value: "", label: "Seleccionar Evaluación" },
-                      ...evaluations.map((evaluation) => ({
-                        value: evaluation.evaluation_id.toString(),
-                        label: evaluation.name,
-                      })),
-                    ]}
-                    error={
-                      formData.evaluation_id === 0 &&
-                      touchedFields["evaluation_id"]
-                    }
-                    touched={touchedFields["evaluation_id"]}
-                    required
-                  />
-                  <FormField
-                    id="duration_video"
-                    label="Duración del Video"
-                    type="text"
-                    value={formData.duration_video}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={
-                      !formData.duration_video &&
-                      touchedFields["duration_video"]
-                    }
-                    touched={touchedFields["duration_video"]}
-                    required
-                  />
-                  <div>
-                    <label
-                      htmlFor="intro_video"
-                      className="block text-sm font-medium mb-6 text-gray-700"
-                    >
-                      Video de Introducción
-                    </label>
-                    <MediaUploadPreview
-                      ref={videoUploadRef}
-                      onMediaUpload={handleVideoUpload}
-                      accept="video/*"
-                      label="Subir video"
-                      inputId="mediaUpload-intro_video"
-                      clearMediaPreview={clearMediaPreview}
-                      error={!videoFile && touchedFields["intro_video"]}
-                      touched={touchedFields["intro_video"]}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="presentation_professor"
-                      className="block text-sm font-medium mb-6 text-gray-700"
-                    >
-                      Video de Presentación del Profesor
-                    </label>
-                    <MediaUploadPreview
-                      ref={presentationVideoUploadRef}
-                      onMediaUpload={handlePresentationVideoUpload}
-                      accept="video/*"
-                      label="Subir video"
-                      inputId="mediaUpload-presentation_professor"
-                      clearMediaPreview={clearMediaPreview}
-                    />
-                  </div>
-                  <FormField
-                    id="duration_course"
-                    label="Duración del Curso"
-                    type="text"
-                    value={formData.duration_course}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={
-                      !formData.duration_course &&
-                      touchedFields["duration_course"]
-                    }
-                    touched={touchedFields["duration_course"]}
-                    required
-                  />
-                </div>
-              </form>
-            </div>
-            <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
-              <ActionButtons
-                onSave={handleSubmit}
-                onCancel={handleCancel}
-                isEditing={true}
-                customSize={true} // Pass the customSize prop to set the size to 400x300
+                Imagen
+              </label>
+              <MediaUploadPreview
+                ref={imageUploadRef}
+                onMediaUpload={handleImageUpload}
+                accept="image/*"
+                label="Subir imagen"
+                clearMediaPreview={clearMediaPreview}
+                error={!imageFile && touchedFields["image"]}
+                touched={touchedFields["image"]}
               />
             </div>
-          </main>
-        </div>
-        {formLoading && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-            <Loader />
           </div>
-        )}
+          <div className="space-y-4">
+            <FormField
+              id="professor_id"
+              label="Profesor"
+              type="select"
+              value={formData.professor_id.toString()}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={[
+                { value: "", label: "Seleccionar Profesor" },
+                ...professors.map((professor) => ({
+                  value: professor.professor_id.toString(),
+                  label: professor.full_name,
+                })),
+              ]}
+              error={
+                formData.professor_id === 0 && touchedFields["professor_id"]
+              }
+              touched={touchedFields["professor_id"]}
+              required
+            />
+            <FormField
+              id="evaluation_id"
+              label="Evaluación"
+              type="select"
+              value={formData.evaluation_id.toString()}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              options={[
+                { value: "", label: "Seleccionar Evaluación" },
+                ...evaluations.map((evaluation) => ({
+                  value: evaluation.evaluation_id.toString(),
+                  label: evaluation.name,
+                })),
+              ]}
+              error={
+                formData.evaluation_id === 0 && touchedFields["evaluation_id"]
+              }
+              touched={touchedFields["evaluation_id"]}
+              required
+            />
+            <FormField
+              id="duration_video"
+              label="Duración del Video"
+              type="text"
+              value={formData.duration_video}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={
+                !formData.duration_video && touchedFields["duration_video"]
+              }
+              touched={touchedFields["duration_video"]}
+              required
+            />
+            <div>
+              <label
+                htmlFor="intro_video"
+                className="block text-sm font-medium mb-6 text-gray-700"
+              >
+                Video de Introducción
+              </label>
+              <MediaUploadPreview
+                ref={videoUploadRef}
+                onMediaUpload={handleVideoUpload}
+                accept="video/*"
+                label="Subir video"
+                inputId="mediaUpload-intro_video"
+                clearMediaPreview={clearMediaPreview}
+                error={!videoFile && touchedFields["intro_video"]}
+                touched={touchedFields["intro_video"]}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="presentation_professor"
+                className="block text-sm font-medium mb-6 text-gray-700"
+              >
+                Video de Presentación del Profesor
+              </label>
+              <MediaUploadPreview
+                ref={presentationVideoUploadRef}
+                onMediaUpload={handlePresentationVideoUpload}
+                accept="video/*"
+                label="Subir video"
+                inputId="mediaUpload-presentation_professor"
+                clearMediaPreview={clearMediaPreview}
+              />
+            </div>
+            <FormField
+              id="duration_course"
+              label="Duración del Curso"
+              type="text"
+              value={formData.duration_course}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={
+                !formData.duration_course && touchedFields["duration_course"]
+              }
+              touched={touchedFields["duration_course"]}
+              required
+            />
+          </div>
+        </form>
       </div>
-    </ProtectedRoute>
+      <div className="mt-4 md:mt-0 md:ml-4 flex-shrink-0">
+        <ActionButtons
+          onSave={handleSubmit}
+          onCancel={handleCancel}
+          isEditing={true}
+          customSize={true} // Pass the customSize prop to set the size to 400x300
+        />
+      </div>
+      {formLoading && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+          <Loader />
+        </div>
+      )}
+    </>
   );
 };
+
+AddCourse.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default AddCourse;
