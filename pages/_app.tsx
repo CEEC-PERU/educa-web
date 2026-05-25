@@ -6,6 +6,7 @@ import SessionTimeoutNotification from "../components/SessionTimeOutNotification
 import NotificationProvider from "../components/notifications/NotificationProvider";
 import AuthBridge from "../components/notifications/AuthBridge";
 import { queryClient } from "../lib/query/queryClient";
+import { Toaster } from "sonner";
 import "../app/globals.css";
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
@@ -18,6 +19,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         {getLayout(<Component {...pageProps} />)}
         <SessionTimeoutNotification />
         <NotificationProvider />
+        <Toaster position="top-right" richColors closeButton />
       </AuthProvider>
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} />

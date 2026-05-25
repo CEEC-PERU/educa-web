@@ -1,58 +1,59 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import { useRouter } from "next/router";
-import { Course } from "@/interfaces/Courses/Course";
-import { getCourses } from "@/services/courses/courseService";
-import CardCourses from "@/components/Content/CardCourses";
+import { useCoursesQuery } from "@/features/courses/courses.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
+import CourseCard from "@/components/courses/CourseCard";
+import CourseCardSkeleton from "@/components/courses/CourseCardSkeleton";
 
 const Flashcards: NextPageWithLayout = () => {
-  const [cursos, setCursos] = useState<Course[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
+  const coursesQuery = useCoursesQuery();
+  const courses = coursesQuery.data ?? [];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getCourses();
-        setCursos(data);
-      } catch (error) {
-        setError("Error fetching courses");
-        console.error("Error fetching courses:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleViewModulesClick = (courseId?: number) => {
-    if (courseId) {
-      router.push(`/content/detailFlashcard?id=${courseId}`);
-    }
+  const handleViewModules = (courseId: number) => {
+    router.push(`/content/detailFlashcard?id=${courseId}`);
   };
-  return (
-    <>
-      <div className="flex justify-between items-center mb-4"></div>
-      {error && <p className="text-red-500">{error}</p>}
+
+  if (coursesQuery.isLoading) {
+    return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* lista de módulos */}
-        {cursos.map((curso) => (
-          <CardCourses
-            key={curso.course_id}
-            id={curso.course_id}
-            image={curso.image}
-            name={curso.name}
-            description_short={curso.description_short}
-            duration_course={curso.duration_course}
-            rating={4.9}
-            buttonLabel="Ver Módulos"
-            textColor="text-blue-gray-900"
-            onButtonClick={() => handleViewModulesClick(curso.course_id)}
-          />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <CourseCardSkeleton key={i} />
         ))}
       </div>
-    </>
+    );
+  }
+
+  if (coursesQuery.isError) {
+    return (
+      <p className="text-gray-500 text-center mt-20">
+        {getUserFacingMessage(coursesQuery.error) ??
+          "Error al cargar los cursos. Intenta de nuevo."}
+      </p>
+    );
+  }
+
+  if (courses.length === 0) {
+    return (
+      <p className="text-gray-400 text-center mt-20">
+        No hay cursos disponibles.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {courses.map((course) => (
+        <CourseCard
+          key={course.course_id}
+          course={course}
+          buttonLabel="Ver Módulos"
+          onButtonClick={handleViewModules}
+        />
+      ))}
+    </div>
   );
 };
 

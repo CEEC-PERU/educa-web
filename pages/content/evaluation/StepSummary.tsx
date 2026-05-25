@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
-import { Question, Option } from '../../../interfaces/Evaluation';
-import WizardStepContainer from '../../../components/WizardStepContainer';
-import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
-import AlertComponent from '../../../components/AlertComponent'; // Importar el componente de alerta
+import React, { useState } from "react";
+import { Question, Option } from "../../../interfaces/Evaluation";
+import WizardStepContainer from "../../../components/WizardStepContainer";
+import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 interface StepSummaryProps {
   prevStep: () => void;
-  completeForm: () => void;
-  questionsData: (Omit<Question, 'question_id'> & {
+  completeForm: () => Promise<void>;
+  questionsData: (Omit<Question, "question_id"> & {
     imageFile?: File | null;
   })[];
-  optionsData: { [key: number]: Omit<Option, 'option_id'>[] };
+  optionsData: { [key: number]: Omit<Option, "option_id">[] };
 }
 
 const StepSummary: React.FC<StepSummaryProps> = ({
@@ -19,21 +18,16 @@ const StepSummary: React.FC<StepSummaryProps> = ({
   questionsData = [],
   optionsData = {},
 }) => {
-  const [showAlert, setShowAlert] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleComplete = () => {
-    completeForm();
+  const handleComplete = async () => {
+    setIsProcessing(true);
+    await completeForm();
+    setIsProcessing(false);
   };
 
   return (
     <div className="space-y-6">
-      {showAlert && (
-        <AlertComponent
-          type="success"
-          message="Evaluación creada exitosamente."
-          onClose={() => setShowAlert(false)}
-        />
-      )}
       {questionsData.map((question, index) => (
         <WizardStepContainer key={index}>
           <div className="mb-4 pb-4 border-b p-4 rounded-md bg-gray-50">
@@ -62,7 +56,7 @@ const StepSummary: React.FC<StepSummaryProps> = ({
                   <li
                     key={optionIndex}
                     className={`mb-1 ${
-                      option.is_correct ? 'text-green-600 font-semibold' : ''
+                      option.is_correct ? "text-green-600 font-semibold" : ""
                     }`}
                   >
                     {option.option_text}
@@ -83,10 +77,33 @@ const StepSummary: React.FC<StepSummaryProps> = ({
         </button>
         <button
           onClick={handleComplete}
-          className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center"
+          disabled={isProcessing}
+          className="py-2 px-4 bg-custom-purple text-white rounded-md flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          <CheckIcon className="w-5 h-5 mr-2" />
-          Completar
+          {isProcessing ? (
+            <svg
+              className="w-4 h-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
+            </svg>
+          ) : (
+            <CheckIcon className="w-5 h-5" />
+          )}
+          {isProcessing ? "Guardando..." : "Completar"}
         </button>
       </div>
     </div>

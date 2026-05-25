@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import { useCourseModulesQuery } from "@/features/courses/courses.queries";
@@ -12,11 +13,8 @@ import { coursesKeys } from "@/features/courses/courses.query-keys";
 import { useQueryClient } from "@tanstack/react-query";
 import { getUserFacingMessage } from "@/lib/http/error";
 import { deleteSession } from "../../services/sessionService";
-import ButtonComponent from "../../components/ButtonComponent";
-import { Module } from "../../interfaces/Module";
-import Link from "next/link";
+import { Session } from "../../interfaces/Session";
 import { Disclosure } from "@headlessui/react";
-import FloatingButton from "../../components/FloatingButton";
 import {
   ChevronUpIcon,
   ChevronDownIcon,
@@ -25,14 +23,15 @@ import {
   TrashIcon,
   ClipboardIcon,
   XMarkIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import ModalConfirmation from "../../components/ModalConfirmation";
 import useModal from "../../hooks/ui/useModal";
-import AlertComponent from "../../components/AlertComponent";
 import Modal from "../../components/Admin/Modal";
 import AddModuleForm from "./addModule";
 import EditModuleForm from "./editModule";
-import ReactTooltip from "react-tooltip";
+import { toast } from "sonner";
+
 const ModulesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -47,17 +46,11 @@ const ModulesPage: NextPageWithLayout = () => {
   const modules = modulesQuery.data ?? [];
   const evaluations = evaluationsQuery.data ?? [];
 
-  const [error, setError] = useState<string | null>(
-    modulesQuery.isError || evaluationsQuery.isError
-      ? "Error fetching modules and evaluations"
-      : null,
-  );
-  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [moduleToDelete, setModuleToDelete] = useState<number | null>(null);
   const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
   const [moduleToEdit, setModuleToEdit] = useState<number | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
   const {
     isVisible: isModuleModalVisible,
     showModal: showModuleModal,
@@ -79,73 +72,50 @@ const ModulesPage: NextPageWithLayout = () => {
     hideModal: hideEditModuleModal,
   } = useModal();
 
-  React.useEffect(() => {
-    if (router.query.success) {
-      setSuccessMessage(router.query.success as string);
-      setTimeout(() => setSuccessMessage(null), 5000);
+  useEffect(() => {
+    if (router.isReady && router.query.success) {
+      toast.success(router.query.success as string);
+      router.replace({ query: { id: router.query.id } }, undefined, {
+        shallow: true,
+      });
     }
-  }, [router.query.success]);
+  }, [router.isReady]);
 
   const handleDeleteModule = async () => {
-    if (moduleToDelete !== null) {
-      try {
-        await deleteModuleMutation.mutateAsync({
-          moduleId: moduleToDelete,
-          courseId,
-        });
-        setSuccessMessage("Registro eliminado correctamente");
-        setTimeout(() => setSuccessMessage(null), 5000);
-        setModuleToDelete(null);
-        hideModuleModal();
-      } catch (err) {
-        console.error("Error deleting module:", err);
-        setError(getUserFacingMessage(err));
-      }
+    if (moduleToDelete === null) return;
+    try {
+      await deleteModuleMutation.mutateAsync({
+        moduleId: moduleToDelete,
+        courseId,
+      });
+      toast.success("Módulo eliminado correctamente");
+      setModuleToDelete(null);
+      hideModuleModal();
+    } catch (err) {
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar el módulo");
     }
   };
 
   const handleDeleteSession = async () => {
-    if (sessionToDelete !== null) {
-      try {
-        await deleteSession(sessionToDelete);
-        if (typeof courseId === "number") {
-          queryClient.invalidateQueries({
-            queryKey: coursesKeys.modules(courseId),
-          });
-        }
-        setSuccessMessage("Registro eliminado correctamente");
-        setTimeout(() => setSuccessMessage(null), 5000);
-        setSessionToDelete(null);
-        hideSessionModal();
-      } catch (err) {
-        console.error("Error deleting session:", err);
-        setError(getUserFacingMessage(err));
+    if (sessionToDelete === null) return;
+    try {
+      await deleteSession(sessionToDelete);
+      if (typeof courseId === "number") {
+        queryClient.invalidateQueries({
+          queryKey: coursesKeys.modules(courseId),
+        });
       }
+      toast.success("Sesión eliminada correctamente");
+      setSessionToDelete(null);
+      setSelectedSession(null);
+      hideSessionModal();
+    } catch (err) {
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar la sesión");
     }
   };
 
-  const getEvaluationName = (evaluation_id: number) => {
-    const evaluation = evaluations.find(
-      (e) => e.evaluation_id === evaluation_id,
-    );
-    return evaluation ? evaluation.name : "N/A";
-  };
-
-  const handleCloseSession = () => {
-    setSelectedSession(null);
-  };
-
-  const handleAddModuleSuccess = () => {
-    hideAddModuleModal();
-    setSuccessMessage("Módulo creado exitosamente.");
-    setTimeout(() => setSuccessMessage(null), 5000);
-  };
-
-  const handleEditModuleSuccess = () => {
-    hideEditModuleModal();
-    setSuccessMessage("Módulo actualizado exitosamente.");
-    setTimeout(() => setSuccessMessage(null), 5000);
-  };
+  const getEvaluationName = (evaluation_id: number) =>
+    evaluations.find((e) => e.evaluation_id === evaluation_id)?.name ?? "N/A";
 
   const handleToggleModuleStatus = async (
     moduleId: number,
@@ -157,181 +127,238 @@ const ModulesPage: NextPageWithLayout = () => {
         isActive: !currentStatus,
         courseId,
       });
-      setStatusMessage(`Módulo ${!currentStatus ? "activado" : "desactivado"}`);
-      setTimeout(() => setStatusMessage(null), 5000);
+      toast.info(`Módulo ${!currentStatus ? "activado" : "desactivado"}`);
     } catch (err) {
-      console.error("Error updating module status:", err);
-      setError(getUserFacingMessage(err));
+      toast.error(
+        getUserFacingMessage(err) ?? "Error al cambiar el estado del módulo",
+      );
     }
   };
 
-  return (
-    <>
-      {successMessage && (
-        <AlertComponent
-          type="success"
-          message={successMessage}
-          onClose={() => setSuccessMessage(null)}
-        />
-      )}
-      {statusMessage && (
-        <AlertComponent
-          type="info" // Azul para información
-          message={statusMessage}
-          onClose={() => setStatusMessage(null)}
-        />
-      )}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Módulos</h2>
-        <FloatingButton onClick={showAddModuleModal} label="Añadir Módulo" />
-      </div>
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="flex">
-        <div
-          className={`space-y-4 mb-10 transition-all duration-300 ease-in-out ${
-            selectedSession ? "w-2/5" : "w-full"
-          }`}
-        >
-          {modules.map((module) => (
-            <div
-              key={module.module_id}
-              className="border border-gray-300 rounded-lg"
-            >
-              <Disclosure defaultOpen={true}>
-                {({ open }) => (
-                  <>
-                    <Disclosure.Button className="flex justify-between items-center w-full px-6 py-4 text-sm font-medium text-left text-purple-1000 bg-gradient-purple focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75 rounded-t-lg">
-                      <div className="flex items-center">
-                        {open ? (
-                          <ChevronUpIcon className="w-5 h-5 text-purple-500 mr-2" />
-                        ) : (
-                          <ChevronDownIcon className="w-5 h-5 text-purple-500 mr-2" />
-                        )}
-                        <span className="flex-grow">{module.name}</span>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex justify-between items-center mr-2">
-                          <ButtonComponent
-                            buttonLabel="Añadir Sesión"
-                            buttonroute={`/content/addSession?moduleId=${module.module_id}`}
-                            backgroundColor="bg-gradient-blue"
-                            textColor="text-white"
-                            fontSize="text-xs"
-                            buttonSize="py-2 px-7"
-                          />
-                        </div>
-                        <button
-                          onClick={() => {
-                            setModuleToEdit(module.module_id);
-                            showEditModuleModal();
-                          }}
-                        >
-                          <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setModuleToDelete(module.module_id);
-                            showModuleModal();
-                          }}
-                        >
-                          <TrashIcon className="w-6 h-5 text-red-500 cursor-pointer" />
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleToggleModuleStatus(
-                              module.module_id,
-                              module.is_active,
-                            )
-                          }
-                          data-tooltip-id={`statusTooltip-${module.module_id}`}
-                          data-tooltip-content={
-                            module.is_active ? "Desactivar" : "Activar"
-                          }
-                        >
-                          {module.is_active ? (
-                            <CheckCircleIcon className="w-7 h-7 text-green-500 cursor-pointer" />
-                          ) : (
-                            <CheckCircleIcon className="w-7 h-7 text-gray-500 cursor-pointer" />
-                          )}
-                        </button>
-                        <ReactTooltip
-                          id={`statusTooltip-${module.module_id}`}
-                          place="top"
-                        />
-                      </div>
-                    </Disclosure.Button>
-                    <Disclosure.Panel className="text-m text-gray-700 px-6 py-4 rounded-b-lg">
-                      <div className="flex flex-col space-y-2">
-                        {module.moduleSessions?.length ? (
-                          module.moduleSessions.map((session) => (
-                            <div
-                              key={session.session_id}
-                              className={`flex items-center cursor-pointer hover:bg-purple-100 p-2 rounded ${
-                                selectedSession?.session_id ===
-                                session.session_id
-                                  ? "bg-purple-200"
-                                  : ""
-                              }`}
-                              onClick={() => setSelectedSession(session)}
-                            >
-                              <div className="flex flex-col">
-                                <p className="font-medium">{session.name}</p>
-                                <p className="text-xs text-gray-500">
-                                  {session.duracion_minutos} mins
-                                </p>
-                              </div>
-                            </div>
-                          ))
-                        ) : (
-                          <p>No hay sesiones disponibles</p>
-                        )}
-                      </div>
-                      <hr className="my-4" />
-                      <Link
-                        href={`/content/evaluation/detailEvaluation?id=${module.evaluation_id}`}
-                      >
-                        <p className="flex items-center py-4 px-6 mt-6 hover:bg-gray-100 rounded-lg">
-                          <ClipboardIcon className="w-5 h-5 text-gray-500 mr-2" />
-                          <strong>
-                            <span className="ml-2">
-                              {getEvaluationName(module.evaluation_id)}
-                            </span>
-                          </strong>
-                        </p>
-                      </Link>
-                    </Disclosure.Panel>
-                  </>
-                )}
-              </Disclosure>
-            </div>
-          ))}
-        </div>
-        {selectedSession && (
-          <aside className="w-3/5 bg-white p-4 border-l border-gray-300 shadow-lg ml-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{selectedSession.name}</h2>
-              <div className="flex items-center space-x-2">
-                <Link
-                  href={`/content/editSession?id=${selectedSession.session_id}`}
-                >
-                  <PencilIcon className="w-6 h-5 text-blue-500 cursor-pointer" />
-                </Link>
-                <button
-                  onClick={() => {
-                    setSessionToDelete(selectedSession.session_id);
-                    showSessionModal();
-                  }}
-                >
-                  <TrashIcon className="w-6 h-5 text-red-500 cursor-pointer" />
-                </button>
-                <button onClick={handleCloseSession}>
-                  <XMarkIcon className="w-6 h-5 text-gray-500 cursor-pointer" />
-                </button>
+  if (modulesQuery.isLoading || evaluationsQuery.isLoading) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="border border-gray-200 rounded-xl">
+            <div className="flex justify-between items-center px-6 py-4">
+              <div className="h-4 w-48 bg-gray-200 rounded" />
+              <div className="flex gap-2">
+                <div className="h-7 w-28 bg-gray-200 rounded-lg" />
+                <div className="h-5 w-5 bg-gray-200 rounded" />
+                <div className="h-5 w-5 bg-gray-200 rounded" />
+                <div className="h-5 w-5 bg-gray-200 rounded" />
               </div>
             </div>
-          </aside>
-        )}
+          </div>
+        ))}
       </div>
+    );
+  }
+
+  if (modulesQuery.isError) {
+    return (
+      <p className="text-gray-500 text-center mt-20">
+        {getUserFacingMessage(modulesQuery.error) ??
+          "Error al cargar los módulos."}
+      </p>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">Módulos</h2>
+        <button
+          onClick={showAddModuleModal}
+          className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+        >
+          <PlusIcon className="w-4 h-4" />
+          Añadir Módulo
+        </button>
+      </div>
+
+      {modules.length === 0 ? (
+        <p className="text-gray-400 text-center mt-20">
+          No hay módulos disponibles.
+        </p>
+      ) : (
+        <div className="flex gap-4">
+          <div
+            className={`space-y-4 mb-10 transition-all duration-300 ease-in-out ${
+              selectedSession ? "w-2/5" : "w-full"
+            }`}
+          >
+            {modules.map((module) => (
+              <div
+                key={module.module_id}
+                className="border border-gray-200 rounded-xl overflow-hidden"
+              >
+                <Disclosure defaultOpen={true}>
+                  {({ open }) => (
+                    <>
+                      <Disclosure.Button className="flex justify-between items-center w-full px-6 py-4 text-sm font-medium text-left bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none">
+                        <div className="flex items-center gap-2">
+                          {open ? (
+                            <ChevronUpIcon className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <ChevronDownIcon className="w-4 h-4 text-gray-400" />
+                          )}
+                          <span className="text-gray-900 font-medium">
+                            {module.name}
+                          </span>
+                        </div>
+                        <div
+                          className="flex items-center gap-2"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Link
+                            href={`/content/addSession?moduleId=${module.module_id}`}
+                            className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+                          >
+                            <PlusIcon className="w-3.5 h-3.5" />
+                            Añadir Sesión
+                          </Link>
+                          <button
+                            title="Editar módulo"
+                            onClick={() => {
+                              setModuleToEdit(module.module_id);
+                              showEditModuleModal();
+                            }}
+                          >
+                            <PencilIcon className="w-5 h-5 text-blue-500 hover:text-blue-700 transition-colors cursor-pointer" />
+                          </button>
+                          <button
+                            title="Eliminar módulo"
+                            onClick={() => {
+                              setModuleToDelete(module.module_id);
+                              showModuleModal();
+                            }}
+                          >
+                            <TrashIcon className="w-5 h-5 text-red-400 hover:text-red-600 transition-colors cursor-pointer" />
+                          </button>
+                          <button
+                            title={
+                              module.is_active
+                                ? "Desactivar módulo"
+                                : "Activar módulo"
+                            }
+                            onClick={() =>
+                              handleToggleModuleStatus(
+                                module.module_id,
+                                module.is_active,
+                              )
+                            }
+                          >
+                            <CheckCircleIcon
+                              className={`w-6 h-6 cursor-pointer transition-colors ${
+                                module.is_active
+                                  ? "text-green-500 hover:text-green-700"
+                                  : "text-gray-400 hover:text-gray-600"
+                              }`}
+                            />
+                          </button>
+                        </div>
+                      </Disclosure.Button>
+
+                      <Disclosure.Panel className="px-6 py-4 bg-white">
+                        <div className="flex flex-col space-y-1">
+                          {module.moduleSessions?.length ? (
+                            module.moduleSessions.map((session) => (
+                              <div
+                                key={session.session_id}
+                                className={`flex items-center cursor-pointer px-3 py-2 rounded-lg transition-colors ${
+                                  selectedSession?.session_id ===
+                                  session.session_id
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "hover:bg-gray-50 text-gray-700"
+                                }`}
+                                onClick={() => setSelectedSession(session)}
+                              >
+                                <div className="flex flex-col">
+                                  <p className="text-sm font-medium">
+                                    {session.name}
+                                  </p>
+                                  <p className="text-xs text-gray-400">
+                                    {session.duracion_minutos} mins
+                                  </p>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-400">
+                              No hay sesiones disponibles
+                            </p>
+                          )}
+                        </div>
+                        <hr className="my-4 border-gray-100" />
+                        <Link
+                          href={`/content/evaluation/detailEvaluation?id=${module.evaluation_id}`}
+                          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors text-gray-600"
+                        >
+                          <ClipboardIcon className="w-4 h-4 text-gray-400" />
+                          <span className="text-sm font-medium">
+                            {getEvaluationName(module.evaluation_id)}
+                          </span>
+                        </Link>
+                      </Disclosure.Panel>
+                    </>
+                  )}
+                </Disclosure>
+              </div>
+            ))}
+          </div>
+
+          {selectedSession && (
+            <aside className="w-3/5 bg-white rounded-xl border border-gray-100 shadow-sm p-5 self-start">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-base font-semibold text-gray-900">
+                  {selectedSession.name}
+                </h2>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/content/editSession?id=${selectedSession.session_id}`}
+                    title="Editar sesión"
+                  >
+                    <PencilIcon className="w-5 h-5 text-blue-500 hover:text-blue-700 transition-colors cursor-pointer" />
+                  </Link>
+                  <button
+                    title="Eliminar sesión"
+                    onClick={() => {
+                      setSessionToDelete(selectedSession.session_id);
+                      showSessionModal();
+                    }}
+                  >
+                    <TrashIcon className="w-5 h-5 text-red-400 hover:text-red-600 transition-colors cursor-pointer" />
+                  </button>
+                  <button
+                    title="Cerrar"
+                    onClick={() => setSelectedSession(null)}
+                  >
+                    <XMarkIcon className="w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer" />
+                  </button>
+                </div>
+              </div>
+
+              {selectedSession.video_enlace ? (
+                <video
+                  src={selectedSession.video_enlace}
+                  controls
+                  className="w-full rounded-lg bg-black"
+                />
+              ) : (
+                <p className="text-sm text-gray-400 text-center py-8">
+                  Esta sesión no tiene video asociado.
+                </p>
+              )}
+
+              <p className="text-xs text-gray-400 mt-3">
+                {selectedSession.duracion_minutos} min
+              </p>
+            </aside>
+          )}
+        </div>
+      )}
+
       <ModalConfirmation
         show={isModuleModalVisible}
         onClose={hideModuleModal}
@@ -350,10 +377,13 @@ const ModulesPage: NextPageWithLayout = () => {
         <AddModuleForm
           courseId={Number(id)}
           onClose={hideAddModuleModal}
-          onSuccess={handleAddModuleSuccess}
+          onSuccess={() => {
+            hideAddModuleModal();
+            toast.success("Módulo creado exitosamente");
+          }}
         />
       </Modal>
-      {moduleToEdit !== null && ( // Asegúrate de que moduleToEdit no sea null
+      {moduleToEdit !== null && (
         <Modal
           show={isEditModuleModalVisible}
           onClose={hideEditModuleModal}
@@ -362,7 +392,10 @@ const ModulesPage: NextPageWithLayout = () => {
           <EditModuleForm
             moduleId={moduleToEdit.toString()}
             onClose={hideEditModuleModal}
-            onSuccess={handleEditModuleSuccess}
+            onSuccess={() => {
+              hideEditModuleModal();
+              toast.success("Módulo actualizado exitosamente");
+            }}
           />
         </Modal>
       )}

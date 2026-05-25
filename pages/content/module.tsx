@@ -1,47 +1,61 @@
 import React from "react";
+import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import CardCourses from "../../components/Content/CardCourses";
+import CourseCard from "@components/courses/CourseCard";
+import CourseCardSkeleton from "@components/courses/CourseCardSkeleton";
 import { useCoursesQuery } from "@/features/courses/courses.queries";
 import { getUserFacingMessage } from "@/lib/http/error";
-import { useRouter } from "next/router";
 
 const ModulePage: NextPageWithLayout = () => {
   const router = useRouter();
   const coursesQuery = useCoursesQuery();
-  const cursos = coursesQuery.data ?? [];
-  const error = coursesQuery.isError
-    ? getUserFacingMessage(coursesQuery.error)
-    : null;
 
-  const handleViewModulesClick = (courseId?: number) => {
-    if (courseId) {
-      router.push(`/content/detailModule?id=${courseId}`);
-    }
-  };
+  if (coursesQuery.isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <CourseCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  if (coursesQuery.isError) {
+    return (
+      <p className="text-gray-500 text-center mt-20">
+        {getUserFacingMessage(coursesQuery.error) ??
+          "Error al cargar los cursos."}
+      </p>
+    );
+  }
+
+  const cursos = coursesQuery.data ?? [];
+
+  if (cursos.length === 0) {
+    return (
+      <p className="text-gray-400 text-center mt-20">
+        No hay cursos disponibles.
+      </p>
+    );
+  }
 
   return (
-    <>
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="w-full bg-white rounded-lg">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cursos.map((curso) => (
-            <CardCourses
-              key={curso.course_id}
-              id={curso.course_id}
-              image={curso.image}
-              name={curso.name}
-              description_short={curso.description_short}
-              duration_course={curso.duration_course}
-              rating={4.9}
-              buttonLabel="Ver Módulos"
-              textColor="text-blue-gray-900"
-              onButtonClick={() => handleViewModulesClick(curso.course_id)}
-            />
-          ))}
-        </div>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold text-gray-800">Módulos</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cursos.map((curso) => (
+          <CourseCard
+            key={curso.course_id}
+            course={curso}
+            buttonLabel="Ver Módulos"
+            onButtonClick={(courseId) =>
+              router.push(`/content/detailModule?id=${courseId}`)
+            }
+          />
+        ))}
       </div>
-    </>
+    </div>
   );
 };
 

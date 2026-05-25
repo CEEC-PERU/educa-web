@@ -1,190 +1,137 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import AlertComponent from "@/components/AlertComponent";
-import Loader from "@/components/Loader";
-import { Flashcard } from "@/interfaces/Flashcard";
-import ArrowLeftIcon from "@heroicons/react/24/outline/ArrowLeftIcon";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import FormField from "@/components/FormField";
 import MultipleImageUpload from "@/components/MultipleImageUpload";
-import ActionButtons from "@/components/Content/ActionButtons";
 import { useCreateFlashcardMutation } from "@/features/flashcards/flashcards.mutations";
 import { getUserFacingMessage } from "@/lib/http/error";
+import { toast } from "sonner";
 
 const AddFlashcard: NextPageWithLayout = () => {
-  const [flashcard, setFlashcard] = useState<Omit<Flashcard, "flashcard_id">>({
-    question: "",
-    correct_answer: [],
-    incorrect_answer: [],
-    module_id: 0,
-  });
+  const router = useRouter();
+  const moduleId = router.isReady ? Number(router.query.moduleId) : undefined;
+
+  const [question, setQuestion] = useState("");
   const [correctImages, setCorrectImages] = useState<File[]>([]);
   const [incorrectImages, setIncorrectImages] = useState<File[]>([]);
-  const [showAlert, setShowAlert] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<{
-    [key: string]: boolean;
-  }>({});
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  const { moduleId } = router.query;
+  const [touched, setTouched] = useState(false);
 
   const createFlashcardMutation = useCreateFlashcardMutation();
-  const formLoading = createFlashcardMutation.isPending;
-
-  useEffect(() => {
-    if (moduleId) {
-      setFlashcard((prevFlashcard) => ({
-        ...prevFlashcard,
-        module_id: Number(moduleId),
-      }));
-      setLoading(false);
-    }
-  }, [moduleId]);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
-    const { id, value } = e.target;
-    setFlashcard((prevFlashcard) => ({
-      ...prevFlashcard,
-      [id]: value,
-    }));
-    setTouchedFields((prev) => ({ ...prev, [id]: true }));
-  };
-
-  const handleBlur = (
-    e: React.FocusEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
-    const { id } = e.target;
-    setTouchedFields((prev) => ({ ...prev, [id]: true }));
-  };
+  const isSubmitting = createFlashcardMutation.isPending;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched(true);
+
+    if (!question.trim()) {
+      toast.error("La pregunta es obligatoria");
+      return;
+    }
+    if (correctImages.length !== 3) {
+      toast.error("Debes subir exactamente 3 imágenes correctas");
+      return;
+    }
+    if (incorrectImages.length !== 3) {
+      toast.error("Debes subir exactamente 3 imágenes incorrectas");
+      return;
+    }
 
     try {
-      if (!flashcard.question.trim()) {
-        throw new Error("La pregunta es obligatoria");
-      }
-      if (correctImages.length !== 3) {
-        throw new Error("Debes subir exactamente 3 imágenes correctas");
-      }
-      if (incorrectImages.length !== 3) {
-        throw new Error("Debes subir exactamente 3 imágenes incorrectas");
-      }
-
       await createFlashcardMutation.mutateAsync({
-        question: flashcard.question,
-        moduleId: flashcard.module_id,
+        question: question.trim(),
+        moduleId: moduleId!,
         correctImages,
         incorrectImages,
       });
-
-      setError(null);
-      setShowAlert(true);
-
-      setTimeout(() => {
-        router.back();
-      }, 2000);
-    } catch (err: any) {
-      setError(
-        err?.message
-          ? err.message
-          : (getUserFacingMessage(err) ?? "Error al crear la flashcard"),
-      );
-      setShowAlert(true);
+      toast.success("Flashcard agregada exitosamente");
+      router.back();
+    } catch (err: unknown) {
+      toast.error(getUserFacingMessage(err) ?? "Error al crear la flashcard");
     }
   };
 
-  const handleCancel = () => {
-    setFlashcard({
-      question: "",
-      correct_answer: [],
-      incorrect_answer: [],
-      module_id: Number(moduleId),
-    });
-    setCorrectImages([]);
-    setIncorrectImages([]);
-    setTouchedFields({});
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
-    <>
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4"
-      >
-        {showAlert && (
-          <AlertComponent
-            type={error ? "danger" : "success"}
-            message={error || "Flashcard agregada exitosamente."}
-            onClose={() => setShowAlert(false)}
-          />
-        )}
-
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+      <div className="flex items-center gap-3 mb-2">
         <button
           type="button"
           onClick={() => router.back()}
-          className="flex items-center text-purple-600 mb-6"
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
         >
-          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <ArrowLeftIcon className="w-4 h-4" />
           Volver
         </button>
-
-        <FormField
-          id="question"
-          label="Pregunta"
-          type="text"
-          value={flashcard.question}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={!flashcard.question && touchedFields["question"]}
-          touched={touchedFields["question"]}
-          required
-        />
-
-        <MultipleImageUpload
-          label="Respuestas Correctas (3 imágenes)"
-          onImagesUpload={setCorrectImages}
-          maxImages={3}
-          currentImages={correctImages}
-        />
-
-        <MultipleImageUpload
-          label="Respuestas Incorrectas (3 imágenes)"
-          onImagesUpload={setIncorrectImages}
-          maxImages={3}
-          currentImages={incorrectImages}
-        />
-      </form>
-
-      <div className="ml-4 flex-shrink-0">
-        <ActionButtons
-          onSave={handleSubmit}
-          onCancel={handleCancel}
-          isEditing={true}
-        />
+        <span className="text-gray-300">/</span>
+        <h2 className="text-2xl font-bold text-gray-800">Nueva Flashcard</h2>
       </div>
-      {formLoading && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <Loader />
-        </div>
-      )}
-    </>
+
+      <FormField
+        id="question"
+        label="Pregunta"
+        type="text"
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        onBlur={() => setTouched(true)}
+        error={!question.trim() && touched}
+        touched={touched}
+        required
+      />
+
+      <MultipleImageUpload
+        label="Respuestas Correctas (3 imágenes)"
+        onImagesUpload={setCorrectImages}
+        maxImages={3}
+        currentImages={correctImages}
+      />
+
+      <MultipleImageUpload
+        label="Respuestas Incorrectas (3 imágenes)"
+        onImagesUpload={setIncorrectImages}
+        maxImages={3}
+        currentImages={incorrectImages}
+      />
+
+      <div className="flex items-center gap-3 pt-2">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {isSubmitting && (
+            <svg
+              className="w-4 h-4 animate-spin"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              />
+            </svg>
+          )}
+          {isSubmitting ? "Guardando..." : "Guardar Flashcard"}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          disabled={isSubmitting}
+          className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50 transition-colors"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
   );
 };
 

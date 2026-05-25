@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useModuleQuery } from "@/features/modules/modules.queries";
 import { useUpdateModuleMutation } from "@/features/modules/modules.mutations";
-import { useAvailableEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { useEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
 import { getUserFacingMessage } from "@/lib/http/error";
 import { Module } from "../../interfaces/Module";
-import FormField from "../../components/FormField";
-import AlertComponent from "../../components/AlertComponent";
-import Loader from "../../components/Loader";
+import SidebarSelect from "@components/ui/SidebarSelect";
+import { toast } from "sonner";
+
 interface EditModuleFormProps {
   moduleId: string;
   onClose: () => void;
@@ -19,20 +19,14 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
   onSuccess,
 }) => {
   const [module, setModule] = useState<Module | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [touchedFields, setTouchedFields] = useState<{
-    [key in keyof Module]?: boolean;
-  }>({});
+  const [touched, setTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const moduleQuery = useModuleQuery(moduleId);
-  const evaluationsQuery = useAvailableEvaluationsQuery();
+  const evaluationsQuery = useEvaluationsQuery();
   const updateModuleMutation = useUpdateModuleMutation();
 
   const evaluations = evaluationsQuery.data ?? [];
-  const loading = moduleQuery.isLoading || evaluationsQuery.isLoading;
-  const formLoading = updateModuleMutation.isPending;
 
   useEffect(() => {
     if (moduleQuery.data) {
@@ -40,145 +34,142 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
     }
   }, [moduleQuery.data]);
 
-  useEffect(() => {
-    if (moduleQuery.isError || evaluationsQuery.isError) {
-      setError("Error fetching module and evaluations");
-      setShowAlert(true);
-    }
-  }, [moduleQuery.isError, evaluationsQuery.isError]);
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >,
   ) => {
-    const { id, value, type, checked } = e.target as HTMLInputElement;
-    setModule((prevModule) => ({
-      ...prevModule!,
-      [id]: type === "checkbox" ? checked : value,
+    const { id, value } = e.target;
+    setModule((prev) => ({
+      ...prev!,
+      [id]: id === "evaluation_id" ? Number(value) : value,
     }));
   };
 
-  const handleBlur = (
-    e: React.FocusEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => {
-    const { id } = e.target;
-    setTouchedFields((prevState) => ({
-      ...prevState,
-      [id]: true,
-    }));
-  };
-
-  const requiredFields: (keyof Module)[] = ["name", "evaluation_id"];
+  const isValid =
+    module !== null &&
+    module.name.trim().length > 0 &&
+    module.evaluation_id > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched(true);
+    if (!isValid) return;
 
-    const newTouchedFields: { [key in keyof Module]?: boolean } = {};
-    requiredFields.forEach((field) => {
-      if (!module?.[field]) {
-        newTouchedFields[field] = true;
-      }
-    });
-
-    const hasEmptyFields = requiredFields.some((field) => !module?.[field]);
-
-    if (hasEmptyFields) {
-      setTouchedFields((prev) => ({ ...prev, ...newTouchedFields }));
-      setError("Por favor, complete todos los campos requeridos.");
-      setShowAlert(true);
-      return;
-    }
-
+    setIsSubmitting(true);
     try {
-      await updateModuleMutation.mutateAsync({
-        id: moduleId,
-        module: module!,
-      });
-      setShowAlert(true);
-      setError(null);
-      setSuccess("Módulo actualizado exitosamente.");
+      await updateModuleMutation.mutateAsync({ id: moduleId, module: module! });
       onSuccess();
-    } catch (err) {
-      console.error("Error updating module:", err);
-      setError(getUserFacingMessage(err));
-      setShowAlert(true);
+    } catch (err: unknown) {
+      toast.error(getUserFacingMessage(err) ?? "Error al actualizar el módulo");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleCancel = () => {
-    onClose();
-  };
-
-  if (loading || !module) {
+  if (moduleQuery.isLoading || evaluationsQuery.isLoading || !module) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
+      <div className="flex items-center justify-center py-12 text-gray-500 text-sm">
+        Cargando...
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-6 w-full max-w-4xl mx-auto">
-      {showAlert && (
-        <AlertComponent
-          type={error ? "danger" : "success"}
-          message={error || success || ""}
-          onClose={() => setShowAlert(false)}
-        />
-      )}
+    <div className="w-full space-y-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            id="name"
-            label="Nombre del Módulo"
-            type="text"
-            value={module.name}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            error={!module.name && touchedFields["name"]}
-            touched={touchedFields["name"]}
-            required
-          />
-          <FormField
-            id="evaluation_id"
-            label="Evaluación"
-            type="select"
-            value={module.evaluation_id.toString()}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            options={evaluations.map((evaluation) => ({
-              value: evaluation.evaluation_id.toString(),
-              label: evaluation.name,
-            }))}
-            error={module.evaluation_id === 0 && touchedFields["evaluation_id"]}
-            touched={touchedFields["evaluation_id"]}
-            required
-          />
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="name"
+              className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+            >
+              Nombre del Módulo
+            </label>
+            <input
+              id="name"
+              type="text"
+              value={module.name}
+              onChange={handleChange}
+              className={`block w-full rounded-lg border px-3 py-2 text-sm text-gray-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors ${
+                touched && !module.name.trim()
+                  ? "border-red-400"
+                  : "border-gray-200"
+              }`}
+            />
+            {touched && !module.name.trim() && (
+              <p className="text-xs text-red-500">El nombre es requerido</p>
+            )}
+          </div>
+          <div>
+            <SidebarSelect
+              id="evaluation_id"
+              label="Evaluación"
+              value={
+                module.evaluation_id === 0
+                  ? ""
+                  : module.evaluation_id.toString()
+              }
+              onChange={handleChange}
+              options={[
+                {
+                  value: "",
+                  label: evaluationsQuery.isError
+                    ? "Error al cargar"
+                    : "Seleccionar Evaluación",
+                },
+                ...evaluations.map((ev) => ({
+                  value: ev.evaluation_id.toString(),
+                  label: ev.name,
+                })),
+              ]}
+            />
+            {touched && module.evaluation_id === 0 && (
+              <p className="text-xs text-red-500 mt-1">
+                La evaluación es requerida
+              </p>
+            )}
+          </div>
         </div>
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end gap-3 pt-2">
           <button
             type="button"
-            onClick={handleCancel}
-            className="bg-gray-500 text-white py-2 px-4 rounded"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50 transition-colors"
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            disabled={isSubmitting}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            Guardar
+            {isSubmitting && (
+              <svg
+                className="w-4 h-4 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                />
+              </svg>
+            )}
+            {isSubmitting ? "Guardando..." : "Guardar"}
           </button>
         </div>
       </form>
-      {formLoading && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <Loader />
-        </div>
-      )}
     </div>
   );
 };

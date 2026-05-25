@@ -1,11 +1,11 @@
 import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
+import Link from "next/link";
 import { useCoursesQuery } from "@/features/courses/courses.queries";
 import { getUserFacingMessage } from "@/lib/http/error";
 import CourseCard from "@/components/courses/CourseCard";
-import ButtonComponent from "../../components/ButtonComponent";
-import Loader from "../../components/Loader";
+import CourseCardSkeleton from "@/components/courses/CourseCardSkeleton";
 import { useRouter } from "next/router";
 
 const Home: NextPageWithLayout = () => {
@@ -17,25 +17,15 @@ const Home: NextPageWithLayout = () => {
     router.push(`/content/${courseId}`);
   };
 
-  if (coursesQuery.isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <ButtonComponent
-          buttonLabel="Añadir Curso"
-          buttonroute="/content/addCourse"
-          backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400"
-          textColor="text-white"
-          fontSize="text-xs"
-          buttonSize="py-2 px-7"
-        />
+        <Link
+          href="/content/addCourse"
+          className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-bold uppercase rounded-full px-7 py-2 shadow-md hover:shadow-lg transition-all"
+        >
+          Añadir Curso
+        </Link>
       </div>
 
       {coursesQuery.isError && (
@@ -54,14 +44,18 @@ const Home: NextPageWithLayout = () => {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {courses.map((course) => (
-          <CourseCard
-            key={course.course_id}
-            course={course}
-            buttonLabel="Ver detalles"
-            onButtonClick={handleViewCourse}
-          />
-        ))}
+        {coursesQuery.isLoading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <CourseCardSkeleton key={i} />
+            ))
+          : courses.map((course) => (
+              <CourseCard
+                key={course.course_id}
+                course={course}
+                buttonLabel="Ver detalles"
+                onButtonClick={handleViewCourse}
+              />
+            ))}
       </div>
     </>
   );

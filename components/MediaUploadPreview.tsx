@@ -3,7 +3,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   forwardRef,
-} from 'react';
+} from "react";
 
 interface MediaUploadPreviewProps {
   onMediaUpload: (file: File) => void;
@@ -33,23 +33,41 @@ const MediaUploadPreview = forwardRef<
       error,
       touched,
     },
-    ref
+    ref,
   ) => {
     const [mediaPreview, setMediaPreview] = useState<string | null>(
-      initialPreview || null
+      initialPreview || null,
     );
+    const objectUrlRef = React.useRef<string | null>(null);
+
+    const revokeObjectUrl = () => {
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
+    };
 
     const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setMediaPreview(reader.result as string);
-        };
-        reader.readAsDataURL(file);
+        const isImageFile = file.type.startsWith("image/");
+        if (isImageFile) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setMediaPreview(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        } else {
+          revokeObjectUrl();
+          const url = URL.createObjectURL(file);
+          objectUrlRef.current = url;
+          setMediaPreview(url);
+        }
         onMediaUpload(file);
       }
     };
+
+    useEffect(() => () => revokeObjectUrl(), []);
 
     useEffect(() => {
       setMediaPreview(initialPreview || null);
@@ -64,20 +82,20 @@ const MediaUploadPreview = forwardRef<
     useImperativeHandle(ref, () => ({
       clear: () => {
         if (inputRef?.current) {
-          inputRef.current.value = '';
+          inputRef.current.value = "";
           setMediaPreview(null);
         }
       },
     }));
 
-    const isImage = accept.startsWith('image/');
+    const isImage = accept.startsWith("image/");
 
     const isError = error && touched;
 
     return (
       <div
         className={`w-full mb-4 border ${
-          isError ? 'border-red-500' : 'border-gray-200'
+          isError ? "border-red-500" : "border-gray-200"
         } rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600`}
       >
         <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
@@ -135,17 +153,15 @@ const MediaUploadPreview = forwardRef<
               />
             ) : (
               <video
+                src={mediaPreview}
                 controls
                 className="w-full h-full object-contain mb-4 rounded-md"
-              >
-                <source src={mediaPreview} type={accept} />
-                Your browser does not support the video tag.
-              </video>
+              />
             ))}
         </div>
       </div>
     );
-  }
+  },
 );
 
 export default MediaUploadPreview;
