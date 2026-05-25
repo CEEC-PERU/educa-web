@@ -9,8 +9,8 @@ import ArrowLeftIcon from "@heroicons/react/24/outline/ArrowLeftIcon";
 import FormField from "@/components/FormField";
 import MultipleImageUpload from "@/components/MultipleImageUpload";
 import ActionButtons from "@/components/Content/ActionButtons";
-import axios from "@/services/axios";
-import { API_USER_FLASHCARDS } from "@/utils/Endpoints";
+import { useCreateFlashcardMutation } from "@/features/flashcards/flashcards.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 
 const AddFlashcard: NextPageWithLayout = () => {
   const [flashcard, setFlashcard] = useState<Omit<Flashcard, "flashcard_id">>({
@@ -22,7 +22,6 @@ const AddFlashcard: NextPageWithLayout = () => {
   const [correctImages, setCorrectImages] = useState<File[]>([]);
   const [incorrectImages, setIncorrectImages] = useState<File[]>([]);
   const [showAlert, setShowAlert] = useState(false);
-  const [formLoading, setFormLoading] = useState(false);
   const [touchedFields, setTouchedFields] = useState<{
     [key: string]: boolean;
   }>({});
@@ -30,6 +29,9 @@ const AddFlashcard: NextPageWithLayout = () => {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { moduleId } = router.query;
+
+  const createFlashcardMutation = useCreateFlashcardMutation();
+  const formLoading = createFlashcardMutation.isPending;
 
   useEffect(() => {
     if (moduleId) {
@@ -65,7 +67,6 @@ const AddFlashcard: NextPageWithLayout = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormLoading(true);
 
     try {
       if (!flashcard.question.trim()) {
@@ -78,20 +79,11 @@ const AddFlashcard: NextPageWithLayout = () => {
         throw new Error("Debes subir exactamente 3 imágenes incorrectas");
       }
 
-      const formData = new FormData();
-      formData.append("question", flashcard.question);
-      formData.append("module_id", String(flashcard.module_id));
-
-      correctImages.forEach((file) => {
-        formData.append("correct_images", file);
-      });
-
-      incorrectImages.forEach((file) => {
-        formData.append("incorrect_images", file);
-      });
-
-      await axios.post(API_USER_FLASHCARDS, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      await createFlashcardMutation.mutateAsync({
+        question: flashcard.question,
+        moduleId: flashcard.module_id,
+        correctImages,
+        incorrectImages,
       });
 
       setError(null);
@@ -100,11 +92,13 @@ const AddFlashcard: NextPageWithLayout = () => {
       setTimeout(() => {
         router.back();
       }, 2000);
-    } catch (error: any) {
-      setError(error.message || "Error al crear la flashcard");
+    } catch (err: any) {
+      setError(
+        err?.message
+          ? err.message
+          : (getUserFacingMessage(err) ?? "Error al crear la flashcard"),
+      );
       setShowAlert(true);
-    } finally {
-      setFormLoading(false);
     }
   };
 

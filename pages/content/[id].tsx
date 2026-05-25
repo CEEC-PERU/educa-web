@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { getCourse, deleteCourse } from "../../services/courses/courseService";
-import { getEvaluations } from "../../services/evaluationService";
-import { Course } from "../../interfaces/Courses/Course";
-import { Evaluation } from "../../interfaces/Evaluation";
+import { useCourseQuery } from "@/features/courses/courses.queries";
+import { useDeleteCourseMutation } from "@/features/courses/courses.mutations";
+import { useEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import DetailView from "../../components/DetailView";
@@ -18,37 +18,17 @@ import "./../../app/globals.css";
 const CourseDetail: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const [course, setCourse] = useState<Course | null>(null);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [loading, setLoading] = useState(true);
   const { isVisible, showModal, hideModal } = useModal();
   const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      const fetchCourse = async () => {
-        try {
-          const courseData = await getCourse(id);
-          setCourse(courseData);
-        } catch (error) {
-          console.error("Error fetching course details:", error);
-        }
-      };
+  const courseQuery = useCourseQuery(id);
+  const evaluationsQuery = useEvaluationsQuery();
+  const deleteCourseMutation = useDeleteCourseMutation();
 
-      const fetchEvaluations = async () => {
-        try {
-          const evaluationsData = await getEvaluations();
-          setEvaluations(evaluationsData);
-        } catch (error) {
-          console.error("Error fetching evaluations:", error);
-        }
-      };
-
-      Promise.all([fetchCourse(), fetchEvaluations()]).then(() => {
-        setLoading(false);
-      });
-    }
-  }, [id]);
+  const course = courseQuery.data ?? null;
+  const evaluations = evaluationsQuery.data ?? [];
+  const loading = courseQuery.isLoading || evaluationsQuery.isLoading;
 
   const handleEdit = () => {
     if (course) {
@@ -57,14 +37,14 @@ const CourseDetail: NextPageWithLayout = () => {
   };
 
   const handleDelete = async () => {
-    if (course) {
-      try {
-        await deleteCourse(course.course_id.toString());
-        setSuccess("Registro eliminado correctamente");
-        router.push("/content");
-      } catch (error) {
-        console.error("Error eliminando el curso:", error);
-      }
+    if (!course) return;
+    try {
+      await deleteCourseMutation.mutateAsync(course.course_id.toString());
+      setSuccess("Registro eliminado correctamente");
+      router.push("/content");
+    } catch (err) {
+      setError(getUserFacingMessage(err));
+      console.error("Error eliminando el curso:", err);
     }
   };
 
@@ -100,6 +80,13 @@ const CourseDetail: NextPageWithLayout = () => {
           type="success"
           message={success}
           onClose={() => setSuccess(null)}
+        />
+      )}
+      {error && (
+        <AlertComponent
+          type="danger"
+          message={error}
+          onClose={() => setError(null)}
         />
       )}
       <button

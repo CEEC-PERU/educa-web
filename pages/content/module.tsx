@@ -1,29 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import CardCourses from "../../components/Content/CardCourses";
-import { getCourses } from "../../services/courses/courseService";
-import { Course } from "../../interfaces/Courses/Course";
+import { useCoursesQuery } from "@/features/courses/courses.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { useRouter } from "next/router";
 
 const ModulePage: NextPageWithLayout = () => {
-  const [cursos, setCursos] = useState<Course[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getCourses();
-        setCursos(data);
-      } catch (error) {
-        setError("Error fetching courses");
-        console.error("Error fetching courses:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const coursesQuery = useCoursesQuery();
+  const cursos = coursesQuery.data ?? [];
+  const error = coursesQuery.isError
+    ? getUserFacingMessage(coursesQuery.error)
+    : null;
 
   const handleViewModulesClick = (courseId?: number) => {
     if (courseId) {

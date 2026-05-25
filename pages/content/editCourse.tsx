@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import { getCategories } from "@services/categoryService";
-import { getProfessors } from "@services/professorService";
-import { getCourse, updateCourse } from "@services/courses/courseService";
+import { useCategoriesQuery } from "@/features/categories/categories.queries";
+import { useProfessorsQuery } from "@/features/professors/professors.queries";
+import { useAvailableEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { useCourseQuery } from "@/features/courses/courses.queries";
+import { useUpdateCourseMutation } from "@/features/courses/courses.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { uploadVideo } from "@services/videoService";
 import { uploadImage } from "@services/imageService";
-import { getAvailableEvaluations } from "@services/evaluationService";
-import { Category } from "@/interfaces/Category";
-import { Professor } from "@/interfaces/Professor";
-import { Evaluation } from "@/interfaces/Evaluation";
 import { Course } from "@/interfaces/Courses/Course";
 import MediaUploadPreview from "@components/MediaUploadPreview";
 import FormField from "@components/FormField";
@@ -20,11 +19,19 @@ import AlertComponent from "@components/AlertComponent";
 import Loader from "@components/Loader";
 
 const EditCourse: NextPageWithLayout = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
+  const router = useRouter();
+  const { id } = router.query;
+  const courseId = typeof id === "string" ? id : undefined;
+
+  const categoriesQuery = useCategoriesQuery();
+  const professorsQuery = useProfessorsQuery();
+  const availableEvaluationsQuery = useAvailableEvaluationsQuery();
+  const courseQuery = useCourseQuery(courseId);
+  const updateCourseMutation = useUpdateCourseMutation();
+
+  const categories = categoriesQuery.data ?? [];
+  const professors = professorsQuery.data ?? [];
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -48,61 +55,65 @@ const EditCourse: NextPageWithLayout = () => {
     is_active: true,
   });
 
-  const router = useRouter();
-  const { id } = router.query;
+  const evaluations = useMemo(() => {
+    const available = availableEvaluationsQuery.data ?? [];
+    const courseEvaluationId = courseQuery.data?.evaluation_id;
+    if (!courseEvaluationId) return available;
+    const current = available.find(
+      (evaluation) => evaluation.evaluation_id === courseEvaluationId,
+    );
+    return current
+      ? [
+          current,
+          ...available.filter(
+            (evaluation) => evaluation.evaluation_id !== courseEvaluationId,
+          ),
+        ]
+      : available;
+  }, [availableEvaluationsQuery.data, courseQuery.data?.evaluation_id]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoriesRes, professorsRes, availableEvaluations, courseRes] =
-          await Promise.all([
-            getCategories(),
-            getProfessors(),
-            getAvailableEvaluations(),
-            getCourse(id as string),
-          ]);
-        setCategories(categoriesRes);
-        setProfessors(professorsRes);
+    const courseRes = courseQuery.data;
+    if (!courseRes) return;
+    setFormData({
+      name: courseRes.name,
+      description_short: courseRes.description_short,
+      description_large: courseRes.description_large,
+      category_id: courseRes.category_id,
+      professor_id: courseRes.professor_id,
+      intro_video: courseRes.intro_video,
+      presentation_professor: courseRes.presentation_professor ?? "",
+      duration_video: courseRes.duration_video,
+      image: courseRes.image,
+      duration_course: courseRes.duration_course,
+      evaluation_id: courseRes.evaluation_id,
+      is_active: courseRes.is_active,
+    });
+  }, [courseQuery.data]);
 
-        const currentEvaluation = availableEvaluations.find(
-          (evaluation) => evaluation.evaluation_id === courseRes.evaluation_id,
-        );
-        const updatedEvaluations = currentEvaluation
-          ? [
-              currentEvaluation,
-              ...availableEvaluations.filter(
-                (evaluation) =>
-                  evaluation.evaluation_id !== courseRes.evaluation_id,
-              ),
-            ]
-          : availableEvaluations;
+  const loading =
+    categoriesQuery.isLoading ||
+    professorsQuery.isLoading ||
+    availableEvaluationsQuery.isLoading ||
+    courseQuery.isLoading;
 
-        setEvaluations(updatedEvaluations);
-
-        setFormData({
-          name: courseRes.name,
-          description_short: courseRes.description_short,
-          description_large: courseRes.description_large,
-          category_id: courseRes.category_id,
-          professor_id: courseRes.professor_id,
-          intro_video: courseRes.intro_video,
-          presentation_professor: courseRes.presentation_professor ?? "",
-          duration_video: courseRes.duration_video,
-          image: courseRes.image,
-          duration_course: courseRes.duration_course,
-          evaluation_id: courseRes.evaluation_id,
-          is_active: courseRes.is_active,
-        });
-        setLoading(false);
-      } catch (error) {
-        setError("Error fetching data");
-        setLoading(false);
-      }
-    };
-    if (id) {
-      fetchData();
+  useEffect(() => {
+    if (
+      categoriesQuery.isError ||
+      professorsQuery.isError ||
+      availableEvaluationsQuery.isError ||
+      courseQuery.isError
+    ) {
+      setError("Error fetching data");
     }
-  }, [id]);
+  }, [
+    categoriesQuery.isError,
+    professorsQuery.isError,
+    availableEvaluationsQuery.isError,
+    courseQuery.isError,
+  ]);
+
+  const formLoading = updateCourseMutation.isPending;
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -130,7 +141,7 @@ const EditCourse: NextPageWithLayout = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormLoading(true);
+    if (!courseId) return;
     try {
       let videoUrl = formData.intro_video;
       let presentationVideoUrl = formData.presentation_professor;
@@ -151,19 +162,20 @@ const EditCourse: NextPageWithLayout = () => {
         imageUrl = await uploadImage(imageFile, "Cursos/Images");
       }
 
-      await updateCourse(id as string, {
-        ...formData,
-        intro_video: videoUrl,
-        presentation_professor: presentationVideoUrl,
-        image: imageUrl,
+      await updateCourseMutation.mutateAsync({
+        id: courseId,
+        course: {
+          ...formData,
+          intro_video: videoUrl,
+          presentation_professor: presentationVideoUrl,
+          image: imageUrl,
+        },
       });
       setSuccess("Curso actualizado exitosamente");
       setTimeout(() => setSuccess(null), 3000);
-    } catch (error) {
-      setError("Error updating course");
-      console.error("Error updating course:", error);
-    } finally {
-      setFormLoading(false);
+    } catch (err) {
+      setError(getUserFacingMessage(err));
+      console.error("Error updating course:", err);
     }
   };
 

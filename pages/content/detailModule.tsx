@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import { updateModuleStatus, getModule } from "../../services/moduleService";
-import { getModulesByCourseId } from "../../services/courses/courseService";
-import { deleteModule } from "../../services/moduleService";
+import { useCourseModulesQuery } from "@/features/courses/courses.queries";
+import { useEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import {
+  useDeleteModuleMutation,
+  useUpdateModuleStatusMutation,
+} from "@/features/modules/modules.mutations";
+import { coursesKeys } from "@/features/courses/courses.query-keys";
+import { useQueryClient } from "@tanstack/react-query";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { deleteSession } from "../../services/sessionService";
-import { getEvaluations } from "../../services/evaluationService";
-import { Evaluation } from "../../interfaces/Evaluation";
 import ButtonComponent from "../../components/ButtonComponent";
 import { Module } from "../../interfaces/Module";
 import Link from "next/link";
@@ -32,9 +36,22 @@ import ReactTooltip from "react-tooltip";
 const ModulesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [modules, setModules] = useState<Module[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const courseId = id ? Number(id) : undefined;
+  const queryClient = useQueryClient();
+
+  const modulesQuery = useCourseModulesQuery(courseId);
+  const evaluationsQuery = useEvaluationsQuery();
+  const deleteModuleMutation = useDeleteModuleMutation();
+  const updateModuleStatusMutation = useUpdateModuleStatusMutation();
+
+  const modules = modulesQuery.data ?? [];
+  const evaluations = evaluationsQuery.data ?? [];
+
+  const [error, setError] = useState<string | null>(
+    modulesQuery.isError || evaluationsQuery.isError
+      ? "Error fetching modules and evaluations"
+      : null,
+  );
   const [selectedSession, setSelectedSession] = useState<any>(null);
   const [moduleToDelete, setModuleToDelete] = useState<number | null>(null);
   const [sessionToDelete, setSessionToDelete] = useState<number | null>(null);
@@ -62,45 +79,27 @@ const ModulesPage: NextPageWithLayout = () => {
     hideModal: hideEditModuleModal,
   } = useModal();
 
-  useEffect(() => {
-    if (id) {
-      const fetchModulesAndEvaluations = async () => {
-        try {
-          const [modulesData, evaluationsData] = await Promise.all([
-            getModulesByCourseId(Number(id)),
-            getEvaluations(),
-          ]);
-          setModules(modulesData);
-          setEvaluations(evaluationsData);
-        } catch (error) {
-          setError("Error fetching modules and evaluations");
-          console.error("Error fetching modules and evaluations:", error);
-        }
-      };
-
-      fetchModulesAndEvaluations();
-    }
-
+  React.useEffect(() => {
     if (router.query.success) {
       setSuccessMessage(router.query.success as string);
-      setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+      setTimeout(() => setSuccessMessage(null), 5000);
     }
-  }, [id, router.query.success]);
+  }, [router.query.success]);
 
   const handleDeleteModule = async () => {
     if (moduleToDelete !== null) {
       try {
-        await deleteModule(moduleToDelete);
-        setModules(
-          modules.filter((module) => module.module_id !== moduleToDelete),
-        );
+        await deleteModuleMutation.mutateAsync({
+          moduleId: moduleToDelete,
+          courseId,
+        });
         setSuccessMessage("Registro eliminado correctamente");
-        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+        setTimeout(() => setSuccessMessage(null), 5000);
         setModuleToDelete(null);
         hideModuleModal();
-      } catch (error) {
-        console.error("Error deleting module:", error);
-        setError("Error deleting module");
+      } catch (err) {
+        console.error("Error deleting module:", err);
+        setError(getUserFacingMessage(err));
       }
     }
   };
@@ -109,22 +108,18 @@ const ModulesPage: NextPageWithLayout = () => {
     if (sessionToDelete !== null) {
       try {
         await deleteSession(sessionToDelete);
-        setModules(
-          modules.map((module) => ({
-            ...module,
-            moduleSessions:
-              module.moduleSessions?.filter(
-                (session) => session.session_id !== sessionToDelete,
-              ) || [],
-          })),
-        );
+        if (typeof courseId === "number") {
+          queryClient.invalidateQueries({
+            queryKey: coursesKeys.modules(courseId),
+          });
+        }
         setSuccessMessage("Registro eliminado correctamente");
-        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+        setTimeout(() => setSuccessMessage(null), 5000);
         setSessionToDelete(null);
         hideSessionModal();
-      } catch (error) {
-        console.error("Error deleting session:", error);
-        setError("Error deleting session");
+      } catch (err) {
+        console.error("Error deleting session:", err);
+        setError(getUserFacingMessage(err));
       }
     }
   };
@@ -140,34 +135,16 @@ const ModulesPage: NextPageWithLayout = () => {
     setSelectedSession(null);
   };
 
-  const handleAddModuleSuccess = async () => {
+  const handleAddModuleSuccess = () => {
     hideAddModuleModal();
     setSuccessMessage("Módulo creado exitosamente.");
     setTimeout(() => setSuccessMessage(null), 5000);
-    if (id) {
-      try {
-        const modulesData = await getModulesByCourseId(Number(id));
-        setModules(modulesData);
-      } catch (error) {
-        console.error("Error fetching modules:", error);
-        setError("Error fetching modules");
-      }
-    }
   };
 
-  const handleEditModuleSuccess = async () => {
+  const handleEditModuleSuccess = () => {
     hideEditModuleModal();
     setSuccessMessage("Módulo actualizado exitosamente.");
     setTimeout(() => setSuccessMessage(null), 5000);
-    if (id) {
-      try {
-        const modulesData = await getModulesByCourseId(Number(id));
-        setModules(modulesData);
-      } catch (error) {
-        console.error("Error fetching modules:", error);
-        setError("Error fetching modules");
-      }
-    }
   };
 
   const handleToggleModuleStatus = async (
@@ -175,19 +152,16 @@ const ModulesPage: NextPageWithLayout = () => {
     currentStatus: boolean,
   ) => {
     try {
-      await updateModuleStatus(moduleId, !currentStatus);
-      setModules(
-        modules.map((module) =>
-          module.module_id === moduleId
-            ? { ...module, is_active: !currentStatus }
-            : module,
-        ),
-      );
+      await updateModuleStatusMutation.mutateAsync({
+        moduleId,
+        isActive: !currentStatus,
+        courseId,
+      });
       setStatusMessage(`Módulo ${!currentStatus ? "activado" : "desactivado"}`);
-      setTimeout(() => setStatusMessage(null), 5000); // Ocultar la alerta después de 5 segundos
-    } catch (error) {
-      console.error("Error updating module status:", error);
-      setError("Error updating module status");
+      setTimeout(() => setStatusMessage(null), 5000);
+    } catch (err) {
+      console.error("Error updating module status:", err);
+      setError(getUserFacingMessage(err));
     }
   };
 

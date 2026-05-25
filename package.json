@@ -16,6 +16,8 @@
     "@nivo/bar": "^0.87.0",
     "@nivo/line": "^0.87.0",
     "@nivo/pie": "^0.87.0",
+    "@tanstack/react-query": "^5.100.14",
+    "@tanstack/react-query-devtools": "^5.100.14",
     "@vidstack/react": "^1.12.13",
     "axios": "^1.7.2",
     "cross-env": "^7.0.3",

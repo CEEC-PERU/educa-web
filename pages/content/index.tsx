@@ -1,41 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import CardCourses from "../../components/Content/CardCourses";
+import { useCoursesQuery } from "@/features/courses/courses.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
+import CourseCard from "@/components/courses/CourseCard";
 import ButtonComponent from "../../components/ButtonComponent";
-import { getCourses } from "../../services/courses/courseService";
-import { Course } from "../../interfaces/Courses/Course";
-import { useRouter } from "next/router";
 import Loader from "../../components/Loader";
+import { useRouter } from "next/router";
+
 const Home: NextPageWithLayout = () => {
-  const [cursos, setCursos] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const coursesQuery = useCoursesQuery();
+  const courses = coursesQuery.data ?? [];
 
-  const fetchData = async () => {
-    try {
-      const data = await getCourses();
-      setCursos(data);
-      setLoading(false);
-    } catch (error) {
-      setError("Error fetching courses");
-      console.error("Error fetching courses:", error);
-      setLoading(false);
-    }
+  const handleViewCourse = (courseId: number) => {
+    router.push(`/content/${courseId}`);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const handleButtonClick = (id?: number) => {
-    if (id) {
-      router.push(`/content/${id}`);
-    }
-  };
-
-  if (loading) {
+  if (coursesQuery.isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader />
@@ -55,20 +37,29 @@ const Home: NextPageWithLayout = () => {
           buttonSize="py-2 px-7"
         />
       </div>
-      {error && <p className="text-red-500">{error}</p>}
+
+      {coursesQuery.isError && (
+        <p className="text-red-500 mb-4">
+          {getUserFacingMessage(coursesQuery.error)}
+        </p>
+      )}
+
+      {!coursesQuery.isError && courses.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+          <p className="text-lg font-medium">No hay cursos disponibles</p>
+          <p className="text-sm mt-1">
+            Crea el primer curso usando el botón de arriba.
+          </p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {cursos.map((curso) => (
-          <CardCourses
-            key={curso.course_id}
-            id={curso.course_id}
-            image={curso.image}
-            name={curso.name}
-            description_short={curso.description_short}
-            duration_course={curso.duration_course}
-            rating={4.9}
+        {courses.map((course) => (
+          <CourseCard
+            key={course.course_id}
+            course={course}
             buttonLabel="Ver detalles"
-            textColor="text-blue-gray-900"
-            onButtonClick={handleButtonClick}
+            onButtonClick={handleViewCourse}
           />
         ))}
       </div>

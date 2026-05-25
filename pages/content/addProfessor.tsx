@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import { Professor, Level } from "../../interfaces/Professor";
-import { getLevels, addProfessor } from "../../services/professorService";
+import { Professor } from "../../interfaces/Professor";
+import { useLevelsQuery } from "@/features/professors/professors.queries";
+import { useCreateProfessorMutation } from "@/features/professors/professors.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import MediaUploadPreview from "../../components/MediaUploadPreview";
 import FormField from "../../components/FormField";
 import ActionButtons from "../../components/Content/ActionButtons";
@@ -21,13 +23,9 @@ const AddProfessors: NextPageWithLayout = () => {
     description: "",
     level_id: 0,
   });
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [levels, setLevels] = useState<Level[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [clearMediaPreview, setClearMediaPreview] = useState(false);
   const [touchedFields, setTouchedFields] = useState<{
@@ -37,21 +35,12 @@ const AddProfessors: NextPageWithLayout = () => {
   const router = useRouter();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [levelsRes] = await Promise.all([getLevels()]);
-        setLevels(levelsRes);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Error fetching data");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const levelsQuery = useLevelsQuery();
+  const createProfessorMutation = useCreateProfessorMutation();
 
-    fetchData();
-  }, []);
+  const levels = levelsQuery.data ?? [];
+  const loading = levelsQuery.isLoading;
+  const formLoading = createProfessorMutation.isPending;
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -117,10 +106,11 @@ const AddProfessors: NextPageWithLayout = () => {
       }, 3000);
       return;
     }
-    setFormLoading(true);
     try {
-      const response = await addProfessor(profesor, imageFile!);
-      setProfessors([...professors, response]);
+      await createProfessorMutation.mutateAsync({
+        professor: profesor,
+        imageFile: imageFile!,
+      });
       setProfesor({
         full_name: "",
         image: "",
@@ -132,16 +122,16 @@ const AddProfessors: NextPageWithLayout = () => {
       setTouchedFields({});
       setClearMediaPreview(true);
       setTimeout(() => setClearMediaPreview(false), 500);
+      setError(null);
       setShowAlert(true);
       setSuccess("Profesor agregado exitosamente");
       setTimeout(() => {
         setShowAlert(false);
       }, 3000);
-    } catch (error) {
-      console.error("Error adding professor:", error);
-      setError("Error adding professor");
-    } finally {
-      setFormLoading(false);
+    } catch (err) {
+      console.error("Error adding professor:", err);
+      setError(getUserFacingMessage(err));
+      setShowAlert(true);
     }
   };
 

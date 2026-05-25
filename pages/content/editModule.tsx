@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getModule, updateModule } from "../../services/moduleService";
-import { getAvailableEvaluations } from "../../services/evaluationService";
-import { Evaluation } from "../../interfaces/Evaluation";
+import { useModuleQuery } from "@/features/modules/modules.queries";
+import { useUpdateModuleMutation } from "@/features/modules/modules.mutations";
+import { useAvailableEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { Module } from "../../interfaces/Module";
 import FormField from "../../components/FormField";
 import AlertComponent from "../../components/AlertComponent";
@@ -17,36 +18,34 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [module, setModule] = useState<Module | null>(null); // Cambiar el estado inicial a null
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
+  const [module, setModule] = useState<Module | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
   const [touchedFields, setTouchedFields] = useState<{
     [key in keyof Module]?: boolean;
   }>({});
 
-  useEffect(() => {
-    const fetchModuleAndEvaluations = async () => {
-      try {
-        const [moduleRes, evaluationsRes] = await Promise.all([
-          getModule(moduleId),
-          getAvailableEvaluations(),
-        ]);
-        setModule(moduleRes);
-        setEvaluations(evaluationsRes);
-      } catch (error) {
-        console.error("Error fetching module and evaluations:", error);
-        setError("Error fetching module and evaluations");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const moduleQuery = useModuleQuery(moduleId);
+  const evaluationsQuery = useAvailableEvaluationsQuery();
+  const updateModuleMutation = useUpdateModuleMutation();
 
-    fetchModuleAndEvaluations();
-  }, [moduleId]);
+  const evaluations = evaluationsQuery.data ?? [];
+  const loading = moduleQuery.isLoading || evaluationsQuery.isLoading;
+  const formLoading = updateModuleMutation.isPending;
+
+  useEffect(() => {
+    if (moduleQuery.data) {
+      setModule(moduleQuery.data);
+    }
+  }, [moduleQuery.data]);
+
+  useEffect(() => {
+    if (moduleQuery.isError || evaluationsQuery.isError) {
+      setError("Error fetching module and evaluations");
+      setShowAlert(true);
+    }
+  }, [moduleQuery.isError, evaluationsQuery.isError]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -76,7 +75,6 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormLoading(true);
 
     const newTouchedFields: { [key in keyof Module]?: boolean } = {};
     requiredFields.forEach((field) => {
@@ -91,21 +89,22 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
       setTouchedFields((prev) => ({ ...prev, ...newTouchedFields }));
       setError("Por favor, complete todos los campos requeridos.");
       setShowAlert(true);
-      setFormLoading(false);
       return;
     }
 
     try {
-      await updateModule(moduleId, module!);
+      await updateModuleMutation.mutateAsync({
+        id: moduleId,
+        module: module!,
+      });
       setShowAlert(true);
       setError(null);
       setSuccess("Módulo actualizado exitosamente.");
       onSuccess();
-    } catch (error) {
-      console.error("Error updating module:", error);
-      setError("Error updating module");
-    } finally {
-      setFormLoading(false);
+    } catch (err) {
+      console.error("Error updating module:", err);
+      setError(getUserFacingMessage(err));
+      setShowAlert(true);
     }
   };
 

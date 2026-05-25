@@ -1,27 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import Navbar from '../../../../components/Navbar';
-import Sidebar from '../../../../components/Content/SideBar';
-import MediaUploadPreview from '../../../../components/MediaUploadPreview';
-import { addSession } from '../../../../services/sessionService';
-import { uploadVideo } from '../../../../services/videoService';
-import { Session } from '../../../../interfaces/Session';
-import FormField from '../../../../components/FormField';
-import ActionButtons from '../../../../components/Content/ActionButtons';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import './../../../../app/globals.css';
-import AlertComponent from '../../../../components/AlertComponent';
+import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/router";
+import Navbar from "../../../../components/Navbar";
+import MediaUploadPreview from "../../../../components/MediaUploadPreview";
+import { addSession } from "../../../../services/sessionService";
+import { uploadVideo } from "../../../../services/videoService";
+import { Session } from "../../../../interfaces/Session";
+import FormField from "../../../../components/FormField";
+import ActionButtons from "../../../../components/Content/ActionButtons";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import "./../../../../app/globals.css";
+import AlertComponent from "../../../../components/AlertComponent";
 
-import Loader from '../../../../components/Loader';
+import Loader from "../../../../components/Loader";
 
-import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
+import ProtectedRoute from "../../../../components/Auth/ProtectedRoute";
 
 const AddSession: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
-  const [session, setSession] = useState<Omit<Session, 'session_id'>>({
-    video_enlace: '',
+  const [session, setSession] = useState<Omit<Session, "session_id">>({
+    video_enlace: "",
     duracion_minutos: 0,
-    name: '',
+    name: "",
     module_id: 0,
   });
   const [error, setError] = useState<string | null>(null);
@@ -47,20 +46,15 @@ const AddSession: React.FC = () => {
     }
   }, [moduleId]);
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { id, value, type, checked } = e.target as HTMLInputElement;
     setSession((prevSession) => ({
       ...prevSession,
-      [id]: type === 'checkbox' ? checked : value,
+      [id]: type === "checkbox" ? checked : value,
     }));
     setTouchedFields((prev) => ({ ...prev, [id]: true }));
   };
@@ -68,7 +62,7 @@ const AddSession: React.FC = () => {
   const handleBlur = (
     e: React.FocusEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { id } = e.target;
     setTouchedFields((prev) => ({ ...prev, [id]: true }));
@@ -84,18 +78,18 @@ const AddSession: React.FC = () => {
 
     try {
       if (videoFile) {
-        const videoUrl = await uploadVideo(videoFile, 'Sesiones');
+        const videoUrl = await uploadVideo(videoFile, "Sesiones");
         await addSession({ ...session, video_enlace: videoUrl });
         setShowAlert(true);
         setError(null);
       }
     } catch (error: any) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
+      if (error.name === "SequelizeUniqueConstraintError") {
         setError(
-          'A session with this ID already exists. Please try again with a different session.'
+          "A session with this ID already exists. Please try again with a different session.",
         );
       } else {
-        setError('An error occurred while creating the session.');
+        setError("An error occurred while creating the session.");
       }
     } finally {
       setFormLoading(false);
@@ -104,9 +98,9 @@ const AddSession: React.FC = () => {
 
   const handleCancel = () => {
     setSession({
-      video_enlace: '',
+      video_enlace: "",
       duracion_minutos: 0,
-      name: '',
+      name: "",
       module_id: Number(moduleId),
     });
     setVideoFile(null);
@@ -130,10 +124,9 @@ const AddSession: React.FC = () => {
       <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
         <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
           <main
             className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
+              showSidebar ? "ml-20" : ""
             } flex`}
           >
             <form
@@ -143,7 +136,7 @@ const AddSession: React.FC = () => {
               {showAlert && (
                 <AlertComponent
                   type="danger"
-                  message={error || 'Sesión agregada exitosamente.'}
+                  message={error || "Sesión agregada exitosamente."}
                   onClose={() => setShowAlert(false)}
                 />
               )}
@@ -164,8 +157,8 @@ const AddSession: React.FC = () => {
                 value={session.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                error={!session.name && touchedFields['name']}
-                touched={touchedFields['name']}
+                error={!session.name && touchedFields["name"]}
+                touched={touchedFields["name"]}
                 required
               />
               <FormField
@@ -176,9 +169,9 @@ const AddSession: React.FC = () => {
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={
-                  !session.duracion_minutos && touchedFields['duracion_minutos']
+                  !session.duracion_minutos && touchedFields["duracion_minutos"]
                 }
-                touched={touchedFields['duracion_minutos']}
+                touched={touchedFields["duracion_minutos"]}
                 required
               />
               <div className="mb-4">

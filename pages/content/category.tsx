@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
+import { useCategoriesQuery } from "@/features/categories/categories.queries";
 import {
-  getCategories,
-  addCategory,
-  deleteCategory,
-  updateCategory,
-} from "../../services/categoryService";
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} from "@/features/categories/categories.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { Category } from "../../interfaces/Category";
 import ButtonContent from "../../components/Content/ButtonContent";
 import FormField from "../../components/FormField";
@@ -18,12 +19,9 @@ import ModalConfirmation from "../../components/ModalConfirmation";
 import useModal from "../../hooks/ui/useModal";
 const CategoryPage: NextPageWithLayout = () => {
   const [category, setCategory] = useState<Category | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
   const [touchedFields, setTouchedFields] = useState<{
     [key: string]: boolean;
@@ -31,21 +29,26 @@ const CategoryPage: NextPageWithLayout = () => {
   const [showAlert, setShowAlert] = useState(false);
   const { isVisible, showModal, hideModal } = useModal();
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const fetchedCategories = await getCategories();
-        setCategories(fetchedCategories);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-        setError("Error fetching categories");
-        setLoading(false);
-      }
-    };
+  const categoriesQuery = useCategoriesQuery();
+  const createCategoryMutation = useCreateCategoryMutation();
+  const updateCategoryMutation = useUpdateCategoryMutation();
+  const deleteCategoryMutation = useDeleteCategoryMutation();
 
-    fetchCategories();
-  }, []);
+  const categories = categoriesQuery.data ?? [];
+  const loading = categoriesQuery.isLoading;
+  const formLoading =
+    createCategoryMutation.isPending ||
+    updateCategoryMutation.isPending ||
+    deleteCategoryMutation.isPending;
+
+  React.useEffect(() => {
+    if (categoriesQuery.isError) {
+      setError(
+        getUserFacingMessage(categoriesQuery.error) ??
+          "Error fetching categories",
+      );
+    }
+  }, [categoriesQuery.isError, categoriesQuery.error]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -80,36 +83,24 @@ const CategoryPage: NextPageWithLayout = () => {
       return;
     }
 
-    setFormLoading(true);
     try {
-      let updatedCategories;
       if (isEditing && category) {
-        const updatedCategory = await updateCategory(
-          category.category_id,
+        await updateCategoryMutation.mutateAsync({
+          categoryId: category.category_id,
           category,
-        );
-        updatedCategories = categories.map((cat) =>
-          cat.category_id === updatedCategory.category_id
-            ? updatedCategory
-            : cat,
-        );
+        });
         setIsEditing(false);
         setSuccess("Categoría actualizada exitosamente");
       } else {
-        const response = await addCategory(category.name);
-        const newCategory = response.newCategory;
-        updatedCategories = [...categories, newCategory];
+        await createCategoryMutation.mutateAsync(category.name);
         setSuccess("Categoría agregada exitosamente");
       }
-      setCategories(updatedCategories);
       setCategory(null);
       setTouchedFields({});
       setTimeout(() => setSuccess(null), 5000);
-    } catch (error) {
-      console.error("Error saving category:", error);
-      setError("Error saving category");
-    } finally {
-      setFormLoading(false);
+    } catch (err) {
+      console.error("Error saving category:", err);
+      setError(getUserFacingMessage(err));
     }
   };
 
@@ -121,25 +112,18 @@ const CategoryPage: NextPageWithLayout = () => {
 
   const handleDelete = async () => {
     if (categoryToDelete !== null) {
-      setFormLoading(true);
       try {
-        await deleteCategory(categoryToDelete);
-        setCategories(
-          categories.filter(
-            (category) => category.category_id !== categoryToDelete,
-          ),
-        );
+        await deleteCategoryMutation.mutateAsync(categoryToDelete);
         if (category?.category_id === categoryToDelete) {
           setCategory(null);
           setIsEditing(false);
         }
         setSuccess("Categoría eliminada exitosamente");
         setTimeout(() => setSuccess(null), 3000);
-      } catch (error) {
-        console.error("Error deleting category:", error);
-        setError("Error deleting category");
+      } catch (err) {
+        console.error("Error deleting category:", err);
+        setError(getUserFacingMessage(err));
       } finally {
-        setFormLoading(false);
         hideModal();
       }
     }

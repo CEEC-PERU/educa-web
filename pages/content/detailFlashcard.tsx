@@ -11,11 +11,12 @@ import {
 import { Module } from "@/interfaces/Module";
 import { Flashcard } from "@/interfaces/Flashcard";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
-import { getModulesByCourseId } from "@/services/courses/courseService";
+import { useCourseModulesQuery } from "@/features/courses/courses.queries";
 import {
-  deleteFlashcard,
-  updateFlashcard,
-} from "@/services/flashcards/flashcardService";
+  useDeleteFlashcardMutation,
+  useUpdateFlashcardMutation,
+} from "@/features/flashcards/flashcards.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import ButtonComponent from "@/components/ButtonComponent";
 import { TrashIcon, PencilSquareIcon } from "@heroicons/react/24/solid";
 import useModal from "@/hooks/ui/useModal";
@@ -31,7 +32,6 @@ const FlashcardsPage: NextPageWithLayout = () => {
   const [selectedFlashcard, setSelectedFlashcard] = useState<Flashcard | null>(
     null,
   );
-  const [modules, setModules] = useState<Module[]>([]);
   const [flashcardToDelete, setFlashcardToDelete] = useState<number | null>(
     null,
   );
@@ -39,7 +39,6 @@ const FlashcardsPage: NextPageWithLayout = () => {
   // Estado de edición
   const [isEditing, setIsEditing] = useState(false);
   const [editQuestion, setEditQuestion] = useState("");
-  const [editLoading, setEditLoading] = useState(false);
 
   const {
     isVisible: isFlashcardModalVisible,
@@ -47,41 +46,34 @@ const FlashcardsPage: NextPageWithLayout = () => {
     hideModal: hideFlashcardModal,
   } = useModal();
 
+  const courseId = router.isReady && id !== undefined ? Number(id) : undefined;
+  const modulesQuery = useCourseModulesQuery(courseId);
+  const modules: Module[] = modulesQuery.data ?? [];
+  const deleteFlashcardMutation = useDeleteFlashcardMutation();
+  const updateFlashcardMutation = useUpdateFlashcardMutation();
+  const editLoading = updateFlashcardMutation.isPending;
+
   useEffect(() => {
-    if (!router.isReady || !id) return;
+    if (modulesQuery.isError) {
+      setError(
+        getUserFacingMessage(modulesQuery.error) ??
+          "Hubo un error al cargar los módulos",
+      );
+    }
+  }, [modulesQuery.isError, modulesQuery.error]);
 
-    const fetchModules = async () => {
-      try {
-        const [modulesData] = await Promise.all([
-          getModulesByCourseId(Number(id)),
-        ]);
-        setModules(modulesData);
-      } catch (error) {
-        setError("Hubo un error al cargar los módulos");
-        console.error("Hubo un error al cargar los módulos:", error);
-      }
-    };
-
-    fetchModules();
+  useEffect(() => {
+    if (!router.isReady) return;
     if (router.query.success) {
       setSuccessMessage(router.query.success as string);
       setTimeout(() => setSuccessMessage(null), 5000);
     }
-  }, [id, router.isReady, router.query.success]);
+  }, [router.isReady, router.query.success]);
 
   const handleDeleteFlashcard = async () => {
     if (flashcardToDelete !== null) {
       try {
-        await deleteFlashcard(flashcardToDelete);
-        setModules(
-          modules.map((module) => ({
-            ...module,
-            moduleFlashcards:
-              module.moduleFlashcards?.filter(
-                (flashcard) => flashcard.flashcard_id !== flashcardToDelete,
-              ) || [],
-          })),
-        );
+        await deleteFlashcardMutation.mutateAsync(flashcardToDelete);
         if (selectedFlashcard?.flashcard_id === flashcardToDelete) {
           setSelectedFlashcard(null);
           setIsEditing(false);
@@ -90,9 +82,9 @@ const FlashcardsPage: NextPageWithLayout = () => {
         setTimeout(() => setSuccessMessage(null), 5000);
         setFlashcardToDelete(null);
         hideFlashcardModal();
-      } catch (error) {
-        console.error("Error al eliminar la flashcard:", error);
-        setError("Hubo un error al eliminar la flashcard");
+      } catch (err) {
+        console.error("Error al eliminar la flashcard:", err);
+        setError(getUserFacingMessage(err));
       }
     }
   };
@@ -125,36 +117,27 @@ const FlashcardsPage: NextPageWithLayout = () => {
   const handleSaveEdit = async () => {
     if (!selectedFlashcard) return;
 
-    setEditLoading(true);
     try {
-      await updateFlashcard(selectedFlashcard.flashcard_id, {
-        question: editQuestion.trim(),
-        correct_answer: selectedFlashcard.correct_answer,
-        incorrect_answer: selectedFlashcard.incorrect_answer,
+      await updateFlashcardMutation.mutateAsync({
+        flashcardId: selectedFlashcard.flashcard_id,
+        data: {
+          question: editQuestion.trim(),
+          correct_answer: selectedFlashcard.correct_answer,
+          incorrect_answer: selectedFlashcard.incorrect_answer,
+        },
       });
 
-      // Actualizar en el estado local
       const updated: Flashcard = {
         ...selectedFlashcard,
         question: editQuestion.trim(),
       };
       setSelectedFlashcard(updated);
-      setModules(
-        modules.map((module) => ({
-          ...module,
-          moduleFlashcards: module.moduleFlashcards?.map((fc) =>
-            fc.flashcard_id === updated.flashcard_id ? updated : fc,
-          ),
-        })),
-      );
       setIsEditing(false);
       setSuccessMessage("Flashcard actualizada exitosamente");
       setTimeout(() => setSuccessMessage(null), 5000);
-    } catch (error) {
-      console.error("Error al actualizar la flashcard:", error);
-      setError("Hubo un error al actualizar la flashcard");
-    } finally {
-      setEditLoading(false);
+    } catch (err) {
+      console.error("Error al actualizar la flashcard:", err);
+      setError(getUserFacingMessage(err));
     }
   };
 

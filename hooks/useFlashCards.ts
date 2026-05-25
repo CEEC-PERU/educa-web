@@ -1,45 +1,11 @@
-import { useEffect, useState } from 'react';
-import { getFlashcards } from '../services/flashcardsService';
-import { useAuth } from '../context/AuthContext';
-import { Flashcard } from '@/interfaces/Flashcard';
+import { useFlashcardsByModuleQuery } from "@/features/flashcards/flashcards.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 
-export const useFlashcards= (module_id :number) => {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { user, token } = useAuth();
-//useEffect
-  useEffect(() => {
-    const fetchFlascards = async () => {
-      if (!token) {
-        return;
-      }
-      setIsLoading(true);
-      try {
-        const response = await getFlashcards(token, module_id );
-        if (response === null) {
-          setFlashcards([]); 
-        } else if (Array.isArray(response)) {
-          setFlashcards(response); 
-        } else {
-          setFlashcards([response]); 
-        }
-      } catch (error) {
-        console.error('Error fetching course detail:', error);
-        setError('Error fetching course detail. Please try again.');
-      } finally {
-        setIsLoading(false);
-        //carga 
-      }
-    };
-
-    fetchFlascards();
-  }, [token]);
-
+export const useFlashcards = (module_id: number) => {
+  const query = useFlashcardsByModuleQuery(module_id);
   return {
-    flashcards,
-    error,
-    isLoading
+    flashcards: query.data ?? [],
+    error: query.isError ? getUserFacingMessage(query.error) : null,
+    isLoading: query.isLoading,
   };
 };
-

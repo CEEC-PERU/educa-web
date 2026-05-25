@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
-  getProfessor,
-  deleteProfessor,
-  updateProfessor,
-  getLevels,
-} from "../../services/professorService";
+  useProfessorQuery,
+  useLevelsQuery,
+} from "@/features/professors/professors.queries";
+import {
+  useUpdateProfessorMutation,
+  useDeleteProfessorMutation,
+} from "@/features/professors/professors.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import ActionButtons from "../../components/Content/ActionButtons";
 import { uploadImage } from "../../services/imageService";
 import MediaUploadPreview from "../../components/MediaUploadPreview";
 import FormField from "../../components/FormField";
-import { Professor, Level } from "../../interfaces/Professor";
+import { Professor } from "../../interfaces/Professor";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import AlertComponent from "../../components/AlertComponent";
 import Loader from "../../components/Loader";
@@ -22,35 +25,44 @@ import useModal from "../../hooks/ui/useModal";
 const DetailProfessor: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
+  const professorId = id ? Number(id) : undefined;
+
   const [professor, setProfessor] = useState<Professor | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [levels, setLevels] = useState<Level[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
   const { isVisible, showModal, hideModal } = useModal();
 
-  const fetchProfessorAndLevels = async () => {
-    try {
-      const professorData = await getProfessor(Number(id));
-      const levelsData = await getLevels();
-      setProfessor(professorData);
-      setLevels(levelsData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching professor details or levels:", error);
-      setError("Error fetching professor details o levels");
-      setLoading(false);
-    }
-  };
+  const professorQuery = useProfessorQuery(professorId);
+  const levelsQuery = useLevelsQuery();
+  const updateProfessorMutation = useUpdateProfessorMutation();
+  const deleteProfessorMutation = useDeleteProfessorMutation();
+
+  const levels = levelsQuery.data ?? [];
+  const loading = professorQuery.isLoading || levelsQuery.isLoading;
+  const formLoading =
+    updateProfessorMutation.isPending || deleteProfessorMutation.isPending;
 
   useEffect(() => {
-    if (id) {
-      fetchProfessorAndLevels();
+    if (professorQuery.data) {
+      setProfessor(professorQuery.data);
     }
-  }, [id]);
+  }, [professorQuery.data]);
+
+  useEffect(() => {
+    if (professorQuery.isError || levelsQuery.isError) {
+      setError(
+        getUserFacingMessage(professorQuery.error ?? levelsQuery.error) ??
+          "Error fetching professor details o levels",
+      );
+    }
+  }, [
+    professorQuery.isError,
+    levelsQuery.isError,
+    professorQuery.error,
+    levelsQuery.error,
+  ]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -58,18 +70,14 @@ const DetailProfessor: NextPageWithLayout = () => {
 
   const handleDelete = async () => {
     if (professor) {
-      setFormLoading(true);
       try {
-        await deleteProfessor(professor.professor_id);
+        await deleteProfessorMutation.mutateAsync(professor.professor_id);
         setSuccess("Registro eliminado correctamente");
         setTimeout(() => setSuccess(null), 5000);
         router.push("/content/professors");
-      } catch (error) {
-        const err = error as any;
+      } catch (err) {
         console.error("Error deleting professor:", err);
-        setError(err.response?.data?.error || "Error eliminando profesor");
-      } finally {
-        setFormLoading(false);
+        setError(getUserFacingMessage(err));
       }
     }
   };
@@ -96,27 +104,22 @@ const DetailProfessor: NextPageWithLayout = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (professor) {
-      setFormLoading(true);
       try {
         let imageUrl = professor.image;
         if (imageFile) {
           imageUrl = await uploadImage(imageFile, "Profesores");
           setProfessor({ ...professor, image: imageUrl });
         }
-        await updateProfessor(professor.professor_id, {
-          ...professor,
-          image: imageUrl,
+        await updateProfessorMutation.mutateAsync({
+          professorId: professor.professor_id,
+          professor: { ...professor, image: imageUrl },
         });
         setSuccess("Profesor actualizado exitosamente");
         setTimeout(() => setSuccess(null), 3000);
         setIsEditing(false);
-        fetchProfessorAndLevels(); // Refrescar los datos del profesor y los niveles
-      } catch (error) {
-        const err = error as any;
+      } catch (err) {
         console.error("Error updating professor:", err);
-        setError("Error actualizando profesor");
-      } finally {
-        setFormLoading(false);
+        setError(getUserFacingMessage(err));
       }
     }
   };

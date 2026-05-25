@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import MediaUploadPreview from "@components/MediaUploadPreview";
 import FormField from "@components/FormField";
 import ActionButtons from "@components/Content/ActionButtons";
-import { getCategories } from "@services/categoryService";
-import { getProfessors } from "@services/professorService";
-import { getAvailableEvaluations } from "@services/evaluationService";
-import { addCourse } from "@services/courses/courseService";
-import { Category } from "@/interfaces/Category";
-import { Professor } from "@/interfaces/Professor";
-import { Evaluation } from "@/interfaces/Evaluation";
+import { useCategoriesQuery } from "@/features/categories/categories.queries";
+import { useProfessorsQuery } from "@/features/professors/professors.queries";
+import { useAvailableEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { useCreateCourseMutation } from "@/features/courses/courses.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { Course } from "@/interfaces/Courses/Course";
 import Loader from "@components/Loader";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -25,11 +23,26 @@ interface FormData extends Omit<
 }
 
 const AddCourse: NextPageWithLayout = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
+  const categoriesQuery = useCategoriesQuery();
+  const professorsQuery = useProfessorsQuery();
+  const evaluationsQuery = useAvailableEvaluationsQuery();
+
+  const categories = categoriesQuery.data ?? [];
+  const professors = professorsQuery.data ?? [];
+  const evaluations = evaluationsQuery.data ?? [];
+
+  const isBootstrapping =
+    categoriesQuery.isLoading ||
+    professorsQuery.isLoading ||
+    evaluationsQuery.isLoading;
+
+  const bootstrapError =
+    categoriesQuery.isError ||
+    professorsQuery.isError ||
+    evaluationsQuery.isError;
+
+  const createCourseMutation = useCreateCourseMutation();
+  const formLoading = createCourseMutation.isPending;
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"success" | "danger" | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -60,30 +73,13 @@ const AddCourse: NextPageWithLayout = () => {
   const videoUploadRef = useRef<{ clear: () => void }>(null);
   const presentationVideoUploadRef = useRef<{ clear: () => void }>(null);
 
-  useEffect(() => {
-    const fetchCategoriesProfessorsEvaluations = async () => {
-      try {
-        const [categoriesRes, professorsRes, evaluationsRes] =
-          await Promise.all([
-            getCategories(),
-            getProfessors(),
-            getAvailableEvaluations(),
-          ]);
-        setCategories(categoriesRes);
-        setProfessors(professorsRes);
-        setEvaluations(evaluationsRes);
-        setLoading(false);
-      } catch (error) {
-        setAlertMessage(
-          "Error fetching categories, professors, or evaluations",
-        );
-        setAlertType("danger");
-        setShowAlert(true);
-        setLoading(false);
-      }
-    };
-    fetchCategoriesProfessorsEvaluations();
-  }, []);
+  React.useEffect(() => {
+    if (bootstrapError) {
+      setAlertMessage("Error fetching categories, professors, or evaluations");
+      setAlertType("danger");
+      setShowAlert(true);
+    }
+  }, [bootstrapError]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -125,7 +121,6 @@ const AddCourse: NextPageWithLayout = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormLoading(true);
 
     const requiredFields = [
       "name",
@@ -162,17 +157,16 @@ const AddCourse: NextPageWithLayout = () => {
       setAlertMessage("Por favor, complete todos los campos requeridos.");
       setAlertType("danger");
       setShowAlert(true);
-      setFormLoading(false);
       return;
     }
 
     try {
-      await addCourse(
-        formData,
-        videoFile!,
-        imageFile!,
-        presentationVideoFile ?? undefined,
-      );
+      await createCourseMutation.mutateAsync({
+        course: formData,
+        videoFile: videoFile!,
+        imageFile: imageFile!,
+        presentationVideoFile: presentationVideoFile ?? undefined,
+      });
       setAlertMessage("Curso creado exitosamente.");
       setAlertType("success");
       setShowAlert(true);
@@ -203,12 +197,10 @@ const AddCourse: NextPageWithLayout = () => {
         setTimeout(() => setClearMediaPreview(false), 500);
       }, 3000);
     } catch (error) {
-      setAlertMessage("Error creating course");
+      setAlertMessage(getUserFacingMessage(error));
       setAlertType("danger");
       setShowAlert(true);
       console.error("Error creating course:", error);
-    } finally {
-      setFormLoading(false);
     }
   };
 
@@ -238,7 +230,7 @@ const AddCourse: NextPageWithLayout = () => {
     setTimeout(() => setClearMediaPreview(false), 500);
   };
 
-  if (loading) {
+  if (isBootstrapping) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader />

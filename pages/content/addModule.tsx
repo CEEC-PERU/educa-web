@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { addModule } from "../../services/moduleService";
+import { useCreateModuleMutation } from "@/features/modules/modules.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
 import { Module } from "../../interfaces/Module";
 import FormField from "../../components/FormField";
 import AlertComponent from "../../components/AlertComponent";
@@ -27,6 +28,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
   const [showAlert, setShowAlert] = useState(false);
 
   const wizard = useEvaluationWizard();
+  const createModuleMutation = useCreateModuleMutation();
 
   const handleStartWizard = () => {
     if (!moduleName.trim()) {
@@ -55,7 +57,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
           course_id: courseId,
         };
 
-      await addModule(newModule);
+      await createModuleMutation.mutateAsync(newModule);
 
       // 3. Mostrar éxito
       setStep("success");
@@ -64,7 +66,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
     } catch (err) {
       console.error("Error al crear módulo con evaluación:", err);
       setStep("form");
-      setError("Ocurrió un error al guardar. Intente nuevamente.");
+      setError(getUserFacingMessage(err));
       setShowAlert(true);
     }
   };

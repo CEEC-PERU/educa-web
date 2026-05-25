@@ -1,36 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
-import { Professor, Level } from "../../interfaces/Professor";
-import { getProfessors, getLevels } from "../../services/professorService"; // Importar las funciones del servicio
+import {
+  useProfessorsQuery,
+  useLevelsQuery,
+} from "@/features/professors/professors.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 import ButtonComponent from "../../components/ButtonComponent";
 import ProfileCard from "../../components/ProfileCard";
 import { useRouter } from "next/router";
 
 const Profesores: NextPageWithLayout = () => {
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [levels, setLevels] = useState<Level[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
+  const professorsQuery = useProfessorsQuery();
+  const levelsQuery = useLevelsQuery();
 
-  useEffect(() => {
-    const fetchProfessorsAndLevels = async () => {
-      try {
-        const [professorsData, levelsData] = await Promise.all([
-          getProfessors(),
-          getLevels(),
-        ]);
-        setProfessors(professorsData);
-        setLevels(levelsData);
-      } catch (error) {
-        console.error("Error fetching professors or levels:", error);
-        setError("Error fetching professors or levels");
-      }
-    };
-
-    fetchProfessorsAndLevels();
-  }, []);
+  const professors = professorsQuery.data ?? [];
+  const levels = levelsQuery.data ?? [];
+  const error =
+    professorsQuery.isError || levelsQuery.isError
+      ? getUserFacingMessage(professorsQuery.error ?? levelsQuery.error)
+      : null;
 
   const handleViewProfile = (id: number) => {
     router.push(`/content/detailProfessor?id=${id}`);

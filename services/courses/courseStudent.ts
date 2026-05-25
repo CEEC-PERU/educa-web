@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 import {
   API_GET_COURSESTUDENT,
@@ -8,12 +8,12 @@ import {
   API_POST_COURSESTUDENT,
   API_GET_COURSESTUDENT_ASSIGNED,
   API_GET_COURSESTUDENT_SUPERVISOR,
-} from '../../utils/Endpoints';
-import { CourseStudent } from '../../interfaces/Courses/CourseStudent';
+} from "../../utils/Endpoints";
+import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
 
 export const getCourseStudent = async (
   userToken: string,
-  userId: number
+  userId: number,
 ): Promise<CourseStudent | null> => {
   try {
     const config = {
@@ -23,24 +23,24 @@ export const getCourseStudent = async (
     };
     const response = await axios.get<CourseStudent>(
       `${API_GET_COURSESTUDENT}/${userId}`,
-      config
+      config,
     );
     if (response.data) {
       return response.data;
     } else {
-      console.warn('No enterprise found for user:', userId);
+      console.warn("No enterprise found for user:", userId);
       return null;
     }
   } catch (error) {
-    console.error('Error getting enterprise:', error);
-    throw new Error('Error getting enterprise');
+    console.error("Error getting enterprise:", error);
+    throw new Error("Error getting enterprise");
   }
 };
 
 export const getCourseStudentCategory = async (
   userToken: string,
   userId: number,
-  categoryId: number
+  categoryId: number,
 ): Promise<CourseStudent | null> => {
   try {
     const config = {
@@ -50,33 +50,33 @@ export const getCourseStudentCategory = async (
     };
     const response = await axios.get<CourseStudent>(
       `${API_GET_COURSESTUDENT}/${userId}/category/${categoryId}`,
-      config
+      config,
     );
     if (response.data) {
       return response.data;
     } else {
-      console.warn('No enterprise found for user:', userId);
+      console.warn("No enterprise found for user:", userId);
       return null;
     }
   } catch (error) {
-    console.error('Error getting enterprise:', error);
-    throw new Error('Error getting enterprise');
+    console.error("Error getting enterprise:", error);
+    throw new Error("Error getting enterprise");
   }
 };
 
 export const getModulesByCourseId2 = async (
   courseId: number,
-  userId: number
+  userId: number,
 ) => {
   const response = await axios.get(
-    `${API_GET_COURSEMODULE}/${courseId}/${userId}`
+    `${API_GET_COURSEMODULE}/${courseId}/${userId}`,
   );
   return response.data;
 };
 
 export const assignStudentsToCourse = async (
   enterpriseId: number,
-  courseId: number
+  courseId: number,
 ) => {
   try {
     const response = await axios.post(`${API_POST_COURSESTUDENT}`, {
@@ -86,29 +86,29 @@ export const assignStudentsToCourse = async (
     });
     return response.data;
   } catch (error) {
-    console.error('Error assigning students to course:', error);
-    throw new Error('Error assigning students to course');
+    console.error("Error assigning students to course:", error);
+    throw new Error("Error assigning students to course");
   }
 };
 
 export const getAssignedStudents = async (course_id: number) => {
   const response = await axios.get(
-    `${API_GET_COURSESTUDENT_ASSIGNED}/${course_id}`
+    `${API_GET_COURSESTUDENT_ASSIGNED}/${course_id}`,
   );
   return response.data;
 };
 
 export const getUnassignedStudents = async (
   course_id: number,
-  enterprise_id: number
+  enterprise_id: number,
 ) => {
   try {
     const response = await axios.get(
-      `${API_GET_COURSESTUDENT_ASSIGNED}/${course_id}/${enterprise_id}`
+      `${API_GET_COURSESTUDENT_ASSIGNED}/${course_id}/${enterprise_id}`,
     );
     return response.data;
   } catch (error) {
-    console.error('Error fetching unassigned students:', error);
+    console.error("Error fetching unassigned students:", error);
     throw error;
   }
 };
@@ -116,14 +116,14 @@ export const getUnassignedStudents = async (
 //corporativo y calidad mismo crd de graficos
 export const getCoursesByEnterpriseCalidad = async (enterpriseId: number) => {
   const response = await axios.get(
-    `${API_GET_COURSESTUDENT_ENTERPRISE}/calidad/${enterpriseId}`
+    `${API_GET_COURSESTUDENT_ENTERPRISE}/calidad/${enterpriseId}`,
   );
   return response.data;
 };
 
 export const getCoursesBySupervisor = async (userId: number) => {
   const response = await axios.get(
-    `${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`
+    `${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`,
   );
   return response.data;
 };
@@ -131,23 +131,23 @@ export const getCoursesBySupervisor = async (userId: number) => {
 export const getUsersByEnterpriseWithSessions = async (
   startDate: string,
   endDate: string,
-  enterpriseId: number
+  enterpriseId: number,
 ) => {
   const response = await axios.get(
     `${API_GET_COURSESTUDENT_ENTERPRISE}/users/sessions`,
     {
       params: { startDate, endDate, enterpriseId },
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
       },
-    }
+    },
   );
   return response.data;
 };
 // Nueva función para obtener estudiantes por empresa
 export const getStudentsByEnterprise = async (enterpriseId: number) => {
   const response = await axios.get(
-    `${API_GET_COURSESTUDENT_ENTERPRISE}/${enterpriseId}/students`
+    `${API_GET_COURSESTUDENT_ENTERPRISE}/${enterpriseId}/students`,
   );
   return response.data;
 };
@@ -155,7 +155,7 @@ export const getStudentsByEnterprise = async (enterpriseId: number) => {
 // Nueva función para obtener cursos y notas por estudiante
 export const getCoursesWithGradesByStudent = async (userId: number) => {
   const response = await axios.get(
-    `${API_GET_COURSESTUDENTS}/${userId}/grades`
+    `${API_GET_COURSESTUDENTS}/${userId}/grades`,
   );
   return response.data;
 };

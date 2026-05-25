@@ -1,50 +1,47 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
 import DetailContainer from "./DetailContainer";
 import QuestionsContainer from "./QuestionsContainer";
 import {
-  getEvaluationById,
-  updateEvaluation,
-  deleteEvaluation,
-  getQuestionTypes,
-} from "../../../services/evaluationService";
+  useEvaluationByIdQuery,
+  useQuestionTypesQuery,
+} from "@/features/evaluations/evaluations.queries";
 import {
-  Evaluation,
-  Question,
-  QuestionType,
-  Option,
-} from "../../../interfaces/Evaluation";
+  useUpdateEvaluationMutation,
+  useDeleteEvaluationMutation,
+} from "@/features/evaluations/evaluations.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
+import { Evaluation, Question, Option } from "../../../interfaces/Evaluation";
 import { useRouter } from "next/router";
 
 const EvaluationDetail: NextPageWithLayout = () => {
-  const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
   const { id } = router.query;
+  const evaluationId = id ? Number(id) : undefined;
+
+  const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const evaluationQuery = useEvaluationByIdQuery(evaluationId);
+  const questionTypesQuery = useQuestionTypesQuery();
+  const updateEvaluationMutation = useUpdateEvaluationMutation();
+  const deleteEvaluationMutation = useDeleteEvaluationMutation();
+
+  const questionTypes = questionTypesQuery.data ?? [];
 
   useEffect(() => {
-    const fetchEvaluation = async () => {
-      if (id) {
-        const data = await getEvaluationById(Number(id));
-        setEvaluation(data.evaluation);
-        setQuestions(
-          data.questions.map((question) => ({
-            ...question,
-            options: question.options || [],
-          })),
-        );
-      }
-    };
-    const fetchQuestionTypes = async () => {
-      const types = await getQuestionTypes();
-      setQuestionTypes(types);
-    };
-    fetchEvaluation();
-    fetchQuestionTypes();
-  }, [id]);
+    if (evaluationQuery.data) {
+      setEvaluation(evaluationQuery.data.evaluation);
+      setQuestions(
+        evaluationQuery.data.questions.map((question) => ({
+          ...question,
+          options: question.options || [],
+        })),
+      );
+    }
+  }, [evaluationQuery.data]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -52,8 +49,12 @@ const EvaluationDetail: NextPageWithLayout = () => {
 
   const handleDelete = async () => {
     if (evaluation) {
-      await deleteEvaluation(evaluation.evaluation_id);
-      router.push("/content/evaluation/listEvaluations");
+      try {
+        await deleteEvaluationMutation.mutateAsync(evaluation.evaluation_id);
+        router.push("/content/evaluation/listEvaluations");
+      } catch (err) {
+        console.error("Error deleting evaluation:", getUserFacingMessage(err));
+      }
     }
   };
 
@@ -115,12 +116,18 @@ const EvaluationDetail: NextPageWithLayout = () => {
       );
 
       try {
-        await updateEvaluation(updatedEvaluation, updatedQuestions);
+        await updateEvaluationMutation.mutateAsync({
+          evaluation: updatedEvaluation,
+          questions: updatedQuestions,
+        });
         setEvaluation(updatedEvaluation);
         setQuestions(updatedQuestions);
         setIsEditing(false);
-      } catch (error) {
-        console.error("Error al guardar la evaluación:", error);
+      } catch (err) {
+        console.error(
+          "Error al guardar la evaluación:",
+          getUserFacingMessage(err),
+        );
       }
     }
   };

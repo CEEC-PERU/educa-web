@@ -1,26 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../../../../components/Navbar';
-import Sidebar from '../../../../../components/Content/SideBar';
-import DetailContainer from '../../../../content/evaluation/DetailContainer';
-import QuestionsContainer from '../../../../content/evaluation/QuestionsContainer';
+import React, { useState, useEffect } from "react";
+import Navbar from "../../../../../components/Navbar";
+import DetailContainer from "../../../../content/evaluation/DetailContainer";
+import QuestionsContainer from "../../../../content/evaluation/QuestionsContainer";
 import {
   getEvaluationById,
   updateEvaluation,
   deleteEvaluation,
   getQuestionTypes,
-} from '../../../../../services/evaluationService';
+} from "../../../../../services/evaluationService";
 import {
   Evaluation,
   Question,
   QuestionType,
   Option,
-} from '../../../../../interfaces/Evaluation';
-import ProtectedRoute from '../../../../../components/Auth/ProtectedRoute';
-import { useRouter } from 'next/router';
-import './../../../../../app/globals.css';
+} from "../../../../../interfaces/Evaluation";
+import ProtectedRoute from "../../../../../components/Auth/ProtectedRoute";
+import { useRouter } from "next/router";
+import "./../../../../../app/globals.css";
 
 const EvaluationDetail: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
@@ -37,7 +35,7 @@ const EvaluationDetail: React.FC = () => {
           data.questions.map((question) => ({
             ...question,
             options: question.options || [],
-          }))
+          })),
         );
       }
     };
@@ -49,11 +47,6 @@ const EvaluationDetail: React.FC = () => {
     fetchQuestionTypes();
   }, [id]);
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
-
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
@@ -61,7 +54,7 @@ const EvaluationDetail: React.FC = () => {
   const handleDelete = async () => {
     if (evaluation) {
       await deleteEvaluation(evaluation.evaluation_id);
-      router.push('/content/evaluation/listEvaluations');
+      router.push("/content/evaluation/listEvaluations");
     }
   };
 
@@ -70,11 +63,11 @@ const EvaluationDetail: React.FC = () => {
     if (evaluation) {
       const updatedEvaluation: Evaluation = {
         ...evaluation,
-        name: (document.getElementById('evaluationName') as HTMLInputElement)
+        name: (document.getElementById("evaluationName") as HTMLInputElement)
           .value,
         description: (
           document.getElementById(
-            'evaluationDescription'
+            "evaluationDescription",
           ) as HTMLTextAreaElement
         ).value,
       };
@@ -86,40 +79,40 @@ const EvaluationDetail: React.FC = () => {
               option_id: option.option_id ? option.option_id : undefined,
               option_text: (
                 document.getElementById(
-                  `optionText${questionIndex}-${optIndex}`
+                  `optionText${questionIndex}-${optIndex}`,
                 ) as HTMLInputElement
               ).value,
               is_correct: (
                 document.getElementById(
-                  `optionCorrect${questionIndex}-${optIndex}`
+                  `optionCorrect${questionIndex}-${optIndex}`,
                 ) as HTMLInputElement
               ).checked,
-            })
+            }),
           );
           return {
             ...question,
             question_text: (
               document.getElementById(
-                `questionText${questionIndex}`
+                `questionText${questionIndex}`,
               ) as HTMLInputElement
             ).value,
             type_id: parseInt(
               (
                 document.getElementById(
-                  `questionType${questionIndex}`
+                  `questionType${questionIndex}`,
                 ) as HTMLSelectElement
-              ).value
+              ).value,
             ),
             score: parseInt(
               (
                 document.getElementById(
-                  `questionScore${questionIndex}`
+                  `questionScore${questionIndex}`,
                 ) as HTMLInputElement
-              ).value
+              ).value,
             ),
             options: updatedOptions,
           };
-        }
+        },
       );
 
       try {
@@ -128,7 +121,7 @@ const EvaluationDetail: React.FC = () => {
         setQuestions(updatedQuestions);
         setIsEditing(false);
       } catch (error) {
-        console.error('Error al guardar la evaluación:', error);
+        console.error("Error al guardar la evaluación:", error);
       }
     }
   };
@@ -138,12 +131,7 @@ const EvaluationDetail: React.FC = () => {
       <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
         <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
-            }`}
-          >
+          <main className="flex-grow p-6 transition-all duration-300 ease-in-out">
             <div className="flex flex-col items-center">
               <div className="w-full max-w-5xl flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6">
                 <DetailContainer
