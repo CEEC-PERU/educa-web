@@ -6,6 +6,7 @@ export type SidebarRoleConfig = {
   roleId: number;
   label: string;
   items: AppSidebarItem[];
+  bgColor?: string;
 };
 
 export type AppSidebarMatchMode = "exact" | "prefix";

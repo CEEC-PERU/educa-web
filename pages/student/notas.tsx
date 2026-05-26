@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import SidebarDrawer from '../../components/student/DrawerNavigation';
-import Navbar from '../../components/Navbar';
-import { Profile } from '../../interfaces/User/UserInterfaces';
-import { useCourseStudent } from '../../hooks/useCourseStudents';
-import { useNotas } from '../../hooks/resultado/useNotasUserId';
-import ScreenSecurity from '../../components/ScreenSecurity';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
+import React, { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import AppLayout from "@/components/layouts/AppLayout";
+import { Profile } from "../../interfaces/User/UserInterfaces";
+import { useCourseStudent } from "../../hooks/useCourseStudents";
+import { useNotas } from "../../hooks/resultado/useNotasUserId";
+import ScreenSecurity from "../../components/ScreenSecurity";
 
-const NotasIndex: React.FC = () => {
+const NotasIndex = () => {
   const { user, profileInfo } = useAuth();
   const { courseStudent } = useCourseStudent();
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  let name = '';
-  let uri_picture = '';
+  let name = "";
+  let uri_picture = "";
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -95,70 +91,57 @@ const NotasIndex: React.FC = () => {
     );
   };
 
-  const toggleSidebar = () => setIsDrawerOpen(!isDrawerOpen);
-
   const handleToggleNotas = (courseId: number) => {
     setSelectedCourseId(selectedCourseId === courseId ? null : courseId);
   };
 
   return (
-    <ProtectedRoute>
-      <div>
-        <ScreenSecurity />
-        <div className="relative z-10">
-          <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
-            user={user ? { profilePicture: uri_picture } : undefined}
-            toggleSidebar={toggleSidebar}
-          />
-          <SidebarDrawer
-            isDrawerOpen={isDrawerOpen}
-            toggleSidebar={toggleSidebar}
-          />
-        </div>
+    <>
+      <ScreenSecurity />
+      <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-2 pt-12">
+        <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          {courseStudent.map((courseStudentItem) => (
+            <div
+              key={courseStudentItem.Course.course_id}
+              className={`bg-white shadow-lg rounded-lg transform transition-all duration-300 ${
+                selectedCourseId === courseStudentItem.Course.course_id
+                  ? "scale-105"
+                  : ""
+              }`}
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
+                {courseStudentItem.Course.name}
+              </h3>
+              <img
+                className="w-full h-40 object-cover rounded-lg"
+                src={courseStudentItem.Course.image}
+                alt={courseStudentItem.Course.name}
+              />
 
-        <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-2 pt-12">
-          <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {courseStudent.map((courseStudentItem) => (
-              <div
-                key={courseStudentItem.Course.course_id}
-                className={`bg-white shadow-lg rounded-lg transform transition-all duration-300 ${
-                  selectedCourseId === courseStudentItem.Course.course_id
-                    ? 'scale-105'
-                    : ''
-                }`}
+              <button
+                className="bg-indigo-600 text-white w-full py-2 mt-4 rounded-b-lg hover:bg-indigo-800"
+                onClick={() =>
+                  handleToggleNotas(courseStudentItem.Course.course_id)
+                }
               >
-                <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                  {courseStudentItem.Course.name}
-                </h3>
-                <img
-                  className="w-full h-40 object-cover rounded-lg"
-                  src={courseStudentItem.Course.image}
-                  alt={courseStudentItem.Course.name}
-                />
+                {selectedCourseId === courseStudentItem.Course.course_id
+                  ? "Ocultar Notas"
+                  : "Ver Notas"}
+              </button>
 
-                <button
-                  className="bg-indigo-600 text-white w-full py-2 mt-4 rounded-b-lg hover:bg-indigo-800"
-                  onClick={() =>
-                    handleToggleNotas(courseStudentItem.Course.course_id)
-                  }
-                >
-                  {selectedCourseId === courseStudentItem.Course.course_id
-                    ? 'Ocultar Notas'
-                    : 'Ver Notas'}
-                </button>
-
-                {selectedCourseId === courseStudentItem.Course.course_id && (
-                  <div className="p-4">{renderNotas()}</div>
-                )}
-              </div>
-            ))}
-          </div>
+              {selectedCourseId === courseStudentItem.Course.course_id && (
+                <div className="p-4">{renderNotas()}</div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+NotasIndex.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default NotasIndex;

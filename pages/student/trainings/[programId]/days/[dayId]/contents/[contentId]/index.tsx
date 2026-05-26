@@ -1,8 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import Navbar from "@/components/Navbar";
-import SidebarDrawer from "@/components/student/DrawerNavigation";
-import { useEvaluationUI } from "@/hooks/ui/useEvaluationUI";
+import AppLayout from "@/components/layouts/AppLayout";
 import { useContentProgress } from "@/hooks/useContentProgress";
 import ContentHeader from "@/components/Training/ContentNavigation/ContentHeader";
 import dynamic from "next/dynamic";
@@ -70,8 +68,6 @@ const ScormPlayer = dynamic(
 const ContentViewerPage: React.FC = () => {
   const router = useRouter();
   const { programId, dayId, contentId } = router.query;
-  const { isDrawerOpen, toggleSidebar, userProfile } = useEvaluationUI();
-
   const { content, loading, error, updateProgress, markAsCompleted } =
     useContentProgress(Number(programId), Number(dayId), Number(contentId));
 
@@ -212,43 +208,22 @@ const ContentViewerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="relative z-10">
-        <Navbar
-          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-          borderColor="border border-stone-300"
-          user={
-            userProfile.uri_picture
-              ? { profilePicture: userProfile.uri_picture }
-              : undefined
-          }
-          toggleSidebar={toggleSidebar}
+      {content && (
+        <ContentHeader
+          programTitle={content.title}
+          dayNumber={content.day_number}
+          onBack={handleBack}
+          content={content}
         />
-        <SidebarDrawer
-          isDrawerOpen={isDrawerOpen}
-          toggleSidebar={toggleSidebar}
-        />
-      </div>
+      )}
 
-      <div className="pt-16">
-        <div
-          className={`transition-all duration-300 ${
-            isDrawerOpen ? "lg:ml-64" : "lg:ml-16"
-          }`}
-        >
-          {content && (
-            <ContentHeader
-              programTitle={content.title}
-              dayNumber={content.day_number}
-              onBack={handleBack}
-              content={content}
-            />
-          )}
-
-          {renderContentViewer()}
-        </div>
-      </div>
+      {renderContentViewer()}
     </div>
   );
 };
+
+ContentViewerPage.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default ContentViewerPage;

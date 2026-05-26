@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-modal";
 import { useAuth } from "../../context/AuthContext";
-import SidebarDrawer from "../../components/student/DrawerNavigation";
-import Navbar from "../../components/Navbar";
+import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import CourseCard from "../../components/student/CourseCard";
@@ -16,18 +15,15 @@ import {
   CheckCircleIcon,
   VideoCameraIcon,
   PaperAirplaneIcon,
-  CheckIcon,
 } from "@heroicons/react/24/solid";
 
 import { useRouter } from "next/router";
 import "./../../app/globals.css";
 import ScreenSecurity from "../../components/ScreenSecurity";
-import Footter from "../../components/Footter";
 import jsPDF from "jspdf";
 import { useUserInfo } from "../../hooks/user/useUserInfo";
 import { useCoursesCount } from "../../hooks/user/useUserCourses";
 import { UserInfoData } from "../../interfaces/User/UserInfo";
-import ProtectedRoute from "../../components/Auth/ProtectedRoute";
 import { API_USER_INFO_SHOWMODAL } from "../../utils/Endpoints";
 Modal.setAppElement("#__next");
 
@@ -55,14 +51,13 @@ const LoadingSpinner = () => (
   </div>
 );
 
-const StudentIndex: React.FC = () => {
+const StudentIndex = () => {
   const { logout, user, profileInfo, token } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   const { coursescount } = useCoursesCount();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
   const router = useRouter();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState<
     boolean | null
   >(null);
@@ -275,10 +270,6 @@ const StudentIndex: React.FC = () => {
     setSelectedCourse(null);
   };
 
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
   const navigateToCourseDetails = () => {
     router.push({
       pathname: "/student/course-details",
@@ -353,434 +344,422 @@ const StudentIndex: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div>
-        <ScreenSecurity />
-        {/* MODAL FIRMA DIGITAL */}
-        <Modal
-          isOpen={isSignatureModalOpen === true}
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
-          overlayClassName="fixed inset-0"
-        >
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[95vh] overflow-y-auto border border-gray-100">
-            {loading ? (
-              <div className="min-h-[500px] flex items-center justify-center">
-                <LoadingSpinner />
-              </div>
-            ) : (
-              <div className="space-y-8 p-8">
-                <div className="text-center">
-                  <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 mt-4">
-                    <DocumentTextIcon className="w-10 h-10 text-blue-600" />
-                  </div>
-                  <h2 className="text-3xl font-bold text-gray-900">
-                    Autorización de Tratamiento de Datos
-                  </h2>
-                  <p className="text-lg text-gray-500 mt-2">
-                    Complete su información de verificación
-                  </p>
+    <>
+      <ScreenSecurity />
+      {/* MODAL FIRMA DIGITAL */}
+      <Modal
+        isOpen={isSignatureModalOpen === true}
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-[100]"
+        overlayClassName="fixed inset-0"
+      >
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[95vh] overflow-y-auto border border-gray-100">
+          {loading ? (
+            <div className="min-h-[500px] flex items-center justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : (
+            <div className="space-y-8 p-8">
+              <div className="text-center">
+                <div className="mx-auto w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-4 mt-4">
+                  <DocumentTextIcon className="w-10 h-10 text-blue-600" />
                 </div>
-                {/* INFORMACIÓN CONSENTIMIENTO */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
-                      <InformationCircleIcon className="w-6 h-6 text-blue-500" />
-                    </div>
-                    <div className="ml-3">
-                      <h3 className="text-lg font-semibold text-blue-800 mb-2">
-                        Declaración de Consentimiento
-                      </h3>
-                      <p className="text-gray-700">
-                        "Autorizo el tratamiento de mis datos personales
-                        (incluyendo imagen y firma) para efectos de registro de
-                        asistencia y control de ingreso, conforme a lo dispuesto
-                        en la Ley N.º 29733 - Ley de Protección de Datos
-                        Personales."
+                <h2 className="text-3xl font-bold text-gray-900">
+                  Autorización de Tratamiento de Datos
+                </h2>
+                <p className="text-lg text-gray-500 mt-2">
+                  Complete su información de verificación
+                </p>
+              </div>
+              {/* INFORMACIÓN CONSENTIMIENTO */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 mt-1">
+                    <InformationCircleIcon className="w-6 h-6 text-blue-500" />
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-lg font-semibold text-blue-800 mb-2">
+                      Declaración de Consentimiento
+                    </h3>
+                    <p className="text-gray-700">
+                      "Autorizo el tratamiento de mis datos personales
+                      (incluyendo imagen y firma) para efectos de registro de
+                      asistencia y control de ingreso, conforme a lo dispuesto
+                      en la Ley N.º 29733 - Ley de Protección de Datos
+                      Personales."
+                    </p>
+                  </div>
+                </div>
+              </div>
+              {/* FIRMA DIGITAL MEJORADA */}
+              <div className="space-y-5">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+                    <span className="font-bold">1</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Firma Digital
+                  </h3>
+                </div>
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50">
+                  <canvas
+                    ref={canvasRef}
+                    className="w-full h-48 bg-white rounded-lg shadow-inner"
+                    width={600}
+                    height={192}
+                    onMouseDown={handleStartDrawing}
+                    onMouseMove={handleDrawing}
+                    onMouseUp={handleStopDrawing}
+                    onMouseLeave={handleStopDrawing}
+                    onTouchStart={handleStartDrawing}
+                    onTouchMove={handleDrawing}
+                    onTouchEnd={handleStopDrawing}
+                    style={{ touchAction: "none", cursor: "crosshair" }}
+                  />
+                </div>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={clearCanvas}
+                    className="flex items-center px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200"
+                  >
+                    <TrashIcon className="w-5 h-5 mr-2" />
+                    Limpiar Firma
+                  </button>
+                  <button
+                    onClick={() => {
+                      const dataURL = canvasRef.current?.toDataURL();
+                      if (dataURL) setSignature(dataURL);
+                    }}
+                    className="flex-1 flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
+                  >
+                    <CheckCircleIcon className="w-5 h-5 mr-2" />
+                    Confirmar Firma
+                  </button>
+                </div>
+                {signature && (
+                  <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
+                    <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-green-800">
+                        Firma registrada correctamente
+                      </p>
+                      <p className="text-sm text-green-600">
+                        Puede continuar con el siguiente paso
                       </p>
                     </div>
                   </div>
-                </div>
-                {/* FIRMA DIGITAL MEJORADA */}
-                <div className="space-y-5">
-                  <div className="flex items-center">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
-                      <span className="font-bold">1</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Firma Digital
-                    </h3>
-                  </div>
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50/50">
-                    <canvas
-                      ref={canvasRef}
-                      className="w-full h-48 bg-white rounded-lg shadow-inner"
-                      width={600}
-                      height={192}
-                      onMouseDown={handleStartDrawing}
-                      onMouseMove={handleDrawing}
-                      onMouseUp={handleStopDrawing}
-                      onMouseLeave={handleStopDrawing}
-                      onTouchStart={handleStartDrawing}
-                      onTouchMove={handleDrawing}
-                      onTouchEnd={handleStopDrawing}
-                      style={{ touchAction: "none", cursor: "crosshair" }}
-                    />
-                  </div>
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={clearCanvas}
-                      className="flex items-center px-5 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-200"
-                    >
-                      <TrashIcon className="w-5 h-5 mr-2" />
-                      Limpiar Firma
-                    </button>
-                    <button
-                      onClick={() => {
-                        const dataURL = canvasRef.current?.toDataURL();
-                        if (dataURL) setSignature(dataURL);
-                      }}
-                      className="flex-1 flex items-center justify-center px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg"
-                    >
-                      <CheckCircleIcon className="w-5 h-5 mr-2" />
-                      Confirmar Firma
-                    </button>
-                  </div>
-                  {signature && (
-                    <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
-                      <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-green-800">
-                          Firma registrada correctamente
-                        </p>
-                        <p className="text-sm text-green-600">
-                          Puede continuar con el siguiente paso
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                {/* FOTO Y CONSENTIMIENTO */}
-                <div className="space-y-5">
-                  <div className="flex items-center">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
-                      <span className="font-bold">2</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-800">
-                      Verificación de Identidad
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="relative rounded-xl overflow-hidden bg-black">
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        className="w-full h-auto min-h-[250px] object-cover"
-                      />
-                      {!cameraStream && (
-                        <div className="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center text-white p-6 text-center">
-                          <CameraIcon className="w-10 h-10 mb-3 opacity-70" />
-                          <p>Haga clic en "Activar Cámara" para comenzar</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-4">
-                      <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
-                        <h4 className="font-medium text-gray-800 mb-3 flex items-center">
-                          <InformationCircleIcon className="w-5 h-5 text-blue-500 mr-2" />
-                          Requisitos para la imagen
-                        </h4>
-                        <ul className="space-y-2.5">
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">
-                              Rostro completamente visible y bien iluminado
-                            </span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">
-                              Sin accesorios que cubran el rostro
-                            </span>
-                          </li>
-                          <li className="flex items-start">
-                            <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                            <span className="text-gray-700">
-                              Fondo neutro preferiblemente
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                      <button
-                        onClick={!cameraStream ? startCamera : capturePhoto}
-                        className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${
-                          !cameraStream
-                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                            : "bg-indigo-600 text-white hover:bg-indigo-700"
-                        } shadow-md hover:shadow-lg`}
-                      >
-                        {!cameraStream ? (
-                          <>
-                            <VideoCameraIcon className="w-5 h-5 mr-2" />
-                            Activar Cámara
-                          </>
-                        ) : (
-                          <>
-                            <CameraIcon className="w-5 h-5 mr-2" />
-                            Capturar Imagen
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  {photo && (
-                    <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
-                      <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium text-green-800">
-                          Imagen verificada correctamente
-                        </p>
-                        <p className="text-sm text-green-600">
-                          Su identidad ha sido registrada
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-200">
-                  <input
-                    type="checkbox"
-                    id="consent-checkbox"
-                    className="mt-1 mr-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                    checked={consentGiven}
-                    onChange={(e) => setConsentGiven(e.target.checked)}
-                  />
-                  <label htmlFor="consent-checkbox" className="text-gray-700">
-                    <span className="block font-medium">
-                      Confirmo mi consentimiento
-                    </span>
-                    <span className="block text-sm">
-                      Acepto el tratamiento de mis datos personales según lo
-                      establecido en la{" "}
-                      <a
-                        href="https://www.canva.com/design/DAGnccU5tkw/x9QLqfr8057IgwHGv5sScA/view?utm_content=DAGnccU5tkw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb87bcf2817"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-800 underline"
-                      >
-                        política de protección de datos
-                      </a>{" "}
-                      y confirmo que toda la información proporcionada es
-                      verídica.
-                    </span>
-                  </label>
-                </div>
-                <div className="flex space-x-4 pt-2">
-                  <button
-                    onClick={generatePDF}
-                    disabled={!photo || !signature || !consentGiven}
-                    className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${
-                      !photo || !signature || !consentGiven
-                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                        : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
-                    }`}
-                  >
-                    <PaperAirplaneIcon className="w-5 h-5 mr-2" />
-                    Enviar y Finalizar Registro
-                  </button>
-                </div>
+                )}
               </div>
-            )}
+              {/* FOTO Y CONSENTIMIENTO */}
+              <div className="space-y-5">
+                <div className="flex items-center">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 mr-3">
+                    <span className="font-bold">2</span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Verificación de Identidad
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="relative rounded-xl overflow-hidden bg-black">
+                    <video
+                      ref={videoRef}
+                      autoPlay
+                      playsInline
+                      className="w-full h-auto min-h-[250px] object-cover"
+                    />
+                    {!cameraStream && (
+                      <div className="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center text-white p-6 text-center">
+                        <CameraIcon className="w-10 h-10 mb-3 opacity-70" />
+                        <p>Haga clic en "Activar Cámara" para comenzar</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
+                      <h4 className="font-medium text-gray-800 mb-3 flex items-center">
+                        <InformationCircleIcon className="w-5 h-5 text-blue-500 mr-2" />
+                        Requisitos para la imagen
+                      </h4>
+                      <ul className="space-y-2.5">
+                        <li className="flex items-start">
+                          <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">
+                            Rostro completamente visible y bien iluminado
+                          </span>
+                        </li>
+                        <li className="flex items-start">
+                          <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">
+                            Sin accesorios que cubran el rostro
+                          </span>
+                        </li>
+                        <li className="flex items-start">
+                          <CheckCircleIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                          <span className="text-gray-700">
+                            Fondo neutro preferiblemente
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                    <button
+                      onClick={!cameraStream ? startCamera : capturePhoto}
+                      className={`w-full py-3 px-4 rounded-xl font-medium transition-all duration-200 flex items-center justify-center ${
+                        !cameraStream
+                          ? "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-indigo-600 text-white hover:bg-indigo-700"
+                      } shadow-md hover:shadow-lg`}
+                    >
+                      {!cameraStream ? (
+                        <>
+                          <VideoCameraIcon className="w-5 h-5 mr-2" />
+                          Activar Cámara
+                        </>
+                      ) : (
+                        <>
+                          <CameraIcon className="w-5 h-5 mr-2" />
+                          Capturar Imagen
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+                {photo && (
+                  <div className="mt-4 p-4 bg-green-50/80 border border-green-200 rounded-xl flex items-center">
+                    <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-green-800">
+                        Imagen verificada correctamente
+                      </p>
+                      <p className="text-sm text-green-600">
+                        Su identidad ha sido registrada
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="flex items-start p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <input
+                  type="checkbox"
+                  id="consent-checkbox"
+                  className="mt-1 mr-3 h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  checked={consentGiven}
+                  onChange={(e) => setConsentGiven(e.target.checked)}
+                />
+                <label htmlFor="consent-checkbox" className="text-gray-700">
+                  <span className="block font-medium">
+                    Confirmo mi consentimiento
+                  </span>
+                  <span className="block text-sm">
+                    Acepto el tratamiento de mis datos personales según lo
+                    establecido en la{" "}
+                    <a
+                      href="https://www.canva.com/design/DAGnccU5tkw/x9QLqfr8057IgwHGv5sScA/view?utm_content=DAGnccU5tkw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb87bcf2817"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      política de protección de datos
+                    </a>{" "}
+                    y confirmo que toda la información proporcionada es
+                    verídica.
+                  </span>
+                </label>
+              </div>
+              <div className="flex space-x-4 pt-2">
+                <button
+                  onClick={generatePDF}
+                  disabled={!photo || !signature || !consentGiven}
+                  className={`flex-1 py-4 px-6 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center ${
+                    !photo || !signature || !consentGiven
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
+                  }`}
+                >
+                  <PaperAirplaneIcon className="w-5 h-5 mr-2" />
+                  Enviar y Finalizar Registro
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Modal>
+
+      {/* El resto del contenido */}
+
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
+        <div className="relative flex flex-col lg:flex-row items-center text-left w-full text-white px-4 lg:px-40">
+          <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
+            <p className="text-5xl lg:text-7xl font-bold mb-4 text-brandrosado-800">
+              Hola, {name}
+            </p>
+            <p className="mb-4 text-5xl lg:text-7xl text-white font-bold">
+              ¡Qué bueno verte!
+            </p>
+            <p className="mb-4 text-lg lg:text-base text-white py-8">
+              Este es tu portal de aprendizaje, explora tus cursos y potencia tu
+              desarrollo profesional.
+            </p>
+          </div>
+          <div className="lg:w-1/2 px-20">
+            <div className="bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
+                    {coursescount?.data?.totalCourses}
+                  </p>
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png"
+                    className="h-12 w-12 ml-2"
+                    alt="Icon"
+                  />
+                </div>
+                <p className="text-white p-3">Curso inscritos</p>
+              </div>
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
+                    {coursescount?.data?.completedCourses}
+                  </p>
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png"
+                    className="h-12 w-12 ml-2"
+                    alt="Icon"
+                  />
+                </div>
+                <p className="text-white p-3">Curso completado</p>
+              </div>
+              <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center">
+                  <p className="text-brandfucsia-900 text-4xl lg:text-7xl">1</p>
+                  <img
+                    src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png"
+                    className="h-12 w-12 ml-2"
+                    alt="Icon"
+                  />
+                </div>
+                <p className="text-white p-3">Diploma Obtenido</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Courses */}
+        <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {courseStudent.map((courseStudent) => (
+            <CourseCard
+              key={courseStudent.Course.course_id}
+              name={courseStudent.Course.name}
+              description={courseStudent.Course.description_short}
+              image={courseStudent.Course.image}
+              profesor={courseStudent.Course.courseProfessor.full_name}
+              categoria={courseStudent.Course.courseCategory.name}
+              course_id={courseStudent.Course.course_id}
+              onClick={() => openModal(courseStudent.Course)}
+            />
+          ))}
+        </div>
+      </div>
+      {selectedCourse && (
+        <Modal
+          key={selectedCourse.course_id}
+          isOpen={!!selectedCourse}
+          onRequestClose={closeModal}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+        >
+          <div className="relative bg-white rounded-lg overflow-hidden shadow-lg max-w-lg w-full">
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-black"
+            >
+              <XCircleIcon className="h-8 w-8" />
+            </button>
+            <img
+              className="w-full h-64 object-cover mb-4"
+              src={selectedCourse.image}
+              alt={selectedCourse.name}
+            />
+            <div className="px-6 py-4">
+              <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-4">
+                {selectedCourse.courseCategory.name}
+              </div>
+              <div className="font-bold text-md mb-2 text-black">
+                {selectedCourse.name}
+              </div>
+              <p className="text-brandrosado-800 text-base mb-4">
+                Por: {selectedCourse.courseProfessor.full_name}
+              </p>
+              <p className="text-black text-sm mb-4">
+                {selectedCourse.description_short}
+              </p>
+              <div className="flex justify-end mt-4">
+                <button
+                  className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
+                  onClick={navigateToCourseDetails}
+                >
+                  Detalles del curso{" "}
+                  <ChevronRightIcon className="h-5 w-5 ml-2" />
+                </button>
+              </div>
+            </div>
           </div>
         </Modal>
+      )}
 
-        {/* El resto del contenido */}
-        <div className="relative z-10">
-          <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
-            user={user ? { profilePicture: uri_picture } : undefined}
-            toggleSidebar={toggleSidebar}
-          />
-          <SidebarDrawer
-            isDrawerOpen={isDrawerOpen}
-            toggleSidebar={toggleSidebar}
-          />
-        </div>
-
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
-          <div className="relative flex flex-col lg:flex-row items-center text-left w-full text-white px-4 lg:px-40">
-            <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
-              <p className="text-5xl lg:text-7xl font-bold mb-4 text-brandrosado-800">
-                Hola, {name}
-              </p>
-              <p className="mb-4 text-5xl lg:text-7xl text-white font-bold">
-                ¡Qué bueno verte!
-              </p>
-              <p className="mb-4 text-lg lg:text-base text-white py-8">
-                Este es tu portal de aprendizaje, explora tus cursos y potencia
-                tu desarrollo profesional.
-              </p>
-            </div>
-            <div className="lg:w-1/2 px-20">
-              <div className="bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                  <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
-                      {coursescount?.data?.totalCourses}
-                    </p>
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png"
-                      className="h-12 w-12 ml-2"
-                      alt="Icon"
-                    />
-                  </div>
-                  <p className="text-white p-3">Curso inscritos</p>
-                </div>
-                <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                  <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
-                      {coursescount?.data?.completedCourses}
-                    </p>
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png"
-                      className="h-12 w-12 ml-2"
-                      alt="Icon"
-                    />
-                  </div>
-                  <p className="text-white p-3">Curso completado</p>
-                </div>
-                <div className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col">
-                  <div className="flex items-center justify-center">
-                    <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
-                      1
-                    </p>
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png"
-                      className="h-12 w-12 ml-2"
-                      alt="Icon"
-                    />
-                  </div>
-                  <p className="text-white p-3">Diploma Obtenido</p>
-                </div>
-              </div>
-            </div>
+      {/* Footer Section */}
+      <div
+        className="bg-no-repeat bg-cover bg-brand-100"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
+          height: "500px",
+        }}
+      >
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-20 lg:pt-60 pl-10 lg:pl-40 text-white">
+          {/* Primera columna: Logo */}
+          <div className="flex justify-center">
+            <img
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
+              alt="Logo"
+              className="h-20 lg:h-30"
+            />
           </div>
-          {/* Courses */}
-          <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {courseStudent.map((courseStudent) => (
-              <CourseCard
-                key={courseStudent.Course.course_id}
-                name={courseStudent.Course.name}
-                description={courseStudent.Course.description_short}
-                image={courseStudent.Course.image}
-                profesor={courseStudent.Course.courseProfessor.full_name}
-                categoria={courseStudent.Course.courseCategory.name}
-                course_id={courseStudent.Course.course_id}
-                onClick={() => openModal(courseStudent.Course)}
-              />
-            ))}
+
+          {/* Segunda columna: Títulos y textos */}
+          <div className="pl-0 lg:pl-10">
+            <h3 className="font-semibold text-lg">PÁGINAS</h3>
+            <ul>
+              <li>INICIO</li>
+              <li>RECURSOS</li>
+              <li>BENEFICIOS</li>
+              <li>SUSCRÍBETE</li>
+            </ul>
           </div>
-        </div>
-        {selectedCourse && (
-          <Modal
-            key={selectedCourse.course_id}
-            isOpen={!!selectedCourse}
-            onRequestClose={closeModal}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          >
-            <div className="relative bg-white rounded-lg overflow-hidden shadow-lg max-w-lg w-full">
-              <button
-                onClick={closeModal}
-                className="absolute top-4 right-4 text-black"
-              >
-                <XCircleIcon className="h-8 w-8" />
-              </button>
-              <img
-                className="w-full h-64 object-cover mb-4"
-                src={selectedCourse.image}
-                alt={selectedCourse.name}
-              />
-              <div className="px-6 py-4">
-                <div className="bg-brandmorad-600 rounded font-bold text-md mb-2 text-white p-4">
-                  {selectedCourse.courseCategory.name}
-                </div>
-                <div className="font-bold text-md mb-2 text-black">
-                  {selectedCourse.name}
-                </div>
-                <p className="text-brandrosado-800 text-base mb-4">
-                  Por: {selectedCourse.courseProfessor.full_name}
-                </p>
-                <p className="text-black text-sm mb-4">
-                  {selectedCourse.description_short}
-                </p>
-                <div className="flex justify-end mt-4">
-                  <button
-                    className="bg-brandmora-500 text-white px-4 rounded hover:bg-brandmorado-700 border-2 border-brandborder-400 flex items-center"
-                    onClick={navigateToCourseDetails}
-                  >
-                    Detalles del curso{" "}
-                    <ChevronRightIcon className="h-5 w-5 ml-2" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Modal>
-        )}
 
-        {/* Footer Section */}
-        <div
-          className="bg-no-repeat bg-cover bg-brand-100"
-          style={{
-            backgroundImage:
-              "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
-            height: "500px",
-          }}
-        >
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-20 lg:pt-60 pl-10 lg:pl-40 text-white">
-            {/* Primera columna: Logo */}
-            <div className="flex justify-center">
-              <img
-                src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
-                alt="Logo"
-                className="h-20 lg:h-30"
-              />
-            </div>
+          {/* Tercera columna */}
+          <div className="pl-0 lg:pl-10">
+            <h3 className="font-semibold text-lg">LINKS</h3>
+            <ul>
+              <li>TÉRMINOS Y CONDICIONES</li>
+              <li>POLÍTICA DE PRIVACIDAD</li>
+            </ul>
+          </div>
 
-            {/* Segunda columna: Títulos y textos */}
-            <div className="pl-0 lg:pl-10">
-              <h3 className="font-semibold text-lg">PÁGINAS</h3>
-              <ul>
-                <li>INICIO</li>
-                <li>RECURSOS</li>
-                <li>BENEFICIOS</li>
-                <li>SUSCRÍBETE</li>
-              </ul>
-            </div>
-
-            {/* Tercera columna */}
-            <div className="pl-0 lg:pl-10">
-              <h3 className="font-semibold text-lg">LINKS</h3>
-              <ul>
-                <li>TÉRMINOS Y CONDICIONES</li>
-                <li>POLÍTICA DE PRIVACIDAD</li>
-              </ul>
-            </div>
-
-            {/* Cuarta columna */}
-            <div className="pl-0 lg:pl-10">
-              <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
-              <ul>
-                <li>+51 9912785156</li>
-                <li>administrador.app@ceec.com.pe</li>
-                <li>MAGDALENA DEL MAR - LIMA</li>
-              </ul>
-            </div>
+          {/* Cuarta columna */}
+          <div className="pl-0 lg:pl-10">
+            <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
+            <ul>
+              <li>+51 9912785156</li>
+              <li>administrador.app@ceec.com.pe</li>
+              <li>MAGDALENA DEL MAR - LIMA</li>
+            </ul>
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+StudentIndex.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default StudentIndex;

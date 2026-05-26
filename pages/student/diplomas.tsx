@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 import { useAuth } from "../../context/AuthContext";
-import ProtectedRoute from "../../components/Auth/ProtectedRoute";
-import SidebarDrawer from "../../components/student/DrawerNavigation";
-import Navbar from "../../components/Navbar";
+import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import CourseCard from "../../components/student/CourseCard";
@@ -19,7 +17,6 @@ const Diplomas: React.FC = () => {
   const { courseStudent, isLoading } = useCourseStudent();
   console.log(courseStudent);
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   let name = "";
@@ -32,10 +29,6 @@ const Diplomas: React.FC = () => {
     fullName = `${profile.first_name} ${profile.last_name}`;
     uri_picture = profile.profile_picture!;
   }
-
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
 
   // obtener cursos aprobados
   const approvedCourses = courseStudent.filter(
@@ -94,71 +87,58 @@ const Diplomas: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div>
-        <div className="relative z-10">
-          <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
-            user={user ? { profilePicture: uri_picture } : undefined}
-            toggleSidebar={toggleSidebar}
-          />
-          <SidebarDrawer
-            isDrawerOpen={isDrawerOpen}
-            toggleSidebar={toggleSidebar}
-          />
-        </div>
-
-        <div className="min-h-screen bg-brandazul-600">
-          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60">
-            <h1 className="text-2xl font-bold mb-6 text-white text-center lg:text-left">
-              Mis Diplomas
-            </h1>
-            {isLoading ? (
-              <p className="text-white text-center">Cargando...</p>
-            ) : approvedCourses.length === 0 ? (
-              <div className="bg-white p-8 rounded-lg shadow-lg text-center">
-                <p className="text-gray-600 text-lg">
-                  Aún no tienes diplomas disponibles. Aprueba un curso para
-                  obtener tu diploma.
-                </p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {approvedCourses.map((cs: any) => (
-                  <div
-                    key={cs.course_id}
-                    className="bg-white p-6 rounded-lg shadow-lg"
-                  >
-                    <img
-                      src="https://res.cloudinary.com/dk2red18f/image/upload/v1770871986/WEB_EDUCA/DIPLOMA/Certificado_Reconocimiento_rrn1dp.jpg"
-                      className="w-full h-auto object-contain rounded-md mb-4 border-4 border-brand-100"
-                      alt={`Diploma - ${cs.Course?.name}`}
-                    />
-                    <h2 className="text-lg font-semibold text-gray-800 mb-2">
-                      {cs.Course?.name}
-                    </h2>
-                    <p className="text-sm text-gray-500 mb-4">
-                      Otorgado a: <strong>{fullName}</strong>
-                    </p>
-                    <button
-                      className="w-full bg-brand-300 text-white px-4 py-2 rounded-lg hover:bg-brand-200 disabled:opacity-50"
-                      disabled={isGenerating}
-                      onClick={() =>
-                        handleDownloadDiploma(cs.Course?.name || "Curso")
-                      }
-                    >
-                      {isGenerating ? "Generando..." : "Descargar Diploma"}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+    <div className="min-h-screen bg-brandazul-600">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-60">
+        <h1 className="text-2xl font-bold mb-6 text-white text-center lg:text-left">
+          Mis Diplomas
+        </h1>
+        {isLoading ? (
+          <p className="text-white text-center">Cargando...</p>
+        ) : approvedCourses.length === 0 ? (
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <p className="text-gray-600 text-lg">
+              Aún no tienes diplomas disponibles. Aprueba un curso para obtener
+              tu diploma.
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {approvedCourses.map((cs: any) => (
+              <div
+                key={cs.course_id}
+                className="bg-white p-6 rounded-lg shadow-lg"
+              >
+                <img
+                  src="https://res.cloudinary.com/dk2red18f/image/upload/v1770871986/WEB_EDUCA/DIPLOMA/Certificado_Reconocimiento_rrn1dp.jpg"
+                  className="w-full h-auto object-contain rounded-md mb-4 border-4 border-brand-100"
+                  alt={`Diploma - ${cs.Course?.name}`}
+                />
+                <h2 className="text-lg font-semibold text-gray-800 mb-2">
+                  {cs.Course?.name}
+                </h2>
+                <p className="text-sm text-gray-500 mb-4">
+                  Otorgado a: <strong>{fullName}</strong>
+                </p>
+                <button
+                  className="w-full bg-brand-300 text-white px-4 py-2 rounded-lg hover:bg-brand-200 disabled:opacity-50"
+                  disabled={isGenerating}
+                  onClick={() =>
+                    handleDownloadDiploma(cs.Course?.name || "Curso")
+                  }
+                >
+                  {isGenerating ? "Generando..." : "Descargar Diploma"}
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    </ProtectedRoute>
+    </div>
   );
 };
+
+Diplomas.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default Diplomas;

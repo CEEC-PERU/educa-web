@@ -21,7 +21,7 @@ export default function AppSidebarContainer() {
 
   const roleId =
     typeof rawUser === "object" && rawUser !== null ? rawUser.role : 0;
-  const { items } = getSidebarConfigByRole(roleId);
+  const { items, bgColor } = getSidebarConfigByRole(roleId);
 
   const handleNavigate = (href: string) => {
     router.push(href);
@@ -41,6 +41,7 @@ export default function AppSidebarContainer() {
       onNavigate={handleNavigate}
       onAction={handleAction}
       currentPath={router.pathname}
+      bgColor={bgColor}
       user={user}
     />
   );

@@ -2,17 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import SidebarPrueba from "@components/student/SideBarPrueba";
 import { useAuth } from "@/context/AuthContext";
-import Navbar from "@components/Navbar";
+import AppLayout from "@/components/layouts/AppLayout";
 import MainContentPrueba from "@components/student/MainContentPrueba";
 import { Profile } from "@/interfaces/User/UserInterfaces";
 import { Question, ModuleEvaluation } from "@/interfaces/StudentModule";
 import { useModuleDetail } from "@hooks/useModuleDetail";
-import SidebarDrawer from "@components/student/DrawerNavigation";
 import { useCourseTime } from "@hooks/courses/useCourseTime";
-import ProtectedRoute from "@components/Auth/ProtectedRoute";
 import LoadingIndicator from "@components/student/LoadingIndicator";
 
-const Home: React.FC = () => {
+const Home = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
@@ -29,7 +27,6 @@ const Home: React.FC = () => {
     session_id?: number;
     module_id?: number;
   }>({});
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>(
     {},
   );
@@ -175,10 +172,6 @@ const Home: React.FC = () => {
     }
   };
 
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
   const handleVideoProgress = async (
     progress: number,
     isCompleted: boolean,
@@ -201,20 +194,6 @@ const Home: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 1014) {
-        setIsDrawerOpen(false);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
   if (isLoading) {
     return <LoadingIndicator />;
   }
@@ -226,55 +205,44 @@ const Home: React.FC = () => {
   if (!courseData || courseData.length === 0) {
     return <LoadingIndicator />;
   }
+
   const handleEvaluationFinish = () => {
     refetch();
   };
 
   return (
-    <ProtectedRoute>
-      <div>
-        <div className="relative z-10">
-          <Navbar
-            bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-            borderColor="border border-stone-300"
-            user={user ? { profilePicture: uri_picture } : undefined}
-            toggleSidebar={toggleSidebar}
-          />
-          <SidebarDrawer
-            isDrawerOpen={isDrawerOpen}
-            toggleSidebar={toggleSidebar}
+    <div className="flex flex-col h-screen">
+      <div className="flex flex-grow flex-col lg:flex-row relative">
+        <div className={`flex-1 p-4 lg:mr-96 z-0`}>
+          <MainContentPrueba
+            sessionVideo={selectedSession.video}
+            sessionId={selectedSession.session_id}
+            evaluationQuestions={selectedSession.questions}
+            onProgress={handleVideoProgress}
+            selectedModuleId={selectedModuleId}
+            moduleResults={courseData[0].courseModules.flatMap(
+              (module) => module.ModuleResults,
+            )}
+            courseResults={courseData[0].CourseResults}
+            onUpdated={handleEvaluationFinish}
           />
         </div>
-        <div className="flex flex-col h-screen">
-          <div className="flex flex-grow pt-16 flex-col lg:flex-row relative">
-            <div className={`flex-1 p-4 lg:ml-16 lg:mr-96 z-0`}>
-              <MainContentPrueba
-                sessionVideo={selectedSession.video}
-                sessionId={selectedSession.session_id}
-                evaluationQuestions={selectedSession.questions}
-                onProgress={handleVideoProgress}
-                selectedModuleId={selectedModuleId}
-                moduleResults={courseData[0].courseModules.flatMap(
-                  (module) => module.ModuleResults,
-                )}
-                courseResults={courseData[0].CourseResults}
-                onUpdated={handleEvaluationFinish}
-              />
-            </div>
-            <SidebarPrueba
-              courseModules={courseData[0].courseModules}
-              courseEvaluation={courseData[0].Evaluation}
-              moduleEvaluations={courseData[0].courseModules.map(
-                (module) => module.moduleEvaluation,
-              )}
-              onSelect={handleSelect}
-              videoProgress={videoProgress}
-            />
-          </div>
-        </div>
+        <SidebarPrueba
+          courseModules={courseData[0].courseModules}
+          courseEvaluation={courseData[0].Evaluation}
+          moduleEvaluations={courseData[0].courseModules.map(
+            (module) => module.moduleEvaluation,
+          )}
+          onSelect={handleSelect}
+          videoProgress={videoProgress}
+        />
       </div>
-    </ProtectedRoute>
+    </div>
   );
 };
+
+Home.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default Home;

@@ -14,6 +14,7 @@ export type AppSidebarProps = {
   onAction?: (action: "logout") => void;
   currentPath?: string;
   variant?: "desktop" | "mobile";
+  bgColor?: string;
   user?: {
     name?: string;
     profilePicture?: string;
@@ -27,6 +28,7 @@ export default function AppSidebar({
   onNavigate,
   onAction,
   currentPath = "",
+  bgColor = "bg-blue-600",
   user,
 }: AppSidebarProps) {
   const navItems = items.filter((item) => !item.action);
@@ -34,7 +36,7 @@ export default function AppSidebar({
 
   return (
     <div
-      className={`fixed top-0 left-0 h-screen z-50 flex flex-col bg-blue-600 text-white rounded-r-lg transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen z-50 flex flex-col ${bgColor} text-white rounded-r-lg transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >

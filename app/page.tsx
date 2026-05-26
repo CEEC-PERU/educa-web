@@ -1,25 +1,25 @@
-'use client';
-import React, { useState } from 'react';
-import CardImage from '../components/student/CardImage';
-import CardCarousel from '../components/student/CardCarousel';
-import Footer from '../components/Footter';
-import Navbar from '../components/Navbar';
-import Proyectos from '@/components/Proyectos';
-import { proyectosData } from '@/components/CursosData';
-import ButtonComponent from '@/components/ButtonComponent';
-import CompanyForm from '@/components/FormComponent';
-import IndividualForm from '@/components/IndividualForm';
-import { useEffect } from 'react';
-import SplashScreen from '@/components/SplashScreen'; // ajusta la ruta si es necesario
+"use client";
+import React, { useState } from "react";
+import CardImage from "../components/student/CardImage";
+import CardCarousel from "../components/student/CardCarousel";
+import Footer from "../components/Footter";
+import PublicNavbar from "../components/navigation/PublicNavbar";
+import Proyectos from "@/components/Proyectos";
+import { proyectosData } from "@/components/CursosData";
+import ButtonComponent from "@/components/ButtonComponent";
+import CompanyForm from "@/components/FormComponent";
+import IndividualForm from "@/components/IndividualForm";
+import { useEffect } from "react";
+import SplashScreen from "@/components/SplashScreen"; // ajusta la ruta si es necesario
 
-import './globals.css';
+import "./globals.css";
 
 //pagina principal volver responsive
 // Sección 1: Encabezado con fondo de imagen y gradiente
 
 export default function Home() {
-  const [formType, setFormType] = useState<'company' | 'individual'>(
-    'individual'
+  const [formType, setFormType] = useState<"company" | "individual">(
+    "individual",
   );
   const [showSplash, setShowSplash] = useState(true);
 
@@ -39,10 +39,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
 
-      <Navbar
-        bgColor="bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800 "
-        paddingtop="pt-8"
-      />
+      <PublicNavbar variant="landing" />
 
       <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-60 bg-brand-500 overflow-hidden">
         {/* Fondo con animación de desvanecimiento */}
@@ -50,7 +47,7 @@ export default function Home() {
           className="hero-bg absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              'url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)',
+              "url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)",
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r"></div>
@@ -93,7 +90,7 @@ export default function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(https://source.unsplash.com/random/1600x900)',
+            backgroundImage: "url(https://source.unsplash.com/random/1600x900)",
           }}
         >
           <div className="absolute inset-0 bg-brand-500 "></div>
@@ -147,7 +144,7 @@ export default function Home() {
         {/* Contenido  */}
         <div className="relative z-10 max-w-4xl px-4 text-center">
           <div className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
-            <span className="text-white">“</span> Suma a tu empresa{' '}
+            <span className="text-white">“</span> Suma a tu empresa{" "}
             <span className="text-white">"</span>
           </div>
           <p className="text-white text-base sm:text-lg font-medium">
@@ -192,12 +189,12 @@ export default function Home() {
       {/* Sección 2: Sección con fondo brand-500 */}
       <section
         className="relative flex items-center justify-center w-full p-6 text-center text-white"
-        style={{ backgroundColor: '#7C3AED' }}
+        style={{ backgroundColor: "#7C3AED" }}
       >
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(https://source.unsplash.com/random/1600x900)',
+            backgroundImage: "url(https://source.unsplash.com/random/1600x900)",
           }}
         >
           <div className="absolute inset-0 bg-brand-500"></div>
@@ -245,21 +242,21 @@ export default function Home() {
               {/* Botones toggle */}
               <div className="flex flex-col sm:flex-row mb-6 space-y-4 sm:space-y-0 sm:space-x-4  mt-8">
                 <button
-                  onClick={() => setFormType('individual')}
+                  onClick={() => setFormType("individual")}
                   className={`px-6 py-2 rounded-lg transition-all duration-300 ${
-                    formType === 'individual'
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-200 text-black'
+                    formType === "individual"
+                      ? "bg-gray-800 text-white"
+                      : "bg-gray-200 text-black"
                   }`}
                 >
                   Individual
                 </button>
                 <button
-                  onClick={() => setFormType('company')}
+                  onClick={() => setFormType("company")}
                   className={`px-6 py-2 rounded-lg transition-all duration-300 ${
-                    formType === 'company'
-                      ? 'bg-gray-800 text-white'
-                      : 'bg-gray-200 text-black'
+                    formType === "company"
+                      ? "bg-gray-800 text-white"
+                      : "bg-gray-200 text-black"
                   }`}
                 >
                   Empresa
@@ -268,7 +265,7 @@ export default function Home() {
 
               {/* Formulario dinámico */}
               <div className="w-full mt-8">
-                {formType === 'individual' ? (
+                {formType === "individual" ? (
                   <IndividualForm />
                 ) : (
                   <CompanyForm />

@@ -1,25 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import Modal from 'react-modal';
-import { useAuth } from '../../../context/AuthContext';
-import SidebarDrawer from '../../../components/student/DrawerNavigation';
-import Navbar from '../../../components/Navbar';
-import { Profile } from '../../../interfaces/User/UserInterfaces';
+import React, { useState, useEffect } from "react";
+import Modal from "react-modal";
+import { useAuth } from "../../../context/AuthContext";
+import AppLayout from "@/components/layouts/AppLayout";
+import { Profile } from "../../../interfaces/User/UserInterfaces";
 import {
   Course,
   CourseResult,
   ModuleResultDetails,
   ModuleResult,
-} from '../../../interfaces/Nota';
-import { useCourseStudent } from '../../../hooks/useCourseStudents';
-import { useNotas } from '../../../hooks/resultado/useNotasUserId';
-import CourseCard from '../../../components/student/CourseCard';
-import { XCircleIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-import { useRouter } from 'next/router';
-import './../../../app/globals.css';
-import ScreenSecurity from '../../../components/ScreenSecurity';
-import Footter from '../../../components/Footter';
+} from "../../../interfaces/Nota";
+import { useCourseStudent } from "../../../hooks/useCourseStudents";
+import { useNotas } from "../../../hooks/resultado/useNotasUserId";
+import CourseCard from "../../../components/student/CourseCard";
+import { XCircleIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/router";
+import "./../../../app/globals.css";
+import ScreenSecurity from "../../../components/ScreenSecurity";
+import Footter from "../../../components/Footter";
 
-Modal.setAppElement('#__next');
+Modal.setAppElement("#__next");
 
 // Corrección del tipo para courseNota que es un array de UserNota
 const DetailNota: React.FC = () => {
@@ -30,17 +29,16 @@ const DetailNota: React.FC = () => {
 
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
-    : parseInt(course_id || '0');
+    : parseInt(course_id || "0");
 
   // Aquí courseNota es un array de UserNota[]
   const { courseNota } = useNotas(courseIdNumber);
 
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [filters, setFilters] = useState<any>({});
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  let name = '';
-  let uri_picture = '';
+  let name = "";
+  let uri_picture = "";
 
   if (profileInfo) {
     const profile = profileInfo as Profile;
@@ -54,10 +52,6 @@ const DetailNota: React.FC = () => {
 
   const closeModal = () => {
     setSelectedCourse(null);
-  };
-
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
   };
 
   // Renderiza los resultados de módulos y cursos con diseño agradable
@@ -89,7 +83,7 @@ const DetailNota: React.FC = () => {
                     Fecha: {new Date(result.created_at).toLocaleDateString()}
                   </p>
                 </div>
-              )
+              ),
             )}
           </div>
         ))}
@@ -116,27 +110,18 @@ const DetailNota: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
       <ScreenSecurity />
-      <div className="relative z-10">
-        <Navbar
-          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-          borderColor="border border-stone-300"
-          user={user ? { profilePicture: uri_picture } : undefined}
-          toggleSidebar={toggleSidebar}
-        />
-        <SidebarDrawer
-          isDrawerOpen={isDrawerOpen}
-          toggleSidebar={toggleSidebar}
-        />
-      </div>
-
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
         <h1 className="text-2xl font-bold mb-4 text-white">Notas del Curso</h1>
         <div className="w-full max-w-screen-lg mt-8">{renderNotas()}</div>
       </div>
-    </div>
+    </>
   );
 };
+
+DetailNota.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default DetailNota;

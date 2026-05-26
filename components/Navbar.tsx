@@ -1,10 +1,16 @@
-import React from 'react';
-import Link from 'next/link';
+/**
+ * @deprecated
+ * Usar `components/navigation/PublicNavbar` para superficies públicas
+ * o `components/navigation/AppNavbar` para el shell autenticado.
+ * Este componente se mantiene temporalmente mientras se migran los consumidores restantes.
+ */
+import React from "react";
+import Link from "next/link";
 import {
   AcademicCapIcon,
   ChevronDownIcon,
   ChevronRightIcon,
-} from '@heroicons/react/24/solid';
+} from "@heroicons/react/24/solid";
 
 interface NavbarProps {
   bgColor?: string;
@@ -21,14 +27,14 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-  bgColor = 'bg-blue-600',
-  textColor = 'text-white',
-  fontSize = 'text-2xl',
-  fontFamily = 'font-sans',
-  paddingtop = 'pt-0',
-  navbarHeight = 'h-16',
+  bgColor = "bg-blue-600",
+  textColor = "text-white",
+  fontSize = "text-2xl",
+  fontFamily = "font-sans",
+  paddingtop = "pt-0",
+  navbarHeight = "h-16",
   toggleSidebar,
-  borderColor = '',
+  borderColor = "",
   showMenuButton = true,
   links = [],
   user,

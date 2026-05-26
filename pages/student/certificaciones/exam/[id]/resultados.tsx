@@ -2,8 +2,7 @@ import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
 import React, { useState, useEffect } from 'react';
 import { Profile } from '@/interfaces/User/UserInterfaces';
-import Navbar from '@/components/Navbar';
-import SidebarDrawer from '@/components/student/DrawerNavigation';
+import AppLayout from '@/components/layouts/AppLayout';
 import Link from 'next/link';
 import { ArrowLeftIcon, XCircleIcon } from 'lucide-react';
 import { API_STUDENT_CERTIFICATIONS } from '@/utils/Endpoints';
@@ -48,22 +47,9 @@ const ResultadosPage = () => {
   const { attempt_id } = router.query;
   const { profileInfo } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [certificationResult, setCertificationResult] =
     useState<CertificationResult | null>(null);
-
-  let name = '';
-  let uri_picture = '';
-  if (profileInfo) {
-    const profile = profileInfo as Profile;
-    name = profile.first_name;
-    uri_picture = profile.profile_picture!;
-  }
-
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
 
   const getScoreBgColorClass = (passed: boolean | undefined) => {
     if (passed === undefined) return 'bg-gray-100 border-gray-300';
@@ -144,37 +130,18 @@ const ResultadosPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="relative z-10">
-        <Navbar
-          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-          borderColor="border border-stone-300"
-          user={uri_picture ? { profilePicture: uri_picture } : undefined}
-          toggleSidebar={toggleSidebar}
-        />
-        <SidebarDrawer
-          isDrawerOpen={isDrawerOpen}
-          toggleSidebar={toggleSidebar}
-        />
-      </div>
-
-      <div className="pt-16">
-        <div
-          className={`transition-all duration-300 ${
-            isDrawerOpen ? 'ml-64' : 'ml-0'
-          }`}
-        >
-          <div className="container mx-auto px-4 py-8 max-w-6xl">
-            <div className="mb-8">
-              <Link href="/student/certificaciones">
-                <button className="inline-flex items-center gap-2 text-bran-200 hover:text-brand-300 mb-4">
-                  <ArrowLeftIcon className="h-4 w-4" />
-                  Volver a Certificaciones
-                </button>
-              </Link>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Resultados del Examen
-              </h1>
-            </div>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="mb-8">
+          <Link href="/student/certificaciones">
+            <button className="inline-flex items-center gap-2 text-bran-200 hover:text-brand-300 mb-4">
+              <ArrowLeftIcon className="h-4 w-4" />
+              Volver a Certificaciones
+            </button>
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Resultados del Examen
+          </h1>
+        </div>
 
             <div
               className={`rounded-lg border-2 p-8 mb-8 ${getScoreBgColorClass(
@@ -352,5 +319,9 @@ const ResultadosPage = () => {
     </div>
   );
 };
+
+ResultadosPage.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default ResultadosPage;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import dynamic from "next/dynamic"; // Import dynamic
+import dynamic from "next/dynamic";
 import Navbar from "../../components/Navbar";
 import ChartCard from "../../components/dashboard/ChartCard";
 import Sidebar from "../../components/supervisor/SibebarSupervisor";
@@ -15,7 +15,7 @@ import {
   useNPS,
 } from "../../hooks/dashboard/useDashboardCorporative";
 
-import { Template, QuestionTemplate } from "../../interfaces/Template";
+import { QuestionTemplate } from "../../interfaces/Template";
 import { useTemplates } from "../../hooks/useTemplate";
 // Dynamically import Chart with no SSR
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -42,7 +42,7 @@ const CorporateDashboard: React.FC = () => {
   console.log(templates);
   const { createAnswerTemplateUser } = useAnswerTemplate();
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  // Filtrar las plantillas activas
+
   const activeTemplate = templates.find((template) => template.is_active);
 
   const generateSatisfactionData = () => [
@@ -54,7 +54,9 @@ const CorporateDashboard: React.FC = () => {
     Math.floor(Math.random() * 8) + 1,
   ];
 
-  const [satisfactionData, setSatisfactionData] = useState(generateSatisfactionData);
+  const [satisfactionData, setSatisfactionData] = useState(
+    generateSatisfactionData,
+  );
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -63,11 +65,8 @@ const CorporateDashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    // Ya no abrimos el pop-up automáticamente, solo se abre cuando el ícono es clickeado
-  }, [templates]);
+  useEffect(() => {}, [templates]);
 
-  // Función para manejar el cambio de respuestas
   const handleResponseChange = (questionId: number, answer: string) => {
     setResponses((prevResponses) => ({
       ...prevResponses,
@@ -78,7 +77,6 @@ const CorporateDashboard: React.FC = () => {
   const userInfo = user as { id: number };
 
   const handleSubmit = async () => {
-    // Ensure all questions are answered
     const unansweredQuestions = activeTemplate?.QuestionTemplates.filter(
       (question) => !responses[question.quest_temp_id],
     );
@@ -88,7 +86,6 @@ const CorporateDashboard: React.FC = () => {
       return;
     }
 
-    // Prepare the answer templates (array of objects)
     const answerTemplates = activeTemplate?.QuestionTemplates.map(
       (question) => {
         const response = responses[question.quest_temp_id];
@@ -114,19 +111,17 @@ const CorporateDashboard: React.FC = () => {
     if (answerTemplates && answerTemplates.length > 0) {
       try {
         console.log(answerTemplates);
-        // Send the answer templates to the backend
+
         await createAnswerTemplateUser(answerTemplates);
-        // Hide the popup and reset the form after submission
-        setShowPopup(false); // Close the popup after submission
+
+        setShowPopup(false);
         setSubmitSuccess(true);
 
-        // Reset responses and error messages
-        setResponses({}); // Clear form responses
+        setResponses({});
         setError2(null);
 
-        // Hide success message after 2 seconds
         setTimeout(() => {
-          setSubmitSuccess(false); // Hide the success message
+          setSubmitSuccess(false);
         }, 2000);
       } catch (error) {
         console.error("Error submitting answer template:", error);
@@ -135,9 +130,8 @@ const CorporateDashboard: React.FC = () => {
     }
   };
 
-  // Función que abre el pop-up cuando el ícono de notificación es clickeado
   const handleIconClick = () => {
-    setShowPopup(true); // Mostrar el pop-up cuando se hace clic en el ícono
+    setShowPopup(true);
   };
 
   const courseTimeData = [
@@ -187,7 +181,7 @@ const CorporateDashboard: React.FC = () => {
 
   const satisfactionSurveyData = (course: string) => {
     if (course === "CP Pospago") {
-      return [0, 0, 0, 0, 0, 0]; // Valores en porcentaje para cada estrella
+      return [0, 0, 0, 0, 0, 0];
     } else if (course === "Formación Continua") {
       return [0, 0, 0, 0, 0];
     }
@@ -203,14 +197,12 @@ const CorporateDashboard: React.FC = () => {
       <div className="flex flex-1 pt-16 ">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
-          {/* Ícono de notificación para mostrar el cuestionario */}
           <div
             className="absolute top-5 right-5 cursor-pointer z-50"
             onClick={handleIconClick}
           >
             <div className="bg-red-500 rounded-full p-3 text-white relative">
               <span className="text-2xl">🔔</span>
-              {/* Si existe una plantilla activa, mostrar el número "1" encima del ícono */}
               {activeTemplate && (
                 <div className="absolute top-0 right-0 bg-white text-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs">
                   1
@@ -219,7 +211,6 @@ const CorporateDashboard: React.FC = () => {
             </div>
           </div>
 
-          {/* Mostrar el pop-up de encuesta si hay una plantilla activa */}
           {showPopup && activeTemplate && (
             <div className="fixed top-0 right-0 bg-white p-8 shadow-lg rounded-lg z-50 w-1/2 max-w-lg animate__animated animate__fadeIn border-2 border-indigo-500">
               <div className="flex justify-between items-center">
@@ -291,7 +282,6 @@ const CorporateDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Mostrar mensaje de éxito */}
           {submitSuccess && (
             <div className="fixed top-0 left-0 right-0 bg-green-500 text-white p-4 text-center z-50">
               <p>
@@ -300,26 +290,7 @@ const CorporateDashboard: React.FC = () => {
             </div>
           )}
 
-          {/* Dropdown Selector for Courses */}
           <div className="mr-2 col-span-full">
-            {/* Resto del contenido */}
-
-            {/*<select 
-    value={selectedCourse} 
-    onChange={(e) => setSelectedCourse(e.target.value)} 
-    className="block border-4 p-2 mr-4"
-  >
-    {courseStudent.length > 0 ? (
-      courseStudent.map((course) => (
-        <option key={course.course_id} value={course.Course.name} className="text-gray-700">
-          {course.Course.name}
-        </option>
-      ))
-    ) : (
-      <option disabled className="text-gray-600">No hay cursos asignados</option>
-    )}
-  </select>*/}
-
             <select
               value={selectedCourse}
               onChange={(e) => setSelectedCourse(Number(e.target.value))}
@@ -342,7 +313,6 @@ const CorporateDashboard: React.FC = () => {
               )}
             </select>
           </div>
-          {/* Gráfico de Barras de Progreso */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold   text-black mb-2  ">
               Progreso del curso
@@ -375,7 +345,6 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Gráfico de Tiempo promedio por curso (minutos) */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold   text-black mb-2">
               Tiempo Promedio por Curso
@@ -446,7 +415,7 @@ const CorporateDashboard: React.FC = () => {
               type="line"
               series={[
                 { name: "Tiempo", data: averagetime.map((item) => item.time) },
-              ]} // Assuming `averagetime` has objects with `time` property
+              ]}
               options={{
                 chart: { type: "line" },
                 xaxis: {
@@ -491,74 +460,6 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Tasa de Finalización de Cursos 
-          <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-            <h2 className="text-lg font-semibold  text-black mb-2">
-              Tasa de Finalización de Cursos
-            </h2>
-
-            <Chart
-              type="bar"
-              series={[
-                {
-                  name: 'Finalización',
-                  data: courseCompletionData.map((item) => item.completion),
-                },
-              ]}
-              options={{
-                chart: { type: 'bar' },
-                yaxis: { title: { text: 'Finalizaciòn (%)' } },
-                xaxis: {
-                  categories: courseCompletionData.map((item) => item.course),
-                  title: { text: 'Curso' },
-                },
-                colors: ['#3274C1'],
-                dataLabels: { enabled: true },
-              }}
-              height={300}
-            />
-          </div>
-*/}
-          {/* Gráfico de Compleción de Módulos 
-          <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
-            <h2 className="text-lg font-semibold text-black mb-2">
-              Compleción de Módulos
-            </h2>
-            <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(Number(e.target.value))}
-              className="mt-2 block w-full"
-            >
-              <option value="CP Pospago">CP Pospago</option>
-              <option value="Formación Continua">Formación Continua</option>
-            </select>
-            <Chart
-              type="bar"
-              series={[
-                {
-                  name: 'Compleción',
-                  data: moduleCompletionData('CP Pospago').map(
-                    (item) => item.completion
-                  ),
-                },
-              ]}
-              options={{
-                chart: { type: 'bar' },
-                yaxis: { title: { text: 'Finalizaciòn (%)' } },
-                xaxis: {
-                  categories: moduleCompletionData('CP Pospago').map(
-                    (item) => item.module
-                  ),
-                  title: { text: 'Curso' },
-                },
-                colors: ['#3274C1'],
-                dataLabels: { enabled: true },
-              }}
-              height={300}
-            />
-          </div>
-          */}
-
           {/* Gráfico de Dona Encuesta de Satisfacción */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2 text-black">
@@ -599,7 +500,7 @@ const CorporateDashboard: React.FC = () => {
                 bar: {
                   borderRadius: 4,
                   columnWidth: "70%",
-                  distributed: true, // Para que cada barra tenga color independiente
+                  distributed: true,
                 },
               },
               colors: [
