@@ -1,15 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   CourseTime,
   CourseTimeEnd,
   CourseTimeAverage,
-} from '../../interfaces/Courses/CourseTime';
+} from "../../interfaces/Courses/CourseTime";
 import {
   createCourseTime,
   createCourseTimeEndTime,
   getCourseTimeAverage,
-} from '../../services/courses/courseTimeService';
-import { useAuth } from '../../context/AuthContext';
+} from "../../services/courses/courseTimeService";
+import { useAuth } from "../../context/AuthContext";
 
 export const useCourseTime = () => {
   const [courseTime, setCourseTime] = useState<CourseTime | null>(null);
@@ -21,15 +21,15 @@ export const useCourseTime = () => {
   const createCourseTimeStart = async (coursetime_start: CourseTime) => {
     setIsLoading(true);
     try {
-      console.log('Updating profile for user:', userInfo.id);
+      console.log("Updating profile for user:", userInfo.id);
       if (!token) {
-        throw new Error('Token is null or undefined');
+        throw new Error("Token is null or undefined");
       }
       const response = await createCourseTime(token, coursetime_start);
       setCourseTime(response);
     } catch (error) {
-      console.error('Error course time:', error);
-      setError('Error updating profile. Please try again.');
+      console.error("Error course time:", error);
+      setError("Error updating profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +45,7 @@ export const useCourseTime = () => {
 
 export const useCourseTimeEnd = () => {
   const [courseTimeEnd, setCourseTimeEnd] = useState<CourseTimeEnd | null>(
-    null
+    null,
   );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -55,15 +55,15 @@ export const useCourseTimeEnd = () => {
   const createCourseTimeEnd = async (coursetime_end: CourseTimeEnd) => {
     setIsLoading(true);
     try {
-      console.log('Updating profile for user:', userInfo.id);
+      console.log("Updating profile for user:", userInfo.id);
       if (!token) {
-        throw new Error('Token is null or undefined');
+        throw new Error("Token is null or undefined");
       }
       const response = await createCourseTimeEndTime(token, coursetime_end);
       setCourseTimeEnd(response);
     } catch (error) {
-      console.error('Error course time:', error);
-      setError('Error updating profile. Please try again.');
+      console.error("Error course time:", error);
+      setError("Error updating profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +91,7 @@ export const useAverageCourse = (course_id?: number) => {
     const fetchAverageCourse = async () => {
       if (!course_id || !userInfo?.enterprise_id) {
         setIsLoadingAverage(false);
-        setError('Faltan datos necesarios para obtener el promedio.');
+        setError("Faltan datos necesarios para obtener el promedio.");
         return;
       }
 
@@ -99,13 +99,13 @@ export const useAverageCourse = (course_id?: number) => {
         setIsLoadingAverage(true);
         const fetchedAverageCourse = await getCourseTimeAverage(
           course_id,
-          1, // Asumiendo role_id 1 es válido
-          userInfo.enterprise_id
+          2, // Asumiendo role_id 1 es válido
+          userInfo.enterprise_id,
         );
         setCourseTimeAverage(fetchedAverageCourse);
       } catch (error) {
-        console.error('Error fetching average course:', error);
-        setError('Error al obtener el tiempo promedio del curso.');
+        console.error("Error fetching average course:", error);
+        setError("Error al obtener el tiempo promedio del curso.");
       } finally {
         setIsLoadingAverage(false);
       }
