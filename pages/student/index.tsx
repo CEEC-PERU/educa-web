@@ -6,7 +6,6 @@ import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import CourseCard from "../../components/student/CourseCard";
 import { useRouter } from "next/router";
-import ScreenSecurity from "../../components/ScreenSecurity";
 import { useCoursesCount } from "../../hooks/user/useUserCourses";
 import StudentVerificationModal from "../../components/student/StudentVerificationModal";
 import StudentCoursePreviewModal, {
@@ -39,7 +38,6 @@ const StudentIndex = () => {
 
   return (
     <>
-      <ScreenSecurity />
       <StudentVerificationModal />
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
         <StudentHero name={name} coursescount={coursescount} />

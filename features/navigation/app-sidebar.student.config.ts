@@ -18,7 +18,7 @@ export const studentSidebarItems: AppSidebarItem[] = [
   },
   {
     id: "cursos",
-    label: "Cursos",
+    label: "Mis Cursos",
     icon: ComputerDesktopIcon,
     href: "/student/cursos",
     children: [

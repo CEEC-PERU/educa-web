@@ -19,7 +19,7 @@ export default function AppSidebarHeader({
   user,
 }: AppSidebarHeaderProps) {
   return (
-    <div className="flex items-center justify-between p-3 border-b border-white/10 flex-shrink-0">
+    <div className="flex items-center justify-between px-3 h-16 border-b border-white/10 flex-shrink-0">
       <div className="flex items-center gap-2 overflow-hidden">
         <img
           src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"

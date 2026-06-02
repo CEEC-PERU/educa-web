@@ -7,7 +7,7 @@ import { useEnterprise } from "../../hooks/useEnterprise";
 import "./../../app/globals.css";
 //datos que se utilizan de StudentProfile
 
-const StudentProfile: React.FC = () => {
+const StudentProfile = () => {
   const { logout, user, profileInfo } = useAuth();
   const { enterprise, error, isLoading } = useEnterprise();
   const router = useRouter();

@@ -36,7 +36,7 @@ export default function AppSidebar({
 
   return (
     <div
-      className={`fixed top-0 left-0 h-screen z-50 flex flex-col ${bgColor} text-white rounded-r-lg transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-screen z-50 flex flex-col ${bgColor} text-white transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >

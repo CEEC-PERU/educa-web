@@ -20,12 +20,14 @@ type AppNavbarProps = {
   onToggleSidebar?: () => void;
   showMenuButton?: boolean;
   title?: string;
+  bgColor?: string;
 };
 
 export default function AppNavbar({
   onToggleSidebar,
   showMenuButton = true,
   title,
+  bgColor = "bg-blue-600",
 }: AppNavbarProps) {
   const { user, profileInfo, logout } = useAuth();
 
@@ -36,7 +38,7 @@ export default function AppNavbar({
     <nav
       role="navigation"
       aria-label="Navegación de la aplicación"
-      className="bg-blue-600 h-16 fixed top-0 left-0 w-full z-50"
+      className={`${bgColor} h-16 fixed top-0 left-0 w-full z-50`}
     >
       <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">

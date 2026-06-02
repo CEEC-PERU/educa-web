@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import type { AppSidebarItem } from "../../features/navigation/app-sidebar.types";
 import { isSidebarItemActive } from "../../features/navigation/utils/isSidebarItemActive";
@@ -17,12 +17,17 @@ export default function AppSidebarGroup({
   currentPath,
   onNavigate,
 }: AppSidebarGroupProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const Icon = item.icon;
 
   const isAnyChildActive =
     item.children?.some((child) => isSidebarItemActive(child, currentPath)) ??
     false;
+
+  const [isExpanded, setIsExpanded] = useState(isAnyChildActive);
+
+  useEffect(() => {
+    if (isAnyChildActive) setIsExpanded(true);
+  }, [isAnyChildActive]);
 
   if (isCollapsed) {
     const firstChild = item.children?.[0];
@@ -46,7 +51,10 @@ export default function AppSidebarGroup({
   return (
     <li>
       <button
-        onClick={() => setIsExpanded((prev) => !prev)}
+        onClick={() => {
+          if (item.href) onNavigate?.(item.href);
+          setIsExpanded((prev) => !prev);
+        }}
         className={`flex items-center w-full p-4 text-white transition-colors ${
           isAnyChildActive ? "bg-white/20" : "hover:bg-white/10"
         }`}
