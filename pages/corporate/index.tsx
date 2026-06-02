@@ -1,15 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic
-import Navbar from '../../components/Navbar';
-import ChartCard from '../../components/dashboard/ChartCard';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
-import { useAuth } from '../../context/AuthContext';
-import './../../app/globals.css';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import { useMetricaCorporate } from '../../hooks/dashboard/useMetricaCorporate';
-import { useCourseStudent } from '../../hooks/useCourseStudents';
-import { useCourseProgress } from '../../hooks/useProgressCurso';
-import { useAverageCourse } from '../../hooks/courses/useCourseTime';
+import React, { useState, useMemo } from "react";
+import dynamic from "next/dynamic"; // Import dynamic from next/dynamic
+import Navbar from "../../components/Navbar";
+import ChartCard from "../../components/dashboard/ChartCard";
+import Sidebar from "../../components/Corporate/CorporateSideBar";
+import { useAuth } from "../../context/AuthContext";
+import "./../../app/globals.css";
+import ProtectedRoute from "../../components/Auth/ProtectedRoute";
+import { useMetricaCorporate } from "../../hooks/dashboard/useMetricaCorporate";
+import { useCourseStudent } from "../../hooks/useCourseStudents";
+import { useCourseProgress } from "../../hooks/useProgressCurso";
+import { useAverageCourse } from "../../hooks/courses/useCourseTime";
 //cuando solo hay un curso no permite seleccionar por deafult me muestre
 //en blanco para seleccionar el curso
 import {
@@ -18,10 +18,10 @@ import {
   useAUserActive,
   useNPS,
   useSatisfaccion,
-} from '../../hooks/dashboard/useDashboardCorporative';
+} from "../../hooks/dashboard/useDashboardCorporative";
 
 // Dynamically import Chart with no SSR
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
@@ -35,7 +35,7 @@ const CorporateDashboard: React.FC = () => {
   const { courseStudent } = useCourseStudent();
 
   const [selectedCourse, setSelectedCourse] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   const { courseProgressData, loading, error } =
     useCourseProgress(selectedCourse);
@@ -46,7 +46,7 @@ const CorporateDashboard: React.FC = () => {
   const { satisData } = useSatisfaccion(2, selectedCourse);
   const { coursetimeaverage } = useAverageCourse(selectedCourse);
 
-  console.log('coursetimeaverage', coursetimeaverage);
+  console.log("coursetimeaverage", coursetimeaverage);
   console.log(selectedCourse);
 
   // Datos de ejemplo
@@ -55,55 +55,55 @@ const CorporateDashboard: React.FC = () => {
   //  { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
   //];
 
-  const courseTimeData = [{ course: 'Contactados', Tiempo: 20 }];
+  const courseTimeData = [{ course: "Contactados", Tiempo: 20 }];
 
   //averageTimeData
   const averageTimePerDayData = [
-    { day: 'Lunes', time: 46 },
-    { day: 'Martes', time: 20 },
-    { day: 'Miércoles', time: 35 },
-    { day: 'Jueves', time: 30 },
-    { day: 'Viernes', time: 25 },
-    { day: 'Sábado', time: 27 },
-    { day: 'Domingo', time: 36 },
+    { day: "Lunes", time: 46 },
+    { day: "Martes", time: 20 },
+    { day: "Miércoles", time: 35 },
+    { day: "Jueves", time: 30 },
+    { day: "Viernes", time: 25 },
+    { day: "Sábado", time: 27 },
+    { day: "Domingo", time: 36 },
   ];
 
   //Curso completados al 100%
   const courseCompletionData = [
-    { course: 'Contactados', completion: 0 },
-    { course: 'Consulta Previa Prepago', completion: 24 },
+    { course: "Contactados", completion: 0 },
+    { course: "Consulta Previa Prepago", completion: 24 },
   ];
 
   //Participantes en la semana
   const dailyParticipationData = [
-    { day: 'Lunes', active: 2 },
-    { day: 'Martes', active: 4 },
-    { day: 'Miércoles', active: 2 },
-    { day: 'Jueves', active: 3 },
-    { day: 'Viernes', active: 2 },
-    { day: 'Sabado', active: 1 },
-    { day: 'Domingo', active: 0 },
+    { day: "Lunes", active: 2 },
+    { day: "Martes", active: 4 },
+    { day: "Miércoles", active: 2 },
+    { day: "Jueves", active: 3 },
+    { day: "Viernes", active: 2 },
+    { day: "Sabado", active: 1 },
+    { day: "Domingo", active: 0 },
   ];
 
   //Lista de modulos por curso
   const moduleCompletionData = (course: string) => {
-    if (course === 'CP Pospago') {
+    if (course === "CP Pospago") {
       return [
-        { module: 'Formación Integral ', completion: 50 },
-        { module: 'Gestión Integral ', completion: 40 },
-        { module: 'Gestión De Contacto ', completion: 35 },
+        { module: "Formación Integral ", completion: 50 },
+        { module: "Gestión Integral ", completion: 40 },
+        { module: "Gestión De Contacto ", completion: 35 },
       ];
-    } else if (course === 'Formación Continua') {
-      return [{ module: 'Retenciones 1', completion: 85 }];
+    } else if (course === "Formación Continua") {
+      return [{ module: "Retenciones 1", completion: 85 }];
     }
     return [];
   };
 
   //Datos actualizados
   const satisfactionSurveyData = (course: string) => {
-    if (course === 'CP Pospago') {
+    if (course === "CP Pospago") {
       return [0, 0, 0, 1, 0, 33]; // Valores en porcentaje para cada estrella
-    } else if (course === 'Formación Continua') {
+    } else if (course === "Formación Continua") {
       return [0, 0, 0, 1, 0, 33];
     }
     return [];
@@ -137,7 +137,7 @@ const CorporateDashboard: React.FC = () => {
   </select>*/}
 
             <select
-              value={selectedCourse ?? ''}
+              value={selectedCourse ?? ""}
               onChange={(e) =>
                 setSelectedCourse(Number(e.target.value) || undefined)
               }
@@ -172,24 +172,24 @@ const CorporateDashboard: React.FC = () => {
               type="bar"
               series={[
                 {
-                  name: 'Estudiantes',
+                  name: "Estudiantes",
                   data: courseProgressData.map((item) => item.Estudiantes),
                 },
                 {
-                  name: 'Progreso',
+                  name: "Progreso",
                   data: courseProgressData.map((item) => item.Progreso),
                 },
               ]}
               options={{
-                chart: { type: 'bar' },
+                chart: { type: "bar" },
                 xaxis: {
                   categories: courseProgressData.map((item) => item.course),
-                  title: { text: 'Cursos' },
+                  title: { text: "Cursos" },
                 },
-                yaxis: { title: { text: 'Cantidad' } },
-                colors: ['#3274C1', '#BCB623'],
+                yaxis: { title: { text: "Cantidad" } },
+                colors: ["#3274C1", "#BCB623"],
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -205,20 +205,26 @@ const CorporateDashboard: React.FC = () => {
               type="bar"
               series={[
                 {
-                  name: 'Tiempo',
-                  data: coursetimeaverage.map((item) => item.average_time),
+                  name: "Tiempo",
+                  data: [52, 38, 67, 45, 71],
                 },
               ]}
               options={{
-                chart: { type: 'bar' },
+                chart: { type: "bar" },
                 xaxis: {
-                  categories: coursetimeaverage.map((item) => item.course_name),
-                  title: { text: 'Cursos' },
+                  categories: [
+                    "CP Pospago",
+                    "Contactados",
+                    "Formación Continua",
+                    "Retenciones",
+                    "Gestión Integral",
+                  ],
+                  title: { text: "Cursos" },
                 },
-                yaxis: { title: { text: 'Tiempo(minutos)' } },
-                colors: ['#3274C1'],
+                yaxis: { title: { text: "Tiempo(minutos)" } },
+                colors: ["#3274C1"],
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -231,7 +237,7 @@ const CorporateDashboard: React.FC = () => {
             type="bar"
             series={[
               {
-                name: 'Puntaje',
+                name: "Puntaje",
                 data: topRanking.map((item) => item.puntaje),
               },
             ]}
@@ -239,7 +245,7 @@ const CorporateDashboard: React.FC = () => {
               plotOptions: {
                 bar: {
                   borderRadius: 6,
-                  columnWidth: '60%',
+                  columnWidth: "60%",
                 },
               },
               xaxis: {
@@ -266,19 +272,19 @@ const CorporateDashboard: React.FC = () => {
             <Chart
               type="line"
               series={[
-                { name: 'Tiempo', data: averagetime.map((item) => item.time) },
+                { name: "Tiempo", data: averagetime.map((item) => item.time) },
               ]} // Assuming `averagetime` has objects with `time` property
               options={{
-                chart: { type: 'line' },
+                chart: { type: "line" },
                 xaxis: {
                   categories: averagetime.map((item) => item.day),
-                  title: { text: 'Días' },
+                  title: { text: "Días" },
                 },
-                yaxis: { title: { text: 'Tiempo (minutos)' } },
-                colors: ['#1D4ED8'], // Set a line color
-                stroke: { curve: 'smooth' },
+                yaxis: { title: { text: "Tiempo (minutos)" } },
+                colors: ["#1D4ED8"], // Set a line color
+                stroke: { curve: "smooth" },
                 dataLabels: { enabled: true },
-                legend: { position: 'top' },
+                legend: { position: "top" },
               }}
               height={300}
             />
@@ -293,19 +299,19 @@ const CorporateDashboard: React.FC = () => {
               type="line"
               series={[
                 {
-                  name: 'Cantidad',
+                  name: "Cantidad",
                   data: activeuser.map((item) => item.active),
                 },
               ]}
               options={{
-                chart: { type: 'line' },
+                chart: { type: "line" },
                 xaxis: {
                   categories: activeuser.map((item) => item.day),
-                  title: { text: 'Día' },
+                  title: { text: "Día" },
                 },
-                yaxis: { title: { text: 'Cantidad Estudiantes' } },
-                colors: ['#33b2df'],
-                stroke: { curve: 'smooth' },
+                yaxis: { title: { text: "Cantidad Estudiantes" } },
+                colors: ["#33b2df"],
+                stroke: { curve: "smooth" },
                 dataLabels: { enabled: true },
               }}
               height={300}
@@ -386,7 +392,7 @@ const CorporateDashboard: React.FC = () => {
             type="bar"
             series={[
               {
-                name: 'Votos',
+                name: "Votos",
                 data: satisData, // [0, 0, 6, 4, 7]
               },
             ]}
@@ -399,22 +405,22 @@ const CorporateDashboard: React.FC = () => {
               plotOptions: {
                 bar: {
                   horizontal: true,
-                  barHeight: '60%',
+                  barHeight: "60%",
                   borderRadius: 4,
                   distributed: true,
                 },
               },
-              colors: ['#EF4444', '#F59E0B', '#FBBF24', '#10B981', '#3B82F6'],
+              colors: ["#EF4444", "#F59E0B", "#FBBF24", "#10B981", "#3B82F6"],
               dataLabels: {
                 enabled: true,
-                formatter: (val: number) => (val > 0 ? `${val}` : ''),
+                formatter: (val: number) => (val > 0 ? `${val}` : ""),
                 style: {
-                  fontSize: '12px',
-                  colors: ['#1F2937'],
+                  fontSize: "12px",
+                  colors: ["#1F2937"],
                 },
               },
               xaxis: {
-                categories: ['1 ⭐', '2 ⭐', '3 ⭐', '4 ⭐', '5 ⭐'],
+                categories: ["1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"],
                 axisBorder: {
                   show: false,
                 },
@@ -425,7 +431,7 @@ const CorporateDashboard: React.FC = () => {
               yaxis: {
                 labels: {
                   style: {
-                    fontSize: '14px',
+                    fontSize: "14px",
                   },
                 },
               },
@@ -435,7 +441,7 @@ const CorporateDashboard: React.FC = () => {
                 },
               },
               grid: {
-                borderColor: '#E5E7EB',
+                borderColor: "#E5E7EB",
                 xaxis: {
                   lines: {
                     show: false,
@@ -453,35 +459,35 @@ const CorporateDashboard: React.FC = () => {
             title="Del 1 al 10 ¿Qué tanto recomendarías este curso?"
             subtitle="Net Promoter Score (NPS)"
             type="bar"
-            series={[{ name: 'Respuestas', data: npsData }]}
+            series={[{ name: "Respuestas", data: npsData }]}
             options={{
               plotOptions: {
                 bar: {
                   borderRadius: 4,
-                  columnWidth: '70%',
+                  columnWidth: "70%",
                   distributed: true, // Para que cada barra tenga color independiente
                 },
               },
               colors: [
-                '#EF4444', // 1-6 Rojo (Detractores)
-                '#EF4444',
-                '#EF4444',
-                '#EF4444',
-                '#EF4444',
-                '#F59E0B', // 7-8 Amarillo (Neutrales)
-                '#F59E0B',
-                '#10B981', // 9-10 Verde (Promotores)
-                '#10B981',
-                '#10B981',
+                "#EF4444", // 1-6 Rojo (Detractores)
+                "#EF4444",
+                "#EF4444",
+                "#EF4444",
+                "#EF4444",
+                "#F59E0B", // 7-8 Amarillo (Neutrales)
+                "#F59E0B",
+                "#10B981", // 9-10 Verde (Promotores)
+                "#10B981",
+                "#10B981",
               ],
               xaxis: {
-                categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+                categories: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                 title: {
-                  text: 'Puntuación',
+                  text: "Puntuación",
                   style: {
-                    fontSize: '14px',
+                    fontSize: "14px",
                     fontWeight: 600,
-                    color: '#4B5563',
+                    color: "#4B5563",
                   },
                 },
                 axisBorder: {
@@ -493,11 +499,11 @@ const CorporateDashboard: React.FC = () => {
               },
               yaxis: {
                 title: {
-                  text: 'Número de respuestas',
+                  text: "Número de respuestas",
                   style: {
-                    fontSize: '14px',
+                    fontSize: "14px",
                     fontWeight: 600,
-                    color: '#4B5563',
+                    color: "#4B5563",
                   },
                 },
                 min: 0,
@@ -506,11 +512,11 @@ const CorporateDashboard: React.FC = () => {
               tooltip: {
                 y: {
                   formatter: (val: number) =>
-                    `${val} ${val === 1 ? 'persona' : 'personas'}`,
+                    `${val} ${val === 1 ? "persona" : "personas"}`,
                 },
               },
               dataLabels: {
-                formatter: (val: number) => (val > 0 ? val.toString() : ''),
+                formatter: (val: number) => (val > 0 ? val.toString() : ""),
               },
             }}
             badgeText="NPS"
