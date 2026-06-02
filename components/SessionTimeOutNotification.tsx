@@ -1,6 +1,5 @@
-// components/SessionTimeoutNotification.tsx
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const SessionTimeoutNotification = () => {
   const { resetInactivityTimer } = useAuth();

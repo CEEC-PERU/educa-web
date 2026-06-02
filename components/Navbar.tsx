@@ -1,9 +1,4 @@
-/**
- * @deprecated
- * Usar `components/navigation/PublicNavbar` para superficies públicas
- * o `components/navigation/AppNavbar` para el shell autenticado.
- * Este componente se mantiene temporalmente mientras se migran los consumidores restantes.
- */
+//falta hacer migración total antes de eliminar
 import React from "react";
 import Link from "next/link";
 import {
