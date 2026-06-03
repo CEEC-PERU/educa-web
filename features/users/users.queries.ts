@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchClassroomStudents, fetchUserCount } from "./users.api";
+import { fetchClassroomStudents, fetchUserCount, fetchUserById } from "./users.api";
 import { usersKeys } from "./users.query-keys";
 
 export function useClassroomStudentsQuery(
@@ -19,5 +19,13 @@ export function useUserCountQuery(enterpriseId: number | undefined) {
     queryKey: usersKeys.count(enterpriseId ?? 0),
     queryFn: () => fetchUserCount(enterpriseId as number),
     enabled: typeof enterpriseId === "number",
+  });
+}
+
+export function useUserByIdQuery(userId: number | undefined) {
+  return useQuery({
+    queryKey: usersKeys.detail(userId ?? 0),
+    queryFn: () => fetchUserById(userId as number),
+    enabled: typeof userId === "number",
   });
 }

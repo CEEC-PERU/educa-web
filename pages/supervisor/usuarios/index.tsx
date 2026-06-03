@@ -9,7 +9,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { toast } from "sonner";
 import {
   UserGroupIcon,
-  PencilIcon,
+  EyeIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -220,12 +220,12 @@ const Usuarios: NextPageWithLayout = () => {
                           {profile && (
                             <button
                               onClick={() =>
-                                router.push(`/supervisor/usuarios/editUser/${student.User.user_id}`)
+                                router.push(`/supervisor/usuarios/view-user/${student.User.user_id}`)
                               }
                               className="text-blue-500 hover:text-blue-700 transition-colors"
-                              title="Editar"
+                              title="Ver perfil"
                             >
-                              <PencilIcon className="h-4 w-4" />
+                              <EyeIcon className="h-4 w-4" />
                             </button>
                           )}
                           <button

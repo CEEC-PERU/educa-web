@@ -80,7 +80,7 @@ export default function UserMenu({ profileInfo, onLogout }: UserMenuProps) {
           </div>
 
           <Link
-            href="/student/profile"
+            href="/account"
             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
             role="menuitem"
             onClick={() => setOpen(false)}

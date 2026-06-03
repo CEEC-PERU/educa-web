@@ -33,3 +33,8 @@ export async function createUser(userData: Record<string, unknown>): Promise<voi
 export async function deleteUser(userId: number): Promise<void> {
   await http.delete(`${API_USERU}/users/${userId}`);
 }
+
+export async function fetchUserById(userId: number): Promise<unknown> {
+  const { data } = await http.get(`${API_USER}/users/${userId}`);
+  return data;
+}
