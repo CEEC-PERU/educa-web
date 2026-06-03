@@ -10,12 +10,8 @@ import ButtonComponent from "@/components/ButtonComponent";
 import CompanyForm from "@/components/FormComponent";
 import IndividualForm from "@/components/IndividualForm";
 import { useEffect } from "react";
-import SplashScreen from "@/components/SplashScreen"; // ajusta la ruta si es necesario
-
+import SplashScreen from "@/components/SplashScreen";
 import "./globals.css";
-
-//pagina principal volver responsive
-// Sección 1: Encabezado con fondo de imagen y gradiente
 
 export default function Home() {
   const [formType, setFormType] = useState<"company" | "individual">(
@@ -37,12 +33,9 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Sección 1: Encabezado con fondo de imagen y gradiente */}
-
       <PublicNavbar variant="landing" />
 
       <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-60 bg-brand-500 overflow-hidden">
-        {/* Fondo con animación de desvanecimiento */}
         <div
           className="hero-bg absolute inset-0 bg-cover bg-center"
           style={{
@@ -54,7 +47,6 @@ export default function Home() {
         </div>
 
         <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto md:pl-40">
-          {/* Texto y botón */}
           <div className="hero-text md:w-1/2 relative z-10 md:px-6 text-left md:mr-10 pt-40">
             <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight animate-text-1">
               Tu aliado para inspirar
@@ -74,7 +66,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Imagen con animación escalada */}
           <div className="hero-image md:w-1/2 relative z-10 px-6 animate-image">
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1724337541/WEB_EDUCA/WEB-IMAGENES/nnejbmnffrzbibtpm4vq.png"
@@ -84,7 +75,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-      {/* Sección 3: Otra sección con fondo de imagen y gradiente */}
 
       <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20 ">
         <div
@@ -116,8 +106,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección 5: Información adicional con otro fondo de imagen y gradiente */}
-      {/* Fondo con clip-path */}
       <section className="relative w-full h-[300px] bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 overflow-hidden">
         <div className="absolute inset-0">
           <svg
@@ -141,7 +129,6 @@ export default function Home() {
       <section className="relative w-full py-20 flex items-center justify-center overflow-hidden bg-[#070f41] ">
         <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300  "></div>
 
-        {/* Contenido  */}
         <div className="relative z-10 max-w-4xl px-4 text-center">
           <div className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
             <span className="text-white">“</span> Suma a tu empresa{" "}
@@ -186,7 +173,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección 2: Sección con fondo brand-500 */}
       <section
         className="relative flex items-center justify-center w-full p-6 text-center text-white"
         style={{ backgroundColor: "#7C3AED" }}
@@ -223,23 +209,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Sección 4: Sección con fondo brand-500 */}
       <section className="relative flex items-center justify-center w-full p-6 bg-brand-500 text-white pt-40">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-4">
-          {/* Imagen */}
-          {/* Texto "Tu equipo crezca con nosotros" en lugar de imagen */}
-          {/* Texto en lugar de imagen, manteniendo estilo */}
           <div className="w-full md:w-1/2 flex items-center justify-center  mr-8  ">
             <h2 className="text-5xl md:text-5xl lg:text-7xl font-extrabold leading-tight text-center text-white">
               Tu equipo crezca <br className="hidden md:block" /> con nosotros
             </h2>
           </div>
 
-          {/* Formulario */}
           <div className="w-full md:w-1/2 flex flex-col px-4 mb-40">
-            {/* Contenedor de botones + formulario */}
             <div className="flex flex-col items-center w-full">
-              {/* Botones toggle */}
               <div className="flex flex-col sm:flex-row mb-6 space-y-4 sm:space-y-0 sm:space-x-4  mt-8">
                 <button
                   onClick={() => setFormType("individual")}
@@ -263,7 +242,6 @@ export default function Home() {
                 </button>
               </div>
 
-              {/* Formulario dinámico */}
               <div className="w-full mt-8">
                 {formType === "individual" ? (
                   <IndividualForm />

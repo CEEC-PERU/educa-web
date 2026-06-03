@@ -1,7 +1,4 @@
-import Navbar from "@/components/Navbar";
 import React, { useState } from "react";
-import Sidebar from "../../../components/supervisor/SibebarSupervisor";
-import "./../../../app/globals.css";
 import {
   CalendarIcon,
   ClockIcon,
@@ -32,6 +29,8 @@ import {
   ApiError,
 } from "../../../utils/apiHelpers";
 import { useRouter } from "next/router";
+import AppLayout from "../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../types/next";
 
 const getDate = (date: Date) => {
   const now = new Date(date);
@@ -40,9 +39,8 @@ const getDate = (date: Date) => {
   return { now, nextWeek };
 };
 
-const CertificatesPage: React.FC = () => {
+const CertificatesPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const [showSideBar, setShowSidebar] = useState(true);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignmentFormData, setAssignmentFormData] =
     useState<AssignmentFormData>({
@@ -391,14 +389,8 @@ const CertificatesPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSideBar} setShowSidebar={setShowSidebar} />
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
@@ -548,8 +540,6 @@ const CertificatesPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
 
       {/* Modal para crear/editar certificados */}
@@ -604,8 +594,10 @@ const CertificatesPage: React.FC = () => {
           />
         </Modal>
       )}
-    </div>
+    </>
   );
 };
+
+CertificatesPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CertificatesPage;

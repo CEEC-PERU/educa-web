@@ -1,7 +1,4 @@
-import Navbar from '@/components/Navbar';
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
-import './../../../app/globals.css';
+import React, { useState } from 'react';
 import Modal from '../../../components/Admin/Modal';
 import { useAuth } from '@/context/AuthContext';
 import { UserInfo } from '@/interfaces/Training/Training';
@@ -12,10 +9,11 @@ import EmptyState from '@/components/Training/EmptyState';
 import { useRouter } from 'next/router';
 import TrainingForm from '@/components/Training/TrainingForm';
 import { deleteProgram } from '@/services/training/trainingService';
+import AppLayout from '../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../types/next';
 
-const TrainingsPage: React.FC = () => {
+const TrainingsPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const [showSidebar, setShowSidebar] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   //const [showAssignModal, setShowAssignModal] = useState(false);
   //revisar el estado con el que inicia ya que tiene que un objeto definido
@@ -75,14 +73,8 @@ const TrainingsPage: React.FC = () => {
     }
   };
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
@@ -135,8 +127,6 @@ const TrainingsPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
       {showCreateModal && (
         <Modal
@@ -170,8 +160,10 @@ const TrainingsPage: React.FC = () => {
           Dato
         </Modal>
       )}*/}
-    </div>
+    </>
   );
 };
+
+TrainingsPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default TrainingsPage;

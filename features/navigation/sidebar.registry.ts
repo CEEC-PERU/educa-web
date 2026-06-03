@@ -1,6 +1,7 @@
 import type { SidebarRoleConfig } from "./app-sidebar.types";
 import { contentSidebarBaseItems } from "./app-sidebar.content.config";
 import { studentSidebarItems } from "./app-sidebar.student.config";
+import { supervisorSidebarItems } from "./app-sidebar.supervisor.config";
 
 const _registry = new Map<number, SidebarRoleConfig>();
 
@@ -23,4 +24,11 @@ registerSidebarConfig({
   roleId: 3,
   label: "Gestor de Contenido",
   items: contentSidebarBaseItems,
+});
+
+registerSidebarConfig({
+  roleId: 6,
+  label: "Supervisor",
+  items: supervisorSidebarItems,
+  bgColor: "bg-blue-600",
 });

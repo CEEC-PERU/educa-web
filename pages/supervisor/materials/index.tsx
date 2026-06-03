@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../../context/AuthContext';
 import { getCoursesBySupervisor } from '../../../services/courses/courseStudent';
 import Loader from '../../../components/Loader';
 import { API_MATERIALS } from '../../../utils/Endpoints';
 import FileUpload from '../../../components/FileUpload';
 import { useRouter } from 'next/router';
-import './../../../app/globals.css';
+import AppLayout from '../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../types/next';
 
 interface Student {
   profile_picture: string;
@@ -27,7 +26,7 @@ interface Course {
   students: Student[];
 }
 
-const CorporateCourses: React.FC = () => {
+const CorporateCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
   const userId = user ? (user as { id: number }).id : null;
 
@@ -119,7 +118,7 @@ const CorporateCourses: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
+    <>
       {/* Notificación de éxito */}
       {showSuccess && (
         <div className="fixed top-20 right-4 z-50">
@@ -165,12 +164,7 @@ const CorporateCourses: React.FC = () => {
         </div>
       )}
 
-      <Navbar bgColor="bg-gradient-to-r from-blue-600 to-indigo-700" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-
-        <main className="p-6 flex-grow ml-20">
-          <div className="flex justify-between items-center mb-8 w-full">
+      <div className="flex justify-between items-center mb-8 w-full">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
                 Gestión de Cursos
@@ -295,9 +289,7 @@ const CorporateCourses: React.FC = () => {
                 </div>
               ))}
             </div>
-          )}
-        </main>
-      </div>
+      )}
 
       {/* Modal */}
       {showModal && selectedCourse && (
@@ -490,8 +482,10 @@ const CorporateCourses: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
+
+CorporateCourses.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CorporateCourses;

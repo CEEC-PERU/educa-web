@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Sidebar from '@/components/supervisor/SibebarSupervisor';
-import '@/app/globals.css';
 import Modal from '@/components/Admin/Modal';
 import { useTrainingAssignment } from '@/hooks/resultado/useTrainingAssingment';
 import { useAuth } from '@/context/AuthContext';
@@ -10,10 +7,11 @@ import TrainingAssignmentCard from '@/components/Training/TrainingAssignmentCard
 import TrainingAssignmentForm from '@/components/Training/TrainingAssignmentForm';
 import { deleteTrainingAssignment } from '@/services/training/trainingService';
 import { useRouter } from 'next/router';
+import AppLayout from '@/components/layouts/AppLayout';
+import type { NextPageWithLayout } from '@/types/next';
 
-const AssignmentsPage: React.FC = () => {
+const AssignmentsPage: NextPageWithLayout = () => {
   const router = useRouter();
-  const [showSidebar, setShowSidebar] = useState(true);
   const { token } = useAuth();
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [selectedAssignment, setSelectedAssignment] =
@@ -74,12 +72,8 @@ const AssignmentsPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`flex-1 p-6 transition-all duration-300 ease-in-out`}>
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
@@ -127,8 +121,6 @@ const AssignmentsPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
       {showAssignModal && (
         <Modal
@@ -204,8 +196,10 @@ const AssignmentsPage: React.FC = () => {
           </div>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
+
+AssignmentsPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default AssignmentsPage;

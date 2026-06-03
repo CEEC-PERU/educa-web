@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import { useClassroom } from '../../../hooks/useClassroom';
 import FormField from '../../../components/FormField';
 import { useAuth } from '../../../context/AuthContext';
@@ -13,8 +10,6 @@ import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
-import './../../../app/globals.css';
-import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { useShifts } from '@/hooks/useShifts';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import {
@@ -28,8 +23,10 @@ import {
 } from 'react-icons/fi';
 
 import { FaChalkboardTeacher } from 'react-icons/fa';
+import AppLayout from '../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../types/next';
 
-const NotaCourses: React.FC = () => {
+const NotaCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -167,13 +164,8 @@ const NotaCourses: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gray-50">
-        <Navbar bgColor="bg-gradient-to-r from-blue-600 to-indigo-700" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-            <div className="flex flex-col space-y-4">
+    <>
+      <div className="flex flex-col space-y-4">
               <div className="flex justify-between items-center">
                 <div>
                   <h1 className="text-3xl font-bold text-gray-800">
@@ -646,12 +638,11 @@ const NotaCourses: React.FC = () => {
                   )}
                 </div>
               )}
-            </div>
-          </main>
-        </div>
       </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+NotaCourses.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default NotaCourses;

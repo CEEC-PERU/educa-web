@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Navbar from "@/components/Navbar";
 import { useCertificationUser } from "@/hooks/resultado/useCertificationUser";
-import Sidebar from "@/components/supervisor/SibebarSupervisor";
-import ProtectedRoute from "@/components/Auth/ProtectedRoute";
+import AppLayout from "@/components/layouts/AppLayout";
+import type { NextPageWithLayout } from "@/types/next";
 
-const CertificationStudents: React.FC = () => {
+const CertificationStudents: NextPageWithLayout = () => {
   const router = useRouter();
   const { certificationId } = router.query;
-  const [showSideBar] = useState(true);
 
   const [certificationInfo, setCertificationInfo] = useState<any>(null);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -115,49 +113,24 @@ const CertificationStudents: React.FC = () => {
   // Loading state
   if (loading || hookLoading) {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-          <div className="flex flex-1 pt-16">
-            <Sidebar showSidebar={showSideBar} setShowSidebar={() => {}} />
-            <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              </div>
-            </main>
-          </div>
-        </div>
-      </ProtectedRoute>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
     );
   }
 
   // Error state
   if (error || hookError) {
     return (
-      <ProtectedRoute>
-        <div className="min-h-screen flex flex-col bg-gray-50">
-          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-          <div className="flex flex-1 pt-16">
-            <Sidebar showSidebar={showSideBar} setShowSidebar={() => {}} />
-            <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {error || hookError}
-              </div>
-            </main>
-          </div>
-        </div>
-      </ProtectedRoute>
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        {error || hookError}
+      </div>
     );
   }
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSideBar} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-            {/* Header */}
+    <>
+      {/* Header */}
             <div className="mb-6">
               <button
                 onClick={() => router.back()}
@@ -370,11 +343,10 @@ const CertificationStudents: React.FC = () => {
                 </div>
               )}
             </div>
-          </main>
-        </div>
-      </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+CertificationStudents.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CertificationStudents;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../../../../components/Navbar";
 import DetailContainer from "../../../../content/evaluation/DetailContainer";
 import QuestionsContainer from "../../../../content/evaluation/QuestionsContainer";
 import {
@@ -14,11 +13,11 @@ import {
   QuestionType,
   Option,
 } from "../../../../../interfaces/Evaluation";
-import ProtectedRoute from "../../../../../components/Auth/ProtectedRoute";
 import { useRouter } from "next/router";
-import "./../../../../../app/globals.css";
+import AppLayout from "../../../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../../../types/next";
 
-const EvaluationDetail: React.FC = () => {
+const EvaluationDetail: NextPageWithLayout = () => {
   const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
@@ -127,12 +126,8 @@ const EvaluationDetail: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <main className="flex-grow p-6 transition-all duration-300 ease-in-out">
-            <div className="flex flex-col items-center">
+    <>
+      <div className="flex flex-col items-center">
               <div className="w-full max-w-5xl flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6">
                 <DetailContainer
                   evaluation={evaluation}
@@ -148,12 +143,11 @@ const EvaluationDetail: React.FC = () => {
                   setQuestions={setQuestions}
                 />
               </div>
-            </div>
-          </main>
-        </div>
       </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+EvaluationDetail.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default EvaluationDetail;

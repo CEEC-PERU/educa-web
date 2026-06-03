@@ -1,19 +1,15 @@
 import React, { useState, ChangeEvent } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/supervisor/SibebarSupervisor';
 import { createRequirement } from '../../services/requirementService';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import { useAuth } from '../../context/AuthContext';
+import AppLayout from '../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../types/next';
 
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import './../../app/globals.css';
-
-const RequirementForm: React.FC = () => {
+const RequirementForm: NextPageWithLayout = () => {
     const { user } = useAuth();
     const userId = user as { id: number };
-    const [showSidebar, setShowSidebar] = useState(true);
     const [proposedDate, setProposedDate] = useState('');
     const [courseName, setCourseName] = useState('');
     const [message, setMessage] = useState('');
@@ -133,13 +129,8 @@ const RequirementForm: React.FC = () => {
     };
 
     return (
-        <ProtectedRoute>
-        <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-            <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-            <div className="flex flex-1 pt-16">
-                <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-                <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-                    <div className="container mx-auto p-4 text-black">
+        <>
+            <div className="container mx-auto p-4 text-black">
                         {loading && <Loader />}
                         {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
                         {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
@@ -211,12 +202,11 @@ const RequirementForm: React.FC = () => {
                                 <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Enviar Requerimiento</button>
                             </div>
                         </form>
-                    </div>
-                </main>
             </div>
-        </div>
-        </ProtectedRoute>
+        </>
     );
 };
+
+RequirementForm.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default RequirementForm;

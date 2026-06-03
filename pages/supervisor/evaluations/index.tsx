@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Navbar from "../../../components/Navbar";
-import Sidebar from "../../../components/supervisor/SibebarSupervisor";
 import { API_EVALUATIONMODULE } from "../../../utils/Endpoints";
 import Modal from "../../../components/Admin/Modal";
 import { useClassroomBySupervisor } from "../../../hooks/useClassroom";
@@ -20,7 +18,8 @@ import {
   UserGroupIcon,
   ClipboardDocumentListIcon,
 } from "@heroicons/react/24/outline";
-import "../../../app/globals.css";
+import AppLayout from "../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../types/next";
 
 interface Question {
   question_sche_id?: number;
@@ -101,8 +100,7 @@ interface AssignmentFormData {
   status: "assigned";
 }
 
-const Evaluations: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const Evaluations: NextPageWithLayout = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -721,17 +719,8 @@ const Evaluations: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? "ml-20" : ""
-          }`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -901,8 +890,6 @@ const Evaluations: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
 
       {/* Modal para Asignar Evaluación */}
@@ -1587,8 +1574,10 @@ const Evaluations: React.FC = () => {
           </form>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
+
+Evaluations.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Evaluations;

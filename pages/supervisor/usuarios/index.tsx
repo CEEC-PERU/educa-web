@@ -1,7 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import {
   getUsersByCompanyAndRole,
   getUsersByRole,
@@ -18,14 +16,14 @@ import { User } from '../../../interfaces/User/UserAdmin';
 import { useUserCount } from '../../../hooks/user/useUserCount';
 import { useDeleteUser } from '../../../hooks/user/useDeleteUser';
 import { useTemplates } from '../../../hooks/useTemplate';
-import './../../../app/globals.css';
+import AppLayout from '../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../types/next';
 
-const Usuarios: React.FC = () => {
+const Usuarios: NextPageWithLayout = () => {
   const { deleteUser } = useDeleteUser();
   const { usercount, isLoading, error } = useUserCount();
   const { templates } = useTemplates();
   console.log(templates);
-  const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { logout, user, profileInfo } = useAuth();
   const [studentsData, setStudentsData] = useState<StudentData | null>(null); // Ahora manejamos el objeto completo
@@ -158,15 +156,7 @@ const Usuarios: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main
-          className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-20' : ''
-          }`}
-        >
+    <>
           <div className="pb-4">
             {userCountResult && (
               <div>
@@ -228,8 +218,6 @@ const Usuarios: React.FC = () => {
               />
             </div>
           </div>
-        </main>
-      </div>
       <Modal
         show={isModalOpen}
         onClose={handleModalClose}
@@ -246,8 +234,10 @@ const Usuarios: React.FC = () => {
           />
         )}
       </Modal>
-    </div>
+    </>
   );
 };
+
+Usuarios.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Usuarios;

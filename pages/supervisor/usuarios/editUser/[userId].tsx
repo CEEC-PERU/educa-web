@@ -5,16 +5,14 @@ import {
   updateUser,
 } from '../../../../services/users/userService';
 import { getEnterprise } from '../../../../services/enterpriseService';
-import Navbar from '../../../../components/Navbar';
-import Sidebar from '../../../../components/supervisor/SibebarSupervisor';
 import FormField from '../../../../components/FormField';
 import ButtonComponent from '../../../../components/ButtonComponent';
 import Alert from '../../../../components/AlertComponent';
-
-import './../../../../app/globals.css';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import AppLayout from '../../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../../types/next';
 
-const EditUser: React.FC = () => {
+const EditUser: NextPageWithLayout = () => {
   const router = useRouter();
   const { userId } = router.query;
   const [user, setUser] = useState<any>(null);
@@ -100,16 +98,8 @@ const EditUser: React.FC = () => {
   }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main
-          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-            true ? 'ml-20' : ''
-          }`}
-        >
-          {showAlert && (
+    <>
+      {showAlert && (
             <Alert
               type="info"
               message={alertMessage}
@@ -294,10 +284,10 @@ const EditUser: React.FC = () => {
               </div>
             </div>
           )}
-        </main>
-      </div>
-    </div>
+    </>
   );
 };
+
+EditUser.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default EditUser;

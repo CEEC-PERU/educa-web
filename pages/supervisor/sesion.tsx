@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../context/AuthContext';
 import { getUsersByEnterpriseWithSessions } from '../../services/courses/courseStudent';
 import Loader from '../../components/Loader';
 import TopStudentsChart from '../../components/Corporate/TopStudent';
-import './../../app/globals.css';
 import { Profile } from '../../interfaces/User/UserInterfaces';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-const CorporateUsers: React.FC = () => {
+import AppLayout from '../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../types/next';
+
+const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const enterpriseId = user
     ? (user as { id: number; role: number; dni: string; enterprise_id: number })
@@ -92,14 +91,7 @@ const CorporateUsers: React.FC = () => {
   }, [enterpriseId, startDate, endDate]);
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}
-          >
+    <>
             <h2 className="text-2xl font-bold mb-6  text-black">
               Usuarios de la Empresa
             </h2>
@@ -170,11 +162,10 @@ const CorporateUsers: React.FC = () => {
                 </div>
               </>
             )}
-          </main>
-        </div>
-      </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+CorporateUsers.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CorporateUsers;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import Navbar from "../../../../components/Navbar";
 import MediaUploadPreview from "../../../../components/MediaUploadPreview";
 import { addSession } from "../../../../services/sessionService";
 import { uploadVideo } from "../../../../services/videoService";
@@ -8,15 +7,12 @@ import { Session } from "../../../../interfaces/Session";
 import FormField from "../../../../components/FormField";
 import ActionButtons from "../../../../components/Content/ActionButtons";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import "./../../../../app/globals.css";
 import AlertComponent from "../../../../components/AlertComponent";
-
 import Loader from "../../../../components/Loader";
+import AppLayout from "../../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../../types/next";
 
-import ProtectedRoute from "../../../../components/Auth/ProtectedRoute";
-
-const AddSession: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const AddSession: NextPageWithLayout = () => {
   const [session, setSession] = useState<Omit<Session, "session_id">>({
     video_enlace: "",
     duracion_minutos: 0,
@@ -120,15 +116,8 @@ const AddSession: React.FC = () => {
   }
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-              showSidebar ? "ml-20" : ""
-            } flex`}
-          >
+    <>
+      <div className="flex">
             <form
               onSubmit={handleSubmit}
               className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4"
@@ -193,16 +182,16 @@ const AddSession: React.FC = () => {
             <div className="ml-4 flex-shrink-0">
               <ActionButtons onSave={handleSubmit} isEditing={true} />
             </div>
-          </main>
-        </div>
-        {formLoading && (
+      </div>
+      {formLoading && (
           <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
             <Loader />
           </div>
         )}
-      </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+AddSession.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default AddSession;

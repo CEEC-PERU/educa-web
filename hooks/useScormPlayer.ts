@@ -4,7 +4,6 @@ import { useAuth } from "@/context/AuthContext";
 import { getScormPlayerUrl } from "@/utils/scormUrlTransformer";
 import { trackScormData } from "@/services/training/trainingStudentService";
 
-// Declarar tipos globales para SCORM API
 declare global {
   interface Window {
     API?: ScormApi;

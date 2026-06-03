@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import Navbar from "../../components/Navbar";
 import ChartCard from "../../components/dashboard/ChartCard";
-import Sidebar from "../../components/supervisor/SibebarSupervisor";
 import { useAuth } from "../../context/AuthContext";
-import "./../../app/globals.css";
 import { useMetricaCorporate } from "../../hooks/dashboard/useMetricaCorporate";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useCourseProgress } from "../../hooks/useProgressCurso";
@@ -14,13 +11,14 @@ import {
   useAverageTime,
   useNPS,
 } from "../../hooks/dashboard/useDashboardCorporative";
-
 import { QuestionTemplate } from "../../interfaces/Template";
 import { useTemplates } from "../../hooks/useTemplate";
-// Dynamically import Chart with no SSR
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-const CorporateDashboard: React.FC = () => {
+const CorporateDashboard: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user
@@ -189,14 +187,8 @@ const CorporateDashboard: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar
-        bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"
-        borderColor="border border-stone-300"
-      />
-      <div className="flex flex-1 pt-16 ">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             className="absolute top-5 right-5 cursor-pointer z-50"
             onClick={handleIconClick}
@@ -557,10 +549,11 @@ const CorporateDashboard: React.FC = () => {
             badgeText="NPS"
             height={350}
           />
-        </main>
       </div>
-    </div>
+    </>
   );
 };
+
+CorporateDashboard.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CorporateDashboard;
