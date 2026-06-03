@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import "./../../../../app/globals.css";
 import { Module } from "../../../../interfaces/Module";
 import { getModulesByCourseId } from "../../../../services/courses/courseService";
-const ModuleIndex: React.FC = () => {
+const ModuleIndex = () => {
   const router = useRouter();
   const { courseid } = router.query;
   const [modules, setModules] = useState<Module[]>([]);

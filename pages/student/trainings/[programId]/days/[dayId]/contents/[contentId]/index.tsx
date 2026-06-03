@@ -65,7 +65,7 @@ const ScormPlayer = dynamic(
   },
 );
 
-const ContentViewerPage: React.FC = () => {
+const ContentViewerPage = () => {
   const router = useRouter();
   const { programId, dayId, contentId } = router.query;
   const { content, loading, error, updateProgress, markAsCompleted } =

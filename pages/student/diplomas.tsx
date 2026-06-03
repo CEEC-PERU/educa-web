@@ -12,7 +12,7 @@ import "./../../app/globals.css";
 
 Modal.setAppElement("#__next");
 
-const Diplomas: React.FC = () => {
+const Diplomas = () => {
   const { logout, user, profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   console.log(courseStudent);

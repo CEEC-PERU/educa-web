@@ -6,7 +6,7 @@ import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useEnterprise } from "../../hooks/useEnterprise";
 import "./../../app/globals.css";
-const StudentProfile: React.FC = () => {
+const StudentProfile = () => {
   const { logout, user, profileInfo } = useAuth();
   const { enterprise, error, isLoading } = useEnterprise();
   const { updateProfile } = useUpdatedProfile();

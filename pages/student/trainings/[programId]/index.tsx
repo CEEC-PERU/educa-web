@@ -17,7 +17,7 @@ import {
   Eye,
 } from "lucide-react";
 
-const MyTrainingsPage: React.FC = () => {
+const MyTrainingsPage = () => {
   const router = useRouter();
   const [selectedDay, setSelectedDay] = useState<MyProgramDay | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

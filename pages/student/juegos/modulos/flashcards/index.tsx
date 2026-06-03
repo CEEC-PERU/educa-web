@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import "./../../../../../app/globals.css";
 import AppLayout from "@/components/layouts/AppLayout";
 
-const Flashcard: React.FC = () => {
+const Flashcard = () => {
   const { logout, user, profileInfo } = useAuth();
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const { courseStudent, isLoading } = useCourseStudent();
