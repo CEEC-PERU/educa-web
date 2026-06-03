@@ -5,16 +5,12 @@ import { useRouter } from "next/router";
 import { useMyTrainings } from "@/hooks/useMyTrainings";
 import { BookOpen, Building2, ChevronRight, Calendar } from "lucide-react";
 
-const CapacitacionesPage: React.FC = () => {
+const CapacitacionesPage = () => {
   const router = useRouter();
   const { myTrainings, loading, error, refetch } = useMyTrainings();
 
   const handleProgramClick = (programId: number) => {
     router.push(`/student/trainings/${programId}`);
-  };
-
-  const toggleSidebar = () => {
-    setIsDrawerOpen(!isDrawerOpen);
   };
 
   return (
