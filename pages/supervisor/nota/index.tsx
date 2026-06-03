@@ -45,7 +45,6 @@ const NotaCourses: NextPageWithLayout = () => {
   const [statusCount, setStatusCount] = useState({
     notable: 0,
     aprobado: 0,
-    refuerzo: 0,
     desaprobado: 0,
   });
 
@@ -61,7 +60,6 @@ const NotaCourses: NextPageWithLayout = () => {
   const statusStyles = {
     Notable: 'bg-emerald-100 text-emerald-800 border-emerald-200',
     Aprobado: 'bg-blue-100 text-blue-800 border-blue-200',
-    Refuerzo: 'bg-amber-100 text-amber-800 border-amber-200',
     Desaprobado: 'bg-rose-100 text-rose-800 border-rose-200',
     'En Proceso': 'bg-gray-100 text-gray-800 border-gray-200',
   };
@@ -80,14 +78,9 @@ const NotaCourses: NextPageWithLayout = () => {
     setSelectedShift(e.target.value);
   };
 
-  const handleRowClick = (userId: number) => {
-    router.push(`/supervisor/notasmodule`);
-  };
-
   const getStatus = (finalExamGrade: number) => {
     if (finalExamGrade >= 18) return 'Notable';
-    if (finalExamGrade >= 16) return 'Aprobado';
-    if (finalExamGrade >= 13) return 'Refuerzo';
+    if (finalExamGrade >= 13) return 'Aprobado';
     return 'Desaprobado';
   };
 
@@ -137,21 +130,17 @@ const NotaCourses: NextPageWithLayout = () => {
       });
       setRandomDates(dates);
 
-      let notable = 0,
-        aprobado = 0,
-        refuerzo = 0,
-        desaprobado = 0;
+      let notable = 0, aprobado = 0, desaprobado = 0;
       currentCourseData.forEach((user) => {
         const examGrade = user.CourseResults?.[0]?.puntaje;
         if (examGrade === null || examGrade === undefined) return;
         const status = getStatus(examGrade);
         if (status === 'Notable') notable++;
         else if (status === 'Aprobado') aprobado++;
-        else if (status === 'Refuerzo') refuerzo++;
         else if (status === 'Desaprobado') desaprobado++;
       });
 
-      setStatusCount({ notable, aprobado, refuerzo, desaprobado });
+      setStatusCount({ notable, aprobado, desaprobado });
     }
   }, [currentCourseData]);
 
@@ -299,7 +288,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Aprobados</p>
                       <h3 className="text-2xl font-bold text-blue-600">
-                        {statusCount.aprobado}
+                        {statusCount.notable + statusCount.aprobado}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -345,8 +334,7 @@ const NotaCourses: NextPageWithLayout = () => {
                         return (
                           <div
                             key={userIndex}
-                            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow cursor-pointer transform hover:-translate-y-1"
-                            onClick={() => handleRowClick(user.user_id)}
+                            className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
                           >
                             <div className="p-5">
                               <div className="flex justify-between items-start mb-4">
@@ -381,8 +369,6 @@ const NotaCourses: NextPageWithLayout = () => {
                                         ? 'bg-emerald-500'
                                         : status === 'Aprobado'
                                         ? 'bg-blue-500'
-                                        : status === 'Refuerzo'
-                                        ? 'bg-amber-500'
                                         : 'bg-rose-500'
                                     }`}
                                     style={{
@@ -530,8 +516,7 @@ const NotaCourses: NextPageWithLayout = () => {
                             (user: any, userIndex: number) => (
                               <tr
                                 key={userIndex}
-                                className="hover:bg-gray-50 transition-colors cursor-pointer"
-                                onClick={() => handleRowClick(user.user_id)}
+                                className="hover:bg-gray-50 transition-colors"
                               >
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   <div className="flex items-center">

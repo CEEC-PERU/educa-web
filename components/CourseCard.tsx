@@ -92,31 +92,36 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, redirectPath }) => {
           </button>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="flex justify-center items-center">
-            <CircularBar
-              percentage={parseFloat(course.noProgress.percent)}
-              label={`No inicia (${course.noProgress.count})`}
-            />
+        <div className="flex flex-col gap-2">
+          <div className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex justify-center items-center">
+              <CircularBar
+                percentage={parseFloat(course.noProgress.percent)}
+                label={`No inicia (${course.noProgress.count})`}
+              />
+            </div>
+            <div className="flex justify-center items-center">
+              <CircularBar
+                percentage={parseFloat(course.inProgress.percent)}
+                label={`Progreso (${course.inProgress.count})`}
+              />
+            </div>
+            <div className="flex justify-center items-center">
+              <CircularBar
+                percentage={parseFloat(course.completed.percent)}
+                label={`Finalizado (${course.completed.count})`}
+              />
+            </div>
+            <div className="flex justify-center items-center">
+              <CircularBar
+                percentage={parseFloat(course.approved.percent)}
+                label={`Aprobado (${course.approved.count})`}
+              />
+            </div>
           </div>
-          <div className="flex justify-center items-center">
-            <CircularBar
-              percentage={parseFloat(course.inProgress.percent)}
-              label={`Progreso (${course.inProgress.count})`}
-            />
-          </div>
-          <div className="flex justify-center items-center">
-            <CircularBar
-              percentage={parseFloat(course.completed.percent)}
-              label={`Finalizado (${course.completed.count})`}
-            />
-          </div>
-          <div className="flex justify-center items-center">
-            <CircularBar
-              percentage={parseFloat(course.approved.percent)}
-              label={`Aprobado (${course.approved.count})`}
-            />
-          </div>
+          <p className="text-xs text-gray-400 text-right">
+            * Porcentajes calculados sobre los {course.studentCount} estudiantes del curso
+          </p>
         </div>
       </div>{' '}
     </div>

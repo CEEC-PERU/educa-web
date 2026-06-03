@@ -1,7 +1,8 @@
 import { http } from "@/lib/http/client";
-import { API_COURSES } from "@/utils/Endpoints";
+import { API_COURSES, API_GET_COURSESTUDENT_SUPERVISOR } from "@/utils/Endpoints";
 import type { Course } from "@/interfaces/Courses/Course";
 import type { Module } from "@/interfaces/Module";
+import type { SupervisorCourse } from "@/interfaces/Courses/SupervisorCourse";
 
 export type CourseDraft = Omit<
   Course,
@@ -68,4 +69,11 @@ export async function updateCourse(
 
 export async function deleteCourse(id: string | number): Promise<void> {
   await http.delete(`${API_COURSES}/${id}`);
+}
+
+export async function fetchCoursesBySupervisor(userId: number): Promise<SupervisorCourse[]> {
+  const { data } = await http.get<SupervisorCourse[]>(
+    `${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`,
+  );
+  return data;
 }

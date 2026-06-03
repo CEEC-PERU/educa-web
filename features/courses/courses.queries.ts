@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   fetchCourse,
   fetchCourses,
+  fetchCoursesBySupervisor,
   fetchModulesByCourseId,
 } from "./courses.api";
 import { coursesKeys } from "./courses.query-keys";
@@ -26,5 +27,13 @@ export function useCourseModulesQuery(courseId: number | undefined) {
     queryKey: coursesKeys.modules(courseId ?? ""),
     queryFn: () => fetchModulesByCourseId(courseId as number),
     enabled: typeof courseId === "number",
+  });
+}
+
+export function useCoursesBySupervisorQuery(userId: number | undefined) {
+  return useQuery({
+    queryKey: coursesKeys.supervisor(userId ?? 0),
+    queryFn: () => fetchCoursesBySupervisor(userId as number),
+    enabled: typeof userId === "number",
   });
 }
