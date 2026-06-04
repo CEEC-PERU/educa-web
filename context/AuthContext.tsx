@@ -22,6 +22,11 @@ import axios from "axios";
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
 
+socket.on('reconnect', () => {
+  const token = localStorage.getItem('userToken');
+  if (token) socket.emit('login', { userToken: token });
+});
+
 export const useAuth = () => {
   return useContext(AuthContext);
 };

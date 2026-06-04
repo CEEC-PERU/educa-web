@@ -3,6 +3,10 @@
 //export const baseURL = `https://educa-web-api.onrender.com`;
 export const baseURL = `http://localhost:4100`;
 
+//socket
+//export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
+export const API_SOCKET_URL = `http://localhost:4100`;
+
 // authentication datos
 export const API_AUTH = `${baseURL}/api/auth/signin`;
 
@@ -40,9 +44,6 @@ export const API_VIDEOS = `${baseURL}/api/videos`;
 
 // imagenes
 export const API_IMAGES = `${baseURL}/api/images`;
-
-//socket
-export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
 
 //perfil
 export const API_PROFILE = `${baseURL}/api/profiles/profiles`;
