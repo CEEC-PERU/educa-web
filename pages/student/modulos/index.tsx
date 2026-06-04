@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import SidebarPrueba from "@components/student/SideBarPrueba";
+import CourseSidebar from "@components/student/CourseSidebar";
 import { useAuth } from "@/context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
-import MainContentPrueba from "@components/student/MainContentPrueba";
+import SessionViewer from "@components/student/SessionViewer";
 import { Profile } from "@/interfaces/User/UserInterfaces";
 import { Question, ModuleEvaluation } from "@/interfaces/StudentModule";
 import { useModuleDetail } from "@hooks/useModuleDetail";
@@ -214,7 +214,7 @@ const Home = () => {
     <div className="flex flex-col h-screen">
       <div className="flex flex-grow flex-col lg:flex-row relative">
         <div className={`flex-1 p-4 lg:mr-96 z-0`}>
-          <MainContentPrueba
+          <SessionViewer
             sessionVideo={selectedSession.video}
             sessionId={selectedSession.session_id}
             evaluationQuestions={selectedSession.questions}
@@ -227,12 +227,9 @@ const Home = () => {
             onUpdated={handleEvaluationFinish}
           />
         </div>
-        <SidebarPrueba
+        <CourseSidebar
           courseModules={courseData[0].courseModules}
           courseEvaluation={courseData[0].Evaluation}
-          moduleEvaluations={courseData[0].courseModules.map(
-            (module) => module.moduleEvaluation,
-          )}
           onSelect={handleSelect}
           videoProgress={videoProgress}
         />
