@@ -1,16 +1,17 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import { useRouter } from "next/router";
-import FormField from "../../../components/FormField";
-import UserForm from "../../../components/supervisor/UserForm";
-import Modal from "../../../components/Admin/Modal";
-import ModalConfirmation from "../../../components/ModalConfirmation";
-import { Student } from "../../../interfaces/User/UsuariosSupervisor";
-import { useAuth } from "../../../context/AuthContext";
+import FormField from "@/components/FormField";
+import UserForm from "@/components/supervisor/UserForm";
+import Modal from "@/components/Admin/Modal";
+import ModalConfirmation from "@/components/ModalConfirmation";
+import { Student } from "@/interfaces/User/UsuariosSupervisor";
+import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import {
   UserGroupIcon,
   EyeIcon,
   TrashIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import {
   useClassroomStudentsQuery,
@@ -18,6 +19,7 @@ import {
 } from "@/features/users/users.queries";
 import {
   useDeleteUserMutation,
+  useReactivateUserMutation,
 } from "@/features/users/users.mutations";
 import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
@@ -35,11 +37,19 @@ const Usuarios: NextPageWithLayout = () => {
   const studentsQuery = useClassroomStudentsQuery(userId, enterpriseId);
   const userCountQuery = useUserCountQuery(enterpriseId);
   const deleteUserMutation = useDeleteUserMutation(userId, enterpriseId);
+  const reactivateUserMutation = useReactivateUserMutation(
+    userId,
+    enterpriseId,
+  );
 
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
+  const [showActive, setShowActive] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<Student | null>(null);
+  const [userToReactivate, setUserToReactivate] = useState<Student | null>(
+    null,
+  );
 
   const PAGE_SIZE = 20;
 
@@ -49,13 +59,14 @@ const Usuarios: NextPageWithLayout = () => {
   const filteredStudents =
     studentsQuery.data?.students?.filter(
       (student) =>
-        student.User.userProfile?.first_name
+        student.User.is_active === showActive &&
+        (student.User.userProfile?.first_name
           ?.toLowerCase()
           .includes(filter.toLowerCase()) ||
-        student.User.userProfile?.last_name
-          ?.toLowerCase()
-          .includes(filter.toLowerCase()) ||
-        student.User.dni.includes(filter),
+          student.User.userProfile?.last_name
+            ?.toLowerCase()
+            .includes(filter.toLowerCase()) ||
+          student.User.dni.includes(filter)),
     ) ?? [];
 
   const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE);
@@ -66,7 +77,7 @@ const Usuarios: NextPageWithLayout = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [filter]);
+  }, [filter, showActive]);
 
   const slotsAvailable = userCountResult
     ? Number(userCountResult.maxUserCount) - userCountResult.UserCount
@@ -81,11 +92,23 @@ const Usuarios: NextPageWithLayout = () => {
     if (!userToDelete) return;
     try {
       await deleteUserMutation.mutateAsync(userToDelete.User.user_id);
-      toast.success("Usuario eliminado correctamente.");
+      toast.success("Usuario desactivado correctamente.");
     } catch {
-      toast.error("Error al eliminar el usuario.");
+      toast.error("Error al desactivar el usuario.");
     } finally {
       setUserToDelete(null);
+    }
+  };
+
+  const handleReactivateConfirm = async () => {
+    if (!userToReactivate) return;
+    try {
+      await reactivateUserMutation.mutateAsync(userToReactivate.User.user_id);
+      toast.success("Usuario reactivado correctamente.");
+    } catch {
+      toast.error("Error al reactivar el usuario.");
+    } finally {
+      setUserToReactivate(null);
     }
   };
 
@@ -135,7 +158,29 @@ const Usuarios: NextPageWithLayout = () => {
         )}
       </div>
 
-      {/* Filtro */}
+      <div className="mb-4 flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+        <button
+          onClick={() => setShowActive(true)}
+          className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+            showActive
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Activos
+        </button>
+        <button
+          onClick={() => setShowActive(false)}
+          className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+            !showActive
+              ? "bg-white text-gray-900 shadow-sm"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+        >
+          Inactivos
+        </button>
+      </div>
+
       <div className="mb-6 max-w-sm">
         <FormField
           id="filter"
@@ -147,7 +192,6 @@ const Usuarios: NextPageWithLayout = () => {
         />
       </div>
 
-      {/* Tabla unificada */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
@@ -157,7 +201,11 @@ const Usuarios: NextPageWithLayout = () => {
           <div className="text-center py-16 text-gray-400">
             <UserGroupIcon className="mx-auto h-10 w-10 mb-3 text-gray-300" />
             <p className="text-sm">
-              {filter ? "No se encontraron usuarios con ese criterio." : "No hay usuarios asignados."}
+              {filter
+                ? "No se encontraron usuarios con ese criterio."
+                : showActive
+                  ? "No hay usuarios activos."
+                  : "No hay usuarios inactivos."}
             </p>
           </div>
         ) : (
@@ -166,40 +214,57 @@ const Usuarios: NextPageWithLayout = () => {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12" />
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Apellido</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DNI</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Perfil</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nombre
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Apellido
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    DNI
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Perfil
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {paginatedStudents.map((student) => {
                   const profile = student.User.userProfile;
                   return (
-                    <tr key={student.User.user_id} className="hover:bg-gray-50 transition-colors">
+                    <tr
+                      key={student.User.user_id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
                       <td className="px-4 py-3">
-                        {profile?.profile_picture ? (
-                          <img
-                            src={profile.profile_picture}
-                            alt="Foto"
-                            className="h-9 w-9 rounded-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).src =
-                                "https://res.cloudinary.com/dk2red18f/image/upload/v1713896612/CEEC/PERFIL/egwjjcrs2aon5hhtxabj.png";
-                            }}
-                          />
-                        ) : (
-                          <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center">
+                        <div className="h-9 w-9 shrink-0 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                          {profile?.profile_picture ? (
+                            <img
+                              src={profile.profile_picture}
+                              alt="Foto"
+                              className="h-full w-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src =
+                                  "https://res.cloudinary.com/dk2red18f/image/upload/v1713896612/CEEC/PERFIL/egwjjcrs2aon5hhtxabj.png";
+                              }}
+                            />
+                          ) : (
                             <UserGroupIcon className="h-5 w-5 text-gray-400" />
-                          </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-900 uppercase">
+                        {profile?.first_name ?? (
+                          <span className="text-gray-300 normal-case">—</span>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-900 uppercase">
-                        {profile?.first_name ?? <span className="text-gray-300 normal-case">—</span>}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-900 uppercase">
-                        {profile?.last_name ?? <span className="text-gray-300 normal-case">—</span>}
+                        {profile?.last_name ?? (
+                          <span className="text-gray-300 normal-case">—</span>
+                        )}
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-700 font-mono">
                         {student.User.dni}
@@ -220,7 +285,9 @@ const Usuarios: NextPageWithLayout = () => {
                           {profile && (
                             <button
                               onClick={() =>
-                                router.push(`/supervisor/usuarios/view-user/${student.User.user_id}`)
+                                router.push(
+                                  `/supervisor/usuarios/view-user/${student.User.user_id}`,
+                                )
                               }
                               className="text-blue-500 hover:text-blue-700 transition-colors"
                               title="Ver perfil"
@@ -228,13 +295,23 @@ const Usuarios: NextPageWithLayout = () => {
                               <EyeIcon className="h-4 w-4" />
                             </button>
                           )}
-                          <button
-                            onClick={() => setUserToDelete(student)}
-                            className="text-red-400 hover:text-red-600 transition-colors"
-                            title="Eliminar"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
+                          {student.User.is_active ? (
+                            <button
+                              onClick={() => setUserToDelete(student)}
+                              className="text-red-400 hover:text-red-600 transition-colors"
+                              title="Desactivar"
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => setUserToReactivate(student)}
+                              className="text-green-500 hover:text-green-700 transition-colors"
+                              title="Reactivar"
+                            >
+                              <ArrowPathIcon className="h-4 w-4" />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -245,11 +322,12 @@ const Usuarios: NextPageWithLayout = () => {
           </div>
         )}
 
-        {/* Paginación */}
         {!isLoading && filteredStudents.length > PAGE_SIZE && (
           <div className="flex items-center justify-between px-4 py-3 border-t border-gray-200">
             <p className="text-sm text-gray-500">
-              {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filteredStudents.length)} de {filteredStudents.length} usuarios
+              {page * PAGE_SIZE + 1}–
+              {Math.min((page + 1) * PAGE_SIZE, filteredStudents.length)} de{" "}
+              {filteredStudents.length} usuarios
             </p>
             <div className="flex items-center gap-1">
               <button
@@ -284,7 +362,6 @@ const Usuarios: NextPageWithLayout = () => {
         )}
       </div>
 
-      {/* Modal registro */}
       <Modal
         show={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -300,11 +377,19 @@ const Usuarios: NextPageWithLayout = () => {
         )}
       </Modal>
 
-      {/* Modal confirmación eliminación */}
       <ModalConfirmation
         show={!!userToDelete}
         onClose={() => setUserToDelete(null)}
         onConfirm={handleDeleteConfirm}
+      />
+
+      <ModalConfirmation
+        show={!!userToReactivate}
+        onClose={() => setUserToReactivate(null)}
+        onConfirm={handleReactivateConfirm}
+        message="¿Estás seguro que deseas reactivar este usuario?"
+        confirmLabel="Sí, reactivar"
+        confirmClassName="text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
       />
     </>
   );
