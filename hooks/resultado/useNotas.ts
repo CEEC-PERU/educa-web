@@ -116,7 +116,7 @@ export const useNotasSupervisor = (course_id: number) => {
   //useEffect
   useEffect(() => {
     const fetchCourseDetail = async () => {
-      if (!token) {
+      if (!token || !course_id || isNaN(course_id)) {
         return;
       }
       setIsLoading(true);
@@ -167,7 +167,7 @@ export const useNotasSupervisorClassroom = (
   // Definir fetchCourseDetail como una función reutilizable
   const fetchCourseDetail = useCallback(
     async (updatedClassroomId?: number) => {
-      if (!token) {
+      if (!token || !course_id || isNaN(course_id) || !(updatedClassroomId ?? classroom_id)) {
         return;
       }
       setIsLoading(true);

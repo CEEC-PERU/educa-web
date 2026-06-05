@@ -3,8 +3,6 @@ import dynamic from 'next/dynamic';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Corporate/CorporateSideBar';
 import useDownloadNotas from '../../../hooks/notas/useDownloadNotas';
-import useDownloadWordReport from '../../../hooks/notas/useDonwloadWord';
-import DownloadWordButton from '../../../components/Corporate/ButtonDownload';
 import { useClassroom } from '../../../hooks/useClassroom';
 import { useNotas, useNotasClassroom } from '../../../hooks/resultado/useNotas';
 import { StatCard } from '../../../components/StatCard';
@@ -120,8 +118,6 @@ const NotaCourses: React.FC = () => {
     classroomId
   );
   const { downloadNotas } = useDownloadNotas();
-  const { downloadWordReport, isDownloading, error, clearError } =
-    useDownloadWordReport();
 
   // Current data based on classroom selection
   const currentCourseData = selectedClassroom
@@ -188,15 +184,6 @@ const NotaCourses: React.FC = () => {
   const handleClassroomChange = async (value: string) => {
     setSelectedClassroom(value);
     await fetchCourseDetail(Number(value));
-  };
-
-  // Función para manejar descarga de informe Word
-  const handleDownloadWordReport = async () => {
-    const success = await downloadWordReport(20, 103);
-
-    if (success) {
-      console.log('Informe descargado exitosamente');
-    }
   };
 
   // Chart data
@@ -267,10 +254,6 @@ const NotaCourses: React.FC = () => {
                       loading={isLoading}
                     />
 
-                    <DownloadWordButton
-                      onClick={handleDownloadWordReport}
-                      loading={isDownloading}
-                    />
                   </div>
                 </div>
               </div>

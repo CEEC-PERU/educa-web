@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useClassroom } from '../../../hooks/useClassroom';
-import FormField from '../../../components/FormField';
 import { useAuth } from '../../../context/AuthContext';
 import {
   useNotasSupervisor,
@@ -10,7 +8,6 @@ import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
-import { useShifts } from '@/hooks/useShifts';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import {
   FiDownload,
@@ -28,20 +25,14 @@ import type { NextPageWithLayout } from '../../../types/next';
 
 const NotaCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { course_id } = router.query;
   const { classrooms } = useClassroomBySupervisor();
-  const { shifts } = useShifts();
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
     : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
-  const userInfo = user as { id: number; enterprise_id: number };
-  const [randomSessions, setRandomSessions] = useState<number[]>([]);
-  const [randomDates, setRandomDates] = useState<
-    { startDate: Date; endDate: Date }[]
-  >([]);
+  const userInfo = user as { id: number; enterprise_id: number } | null;
   const [statusCount, setStatusCount] = useState({
     notable: 0,
     aprobado: 0,
@@ -52,7 +43,6 @@ const NotaCourses: NextPageWithLayout = () => {
   const classroomId = Number(selectedClassroom);
   const { courseNotaClassroom, fetchCourseDetail } =
     useNotasSupervisorClassroom(courseIdNumber, classroomId);
-  const [selectedShift, setSelectedShift] = useState('');
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -70,14 +60,6 @@ const NotaCourses: NextPageWithLayout = () => {
     await fetchCourseDetail(updatedClassroomId);
   };
 
-  const handleShiftChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    setSelectedShift(e.target.value);
-  };
-
   const getStatus = (finalExamGrade: number) => {
     if (finalExamGrade >= 18) return 'Notable';
     if (finalExamGrade >= 13) return 'Aprobado';
@@ -87,7 +69,7 @@ const NotaCourses: NextPageWithLayout = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `${API_GET_NOTAS_EXCEL}/${userInfo.enterprise_id}/${courseIdNumber}`,
+        `${API_GET_NOTAS_EXCEL}/${userInfo?.enterprise_id}/${courseIdNumber}`,
         { responseType: 'blob' }
       );
 
@@ -116,20 +98,6 @@ const NotaCourses: NextPageWithLayout = () => {
 
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
-      const sessions = currentCourseData.map(
-        () => Math.floor(Math.random() * 5) + 1
-      );
-      setRandomSessions(sessions);
-
-      const dates = currentCourseData.map(() => {
-        const startDate = new Date(2024, 8, 11);
-        const randomEndOffset = Math.floor(Math.random() * 3);
-        const endDate = new Date(startDate);
-        endDate.setDate(startDate.getDate() + randomEndOffset);
-        return { startDate, endDate };
-      });
-      setRandomDates(dates);
-
       let notable = 0, aprobado = 0, desaprobado = 0;
       currentCourseData.forEach((user) => {
         const examGrade = user.CourseResults?.[0]?.puntaje;
@@ -143,14 +111,6 @@ const NotaCourses: NextPageWithLayout = () => {
       setStatusCount({ notable, aprobado, desaprobado });
     }
   }, [currentCourseData]);
-
-  const formatDate = (date: Date) => {
-    return `${date.getDate().toString().padStart(2, '0')}/${(
-      date.getMonth() + 1
-    )
-      .toString()
-      .padStart(2, '0')}/${date.getFullYear()}`;
-  };
 
   return (
     <>
@@ -313,7 +273,7 @@ const NotaCourses: NextPageWithLayout = () => {
               </div>
 
               {/* Contenido principal */}
-              {loading ? (
+              {isLoading ? (
                 <div className="flex justify-center items-center h-64">
                   <Loader />
                 </div>
@@ -322,14 +282,23 @@ const NotaCourses: NextPageWithLayout = () => {
                   {viewMode === 'cards' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                       {filteredStudents?.map((user: any, userIndex: number) => {
-                        const finalGrade = Math.max(
-                          user.CourseResults?.[0]?.puntaje || 0,
-                          user.CourseResults?.[1]?.puntaje || 0
-                        );
-                        const status =
-                          user.CourseResults?.length > 0
-                            ? getStatus(finalGrade)
-                            : 'En Proceso';
+                        const finalGrade = user.CourseResults?.length > 0
+                          ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
+                          : 0;
+                        const status = user.CourseResults?.length > 0
+                          ? getStatus(finalGrade)
+                          : 'En Proceso';
+                        const progress = user.CourseStudents?.[0]?.progress ?? 0;
+                        const lastEvaluatedModule = user.ModuleResults?.length > 0
+                          ? user.ModuleResults[user.ModuleResults.length - 1]
+                          : null;
+                        const moduleLabel = progress === 100
+                          ? 'Curso completado'
+                          : lastEvaluatedModule
+                          ? `En o después de: ${lastEvaluatedModule.module_name}`
+                          : progress > 0
+                          ? 'Módulo inicial (sin evaluaciones)'
+                          : 'No ha iniciado';
 
                         return (
                           <div
@@ -354,13 +323,19 @@ const NotaCourses: NextPageWithLayout = () => {
                                 </div>
                               </div>
 
+                              {/* Módulo estimado */}
+                              <div className="flex items-center gap-1 mb-3 text-xs text-gray-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                <span className="truncate" title={moduleLabel}>{moduleLabel}</span>
+                              </div>
+
                               {/* Barra de progreso */}
                               <div className="mb-4">
-                                <div className="flex justify-betweesn text-sm text-gray-600 mb-1">
+                                <div className="flex justify-between text-sm text-gray-600 mb-1">
                                   <span>Progreso</span>
-                                  <span>
-                                    {user.CourseStudents?.[0]?.progress} %
-                                  </span>
+                                  <span>{progress} %</span>
                                 </div>
                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                   <div
@@ -369,11 +344,11 @@ const NotaCourses: NextPageWithLayout = () => {
                                         ? 'bg-emerald-500'
                                         : status === 'Aprobado'
                                         ? 'bg-blue-500'
-                                        : 'bg-rose-500'
+                                        : status === 'Desaprobado'
+                                        ? 'bg-rose-500'
+                                        : 'bg-gray-400'
                                     }`}
-                                    style={{
-                                      width: `${user.CourseStudents[0].progress}%`,
-                                    }}
+                                    style={{ width: `${progress}%` }}
                                   ></div>
                                 </div>
                               </div>
@@ -503,12 +478,6 @@ const NotaCourses: NextPageWithLayout = () => {
                             >
                               Fin
                             </th>
-                            <th
-                              scope="col"
-                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >
-                              Sesiones
-                            </th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -556,37 +525,24 @@ const NotaCourses: NextPageWithLayout = () => {
                                   }
                                 )}
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  {Math.max(
-                                    user.CourseResults?.[0]?.puntaje || 0,
-                                    user.CourseResults?.[1]?.puntaje || 0
-                                  ) || '-'}
+                                  {user.CourseResults?.length > 0
+                                    ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
+                                    : '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                  <span
-                                    className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                      statusStyles[
-                                        getStatus(
-                                          Math.max(
-                                            user.CourseResults?.[0]?.puntaje ||
-                                              0,
-                                            user.CourseResults?.[1]?.puntaje ||
-                                              0
-                                          )
-                                        )
-                                      ]
-                                    }`}
-                                  >
-                                    {user.CourseResults?.length > 0
-                                      ? getStatus(
-                                          Math.max(
-                                            user.CourseResults?.[0]?.puntaje ||
-                                              0,
-                                            user.CourseResults?.[1]?.puntaje ||
-                                              0
-                                          )
-                                        )
-                                      : 'En Proceso'}
-                                  </span>
+                                  {(() => {
+                                    const grade = user.CourseResults?.length > 0
+                                      ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
+                                      : 0;
+                                    const rowStatus = user.CourseResults?.length > 0
+                                      ? getStatus(grade)
+                                      : 'En Proceso';
+                                    return (
+                                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusStyles[rowStatus]}`}>
+                                        {rowStatus}
+                                      </span>
+                                    );
+                                  })()}
                                 </td>
 
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -610,9 +566,6 @@ const NotaCourses: NextPageWithLayout = () => {
                                         year: 'numeric',
                                       })
                                     : 'En progreso'}
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                  {randomSessions[userIndex] || '-'}
                                 </td>
                               </tr>
                             )
