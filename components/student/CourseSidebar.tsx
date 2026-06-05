@@ -82,7 +82,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
   videoProgress = {},
 }) => {
   const { user } = useAuth();
-  const userInfo = user as { id: number };
+  const userId = (user as { id: number } | null)?.id ?? 0;
   const [lockedClickedId, setLockedClickedId] = useState<string | null>(null);
 
   const getSessionProgress = (
@@ -91,7 +91,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
   ) => {
     const dbProgress =
       session.find(
-        (p) => p.session_id === sessionId && p.user_id === userInfo.id,
+        (p) => p.session_id === sessionId && p.user_id === userId,
       )?.progress || 0;
     return Math.max(dbProgress, videoProgress[sessionId] || 0);
   };

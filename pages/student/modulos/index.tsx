@@ -14,7 +14,7 @@ const Home = () => {
   const { user } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
-  const userId = (user as { id: number }).id;
+  const userId = (user as { id: number } | null)?.id ?? 0;
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
     : parseInt(course_id || "0");
@@ -76,7 +76,7 @@ const Home = () => {
     };
 
     const handleEndSession = () => {
-      if (sent) return;
+      if (sent || !userId) return;
       sent = true;
       clearInterval(interval!);
       createCourseTimeStartRef.current({

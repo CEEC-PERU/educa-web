@@ -14,8 +14,8 @@ const PresentationViewer: React.FC<PresentationViewerProps> = ({
   onCascadeResult,
 }) => {
   const { user } = useAuth();
-  const userInfo = user as { id: number };
-  const { sendProgress, cascadeResult } = useSessionProgress(sessionId, userInfo.id);
+  const userId = (user as { id: number } | null)?.id ?? 0;
+  const { sendProgress, cascadeResult } = useSessionProgress(sessionId, userId);
   const sentRef = useRef(false);
 
   const onCascadeResultRef = useRef(onCascadeResult);

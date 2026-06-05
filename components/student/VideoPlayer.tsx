@@ -25,10 +25,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const currentTimeRef = useRef(0);
 
   const { user } = useAuth();
-  const userInfo = user as { id: number };
+  const userId = (user as { id: number } | null)?.id ?? 0;
 
   const { sendProgress, sendProgressDebounced, cascadeResult } =
-    useSessionProgress(sessionId, userInfo.id);
+    useSessionProgress(sessionId, userId);
 
   const onCascadeResultRef = useRef(onCascadeResult);
   onCascadeResultRef.current = onCascadeResult;
