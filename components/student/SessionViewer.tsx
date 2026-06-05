@@ -1,5 +1,6 @@
 import React from 'react';
 import { Question, ModuleResults, CourseResults } from '../../interfaces/StudentModule';
+import { CascadeResult } from '@/hooks/useSessionProgress';
 import PresentationViewer from './PresentationViewer';
 import VideoPlayer from './VideoPlayer';
 import QuizPlayer from './QuizPlayer';
@@ -9,8 +10,9 @@ interface SessionViewerProps {
   sessionId?: number;
   evaluationQuestions?: Question[];
   onUpdated?: () => void;
-  onProgress?: (progress: number, isCompleted: boolean) => void;
+  onCascadeResult?: (result: CascadeResult) => void;
   videoProgress?: number;
+  sessionCompleted?: boolean;
   selectedModuleId?: number | null;
   moduleResults?: ModuleResults[];
   courseResults?: CourseResults[];
@@ -21,8 +23,9 @@ const SessionViewer: React.FC<SessionViewerProps> = ({
   sessionId,
   evaluationQuestions,
   onUpdated,
-  onProgress,
+  onCascadeResult,
   videoProgress = 0,
+  sessionCompleted = false,
   selectedModuleId,
   moduleResults,
   courseResults,
@@ -35,7 +38,7 @@ const SessionViewer: React.FC<SessionViewerProps> = ({
             key={sessionVideo}
             src={sessionVideo}
             sessionId={sessionId}
-            onProgress={onProgress}
+            onCascadeResult={onCascadeResult}
           />
         </div>
       );
@@ -46,8 +49,9 @@ const SessionViewer: React.FC<SessionViewerProps> = ({
           key={sessionVideo}
           src={sessionVideo}
           sessionId={sessionId}
-          onProgress={onProgress}
+          onCascadeResult={onCascadeResult}
           videoProgress={videoProgress}
+          sessionCompleted={sessionCompleted}
         />
       </div>
     );

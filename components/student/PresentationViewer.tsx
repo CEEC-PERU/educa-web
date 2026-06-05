@@ -1,44 +1,41 @@
 import React, { useEffect, useRef } from 'react';
-import { useSesionProgress } from '../../hooks/useProgressSession';
-import { useAuth } from '../../context/AuthContext';
+import { useSessionProgress, CascadeResult } from '@/hooks/useSessionProgress';
+import { useAuth } from '@/context/AuthContext';
 
 interface PresentationViewerProps {
   src: string;
   sessionId?: number;
-  onProgress?: (progress: number, isCompleted: boolean) => void;
+  onCascadeResult?: (result: CascadeResult) => void;
 }
 
 const PresentationViewer: React.FC<PresentationViewerProps> = ({
   src,
   sessionId,
-  onProgress,
+  onCascadeResult,
 }) => {
-  const { createSession_Progress } = useSesionProgress();
   const { user } = useAuth();
   const userInfo = user as { id: number };
-  const isProgressSent = useRef(false);
+  const { sendProgress, cascadeResult } = useSessionProgress(sessionId, userInfo.id);
+  const sentRef = useRef(false);
+
+  const onCascadeResultRef = useRef(onCascadeResult);
+  onCascadeResultRef.current = onCascadeResult;
 
   useEffect(() => {
-    isProgressSent.current = false;
+    sentRef.current = false;
   }, [sessionId, src]);
 
   useEffect(() => {
-    if (!sessionId || isProgressSent.current) return;
+    if (!sessionId || sentRef.current) return;
+    sentRef.current = true;
+    sendProgress(100, true);
+  }, [sessionId, src, sendProgress]);
 
-    const sendProgress = async () => {
-      await createSession_Progress({
-        session_id: sessionId,
-        progress: 100,
-        is_completed: true,
-        user_id: userInfo.id,
-      });
-      if (onProgress) onProgress(100, true);
-      isProgressSent.current = true;
-    };
-
-    sendProgress();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionId, src]);
+  useEffect(() => {
+    if (cascadeResult) {
+      onCascadeResultRef.current?.(cascadeResult);
+    }
+  }, [cascadeResult]);
 
   return (
     <div className="flex flex-col items-center h-full">

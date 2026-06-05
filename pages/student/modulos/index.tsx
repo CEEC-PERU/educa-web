@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/router";
 import CourseSidebar from "@components/student/CourseSidebar";
 import { useAuth } from "@/context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
 import SessionViewer from "@components/student/SessionViewer";
-import { Profile } from "@/interfaces/User/UserInterfaces";
 import { Question, ModuleEvaluation } from "@/interfaces/StudentModule";
 import { useModuleDetail } from "@hooks/useModuleDetail";
 import { useCourseTime } from "@hooks/courses/useCourseTime";
+import { CascadeResult } from "@hooks/useSessionProgress";
 import LoadingIndicator from "@components/student/LoadingIndicator";
 
 const Home = () => {
-  const { logout, user, profileInfo } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
-  const userInfo = user as { id: number };
+  const userId = (user as { id: number }).id;
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
     : parseInt(course_id || "0");
@@ -26,19 +26,15 @@ const Home = () => {
     questions?: Question[];
     session_id?: number;
     module_id?: number;
+    progress?: number;
+    isCompleted?: boolean;
   }>({});
   const [videoProgress, setVideoProgress] = useState<{ [key: string]: number }>(
     {},
   );
   const { createCourseTimeStart } = useCourseTime();
-  let name = "";
-  let uri_picture = "";
-
-  if (profileInfo) {
-    const profile = profileInfo as Profile;
-    name = profile.first_name;
-    uri_picture = profile.profile_picture!;
-  }
+  const createCourseTimeStartRef = useRef(createCourseTimeStart);
+  createCourseTimeStartRef.current = createCourseTimeStart;
 
   useEffect(() => {
     if (
@@ -46,95 +42,71 @@ const Home = () => {
       courseData.length > 0 &&
       courseData[0].courseModules.length > 0
     ) {
-      // Obtener el primer módulo
       const firstModule = courseData[0].courseModules[0];
 
-      // Verificar si el módulo tiene sesiones
       if (firstModule.moduleSessions && firstModule.moduleSessions.length > 0) {
         const firstSession = firstModule.moduleSessions[0];
+        const savedProgress = firstSession.usersessionprogress.find(
+          (p) => p.user_id === userId,
+        );
 
-        // Seleccionar automáticamente la primera sesión
         setSelectedModuleId(firstModule.module_id);
         setSelectedSession({
           video: firstSession.video_enlace,
           session_id: firstSession.session_id,
           module_id: firstModule.module_id,
+          progress: savedProgress?.progress ?? 0,
+          isCompleted: savedProgress?.is_completed ?? false,
         });
       }
     }
   }, [courseData]);
 
   useEffect(() => {
-    let timer = 0; // Contador en segundos
-    const startTime = new Date(); // Hora exacta de inicio
-
-    console.log("Inicio del curso:", startTime);
-
+    let timer = 0;
+    const startTime = new Date();
     let interval: NodeJS.Timeout | null = null;
-    let isPageVisible = true; // Flag para verificar si la página es visible
+    let isPageVisible = true;
+    let sent = false;
 
     const startTimer = () => {
-      // Incrementar el timer cada segundo
       interval = setInterval(() => {
-        if (isPageVisible) {
-          // Solo incrementar si la página está visible
-          timer += 1;
-          console.log("Tiempo transcurrido (segundos):", timer);
-        }
+        if (isPageVisible) timer += 1;
       }, 1000);
     };
 
     const handleEndSession = () => {
-      const endTime = new Date(); // Hora exacta de finalización
-      clearInterval(interval!); // Detener el timer
-
-      console.log("Fin del curso:", endTime);
-      console.log("Duración total (segundos):", timer);
-
-      // Llamada al backend para registrar el tiempo de la sesión
-      createCourseTimeStart({
+      if (sent) return;
+      sent = true;
+      clearInterval(interval!);
+      createCourseTimeStartRef.current({
         course_id: courseIdNumber,
-        user_id: userInfo.id,
+        user_id: userId,
         startTime: startTime,
-        endTime: endTime,
-        duration: timer, // Incluye el tiempo transcurrido
+        endTime: new Date(),
+        duration: timer,
       }).catch((error: any) =>
         console.error("Error al registrar el tiempo de inicio:", error),
       );
     };
 
-    // Cuando la página gana o pierde visibilidad
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        // Si la pestaña pierde visibilidad, no incrementar el tiempo
-        isPageVisible = false;
-      } else {
-        // Si la pestaña gana visibilidad, reanudar el temporizador
-        isPageVisible = true;
-      }
+      isPageVisible = document.visibilityState !== "hidden";
     };
 
-    // Detectar cuando el usuario navega hacia atrás o adelante en el historial
-    const handlePopState = () => {
-      handleEndSession(); // Llamar a la función para finalizar la sesión cuando retroceda de página
-    };
-
-    // Empezar el temporizador
     startTimer();
 
-    // Registrar la finalización al cerrar la ventana
     window.addEventListener("beforeunload", handleEndSession);
+    window.addEventListener("popstate", handleEndSession);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("popstate", handlePopState); // Detectar retroceso en el historial
 
-    // Cleanup para eliminar el intervalo y el listener
     return () => {
-      clearInterval(interval!); // Limpiar el intervalo
+      handleEndSession();
       window.removeEventListener("beforeunload", handleEndSession);
+      window.removeEventListener("popstate", handleEndSession);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("popstate", handlePopState); // Eliminar el listener del retroceso
     };
-  }, [courseIdNumber, userInfo, createCourseTimeStart]);
+  }, [courseIdNumber, userId]);
 
   const handleSelect = (
     sessionName: string,
@@ -162,37 +134,33 @@ const Home = () => {
         );
 
         if (session) {
+          const savedProgress = session.usersessionprogress.find(
+            (p) => p.user_id === userId,
+          );
+
           setSelectedSession({
             video: session.video_enlace,
             session_id: session.session_id,
             module_id: moduleId,
+            progress: savedProgress?.progress ?? 0,
+            isCompleted: savedProgress?.is_completed ?? false,
           });
         }
       }
     }
   };
 
-  const handleVideoProgress = async (
-    progress: number,
-    isCompleted: boolean,
-  ) => {
-    const progressUpdate = Math.round(progress);
-
-    if (selectedSession.video && selectedSession.session_id) {
-      const sessionProgress = {
-        session_id: selectedSession.session_id,
-        progress: progressUpdate,
-        is_completed: isCompleted,
-        user_id: userInfo.id,
-      };
-
-      // Actualizar el estado local para reflejar el progreso
-      setVideoProgress((prevProgress) => ({
-        ...prevProgress,
-        [selectedSession.session_id!]: progressUpdate,
-      }));
-    }
-  };
+  const handleCascadeResult = useCallback(
+    (result: CascadeResult) => {
+      if (selectedSession.session_id) {
+        setVideoProgress((prev) => ({
+          ...prev,
+          [selectedSession.session_id!]: result.sessionProgress,
+        }));
+      }
+    },
+    [selectedSession.session_id],
+  );
 
   if (isLoading) {
     return <LoadingIndicator />;
@@ -218,7 +186,9 @@ const Home = () => {
             sessionVideo={selectedSession.video}
             sessionId={selectedSession.session_id}
             evaluationQuestions={selectedSession.questions}
-            onProgress={handleVideoProgress}
+            onCascadeResult={handleCascadeResult}
+            videoProgress={selectedSession.progress ?? 0}
+            sessionCompleted={selectedSession.isCompleted ?? false}
             selectedModuleId={selectedModuleId}
             moduleResults={courseData[0].courseModules.flatMap(
               (module) => module.ModuleResults,
