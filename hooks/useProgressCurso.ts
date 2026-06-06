@@ -1,26 +1,27 @@
 import { useState, useEffect } from 'react';
-import { fetchCourseProgress } from '../services/dashboardCorporative';
+import { fetchCourseProgressSupervisor } from '../services/dashboardCorporative';
 import { CourseProgress } from '../interfaces/dashboard';
 import { useAuth } from '../context/AuthContext';
 
 export const useCourseProgress = (selectedCourseId?: number) => {
-  const [courseProgressData, setCourseProgressData] = useState<
-    CourseProgress[]
-  >([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [courseProgressData, setCourseProgressData] = useState<CourseProgress[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const { user, token } = useAuth();
-  const userInfo = user as { id: number; enterprise_id: number };
+  const { token } = useAuth();
 
   useEffect(() => {
+    if (!token) return;
+
+    if (selectedCourseId === undefined) {
+      setCourseProgressData([]);
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchCourseProgress(
-          selectedCourseId,
-          userInfo.enterprise_id
-        );
+        const data = await fetchCourseProgressSupervisor(token, selectedCourseId);
         setCourseProgressData(data);
       } catch (err) {
         setError('Error al obtener los datos del progreso del curso.');
@@ -30,7 +31,7 @@ export const useCourseProgress = (selectedCourseId?: number) => {
     };
 
     fetchData();
-  }, [selectedCourseId]);
+  }, [token, selectedCourseId]);
 
   return { courseProgressData, loading, error };
 };
