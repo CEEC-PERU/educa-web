@@ -45,6 +45,7 @@ const NotaCourses: NextPageWithLayout = () => {
     useNotasSupervisorClassroom(courseIdNumber, classroomId);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState('');
+  const [segment, setSegment] = useState<'all' | 'training' | 'completed'>('all');
 
   // Estilos modernos para los estados
   const statusStyles = {
@@ -88,12 +89,16 @@ const NotaCourses: NextPageWithLayout = () => {
     ? courseNotaClassroom
     : courseNota;
 
-  // Filtrar estudiantes basado en el término de búsqueda
   const filteredStudents = currentCourseData?.filter((user: any) => {
     const fullName = `${user?.userProfile?.first_name || ''} ${
       user?.userProfile?.last_name || ''
     }`.toLowerCase();
-    return fullName.includes(searchTerm.toLowerCase());
+    if (!fullName.includes(searchTerm.toLowerCase())) return false;
+    if (segment === 'all') return true;
+    const cs = user.CourseStudents?.[0];
+    if (!cs) return false;
+    if (segment === 'completed') return cs.finished_date != null || cs.progress >= 100;
+    return cs.finished_date == null && cs.progress < 100;
   });
 
   useEffect(() => {
@@ -213,8 +218,29 @@ const NotaCourses: NextPageWithLayout = () => {
                 </div>
               </div>
 
+              {/* Segmentación */}
+              <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+                {([
+                  { value: 'all', label: 'Todos' },
+                  { value: 'training', label: 'En formación' },
+                  { value: 'completed', label: 'Formados' },
+                ] as const).map(({ value, label }) => (
+                  <button
+                    key={value}
+                    onClick={() => setSegment(value)}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                      segment === value
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
               {/* Resumen estadístico */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {segment !== 'training' && <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-center">
                     <div>
@@ -270,7 +296,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>}
 
               {/* Contenido principal */}
               {isLoading ? (
