@@ -79,6 +79,13 @@ export function useStudentVerificationFlow() {
     };
   }, [cameraStream]);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !cameraStream) return;
+    video.srcObject = cameraStream;
+    video.play().catch(() => {});
+  }, [cameraStream]);
+
   const close = useCallback(() => {
     cameraStream?.getTracks().forEach((t) => t.stop());
     setCameraStream(null);
@@ -88,13 +95,13 @@ export function useStudentVerificationFlow() {
   const startCamera = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 1280, height: 720 },
+        video: {
+          facingMode: "user",
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
       });
       setCameraStream(stream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.play();
-      }
     } catch (error) {
       if (error instanceof Error) {
         if (
