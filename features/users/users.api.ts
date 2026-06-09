@@ -3,6 +3,7 @@ import {
   API_USER,
   API_USERU,
   API_USERCOUNT,
+  API_RESET_PASSWORD,
 } from "@/utils/Endpoints";
 import type { StudentData } from "@/interfaces/User/UsuariosSupervisor";
 import type { UserCount } from "@/interfaces/User/UserCount";
@@ -41,4 +42,8 @@ export async function reactivateUser(userId: number): Promise<void> {
 export async function fetchUserById(userId: number): Promise<unknown> {
   const { data } = await http.get(`${API_USER}/users/${userId}`);
   return data;
+}
+
+export async function resetUserPassword(userId: number): Promise<void> {
+  await http.put(`${API_RESET_PASSWORD}/${userId}`);
 }

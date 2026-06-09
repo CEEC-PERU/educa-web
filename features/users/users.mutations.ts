@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AppError } from "@/lib/http/error";
-import { createUser, deleteUser, reactivateUser } from "./users.api";
+import { createUser, deleteUser, reactivateUser, resetUserPassword } from "./users.api";
 import { usersKeys } from "./users.query-keys";
 
 export function useCreateUserMutation(
@@ -55,6 +55,22 @@ export function useReactivateUserMutation(
       });
       queryClient.invalidateQueries({
         queryKey: usersKeys.count(enterpriseId ?? 0),
+      });
+    },
+  });
+}
+
+export function useResetPasswordMutation(
+  userId: number | undefined,
+  enterpriseId: number | undefined,
+) {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, AppError, number>({
+    mutationFn: resetUserPassword,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.classroom(userId ?? 0, enterpriseId ?? 0),
       });
     },
   });

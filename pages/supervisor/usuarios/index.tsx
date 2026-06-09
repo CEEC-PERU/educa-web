@@ -12,6 +12,7 @@ import {
   EyeIcon,
   TrashIcon,
   ArrowPathIcon,
+  KeyIcon,
 } from "@heroicons/react/24/outline";
 import {
   useClassroomStudentsQuery,
@@ -20,6 +21,7 @@ import {
 import {
   useDeleteUserMutation,
   useReactivateUserMutation,
+  useResetPasswordMutation,
 } from "@/features/users/users.mutations";
 import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
@@ -37,19 +39,16 @@ const Usuarios: NextPageWithLayout = () => {
   const studentsQuery = useClassroomStudentsQuery(userId, enterpriseId);
   const userCountQuery = useUserCountQuery(enterpriseId);
   const deleteUserMutation = useDeleteUserMutation(userId, enterpriseId);
-  const reactivateUserMutation = useReactivateUserMutation(
-    userId,
-    enterpriseId,
-  );
+  const reactivateUserMutation = useReactivateUserMutation(userId, enterpriseId);
+  const resetPasswordMutation = useResetPasswordMutation(userId, enterpriseId);
 
   const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
   const [showActive, setShowActive] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<Student | null>(null);
-  const [userToReactivate, setUserToReactivate] = useState<Student | null>(
-    null,
-  );
+  const [userToReactivate, setUserToReactivate] = useState<Student | null>(null);
+  const [userToReset, setUserToReset] = useState<Student | null>(null);
 
   const PAGE_SIZE = 20;
 
@@ -97,6 +96,18 @@ const Usuarios: NextPageWithLayout = () => {
       toast.error("Error al desactivar el usuario.");
     } finally {
       setUserToDelete(null);
+    }
+  };
+
+  const handleResetPasswordConfirm = async () => {
+    if (!userToReset) return;
+    try {
+      await resetPasswordMutation.mutateAsync(userToReset.User.user_id);
+      toast.success("Contraseña restablecida al DNI del usuario.");
+    } catch {
+      toast.error("Error al restablecer la contraseña.");
+    } finally {
+      setUserToReset(null);
     }
   };
 
@@ -295,6 +306,15 @@ const Usuarios: NextPageWithLayout = () => {
                               <EyeIcon className="h-4 w-4" />
                             </button>
                           )}
+                          {student.User.is_active && profile && (
+                            <button
+                              onClick={() => setUserToReset(student)}
+                              className="text-amber-500 hover:text-amber-700 transition-colors"
+                              title="Restablecer contraseña"
+                            >
+                              <KeyIcon className="h-4 w-4" />
+                            </button>
+                          )}
                           {student.User.is_active ? (
                             <button
                               onClick={() => setUserToDelete(student)}
@@ -390,6 +410,15 @@ const Usuarios: NextPageWithLayout = () => {
         message="¿Estás seguro que deseas reactivar este usuario?"
         confirmLabel="Sí, reactivar"
         confirmClassName="text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
+      />
+
+      <ModalConfirmation
+        show={!!userToReset}
+        onClose={() => setUserToReset(null)}
+        onConfirm={handleResetPasswordConfirm}
+        message={`¿Restablecer la contraseña de ${userToReset?.User.userProfile?.first_name ?? "este usuario"}? Se usará su DNI como nueva contraseña.`}
+        confirmLabel="Sí, restablecer"
+        confirmClassName="text-white bg-amber-500 hover:bg-amber-700 focus:ring-4 focus:ring-amber-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
       />
     </>
   );

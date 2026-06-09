@@ -178,3 +178,4 @@ export const API_TRAININGS = `${baseURL}/api/trainings`;
 export const API_TRAININGS_STUDENT = `${baseURL}/api/student/trainings`;
 
 export const API_CHANGE_PASSWORD = `${baseURL}/api/auth/change-password`;
+export const API_RESET_PASSWORD = `${baseURL}/api/auth/reset-password`;
