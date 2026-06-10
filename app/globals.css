@@ -30,6 +30,10 @@ body {
   margin: 0;
 }
 
+video.no-seekbar::-webkit-media-controls-timeline {
+  display: none !important;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

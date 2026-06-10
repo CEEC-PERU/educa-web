@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSessionProgress, CascadeResult } from "@/hooks/useSessionProgress";
 import { useAuth } from "@/context/AuthContext";
 
@@ -19,10 +19,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   videoProgress = 0,
   sessionCompleted = false,
 }) => {
-  const [videoEnded, setVideoEnded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const completionSentRef = useRef(false);
-  const currentTimeRef = useRef(0);
+  const lastTimeRef = useRef(0);
 
   const { user } = useAuth();
   const userId = (user as { id: number } | null)?.id ?? 0;
@@ -41,94 +40,87 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   useEffect(() => {
     completionSentRef.current = false;
-    setVideoEnded(false);
+    lastTimeRef.current = 0;
   }, [sessionId, src]);
 
   useEffect(() => {
-    if (!videoRef.current) return;
-
     const video = videoRef.current;
+    if (!video) return;
 
     const handleTimeUpdate = () => {
       const progress = (video.currentTime / video.duration) * 100;
-
       sendProgressDebounced(progress, false);
-
       if (progress >= 100 && !completionSentRef.current) {
         completionSentRef.current = true;
         sendProgress(100, true);
       }
+      lastTimeRef.current = video.currentTime;
+    };
 
-      currentTimeRef.current = video.currentTime;
+    const handleEnded = () => {
+      sendProgressDebounced.cancel();
+      completionSentRef.current = true;
+      sendProgress(100, true);
     };
 
     const handlePause = () => {
       const progress = (video.currentTime / video.duration) * 100;
       sendProgressDebounced.cancel();
-      sendProgress(progress, false);
+      sendProgress(progress, progress >= 100);
     };
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        video.pause();
-      }
-    };
-
-    const handlePopState = () => {
-      const progress = (video.currentTime / video.duration) * 100;
-      sendProgressDebounced.cancel();
-      sendProgress(progress, false);
-    };
-
-    const handleBeforeUnload = () => {
-      const progress = (video.currentTime / video.duration) * 100;
-      sendProgressDebounced.cancel();
-      sendProgress(progress, false);
-      video.pause();
-    };
-
-    const handleSeeking = () => {
+    // seeking: intenta bloquear al inicio (webkit, Firefox)
+    // seeked:  corrige si el browser completó el seek igual (Firefox fallback)
+    const handleSeekGuard = () => {
       if (sessionCompleted) return;
-      if (video.currentTime > currentTimeRef.current) {
-        video.currentTime = currentTimeRef.current;
+      if (video.currentTime > lastTimeRef.current) {
+        video.currentTime = lastTimeRef.current;
       }
     };
 
     const handleLoadedMetadata = () => {
-      if (videoProgress > 0 && !sessionCompleted) {
+      if (videoProgress > 0) {
         const targetTime = (videoProgress / 100) * video.duration;
         if (targetTime > 0 && targetTime < video.duration) {
           video.currentTime = targetTime;
-          currentTimeRef.current = targetTime;
+          lastTimeRef.current = targetTime;
         }
       }
     };
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") video.pause();
+    };
+
+    const saveProgress = () => {
+      if (!video.duration) return;
+      sendProgressDebounced.cancel();
+      sendProgress((video.currentTime / video.duration) * 100, false);
+    };
+
     video.addEventListener("timeupdate", handleTimeUpdate);
-    video.addEventListener("seeking", handleSeeking);
+    video.addEventListener("ended", handleEnded);
+    video.addEventListener("seeking", handleSeekGuard);
+    video.addEventListener("seeked", handleSeekGuard);
     video.addEventListener("pause", handlePause);
     video.addEventListener("loadedmetadata", handleLoadedMetadata);
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    window.addEventListener("popstate", handlePopState);
+    window.addEventListener("beforeunload", saveProgress);
+    window.addEventListener("popstate", saveProgress);
 
     return () => {
+      saveProgress();
       video.removeEventListener("timeupdate", handleTimeUpdate);
-      video.removeEventListener("seeking", handleSeeking);
+      video.removeEventListener("ended", handleEnded);
+      video.removeEventListener("seeking", handleSeekGuard);
+      video.removeEventListener("seeked", handleSeekGuard);
       video.removeEventListener("pause", handlePause);
       video.removeEventListener("loadedmetadata", handleLoadedMetadata);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener("beforeunload", saveProgress);
+      window.removeEventListener("popstate", saveProgress);
     };
-  }, [
-    videoProgress,
-    sessionCompleted,
-    videoEnded,
-    src,
-    sendProgress,
-    sendProgressDebounced,
-  ]);
+  }, [videoProgress, sessionCompleted, src, sendProgress, sendProgressDebounced]);
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -136,13 +128,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
           <video
             key={src}
+            ref={videoRef}
             controls
             controlsList="nodownload"
-            onContextMenu={(e) => e.preventDefault()}
-            className="w-full h-full object-contain"
+            className={`w-full h-full object-contain${!sessionCompleted ? " no-seekbar" : ""}`}
             playsInline
-            onEnded={() => setVideoEnded(true)}
-            ref={videoRef}
+            onContextMenu={(e) => e.preventDefault()}
           >
             <source src={src} type="video/mp4" />
           </video>

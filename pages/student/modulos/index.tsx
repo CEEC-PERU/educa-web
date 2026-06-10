@@ -152,14 +152,44 @@ const Home = () => {
 
   const handleCascadeResult = useCallback(
     (result: CascadeResult) => {
-      if (selectedSession.session_id) {
-        setVideoProgress((prev) => ({
-          ...prev,
-          [selectedSession.session_id!]: result.sessionProgress,
-        }));
+      if (!selectedSession.session_id) return;
+
+      setVideoProgress((prev) => ({
+        ...prev,
+        [selectedSession.session_id!]: result.sessionProgress,
+      }));
+
+      if (result.sessionProgress >= 100 && !selectedSession.isCompleted) {
+        refetch();
+
+        const modules = courseData?.[0]?.courseModules ?? [];
+        let foundCurrent = false;
+
+        for (const module of modules) {
+          for (const session of module.moduleSessions) {
+            if (foundCurrent) {
+              const savedProgress = session.usersessionprogress.find(
+                (p) => p.user_id === userId,
+              );
+              setSelectedModuleId(module.module_id);
+              setSelectedSession({
+                video: session.video_enlace,
+                session_id: session.session_id,
+                module_id: module.module_id,
+                progress: savedProgress?.progress ?? 0,
+                isCompleted: savedProgress?.is_completed ?? false,
+              });
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              return;
+            }
+            if (session.session_id === selectedSession.session_id) {
+              foundCurrent = true;
+            }
+          }
+        }
       }
     },
-    [selectedSession.session_id],
+    [selectedSession, courseData, userId, refetch],
   );
 
   if (isLoading) {

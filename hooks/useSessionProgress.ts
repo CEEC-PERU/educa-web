@@ -74,9 +74,13 @@ export const useSessionProgress = (
   );
 
   const sendProgressDebounced = useCallback(
-    debounce((progress: number, isCompleted: boolean) => {
-      sendProgress(progress, isCompleted);
-    }, 10_000),
+    debounce(
+      (progress: number, isCompleted: boolean) => {
+        sendProgress(progress, isCompleted);
+      },
+      5_000,
+      { maxWait: 10_000 },
+    ),
     [sendProgress],
   );
 
