@@ -1,92 +1,105 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import { Professor, Level } from '../../interfaces/Professor';
-import { getProfessors, getLevels } from '../../services/professorService'; // Importar las funciones del servicio
-import ButtonComponent from '../../components/ButtonComponent';
-import ProfileCard from '../../components/ProfileCard';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import './../../app/globals.css';
+import React from "react";
+import Link from "next/link";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+import {
+  useProfessorsQuery,
+  useLevelsQuery,
+} from "@/features/professors/professors.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
+import ProfessorCard from "@/components/professors/ProfessorCard";
+import { useRouter } from "next/router";
+import { PlusIcon } from "@heroicons/react/24/outline";
 
-const Profesores: React.FC = () => {
-  
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [professors, setProfessors] = useState<Professor[]>([]);
-  const [levels, setLevels] = useState<Level[]>([]);
-  const [error, setError] = useState<string | null>(null);
+const ProfessorCardSkeleton = () => (
+  <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden animate-pulse">
+    <div className="h-16 bg-gray-200" />
+    <div className="flex flex-col items-center -mt-8 px-6 pb-6">
+      <div className="w-16 h-16 rounded-full bg-gray-300 ring-4 ring-white" />
+      <div className="mt-3 h-4 w-32 bg-gray-200 rounded" />
+      <div className="mt-1.5 h-3 w-24 bg-gray-200 rounded" />
+      <div className="mt-2 h-5 w-16 bg-gray-200 rounded-full" />
+      <div className="mt-5 h-9 w-full bg-gray-100 rounded-xl" />
+    </div>
+  </div>
+);
 
+const Profesores: NextPageWithLayout = () => {
   const router = useRouter();
+  const professorsQuery = useProfessorsQuery();
+  const levelsQuery = useLevelsQuery();
 
-  useEffect(() => {
-    const fetchProfessorsAndLevels = async () => {
-      try {
-        const [professorsData, levelsData] = await Promise.all([
-          getProfessors(),
-          getLevels()
-        ]);
-        setProfessors(professorsData);
-        setLevels(levelsData);
-      } catch (error) {
-        console.error('Error fetching professors or levels:', error);
-        setError('Error fetching professors or levels');
-      }
-    };
-
-    fetchProfessorsAndLevels();
-  }, []);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+  const professors = professorsQuery.data ?? [];
+  const levels = levelsQuery.data ?? [];
+  const isLoading = professorsQuery.isLoading || levelsQuery.isLoading;
+  const error =
+    professorsQuery.isError || levelsQuery.isError
+      ? getUserFacingMessage(professorsQuery.error ?? levelsQuery.error)
+      : null;
 
   const handleViewProfile = (id: number) => {
     router.push(`/content/detailProfessor?id=${id}`);
   };
 
   const getLevelName = (levelId: number) => {
-    const level = levels.find(l => l.level_id === levelId);
-    return level ? level.name : 'N/A';
+    const level = levels.find((l) => l.level_id === levelId);
+    return level ? level.name : "N/A";
   };
 
+  if (isLoading) {
+    return (
+      <>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Profesores</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <ProfessorCardSkeleton key={i} />
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return <p className="text-gray-500 text-center mt-20">{error}</p>;
+  }
+
   return (
-    <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
-          <div className="flex justify-between items-center mb-4"></div>
-          {error && <p className="text-red-500">{error}</p>}
-          <div className="flex justify-between items-center mb-6 mt-4">
-            <ButtonComponent
-              buttonLabel="Añadir Profesor"
-              buttonroute="/content/addProfessor"
-              backgroundColor="bg-gradient-blue"
-              textColor="text-white"
-              fontSize="text-xs"
-              buttonSize="py-2 px-7"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {professors.map(professor => (
-              <ProfileCard
-                key={professor.professor_id}
-                name={professor.full_name}
-                title={professor.especialitation}
-                imageUrl={professor.image}
-                level={getLevelName(professor.level_id)}
-                onViewProfile={() => handleViewProfile(professor.professor_id)}
-              />
-            ))}
-          </div>
-        </main>
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">Profesores</h2>
+        <Link
+          href="/content/addProfessor"
+          className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+        >
+          <PlusIcon className="w-4 h-4" />
+          Añadir Profesor
+        </Link>
       </div>
-    </div>
-    </ProtectedRoute>
+
+      {professors.length === 0 ? (
+        <p className="text-gray-400 text-center mt-20">
+          No hay profesores registrados.
+        </p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {professors.map((professor) => (
+            <ProfessorCard
+              key={professor.professor_id}
+              name={professor.full_name}
+              title={professor.especialitation}
+              imageUrl={professor.image}
+              level={getLevelName(professor.level_id)}
+              onViewProfile={() => handleViewProfile(professor.professor_id)}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
+
+Profesores.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Profesores;

@@ -1,13 +1,12 @@
-// components/ChartCard.tsx
-import dynamic from 'next/dynamic';
-import { ApexOptions } from 'apexcharts';
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts";
 
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 interface ChartCardProps {
   title: string;
   subtitle?: string;
-  type: 'bar' | 'line' | 'area' | 'pie' | 'donut' | 'radar' | 'heatmap';
+  type: "bar" | "line" | "area" | "pie" | "donut" | "radar" | "heatmap";
   series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
   options?: ApexOptions;
   height?: number | string;
@@ -25,7 +24,7 @@ const ChartCard = ({
   height = 350,
   badgeText,
   showUpdateDate = true,
-  className = '',
+  className = "",
 }: ChartCardProps) => {
   // Configuración base que se fusionará con las opciones personalizadas
   const baseOptions: ApexOptions = {
@@ -45,20 +44,20 @@ const ChartCard = ({
       },
       animations: {
         enabled: true,
-        easing: 'easeinout',
+        easing: "easeinout",
         speed: 800,
       },
     },
     dataLabels: {
-      enabled: type !== 'pie' && type !== 'donut',
+      enabled: type !== "pie" && type !== "donut",
       style: {
-        fontSize: '12px',
-        colors: ['#374151'],
+        fontSize: "12px",
+        colors: ["#374151"],
       },
     },
-    colors: ['#6366F1', '#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
+    colors: ["#6366F1", "#10B981", "#3B82F6", "#F59E0B", "#EF4444"],
     grid: {
-      borderColor: '#E5E7EB',
+      borderColor: "#E5E7EB",
       strokeDashArray: 4,
       yaxis: {
         lines: {
@@ -82,7 +81,7 @@ const ChartCard = ({
           },
           dataLabels: {
             style: {
-              fontSize: '10px',
+              fontSize: "10px",
             },
           },
         },
@@ -111,7 +110,7 @@ const ChartCard = ({
 
       <div
         className="relative"
-        style={{ height: typeof height === 'number' ? `${height}px` : height }}
+        style={{ height: typeof height === "number" ? `${height}px` : height }}
       >
         <Chart
           type={type}

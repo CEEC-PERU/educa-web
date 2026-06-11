@@ -1,280 +1,336 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import {
-  getProfessor,
-  deleteProfessor,
-  updateProfessor,
-  getLevels,
-} from '../../services/professorService';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import ActionButtons from '../../components/Content/ActionButtons';
-import { uploadImage } from '../../services/imageService';
-import MediaUploadPreview from '../../components/MediaUploadPreview';
-import FormField from '../../components/FormField';
-import { Professor, Level } from '../../interfaces/Professor';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent';
-import Loader from '../../components/Loader';
-import ModalConfirmation from '../../components/ModalConfirmation';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import useModal from '../../hooks/ui/useModal';
+  useProfessorQuery,
+  useLevelsQuery,
+} from "@/features/professors/professors.queries";
+import {
+  useUpdateProfessorMutation,
+  useDeleteProfessorMutation,
+} from "@/features/professors/professors.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+import { uploadImage } from "../../services/imageService";
+import MediaUploadPreview from "../../components/MediaUploadPreview";
+import FormField from "../../components/FormField";
+import { Professor } from "../../interfaces/Professor";
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import ModalConfirmation from "../../components/ModalConfirmation";
+import useModal from "../../hooks/ui/useModal";
+import SectionCard from "@components/ui/SectionCard";
+import SidebarSelect from "@components/ui/SidebarSelect";
+import { toast } from "sonner";
 
-const DetailProfessor: React.FC = () => {
+const DetailProfessor: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const [professor, setProfessor] = useState<Professor | null>(null);
-  const [showSidebar, setShowSidebar] = useState(true);
+  const professorId = id ? Number(id) : undefined;
+
   const [isEditing, setIsEditing] = useState(false);
-  const [levels, setLevels] = useState<Level[]>([]);
+  const [editDraft, setEditDraft] = useState<Professor | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [formLoading, setFormLoading] = useState(false);
+
   const { isVisible, showModal, hideModal } = useModal();
 
-  const fetchProfessorAndLevels = async () => {
-    try {
-      const professorData = await getProfessor(Number(id));
-      const levelsData = await getLevels();
-      setProfessor(professorData);
-      setLevels(levelsData);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching professor details or levels:', error);
-      setError('Error fetching professor details o levels');
-      setLoading(false);
-    }
-  };
+  const professorQuery = useProfessorQuery(professorId);
+  const levelsQuery = useLevelsQuery();
+  const updateProfessorMutation = useUpdateProfessorMutation();
+  const deleteProfessorMutation = useDeleteProfessorMutation();
 
-  useEffect(() => {
-    if (id) {
-      fetchProfessorAndLevels();
-    }
-  }, [id]);
+  const professor = professorQuery.data ?? null;
+  const levels = levelsQuery.data ?? [];
+  const isLoading = professorQuery.isLoading || levelsQuery.isLoading;
+  const isSaving = updateProfessorMutation.isPending;
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+  const getLevelName = (levelId: number) =>
+    levels.find((l) => l.level_id === levelId)?.name ?? "N/A";
 
   const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleDelete = async () => {
     if (professor) {
-      setFormLoading(true);
-      try {
-        await deleteProfessor(professor.professor_id);
-        setSuccess('Registro eliminado correctamente');
-        setTimeout(() => setSuccess(null), 5000);
-        router.push('/content/professors');
-      } catch (error) {
-        const err = error as any;
-        console.error('Error deleting professor:', err);
-        setError(err.response?.data?.error || 'Error eliminando profesor');
-      } finally {
-        setFormLoading(false);
-      }
+      setEditDraft({ ...professor });
+      setIsEditing(true);
     }
   };
 
   const handleCancel = () => {
+    setEditDraft(null);
+    setImageFile(null);
     setIsEditing(false);
   };
 
-  const handleChange = (
+  const handleDraftChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { id, value } = e.target;
-    setProfessor((prevProfessor) =>
-      prevProfessor ? { ...prevProfessor, [id]: value } : null
+    setEditDraft((prev) =>
+      prev
+        ? { ...prev, [id]: id === "level_id" ? Number(value) : value }
+        : null,
     );
   };
 
-  const handleFileChange = (file: File) => {
-    setImageFile(file);
+  const handleDelete = async () => {
+    if (!professor) return;
+    try {
+      await deleteProfessorMutation.mutateAsync(professor.professor_id);
+      toast.success("Profesor eliminado correctamente");
+      router.push("/content/professors");
+    } catch (err) {
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar el profesor");
+      hideModal();
+    }
   };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (professor) {
-      setFormLoading(true);
-      try {
-        let imageUrl = professor.image;
-        if (imageFile) {
-          imageUrl = await uploadImage(imageFile, 'Profesores');
-          setProfessor({ ...professor, image: imageUrl });
-        }
-        await updateProfessor(professor.professor_id, {
-          ...professor,
-          image: imageUrl,
-        });
-        setSuccess('Profesor actualizado exitosamente');
-        setTimeout(() => setSuccess(null), 3000);
-        setIsEditing(false);
-        fetchProfessorAndLevels(); // Refrescar los datos del profesor y los niveles
-      } catch (error) {
-        const err = error as any;
-        console.error('Error updating professor:', err);
-        setError('Error actualizando profesor');
-      } finally {
-        setFormLoading(false);
+    if (!editDraft) return;
+    try {
+      let imageUrl = editDraft.image;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile, "Profesores");
       }
+      await updateProfessorMutation.mutateAsync({
+        professorId: editDraft.professor_id,
+        professor: { ...editDraft, image: imageUrl },
+      });
+      toast.success("Profesor actualizado exitosamente");
+      setIsEditing(false);
+      setEditDraft(null);
+      setImageFile(null);
+    } catch (err) {
+      toast.error(
+        getUserFacingMessage(err) ?? "Error al actualizar el profesor",
+      );
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
+      <div className="max-w-3xl mx-auto space-y-6 animate-pulse">
+        <div className="h-5 w-20 bg-gray-200 rounded" />
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center gap-5">
+            <div className="w-20 h-20 rounded-full bg-gray-200" />
+            <div className="space-y-2">
+              <div className="h-6 w-48 bg-gray-200 rounded" />
+              <div className="h-4 w-32 bg-gray-200 rounded" />
+            </div>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="h-10 bg-gray-100 rounded-lg" />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (!professor) {
-    return <p>Error al cargar los detalles del profesor.</p>;
+    return (
+      <p className="text-gray-500 text-center mt-20">
+        {getUserFacingMessage(professorQuery.error) ??
+          "No se encontró el profesor."}
+      </p>
+    );
   }
 
+  const display = isEditing && editDraft ? editDraft : professor;
+
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow ${
-              showSidebar ? 'ml-20' : ''
-            } transition-all duration-300 ease-in-out`}
+    <>
+      <div className="max-w-3xl mx-auto space-y-6">
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/content/professors"
+            className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
           >
-            {success && (
-              <AlertComponent
-                type="info"
-                message={success}
-                onClose={() => setSuccess(null)}
+            <ArrowLeftIcon className="w-4 h-4" />
+            Volver
+          </Link>
+          <span className="text-gray-300">/</span>
+          <span className="text-sm text-gray-400">Profesores</span>
+        </div>
+
+        {/* Profile header */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-5">
+              <img
+                src={display.image}
+                alt={display.full_name}
+                className="w-20 h-20 rounded-full object-cover ring-4 ring-gray-100 shadow-sm"
               />
-            )}
-            {error && (
-              <AlertComponent
-                type="danger"
-                message={error}
-                onClose={() => setError(null)}
-              />
-            )}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-4"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Volver
-            </button>
-            <div className="flex flex-col md:flex-row space-y-4 md:space-x-4 md:space-y-0">
-              <div className="md:w-1/2 bg-white p-10 rounded-lg shadow-md flex flex-col">
-                <div className="flex items-center mb-4">
-                  <img
-                    className="w-40 h-40 rounded-full shadow-lg mr-4"
-                    src={professor.image}
-                    alt={`${professor.full_name} image`}
-                  />
-                  <h1 className="text-4xl font-bold">{professor.full_name}</h1>
-                </div>
-                <hr className="my-4" />
-                {!isEditing ? (
-                  <div>
-                    <p className="mb-4 text-lg">
-                      <strong>Especialización:</strong>{' '}
-                      {professor.especialitation}
-                    </p>
-                    <p className="mb-4 text-lg">{professor.description}</p>
-                    <p className="mb-4 text-lg">
-                      <strong>Nivel:</strong>{' '}
-                      {levels.find(
-                        (level) => level.level_id === professor.level_id
-                      )?.name || 'N/A'}
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSave}>
-                    <FormField
-                      id="full_name"
-                      label="Nombre Completo"
-                      type="text"
-                      value={professor.full_name}
-                      onChange={handleChange}
-                    />
-                    <div className="mb-4">
-                      <label
-                        className="block text-blue-400 text-sm font-bold mb-4"
-                        htmlFor="image"
-                      >
-                        Imagen
-                      </label>
-                      <MediaUploadPreview
-                        onMediaUpload={handleFileChange}
-                        accept="image/*"
-                        label="Subir Imagen"
-                      />
-                    </div>
-                    <FormField
-                      id="especialitation"
-                      label="Especialización"
-                      type="text"
-                      value={professor.especialitation}
-                      onChange={handleChange}
-                    />
-                    <FormField
-                      id="description"
-                      label="Descripción"
-                      type="textarea"
-                      value={professor.description}
-                      onChange={handleChange}
-                    />
-                    <FormField
-                      id="level_id"
-                      label="Nivel"
-                      type="select"
-                      value={professor.level_id.toString()}
-                      onChange={handleChange}
-                      options={levels.map((level) => ({
-                        value: level.level_id.toString(),
-                        label: level.name,
-                      }))}
-                    />
-                  </form>
-                )}
-              </div>
-              <div className="bg-white rounded-lg">
-                <ActionButtons
-                  onEdit={handleEdit}
-                  onCancel={isEditing ? handleCancel : undefined}
-                  onDelete={showModal}
-                  onSave={isEditing ? handleSave : undefined}
-                  isEditing={isEditing}
-                  customSize={true}
-                />
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {display.full_name}
+                </h1>
+                <p className="text-sm text-gray-500 mt-0.5">
+                  {display.especialitation}
+                </p>
+                <span className="mt-1.5 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700">
+                  {getLevelName(display.level_id)}
+                </span>
               </div>
             </div>
-          </main>
-        </div>
-        {formLoading && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-            <Loader />
+
+            {!isEditing && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleEdit}
+                  className="inline-flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-medium px-3 py-2 rounded-lg transition-colors"
+                >
+                  <PencilSquareIcon className="w-4 h-4" />
+                  Editar
+                </button>
+                <button
+                  onClick={showModal}
+                  className="inline-flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium px-3 py-2 rounded-lg transition-colors"
+                >
+                  <TrashIcon className="w-4 h-4" />
+                  Eliminar
+                </button>
+              </div>
+            )}
           </div>
-        )}
-        <ModalConfirmation
-          show={isVisible}
-          onClose={hideModal}
-          onConfirm={handleDelete}
-        />
+        </div>
+
+        {/* Detail / Edit */}
+        <SectionCard title={isEditing ? "Editar Profesor" : "Información"}>
+          {!isEditing ? (
+            <>
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Descripción
+                </p>
+                <p className="text-gray-700">
+                  {professor.description || (
+                    <span className="text-gray-400 italic">
+                      Sin descripción
+                    </span>
+                  )}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Especialización
+                </p>
+                <p className="text-gray-700">{professor.especialitation}</p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
+                  Nivel
+                </p>
+                <p className="text-gray-700">
+                  {getLevelName(professor.level_id)}
+                </p>
+              </div>
+            </>
+          ) : (
+            <form onSubmit={handleSave} className="space-y-4">
+              <FormField
+                id="full_name"
+                label="Nombre Completo"
+                type="text"
+                value={editDraft!.full_name}
+                onChange={handleDraftChange}
+              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Imagen
+                </label>
+                <MediaUploadPreview
+                  onMediaUpload={(file) => setImageFile(file)}
+                  accept="image/*"
+                  label="Subir Imagen"
+                  initialPreview={editDraft!.image}
+                />
+              </div>
+              <FormField
+                id="especialitation"
+                label="Especialización"
+                type="text"
+                value={editDraft!.especialitation}
+                onChange={handleDraftChange}
+              />
+              <FormField
+                id="description"
+                label="Descripción"
+                type="textarea"
+                value={editDraft!.description}
+                onChange={handleDraftChange}
+              />
+              <SidebarSelect
+                id="level_id"
+                label="Nivel"
+                value={editDraft!.level_id.toString()}
+                onChange={handleDraftChange}
+                options={levels.map((level) => ({
+                  value: level.level_id.toString(),
+                  label: level.name,
+                }))}
+              />
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {isSaving && (
+                    <svg
+                      className="w-4 h-4 animate-spin"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v8H4z"
+                      />
+                    </svg>
+                  )}
+                  {isSaving ? "Guardando..." : "Guardar cambios"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancel}
+                  disabled={isSaving}
+                  className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          )}
+        </SectionCard>
       </div>
-    </ProtectedRoute>
+
+      <ModalConfirmation
+        show={isVisible}
+        onClose={hideModal}
+        onConfirm={handleDelete}
+      />
+    </>
   );
 };
+
+DetailProfessor.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default DetailProfessor;

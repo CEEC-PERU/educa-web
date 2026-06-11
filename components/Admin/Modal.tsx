@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ModalProps {
   isOpen?: boolean; // ✅ Hacer opcional
@@ -6,7 +6,7 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  size?: "sm" | "md" | "lg" | "xl" | "2xl";
   closeOnBackdropClick?: boolean;
 }
 
@@ -16,21 +16,41 @@ const Modal: React.FC<ModalProps> = ({
   onClose,
   title,
   children,
-  size = 'md',
+  size = "md",
   closeOnBackdropClick = true,
 }) => {
   // ✅ Usar show o isOpen, dando prioridad a isOpen
   const modalIsOpen = isOpen !== undefined ? isOpen : show;
 
+  // Manejar tecla Escape y scroll del body — debe estar ANTES del early return
+  // para que el cleanup siempre se ejecute cuando el modal cierra o desmonta
+  React.useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    if (modalIsOpen) {
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
+    };
+  }, [modalIsOpen, onClose]);
+
   if (!modalIsOpen) return null;
 
   // Definir tamaños del modal
   const sizeClasses = {
-    sm: 'max-w-md',
-    md: 'max-w-2xl',
-    lg: 'max-w-4xl',
-    xl: 'max-w-6xl',
-    '2xl': 'max-w-7xl',
+    sm: "max-w-md",
+    md: "max-w-2xl",
+    lg: "max-w-4xl",
+    xl: "max-w-6xl",
+    "2xl": "max-w-7xl",
   };
 
   // Manejar click en el overlay para cerrar el modal
@@ -39,26 +59,6 @@ const Modal: React.FC<ModalProps> = ({
       onClose();
     }
   };
-
-  // Manejar tecla Escape para cerrar el modal
-  React.useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    if (modalIsOpen) {
-      document.addEventListener('keydown', handleEscape);
-      // Prevenir scroll del body cuando el modal está abierto
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
-    };
-  }, [modalIsOpen, onClose]);
 
   return (
     <div

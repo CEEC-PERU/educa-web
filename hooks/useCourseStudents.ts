@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { CourseStudent } from '../interfaces/Courses/CourseStudent';
+import { useEffect, useState } from "react";
+import { CourseStudent } from "../interfaces/Courses/CourseStudent";
 import {
   getCourseStudent,
   getCourseStudentCategory,
-} from '../services/courses/courseStudent';
-import { useAuth } from '../context/AuthContext';
-//useCourseStudent
+} from "../services/courses/courseStudent";
+import { useAuth } from "../context/AuthContext";
+
 export const useCourseStudent = () => {
   const [courseStudent, setCourseStudent] = useState<CourseStudent[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -14,12 +14,12 @@ export const useCourseStudent = () => {
   const userInfo = user as { id: number };
 
   useEffect(() => {
+    if (!token) return;
+
     const fetchCourseStudent = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        if (!token) {
-          throw new Error('Token is null or undefined');
-        }
         const response = await getCourseStudent(token, userInfo.id);
         if (response === null) {
           setCourseStudent([]);
@@ -29,8 +29,8 @@ export const useCourseStudent = () => {
           setCourseStudent([response]);
         }
       } catch (error) {
-        console.error('Error fetching course student:', error);
-        setError('Error fetching course student. Please try again.');
+        console.error("Error fetching course student:", error);
+        setError("Error fetching course student. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -61,12 +61,12 @@ export const useCourseStudentCategory = (categoryId: number | null) => {
       setIsLoading(true);
       try {
         if (!token) {
-          throw new Error('Token is null or undefined');
+          throw new Error("Token is null or undefined");
         }
         const response = await getCourseStudentCategory(
           token,
           userInfo.id,
-          categoryId
+          categoryId,
         );
         if (response === null) {
           setCourseStudentCategory([]);
@@ -76,8 +76,8 @@ export const useCourseStudentCategory = (categoryId: number | null) => {
           setCourseStudentCategory([response]);
         }
       } catch (error) {
-        console.error('Error fetching course student:', error);
-        setError('Error fetching course student. Please try again.');
+        console.error("Error fetching course student:", error);
+        setError("Error fetching course student. Please try again.");
       } finally {
         setIsLoading(false);
       }

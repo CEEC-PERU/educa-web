@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Sidebar from '@/components/supervisor/SibebarSupervisor';
-import '@/app/globals.css';
 import { useRouter } from 'next/router';
 import { useTrainingAssignment } from '@/hooks/useTraininingAssignment';
 import {
@@ -13,9 +10,10 @@ import {
   TrendingUp,
   Download,
 } from 'lucide-react';
+import AppLayout from '@/components/layouts/AppLayout';
+import type { NextPageWithLayout } from '@/types/next';
 
-const TrainingAssignmentStudentsPage: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { programId } = router.query;
   const { studentAssignments, loading, error, refetch } = useTrainingAssignment(
@@ -77,13 +75,8 @@ const TrainingAssignmentStudentsPage: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className="flex-1 p-6 transition-all duration-300 ease-in-out">
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             {/* Header con estadísticas rápidas */}
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
@@ -398,8 +391,6 @@ const TrainingAssignmentStudentsPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
 
       {/* Estilos para la animación del shimmer */}
@@ -416,8 +407,10 @@ const TrainingAssignmentStudentsPage: React.FC = () => {
           animation: shimmer 2s infinite;
         }
       `}</style>
-    </div>
+    </>
   );
 };
+
+TrainingAssignmentStudentsPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default TrainingAssignmentStudentsPage;

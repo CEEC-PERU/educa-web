@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Question, QuestionType } from '../../../interfaces/Evaluation';
-import WizardStepContainer from '../../../components/WizardStepContainer';
-import { getQuestionTypes } from '../../../services/evaluationService';
-import MediaUploadPreview from '../../../components/MediaUploadPreview';
+import React, { useState } from "react";
+import { Question, QuestionType } from "../../../interfaces/Evaluation";
+import WizardStepContainer from "../../../components/WizardStepContainer";
+import { useQuestionTypesQuery } from "@/features/evaluations/evaluations.queries";
+import MediaUploadPreview from "../../../components/MediaUploadPreview";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   PlusIcon,
-} from '@heroicons/react/24/outline';
-import './../../../app/globals.css';
+} from "@heroicons/react/24/outline";
 
 interface StepTwoProps {
   nextStep: () => void;
   prevStep: () => void;
   setQuestionsData: (
-    data: (Omit<Question, 'question_id'> & { imageFile?: File | null })[]
+    data: (Omit<Question, "question_id"> & { imageFile?: File | null })[],
   ) => void;
-  initialQuestions: (Omit<Question, 'question_id'> & {
+  initialQuestions: (Omit<Question, "question_id"> & {
     imageFile?: File | null;
   })[];
 }
@@ -28,9 +27,10 @@ const StepTwo: React.FC<StepTwoProps> = ({
   initialQuestions,
 }) => {
   const [questions, setQuestions] = useState<
-    (Omit<Question, 'question_id'> & { imageFile?: File | null })[]
+    (Omit<Question, "question_id"> & { imageFile?: File | null })[]
   >(initialQuestions || []);
-  const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
+  const questionTypesQuery = useQuestionTypesQuery();
+  const questionTypes: QuestionType[] = questionTypesQuery.data ?? [];
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [touchedFields, setTouchedFields] = useState<{
@@ -40,22 +40,9 @@ const StepTwo: React.FC<StepTwoProps> = ({
     [key: number]: { [key: string]: boolean };
   }>({});
 
-  useEffect(() => {
-    const fetchQuestionTypes = async () => {
-      try {
-        const types = await getQuestionTypes();
-        setQuestionTypes(types || []);
-      } catch (error) {
-        console.error('Error fetching question types:', error);
-      }
-    };
-
-    fetchQuestionTypes();
-  }, []);
-
   const handleQuestionChange = (
     index: number,
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     const newQuestions = [...questions];
@@ -65,7 +52,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
   const handleBlur = (
     index: number,
-    field: keyof Omit<Question, 'question_id'>
+    field: keyof Omit<Question, "question_id">,
   ) => {
     setTouchedFields((prev) => ({
       ...prev,
@@ -93,7 +80,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
     questions.forEach((question, index) => {
       newErrors[index] = {
-        question_text: question.question_text.trim() === '',
+        question_text: question.question_text.trim() === "",
         type_id: question.type_id === 0,
         score: question.score <= 0,
         image: !question.imageFile, // Validate image field
@@ -132,11 +119,11 @@ const StepTwo: React.FC<StepTwoProps> = ({
     setQuestions([
       ...questions,
       {
-        question_text: '',
+        question_text: "",
         type_id: 4, // default tipo de pregunta opciones
         score: 0,
         evaluation_id: 0,
-        image: '',
+        image: "",
         imageFile: null,
       },
     ]);
@@ -165,12 +152,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
               name="question_text"
               value={question.question_text}
               onChange={(e) => handleQuestionChange(index, e)}
-              onBlur={() => handleBlur(index, 'question_text')}
+              onBlur={() => handleBlur(index, "question_text")}
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 touchedFields[index]?.question_text &&
                 errors[index]?.question_text
-                  ? 'border-red-500'
-                  : ''
+                  ? "border-red-500"
+                  : ""
               }`}
             />
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">
@@ -182,7 +169,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
                 name="type_id"
                 value={
                   questionTypes.find((type) => type.type_id === 4)?.name ||
-                  'Tipo por defecto'
+                  "Tipo por defecto"
                 }
                 readOnly
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 bg-gray-100 leading-tight focus:outline-none focus:shadow-outline"
@@ -219,11 +206,11 @@ const StepTwo: React.FC<StepTwoProps> = ({
               name="score"
               value={question.score}
               onChange={(e) => handleQuestionChange(index, e)}
-              onBlur={() => handleBlur(index, 'score')}
+              onBlur={() => handleBlur(index, "score")}
               className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
                 touchedFields[index]?.score && errors[index]?.score
-                  ? 'border-red-500'
-                  : ''
+                  ? "border-red-500"
+                  : ""
               }`}
             />
             <label className="block text-gray-700 text-sm font-bold mb-2 mt-2">
@@ -233,7 +220,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
               onMediaUpload={(file) => handleImageUpload(index, file)}
               accept="image/*"
               label={`question-${index}`}
-              initialPreview={question.image || ''}
+              initialPreview={question.image || ""}
               error={errors[index]?.image}
               touched={touchedFields[index]?.image}
             />

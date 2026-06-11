@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/calidad/SibebarCalidad';
-import { useAuth } from '../../context/AuthContext';
-import { getCoursesByEnterpriseCalidad } from '../../services/courses/courseStudent';
-import Loader from '../../components/Loader';
-import CourseCard from './../../components/CourseCard';
-import './../../app/globals.css';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
+import React, { useState, useEffect } from "react";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/calidad/SibebarCalidad";
+import { useAuth } from "../../context/AuthContext";
+import { getCoursesByEnterpriseCalidad } from "../../services/courses/courseStudent";
+import Loader from "../../components/Loader";
+import CourseCard from "./../../components/CourseCard";
 
 const Calidad: React.FC = () => {
   const { user } = useAuth();
@@ -23,10 +21,10 @@ const Calidad: React.FC = () => {
         setLoading(true);
         try {
           const response = await getCoursesByEnterpriseCalidad(enterpriseId);
-          console.log('Courses data:', response); // Verify that the data is correct
+          console.log("Courses data:", response); // Verify that the data is correct
           setCourses(response);
         } catch (error) {
-          console.error('Error fetching courses:', error);
+          console.error("Error fetching courses:", error);
         } finally {
           setLoading(false);
         }
@@ -38,39 +36,39 @@ const Calidad: React.FC = () => {
   // Datos de ejemplo para la tabla
   const studentData = [
     {
-      name: 'Juan Pérez',
-      module1: 'Introducción a React',
-      module2: 'React Avanzado',
-      finalGrade: 'A',
-      status: 'Completado',
+      name: "Juan Pérez",
+      module1: "Introducción a React",
+      module2: "React Avanzado",
+      finalGrade: "A",
+      status: "Completado",
     },
     {
-      name: 'Ana Gómez',
-      module1: 'Fundamentos de JavaScript',
-      module2: 'JavaScript ES6',
-      finalGrade: 'B',
-      status: 'En progreso',
+      name: "Ana Gómez",
+      module1: "Fundamentos de JavaScript",
+      module2: "JavaScript ES6",
+      finalGrade: "B",
+      status: "En progreso",
     },
     {
-      name: 'Luis Martínez',
-      module1: 'HTML & CSS Básico',
-      module2: 'HTML & CSS Avanzado',
-      finalGrade: 'C',
-      status: 'Completado',
+      name: "Luis Martínez",
+      module1: "HTML & CSS Básico",
+      module2: "HTML & CSS Avanzado",
+      finalGrade: "C",
+      status: "Completado",
     },
     {
-      name: 'Laura Sánchez',
-      module1: 'Programación en Python',
-      module2: 'Data Science con Python',
-      finalGrade: 'B',
-      status: 'Completado',
+      name: "Laura Sánchez",
+      module1: "Programación en Python",
+      module2: "Data Science con Python",
+      finalGrade: "B",
+      status: "Completado",
     },
     {
-      name: 'Carlos Ramírez',
-      module1: 'Bases de Datos SQL',
-      module2: 'Bases de Datos NoSQL',
-      finalGrade: 'A',
-      status: 'No iniciado',
+      name: "Carlos Ramírez",
+      module1: "Bases de Datos SQL",
+      module2: "Bases de Datos NoSQL",
+      finalGrade: "A",
+      status: "No iniciado",
     },
   ];
 

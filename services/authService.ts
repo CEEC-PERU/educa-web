@@ -1,7 +1,19 @@
-import { API_AUTH } from '../utils/Endpoints';
-import axios, { AxiosError } from 'axios';
-import api from '../services/api';
-import { LoginResponse, LoginRequest } from '../interfaces/User/UserInterfaces';
+import { API_AUTH, API_CHANGE_PASSWORD } from "../utils/Endpoints";
+import { AxiosError } from "axios";
+import api from "../services/api";
+import { LoginResponse, LoginRequest } from "../interfaces/User/UserInterfaces";
+import { http } from "../lib/http/client";
+
+export const changePassword = async (
+  currentPassword: string,
+  newPassword: string,
+): Promise<void> => {
+  const response = await http.put(API_CHANGE_PASSWORD, {
+    currentPassword,
+    newPassword,
+  });
+  return response.data;
+};
 
 export const signin = async ({
   dni,
@@ -15,7 +27,7 @@ export const signin = async ({
     if (axiosError.response?.status === 401) {
       return axiosError.response.data;
     }
-    console.error('Error in login Service:', error);
+    console.error("Error in login Service:", error);
     throw error;
   }
 };

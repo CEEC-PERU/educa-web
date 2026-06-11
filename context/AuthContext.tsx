@@ -4,32 +4,36 @@ import React, {
   useEffect,
   useContext,
   useMemo,
-} from 'react';
-import { useRouter } from 'next/router';
-import { jwtDecode } from 'jwt-decode';
-import { getProfile } from '../services/profile';
-import { signin } from '../services/authService';
-import { AuthContextData, AuthProviderProps } from '../interfaces/Auth';
-import { API_SOCKET_URL } from '../utils/Endpoints';
+} from "react";
+import { useRouter } from "next/router";
+import { jwtDecode } from "jwt-decode";
+import { getProfile } from "../services/profile";
+import { signin } from "../services/authService";
+import { AuthContextData, AuthProviderProps } from "../interfaces/Auth";
+import { API_SOCKET_URL } from "../utils/Endpoints";
 import {
   LoginResponse,
   Profile,
   UserInfo,
-} from '../interfaces/User/UserInterfaces';
-import { validateToken } from '../helpers/helper-token';
-import { io } from 'socket.io-client';
-import axios, { AxiosError } from 'axios';
+} from "../interfaces/User/UserInterfaces";
+import { validateToken } from "../helpers/helper-token";
+import { io } from "socket.io-client";
+import axios from "axios";
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 const socket = io(API_SOCKET_URL);
+
+socket.on('reconnect', () => {
+  const token = localStorage.getItem('userToken');
+  if (token) socket.emit('login', { userToken: token });
+});
 
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // ... estado existente ...
   const [lastActivity, setLastActivity] = useState<number>(Date.now());
-  const inactivityTimeout = 45 * 60 * 1000; // 45 minutos en milisegundos
+  const inactivityTimeout = 45 * 60 * 1000;
 
   const [user, setUser] = useState<{
     id: number;
@@ -41,16 +45,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(
-    null
+    null,
   );
   const router = useRouter();
 
-  // Función para resetear el temporizador de inactividad
   const resetInactivityTimer = () => {
     setLastActivity(Date.now());
   };
 
-  // Efecto para manejar la inactividad
   useEffect(() => {
     if (!token) return;
 
@@ -60,27 +62,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (elapsedTime > inactivityTimeout) {
         logout();
-        // Opcional: redirigir a una página con mensaje de sesión expirada
-        router.push('/?sessionExpired=true');
+        router.push("/?sessionExpired=true");
       }
     };
 
-    // Verificar inactividad cada minuto
     const interval = setInterval(checkInactivity, 60 * 1000);
     return () => clearInterval(interval);
   }, [token, lastActivity, inactivityTimeout]);
 
-  // Eventos para detectar actividad del usuario
   useEffect(() => {
     if (!token) return;
 
-    //Eventos para detectar actividad del usuario
     const events = [
-      'mousedown',
-      'mousemove',
-      'keypress',
-      'scroll',
-      'touchstart',
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
     ];
 
     const handleActivity = () => {
@@ -98,16 +96,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [token]);
 
-  // AuthContext.tsx
   const refreshProfile = async (token: string, userId: number) => {
     try {
       const profile = await getProfile(token, userId);
       if (profile) {
-        localStorage.setItem('profileInfo', JSON.stringify(profile));
+        localStorage.setItem("profileInfo", JSON.stringify(profile));
         setProfileInfo(profile);
       }
     } catch (error) {
-      console.error('Error refreshing profile:', error);
+      console.error("Error refreshing profile:", error);
     }
   };
 
@@ -116,9 +113,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const response: LoginResponse = await signin({ dni, password });
       if (response.token) {
-        axios.defaults.headers.common[
-          'Authorization'
-        ] = `Bearer ${response.token}`;
+        axios.defaults.headers.common["Authorization"] =
+          `Bearer ${response.token}`;
         const decodedToken: {
           id: number;
           role: number;
@@ -133,23 +129,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           enterprise_id: decodedToken.enterprise_id,
         });
 
-        localStorage.setItem('userToken', response.token);
+        localStorage.setItem("userToken", response.token);
         localStorage.setItem(
-          'userInfo',
+          "userInfo",
           JSON.stringify({
             id: decodedToken.id,
             role: decodedToken.role,
             dni: decodedToken.dni,
             enterprise_id: decodedToken.enterprise_id,
-          })
+          }),
         );
         if (decodedToken.role === 1) {
-          socket.emit('login', { userToken: response.token });
+          socket.emit("login", { userToken: response.token });
         }
         const profile = await getProfile(response.token, decodedToken.id);
         if (profile) {
           setProfileInfo(profile);
-          localStorage.setItem('profileInfo', JSON.stringify(profile));
+          localStorage.setItem("profileInfo", JSON.stringify(profile));
           redirectToDashboard(decodedToken.role);
         } else {
           redirectToProfile(decodedToken.role);
@@ -157,20 +153,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         setError(
           response.msg ??
-            'Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.'
+            "Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.",
         );
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
-          setError('Error al iniciar sesión, datos ingresados incorrectos.');
+          setError("Error al iniciar sesión, datos ingresados incorrectos.");
         } else {
-          setError('Ocurrió un error al iniciar sesión. Inténtalo nuevamente.');
+          setError("Ocurrió un error al iniciar sesión. Inténtalo nuevamente.");
         }
       } else if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('Ocurrió un error inesperado.');
+        setError("Ocurrió un error inesperado.");
       }
     } finally {
       setIsLoading(false);
@@ -178,9 +174,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('userToken');
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('profileInfo');
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("profileInfo");
     if (token) {
       const decodedToken: {
         id: number;
@@ -189,23 +185,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         client_id: number;
       } = jwtDecode(token);
       if (decodedToken.role === 1) {
-        socket.emit('logout');
+        socket.emit("logout");
       }
     }
 
     setUser(null);
     setToken(null);
-    router.push('/');
+    router.push("/");
   };
 
   useEffect(() => {
     try {
-      const storedUserToken = localStorage.getItem('userToken');
-      const storedUserInfo = localStorage.getItem('userInfo');
+      const storedUserToken = localStorage.getItem("userToken");
+      const storedUserInfo = localStorage.getItem("userInfo");
       const isValid = storedUserToken ? validateToken(storedUserToken) : false;
 
       if (storedUserInfo && isValid) {
-        const storedProfileInfo = localStorage.getItem('profileInfo');
+        const storedProfileInfo = localStorage.getItem("profileInfo");
         if (storedProfileInfo) {
           setProfileInfo(JSON.parse(storedProfileInfo));
         }
@@ -220,7 +216,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       setIsLoading(false);
     } catch (error) {
-      console.error('Error initializing auth:', error);
+      console.error("Error initializing auth:", error);
       logout();
     } finally {
       setIsLoading(false);
@@ -230,7 +226,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const redirectToDashboard = (role: number) => {
     switch (role) {
       case 1:
-        router.push('/student');
+        router.push("/student");
         if (token) {
           const decodedToken: {
             id: number;
@@ -239,38 +235,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             client_id: number;
           } = jwtDecode(token);
           if (decodedToken.role === 1) {
-            socket.emit('login', { userToken: token });
+            socket.emit("login", { userToken: token });
           }
         }
         break;
       case 2:
-        router.push('/corporate');
+        router.push("/corporate");
         break;
       case 3:
-        router.push('/content');
+        router.push("/content");
         break;
       case 4:
-        router.push('/admin');
+        router.push("/admin");
         break;
       case 5:
-        router.push('/admincorporative');
+        router.push("/admincorporative");
         break;
       case 6:
-        router.push('/supervisor');
+        router.push("/supervisor");
         break;
       case 7:
-        router.push('/calidad');
+        router.push("/calidad");
         break;
       case 8:
-        router.push('/comercial');
+        router.push("/comercial");
         break;
       default:
-        router.push('/');
+        router.push("/");
     }
   };
 
   const redirectToProfile = (role: number) => {
-    router.push('/profile');
+    router.push("/profile");
   };
 
   const value = useMemo(
@@ -286,7 +282,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       refreshProfile,
       resetInactivityTimer,
     }),
-    [user, token, isLoading, error, profileInfo]
+    [user, token, isLoading, error, profileInfo],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

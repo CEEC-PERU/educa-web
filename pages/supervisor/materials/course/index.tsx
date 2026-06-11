@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../../components/Navbar';
-import Sidebar from '../../../../components/supervisor/SibebarSupervisor';
 import MediaUploadPreview from '../../../../components/MediaUploadPreview';
 import FormField from '../../../../components/FormField';
 import { getCategories } from '../../../../services/categoryService';
@@ -13,7 +11,6 @@ import { Professor } from '../../../../interfaces/Professor';
 import { Evaluation } from '../../../../interfaces/Evaluation';
 import { Course } from '../../../../interfaces/Courses/Course';
 import Loader from '../../../../components/Loader';
-import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
 import { useEvaluationWizard } from '../../../../components/Evaluation/hooks/LogicWizard';
 import { EvaluationWizard } from '../../../../components/Evaluation/WizardEvaluation';
 import { ArrowLeftIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
@@ -24,10 +21,10 @@ interface FormData
   [key: string]: string | boolean | number | undefined;
 }
 
-import './../../../../app/globals.css';
+import AppLayout from '../../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../../types/next';
 
-const AddCourse: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const AddCourse: NextPageWithLayout = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [professors, setProfessors] = useState<Professor[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -235,27 +232,7 @@ const AddCourse: React.FC = () => {
   switch (currentStep) {
     case 'evaluation':
       return (
-        <ProtectedRoute>
-          <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-            <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-            <div className="flex flex-1 pt-16">
-              <Sidebar
-                showSidebar={showSidebar}
-                setShowSidebar={setShowSidebar}
-              />
-              <main
-                className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-                  showSidebar ? 'ml-20' : 'ml-0'
-                }`}
-              >
-                <EvaluationWizard
-                  {...wizard}
-                  completeForm={handleCompleteEvaluation}
-                />
-              </main>
-            </div>
-          </div>
-        </ProtectedRoute>
+        <EvaluationWizard {...wizard} completeForm={handleCompleteEvaluation} />
       );
 
     case 'processing':
@@ -304,20 +281,7 @@ const AddCourse: React.FC = () => {
     case 'form':
     default:
       return (
-        <ProtectedRoute>
-          <div className="relative min-h-screen flex flex-col bg-gradient-to-b ">
-            <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-            <div className="flex flex-1 pt-16">
-              <Sidebar
-                showSidebar={showSidebar}
-                setShowSidebar={setShowSidebar}
-              />
-              <main
-                className={`p-6 flex-grow ${
-                  showSidebar ? 'ml-20' : ''
-                } transition-all duration-300 ease-in-out flex flex-col md:flex-row md:space-x-4`}
-              >
-                <div className="max-w-6xl bg-white rounded-lg w-full p-20 justify-center items-center shadow-md">
+        <div className="max-w-6xl bg-white rounded-lg w-full p-20 justify-center items-center shadow-md">
                   {showAlert && (
                     <AlertComponent
                       type={alertType || 'info'}
@@ -486,13 +450,11 @@ const AddCourse: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </div>
-              </main>
-            </div>
-          </div>
-        </ProtectedRoute>
+        </div>
       );
   }
 };
+
+AddCourse.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default AddCourse;

@@ -1,90 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import CardCourses from '../../components/Content/CardCourses';
-import { getCourses } from '../../services/courses/courseService';
-import { Course } from '../../interfaces/Courses/Course';
-import { useAuth } from '../../context/AuthContext';
-import './../../app/globals.css';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import { useRouter } from 'next/router';
+import React from "react";
+import { useRouter } from "next/router";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+import CourseCard from "@components/courses/CourseCard";
+import CourseCardSkeleton from "@components/courses/CourseCardSkeleton";
+import { useCoursesQuery } from "@/features/courses/courses.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
 
-const ModulePage: React.FC = () => {
-  const { logout } = useAuth();
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [cursos, setCursos] = useState<Course[]>([]);
-  const [error, setError] = useState<string | null>(null);
+const ModulePage: NextPageWithLayout = () => {
   const router = useRouter();
+  const coursesQuery = useCoursesQuery();
 
-  useEffect(() => {
-    const savedState = localStorage.getItem('sidebarState');
-    if (savedState !== null) {
-      setShowSidebar(JSON.parse(savedState));
-    }
-  }, []);
+  if (coursesQuery.isLoading) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <CourseCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+  if (coursesQuery.isError) {
+    return (
+      <p className="text-gray-500 text-center mt-20">
+        {getUserFacingMessage(coursesQuery.error) ??
+          "Error al cargar los cursos."}
+      </p>
+    );
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getCourses();
-        setCursos(data);
-      } catch (error) {
-        setError('Error fetching courses');
-        console.error('Error fetching courses:', error);
-      }
-    };
+  const cursos = coursesQuery.data ?? [];
 
-    fetchData();
-  }, []);
-
-  const handleViewModulesClick = (courseId?: number) => {
-    if (courseId) {
-      router.push(`/content/detailModule?id=${courseId}`);
-    }
-  };
+  if (cursos.length === 0) {
+    return (
+      <p className="text-gray-400 text-center mt-20">
+        No hay cursos disponibles.
+      </p>
+    );
+  }
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
-            }`}
-          >
-            {error && <p className="text-red-500">{error}</p>}
-            <div className="w-full bg-white rounded-lg">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {cursos.map((curso) => (
-                  <CardCourses
-                    key={curso.course_id}
-                    id={curso.course_id}
-                    image={curso.image}
-                    name={curso.name}
-                    description_short={curso.description_short}
-                    duration_course={curso.duration_course}
-                    rating={4.9}
-                    buttonLabel="Ver Módulos"
-                    textColor="text-blue-gray-900"
-                    onButtonClick={() =>
-                      handleViewModulesClick(curso.course_id)
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          </main>
-        </div>
+    <div className="space-y-6">
+      <h2 className="text-xl font-semibold text-gray-800">Módulos</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {cursos.map((curso) => (
+          <CourseCard
+            key={curso.course_id}
+            course={curso}
+            buttonLabel="Ver Módulos"
+            onButtonClick={(courseId) =>
+              router.push(`/content/detailModule?id=${courseId}`)
+            }
+          />
+        ))}
       </div>
-    </ProtectedRoute>
+    </div>
   );
 };
+
+ModulePage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default ModulePage;

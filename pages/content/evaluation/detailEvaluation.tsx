@@ -1,46 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/Content/SideBar';
-import DetailContainer from './DetailContainer';
-import QuestionsContainer from './QuestionsContainer';
-import { getEvaluationById, updateEvaluation, deleteEvaluation, getQuestionTypes } from '../../../services/evaluationService';
-import { Evaluation, Question, QuestionType, Option } from '../../../interfaces/Evaluation';
-import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
-import { useRouter } from 'next/router';
-import './../../../app/globals.css';
+import React, { useEffect, useState } from "react";
+import AppLayout from "../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../types/next";
+import DetailContainer from "./DetailContainer";
+import QuestionsContainer from "./QuestionsContainer";
+import {
+  useEvaluationByIdQuery,
+  useQuestionTypesQuery,
+} from "@/features/evaluations/evaluations.queries";
+import {
+  useUpdateEvaluationMutation,
+  useDeleteEvaluationMutation,
+} from "@/features/evaluations/evaluations.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
+import { Evaluation, Question, Option } from "../../../interfaces/Evaluation";
+import { useRouter } from "next/router";
 
-const EvaluationDetail: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [questionTypes, setQuestionTypes] = useState<QuestionType[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
+const EvaluationDetail: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
+  const evaluationId = id ? Number(id) : undefined;
+
+  const [evaluation, setEvaluation] = useState<Evaluation | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const evaluationQuery = useEvaluationByIdQuery(evaluationId);
+  const questionTypesQuery = useQuestionTypesQuery();
+  const updateEvaluationMutation = useUpdateEvaluationMutation();
+  const deleteEvaluationMutation = useDeleteEvaluationMutation();
+
+  const questionTypes = questionTypesQuery.data ?? [];
 
   useEffect(() => {
-    const fetchEvaluation = async () => {
-      if (id) {
-        const data = await getEvaluationById(Number(id));
-        setEvaluation(data.evaluation);
-        setQuestions(data.questions.map(question => ({
+    if (evaluationQuery.data) {
+      setEvaluation(evaluationQuery.data.evaluation);
+      setQuestions(
+        evaluationQuery.data.questions.map((question) => ({
           ...question,
           options: question.options || [],
-        })));
-      }
-    };
-    const fetchQuestionTypes = async () => {
-      const types = await getQuestionTypes();
-      setQuestionTypes(types);
-    };
-    fetchEvaluation();
-    fetchQuestionTypes();
-  }, [id]);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+        })),
+      );
+    }
+  }, [evaluationQuery.data]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -48,8 +49,12 @@ const EvaluationDetail: React.FC = () => {
 
   const handleDelete = async () => {
     if (evaluation) {
-      await deleteEvaluation(evaluation.evaluation_id);
-      router.push('/content/evaluation/listEvaluations');
+      try {
+        await deleteEvaluationMutation.mutateAsync(evaluation.evaluation_id);
+        router.push("/content/evaluation/listEvaluations");
+      } catch (err) {
+        console.error("Error deleting evaluation:", getUserFacingMessage(err));
+      }
     }
   };
 
@@ -58,65 +63,98 @@ const EvaluationDetail: React.FC = () => {
     if (evaluation) {
       const updatedEvaluation: Evaluation = {
         ...evaluation,
-        name: (document.getElementById('evaluationName') as HTMLInputElement).value,
-        description: (document.getElementById('evaluationDescription') as HTMLTextAreaElement).value
+        name: (document.getElementById("evaluationName") as HTMLInputElement)
+          .value,
+        description: (
+          document.getElementById(
+            "evaluationDescription",
+          ) as HTMLTextAreaElement
+        ).value,
       };
-      const updatedQuestions: Question[] = questions.map((question, questionIndex) => {
-        const updatedOptions: Option[] = (question.options || []).map((option, optIndex) => ({
-          ...option,
-          option_id: option.option_id ? option.option_id : undefined,
-          option_text: (document.getElementById(`optionText${questionIndex}-${optIndex}`) as HTMLInputElement).value,
-          is_correct: (document.getElementById(`optionCorrect${questionIndex}-${optIndex}`) as HTMLInputElement).checked,
-        }));
-        return {
-          ...question,
-          question_text: (document.getElementById(`questionText${questionIndex}`) as HTMLInputElement).value,
-          type_id: parseInt((document.getElementById(`questionType${questionIndex}`) as HTMLSelectElement).value),
-          score: parseInt((document.getElementById(`questionScore${questionIndex}`) as HTMLInputElement).value),
-          options: updatedOptions,
-        };
-      });
+      const updatedQuestions: Question[] = questions.map(
+        (question, questionIndex) => {
+          const updatedOptions: Option[] = (question.options || []).map(
+            (option, optIndex) => ({
+              ...option,
+              option_id: option.option_id ? option.option_id : undefined,
+              option_text: (
+                document.getElementById(
+                  `optionText${questionIndex}-${optIndex}`,
+                ) as HTMLInputElement
+              ).value,
+              is_correct: (
+                document.getElementById(
+                  `optionCorrect${questionIndex}-${optIndex}`,
+                ) as HTMLInputElement
+              ).checked,
+            }),
+          );
+          return {
+            ...question,
+            question_text: (
+              document.getElementById(
+                `questionText${questionIndex}`,
+              ) as HTMLInputElement
+            ).value,
+            type_id: parseInt(
+              (
+                document.getElementById(
+                  `questionType${questionIndex}`,
+                ) as HTMLSelectElement
+              ).value,
+            ),
+            score: parseInt(
+              (
+                document.getElementById(
+                  `questionScore${questionIndex}`,
+                ) as HTMLInputElement
+              ).value,
+            ),
+            options: updatedOptions,
+          };
+        },
+      );
 
       try {
-        await updateEvaluation(updatedEvaluation, updatedQuestions);
+        await updateEvaluationMutation.mutateAsync({
+          evaluation: updatedEvaluation,
+          questions: updatedQuestions,
+        });
         setEvaluation(updatedEvaluation);
         setQuestions(updatedQuestions);
         setIsEditing(false);
-      } catch (error) {
-        console.error('Error al guardar la evaluación:', error);
+      } catch (err) {
+        console.error(
+          "Error al guardar la evaluación:",
+          getUserFacingMessage(err),
+        );
       }
     }
   };
 
   return (
-    <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`flex-grow p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-          <div className="flex flex-col items-center">
-            <div className="w-full max-w-5xl flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6">
-              <DetailContainer
-                evaluation={evaluation}
-                isEditing={isEditing}
-                onEditToggle={handleEditToggle}
-                onSave={handleSave}
-                onDelete={handleDelete}
-              />
-              <QuestionsContainer
-                questions={questions}
-                isEditing={isEditing}
-                questionTypes={questionTypes}
-                setQuestions={setQuestions}
-              />
-            </div>
-          </div>
-        </main>
+    <>
+      <div className="flex flex-col items-center">
+        <div className="w-full max-w-5xl flex flex-col md:flex-row justify-center space-y-6 md:space-y-0 md:space-x-6">
+          <DetailContainer
+            evaluation={evaluation}
+            isEditing={isEditing}
+            onEditToggle={handleEditToggle}
+            onSave={handleSave}
+            onDelete={handleDelete}
+          />
+          <QuestionsContainer
+            questions={questions}
+            isEditing={isEditing}
+            questionTypes={questionTypes}
+            setQuestions={setQuestions}
+          />
+        </div>
       </div>
-    </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+EvaluationDetail.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default EvaluationDetail;

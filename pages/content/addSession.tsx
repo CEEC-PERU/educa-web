@@ -1,175 +1,148 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import MediaUploadPreview from '../../components/MediaUploadPreview';
-import { addSession } from '../../services/sessionService';
-import { uploadVideo } from '../../services/videoService';
-import { Session } from '../../interfaces/Session';
-import FormField from '../../components/FormField';
-import ActionButtons from '../../components/Content/ActionButtons';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import './../../app/globals.css';
-import AlertComponent from '../../components/AlertComponent'; 
-import Loader from '../../components/Loader'; 
+import React, { useState, useRef } from "react";
+import { useRouter } from "next/router";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+import MediaUploadPreview from "../../components/MediaUploadPreview";
+import { addSession } from "../../services/sessionService";
+import { uploadVideo } from "../../services/videoService";
+import FormField from "../../components/FormField";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { getUserFacingMessage } from "@/lib/http/error";
+import SectionCard from "@components/ui/SectionCard";
+import { toast } from "sonner";
 
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-
-const AddSession: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [session, setSession] = useState<Omit<Session, 'session_id'>>({
-    video_enlace: '',
-    duracion_minutos: 0,
-    name: '',
-    module_id: 0
-  });
-  const [error, setError] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false); 
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [clearMediaPreview, setClearMediaPreview] = useState(false); 
-  const [loading, setLoading] = useState(true); 
-  const [formLoading, setFormLoading] = useState(false); 
-  const [touchedFields, setTouchedFields] = useState<{ [key: string]: boolean }>({});
+const AddSession: NextPageWithLayout = () => {
   const router = useRouter();
-  const { moduleId } = router.query; 
+  const moduleId = router.isReady ? Number(router.query.moduleId) : undefined;
+
+  const [name, setName] = useState("");
+  const [duracion, setDuracion] = useState("");
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [touched, setTouched] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const videoInputRef = useRef<{ clear: () => void }>(null);
 
-  useEffect(() => {
-    if (moduleId) {
-      setSession(prevSession => ({ ...prevSession, module_id: Number(moduleId) }));
-      setLoading(false); 
-    }
-  }, [moduleId]);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { id, value, type, checked } = e.target as HTMLInputElement;
-    setSession(prevSession => ({
-      ...prevSession,
-      [id]: type === 'checkbox' ? checked : value
-    }));
-    setTouchedFields(prev => ({ ...prev, [id]: true }));
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { id } = e.target;
-    setTouchedFields(prev => ({ ...prev, [id]: true }));
-  };
-
-  const handleVideoUpload = (file: File) => {
-    setVideoFile(file);
-  };
+  const isNameValid = name.trim().length > 0;
+  const isDuracionValid = Number(duracion) > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormLoading(true);
-    
+    setTouched(true);
+    if (!isNameValid || !isDuracionValid || !videoFile || !moduleId) return;
+
+    setIsSubmitting(true);
     try {
-      if (videoFile) {
-        const videoUrl = await uploadVideo(videoFile, 'Sesiones');
-        await addSession({ ...session, video_enlace: videoUrl });
-        setShowAlert(true);
-        setError(null);
-      }
-    } catch (error: any) {
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        setError('A session with this ID already exists. Please try again with a different session.');
-      } else {
-        setError('An error occurred while creating the session.');
-      }
+      const videoUrl = await uploadVideo(videoFile, "Sesiones");
+      await addSession({
+        name,
+        duracion_minutos: Number(duracion),
+        video_enlace: videoUrl,
+        module_id: moduleId,
+      });
+      toast.success("Sesión creada exitosamente");
+      router.back();
+    } catch (err: unknown) {
+      toast.error(getUserFacingMessage(err) ?? "Error al crear la sesión");
     } finally {
-      setFormLoading(false);
+      setIsSubmitting(false);
     }
   };
-  
-
-  const handleCancel = () => {
-    setSession({ video_enlace: '', duracion_minutos: 0, name: '', module_id: Number(moduleId) });
-    setVideoFile(null);
-    setClearMediaPreview(true);
-    if (videoInputRef.current) {
-      videoInputRef.current.clear();
-    }
-    setTimeout(() => setClearMediaPreview(false), 500);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
 
   return (
-    <ProtectedRoute>
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90"/>
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''} flex`}>
-          <form onSubmit={handleSubmit} className="space-y-4 max-w-2xl rounded-lg flex-grow mr-4">
-            {showAlert && (
-              <AlertComponent
-                type="danger"
-                message={error || "Sesión agregada exitosamente."}
-                onClose={() => setShowAlert(false)}
-              />
-            )}
+    <div className="max-w-2xl mx-auto space-y-6">
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
+      >
+        <ArrowLeftIcon className="w-4 h-4" />
+        Volver
+      </button>
 
+      <SectionCard title="Nueva Sesión">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <FormField
+            id="name"
+            label="Nombre"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            error={touched && !isNameValid}
+            touched={touched}
+            required
+          />
+          <FormField
+            id="duracion_minutos"
+            label="Duración (minutos)"
+            type="text"
+            value={duracion}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (/^\d*$/.test(val)) setDuracion(val);
+            }}
+            error={touched && !isDuracionValid}
+            touched={touched}
+            required
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Video
+            </label>
+            <MediaUploadPreview
+              onMediaUpload={(file) => setVideoFile(file)}
+              accept="video/*"
+              label="Subir video"
+              ref={videoInputRef}
+            />
+            {touched && !videoFile && (
+              <p className="text-xs text-red-500 mt-1">El video es requerido</p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-3 pt-2">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSubmitting && (
+                <svg
+                  className="w-4 h-4 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+              )}
+              {isSubmitting ? "Guardando..." : "Guardar sesión"}
+            </button>
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-6"
+              disabled={isSubmitting}
+              className="text-sm font-medium text-gray-500 hover:text-gray-800 disabled:opacity-50 transition-colors"
             >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Volver
+              Cancelar
             </button>
-            
-            <FormField
-              id="name"
-              label="Nombre"
-              type="text"
-              value={session.name}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={!session.name && touchedFields['name']}
-              touched={touchedFields['name']}
-              required
-            />
-            <FormField
-              id="duracion_minutos"
-              label="Duración (minutos)"
-              type="text"
-              value={session.duracion_minutos.toString()}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={!session.duracion_minutos && touchedFields['duracion_minutos']}
-              touched={touchedFields['duracion_minutos']}
-              required
-            />
-            <div className="mb-4">
-              <label htmlFor="video_enlace" className="block text-gray-700 mb-2">Video</label>
-              <MediaUploadPreview onMediaUpload={handleVideoUpload} accept="video/*" label="Subir video" ref={videoInputRef} clearMediaPreview={clearMediaPreview} />
-            </div>
-          </form>
-          <div className="ml-4 flex-shrink-0">
-            <ActionButtons onSave={handleSubmit} onCancel={handleCancel} isEditing={true} />
           </div>
-        </main>
-      </div>
-      {formLoading && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-          <Loader />
-        </div>
-      )}
+        </form>
+      </SectionCard>
     </div>
-    </ProtectedRoute>
   );
 };
+
+AddSession.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default AddSession;

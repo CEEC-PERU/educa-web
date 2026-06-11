@@ -15,7 +15,8 @@ export interface User {
     enterprise_id: number;
     user_name: string | null;
     created_at: string;
-    userProfile?: UserProfile; // Puede que algunos usuarios no tengan perfil
+    is_active: boolean;
+    userProfile?: UserProfile;
   }
   
 export  interface Enterprise {

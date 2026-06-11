@@ -1,14 +1,12 @@
 import React from 'react';
-import Navbar from '../../../../components/Navbar';
-import Sidebar from '../../../../components/supervisor/SibebarSupervisor';
 import { useAuth } from '../../../../context/AuthContext';
 import { useEvaluationUsers } from '../../../../hooks/resultado/useEvaluationUser';
 import { UsersList } from '../../../../components/Evaluation/UserList';
 import { UserDetails } from '../../../../components/Evaluation/UserDetail';
-import './../../../../app/globals.css';
-import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
+import AppLayout from '../../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../../types/next';
 
-const CorporateUsers: React.FC = () => {
+const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const {
     evaluationId,
@@ -30,48 +28,23 @@ const CorporateUsers: React.FC = () => {
 
   if (loading) {
     return (
-      <ProtectedRoute>
-        <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-          <div className="flex flex-1 pt-16">
-            <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-            <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-              <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-              </div>
-            </main>
-          </div>
-        </div>
-      </ProtectedRoute>
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <ProtectedRoute>
-        <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-          <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-          <div className="flex flex-1 pt-16">
-            <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-            <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {error}
-              </div>
-            </main>
-          </div>
-        </div>
-      </ProtectedRoute>
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        {error}
+      </div>
     );
   }
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-            {/* Header */}
+    <>
+      {/* Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-black mb-2">
                 Usuarios Asignados a la Evaluación
@@ -110,11 +83,10 @@ const CorporateUsers: React.FC = () => {
                 No se encontraron asignaciones para esta evaluación.
               </div>
             )}
-          </main>
-        </div>
-      </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+CorporateUsers.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CorporateUsers;

@@ -1,16 +1,12 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-//import { useAuth } from '@/context/AuthContext';
-import Navbar from '@/components/Navbar';
-import SidebarDrawer from '@/components/student/DrawerNavigation';
-import { useEvaluationUI } from '@/hooks/ui/useEvaluationUI';
-import { useContentProgress } from '@/hooks/useContentProgress';
-import ContentHeader from '@/components/Training/ContentNavigation/ContentHeader';
-import { baseURL } from '@/utils/Endpoints';
-import dynamic from 'next/dynamic';
+import React from "react";
+import { useRouter } from "next/router";
+import AppLayout from "@/components/layouts/AppLayout";
+import { useContentProgress } from "@/hooks/useContentProgress";
+import ContentHeader from "@/components/Training/ContentNavigation/ContentHeader";
+import dynamic from "next/dynamic";
 
 const PDFViewer = dynamic(
-  () => import('@/components/Training/ContentViewer/PDFViewer'),
+  () => import("@/components/Training/ContentViewer/PDFViewer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -25,7 +21,7 @@ const PDFViewer = dynamic(
 );
 
 const AudioPlayer = dynamic(
-  () => import('@/components/Training/ContentViewer/AudioPlayer'),
+  () => import("@/components/Training/ContentViewer/AudioPlayer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -40,7 +36,7 @@ const AudioPlayer = dynamic(
 );
 
 const VideoPlayer = dynamic(
-  () => import('@/components/Training/ContentViewer/VideoPlayer'),
+  () => import("@/components/Training/ContentViewer/VideoPlayer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -55,7 +51,7 @@ const VideoPlayer = dynamic(
 );
 
 const ScormPlayer = dynamic(
-  () => import('@/components/Training/ContentViewer/ScormPlayer'),
+  () => import("@/components/Training/ContentViewer/ScormPlayer"),
   {
     loading: () => (
       <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
@@ -69,12 +65,9 @@ const ScormPlayer = dynamic(
   },
 );
 
-const ContentViewerPage: React.FC = () => {
+const ContentViewerPage = () => {
   const router = useRouter();
   const { programId, dayId, contentId } = router.query;
-  //const { token } = useAuth();
-  const { isDrawerOpen, toggleSidebar, userProfile } = useEvaluationUI();
-
   const { content, loading, error, updateProgress, markAsCompleted } =
     useContentProgress(Number(programId), Number(dayId), Number(contentId));
 
@@ -135,7 +128,7 @@ const ContentViewerPage: React.FC = () => {
     }
 
     switch (content.content_type) {
-      case 'pdf':
+      case "pdf":
         return (
           <div className="h-[calc(100vh-12rem)] bg-gray-800">
             <PDFViewer
@@ -146,7 +139,7 @@ const ContentViewerPage: React.FC = () => {
           </div>
         );
 
-      case 'video':
+      case "video":
         return (
           <div className="h-[calc(100vh-12rem)] bg-black flex items-center justify-center">
             <VideoPlayer
@@ -162,7 +155,7 @@ const ContentViewerPage: React.FC = () => {
           </div>
         );
 
-      case 'audio':
+      case "audio":
         return (
           <div className="h-[calc(100vh-12rem)] bg-gradient-to-br from-gray-900 to-gray-800">
             <AudioPlayer
@@ -180,7 +173,7 @@ const ContentViewerPage: React.FC = () => {
           </div>
         );
 
-      case 'scorm':
+      case "scorm":
         return (
           <div className="h-[calc(100vh-8rem)]">
             <ScormPlayer
@@ -215,43 +208,22 @@ const ContentViewerPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900">
-      <div className="relative z-10">
-        <Navbar
-          bgColor="bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
-          borderColor="border border-stone-300"
-          user={
-            userProfile.uri_picture
-              ? { profilePicture: userProfile.uri_picture }
-              : undefined
-          }
-          toggleSidebar={toggleSidebar}
+      {content && (
+        <ContentHeader
+          programTitle={content.title}
+          dayNumber={content.day_number}
+          onBack={handleBack}
+          content={content}
         />
-        <SidebarDrawer
-          isDrawerOpen={isDrawerOpen}
-          toggleSidebar={toggleSidebar}
-        />
-      </div>
+      )}
 
-      <div className="pt-16">
-        <div
-          className={`transition-all duration-300 ${
-            isDrawerOpen ? 'lg:ml-64' : 'lg:ml-16'
-          }`}
-        >
-          {content && (
-            <ContentHeader
-              programTitle={content.title}
-              dayNumber={content.day_number}
-              onBack={handleBack}
-              content={content}
-            />
-          )}
-
-          {renderContentViewer()}
-        </div>
-      </div>
+      {renderContentViewer()}
     </div>
   );
 };
+
+ContentViewerPage.getLayout = (page: React.ReactNode) => (
+  <AppLayout noPadding>{page}</AppLayout>
+);
 
 export default ContentViewerPage;

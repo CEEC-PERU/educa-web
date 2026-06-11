@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
-import { addModule } from '../../services/moduleService';
-import { Module } from '../../interfaces/Module';
-import FormField from '../../components/FormField';
-import AlertComponent from '../../components/AlertComponent';
-import Loader from '../../components/Loader';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import { useEvaluationWizard } from '../../components/Evaluation/hooks/LogicWizard';
-import { EvaluationWizard } from '../../components/Evaluation/WizardEvaluation';
+import React, { useState } from "react";
+import { useCreateModuleMutation } from "@/features/modules/modules.mutations";
+import { getUserFacingMessage } from "@/lib/http/error";
+import { Module } from "../../interfaces/Module";
+import FormField from "../../components/FormField";
+import { useEvaluationWizard } from "../../components/Evaluation/hooks/LogicWizard";
+import { EvaluationWizard } from "../../components/Evaluation/WizardEvaluation";
+import { toast } from "sonner";
 
 interface AddModuleFormProps {
   courseId: number;
@@ -19,36 +18,28 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
   onClose,
   onSuccess,
 }) => {
-  const [step, setStep] = useState<
-    'form' | 'wizard' | 'processing' | 'success'
-  >('form');
-  const [moduleName, setModuleName] = useState('');
+  const [step, setStep] = useState<"form" | "wizard">("form");
+  const [moduleName, setModuleName] = useState("");
   const [touched, setTouched] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showAlert, setShowAlert] = useState(false);
 
   const wizard = useEvaluationWizard();
+  const createModuleMutation = useCreateModuleMutation();
 
   const handleStartWizard = () => {
     if (!moduleName.trim()) {
       setTouched(true);
-      setError('El nombre del módulo es requerido.');
       return;
     }
     wizard.resetForm();
     wizard.setEvaluationData((prev) => ({ ...prev, name: moduleName }));
-    setStep('wizard');
+    setStep("wizard");
   };
 
   const handleCompleteEvaluation = async () => {
     try {
-      setStep('processing');
-
-      // 1. Crear evaluación
       const evaluationId = await wizard.completeForm();
 
-      // 2. Crear módulo con evaluación
-      const newModule: Omit<Module, 'module_id' | 'created_at' | 'updated_at'> =
+      const newModule: Omit<Module, "module_id" | "created_at" | "updated_at"> =
         {
           name: moduleName,
           evaluation_id: evaluationId,
@@ -56,91 +47,59 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
           course_id: courseId,
         };
 
-      await addModule(newModule);
-
-      // 3. Mostrar éxito
-      setStep('success');
+      await createModuleMutation.mutateAsync(newModule);
       onSuccess();
       onClose();
-    } catch (err) {
-      console.error('Error al crear módulo con evaluación:', err);
-      setStep('form');
-      setError('Ocurrió un error al guardar. Intente nuevamente.');
-      setShowAlert(true);
+    } catch (err: unknown) {
+      toast.error(getUserFacingMessage(err) ?? "Error al crear el módulo");
+      setStep("form");
     }
   };
 
-  const handleCancel = () => {
-    onClose();
-  };
-
   return (
-    <ProtectedRoute>
-      <div className="bg-white p-6 w-full max-w-4xl mx-auto">
-        {step === 'form' && (
-          <>
-            {showAlert && error && (
-              <AlertComponent
-                type="danger"
-                message={error}
-                onClose={() => {
-                  setError(null);
-                  setShowAlert(false);
-                }}
-              />
-            )}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleStartWizard();
-              }}
-              className="space-y-4"
-            >
-              <FormField
-                id="moduleName"
-                label="Nombre del Módulo"
-                type="text"
-                value={moduleName}
-                onChange={(e) => setModuleName(e.target.value)}
-                onBlur={() => setTouched(true)}
-                error={!moduleName && touched}
-                touched={touched}
-                required
-              />
-
-              <div className="flex justify-end space-x-4">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-500 text-white py-2 px-4 rounded"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white py-2 px-4 rounded"
-                >
-                  Crear Evaluación
-                </button>
-              </div>
-            </form>
-          </>
-        )}
-
-        {step === 'wizard' && (
-          <EvaluationWizard
-            {...wizard}
-            completeForm={handleCompleteEvaluation}
+    <div className="w-full">
+      {step === "form" && (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleStartWizard();
+          }}
+          className="space-y-4"
+        >
+          <FormField
+            id="moduleName"
+            label="Nombre del Módulo"
+            type="text"
+            value={moduleName}
+            onChange={(e) => setModuleName(e.target.value)}
+            onBlur={() => setTouched(true)}
+            error={!moduleName && touched}
+            touched={touched}
+            required
           />
-        )}
 
-        {step === 'processing' && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-            <Loader />
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-sm font-medium text-gray-500 hover:text-gray-800 transition-colors px-4 py-2"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
+            >
+              Crear Evaluación
+            </button>
           </div>
-        )}
-      </div>
-    </ProtectedRoute>
+        </form>
+      )}
+
+      {step === "wizard" && (
+        <EvaluationWizard {...wizard} completeForm={handleCompleteEvaluation} />
+      )}
+    </div>
   );
 };
 

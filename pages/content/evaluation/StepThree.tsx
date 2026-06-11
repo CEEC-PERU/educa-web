@@ -6,7 +6,6 @@ import {
   ArrowRightIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
-import './../../../app/globals.css';
 
 interface StepThreeProps {
   prevStep: () => void;

@@ -4,6 +4,11 @@ export interface CourseProgress {
   Progreso: number;
 }
 
+export interface ProgressDistribution {
+  range: string;
+  count: number;
+}
+
 export interface TopRanking {
   name: string;
   puntaje: number;
@@ -19,4 +24,3 @@ export interface ActiveUser {
   active: number;
 }
 
-export type ScoreNPS = number[];

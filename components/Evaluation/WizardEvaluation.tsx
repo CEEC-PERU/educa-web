@@ -1,10 +1,8 @@
-// components/EvaluationWizard/EvaluationWizard.tsx
-import Wizard from '../../components/Wizard';
-import StepOne from '../../pages/content/evaluation/StepOne';
-import StepTwo from '../../pages/content/evaluation/StepTwo';
-import StepThree from '../../pages/content/evaluation/StepThree';
-import StepSummary from '../../pages/content/evaluation/StepSummary';
-
+import Wizard from "../../components/Wizard";
+import StepOne from "../../pages/content/evaluation/StepOne";
+import StepTwo from "../../pages/content/evaluation/StepTwo";
+import StepThree from "../../pages/content/evaluation/StepThree";
+import StepSummary from "../../pages/content/evaluation/StepSummary";
 
 interface EvaluationWizardProps {
   step: number;

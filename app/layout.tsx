@@ -1,15 +1,14 @@
-// app/layout.tsx
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-import Navbar from '../components/Navbar';
-import Footter from '../components/Footter';
-import Head from 'next/head';
-const inter = Inter({ subsets: ['latin'] });
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Navbar from "../components/Navbar";
+import Footter from "../components/Footter";
+import Head from "next/head";
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'MentorMind',
-  description: 'MentorMind plataforma educativa',
+  title: "MentorMind",
+  description: "MentorMind plataforma educativa",
 };
 
 export default function RootLayout({
@@ -25,7 +24,6 @@ export default function RootLayout({
           name="description"
           content="Programas de formación en soft skills, gestión del cambio y liderazgo transformacional para profesionales y empresas."
         />
-        {/* Open Graph / Social Media */}
         <meta property="og:title" content="MentorMind | Cursos de Liderazgo" />
         <meta
           property="og:description"
@@ -37,7 +35,6 @@ export default function RootLayout({
         />
         <meta property="og:url" content="https://mentormind.com.pe" />
         <meta property="og:type" content="website" />
-        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <body className={inter.className}>{children}</body>

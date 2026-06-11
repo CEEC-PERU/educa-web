@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
-import { API_EVALUATIONMODULE } from '../../../utils/Endpoints';
-import Modal from '../../../components/Admin/Modal';
-import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
-import { useAuth } from '../../../context/AuthContext';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { API_EVALUATIONMODULE } from "../../../utils/Endpoints";
+import Modal from "../../../components/Admin/Modal";
+import { useClassroomBySupervisor } from "../../../hooks/useClassroom";
+import { useAuth } from "../../../context/AuthContext";
 import {
   PlusIcon,
   AcademicCapIcon,
@@ -19,17 +17,18 @@ import {
   XCircleIcon,
   UserGroupIcon,
   ClipboardDocumentListIcon,
-} from '@heroicons/react/24/outline';
-import '../../../app/globals.css';
+} from "@heroicons/react/24/outline";
+import AppLayout from "../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../types/next";
 
 interface Question {
   question_sche_id?: number;
   question_text: string;
   question_type:
-    | 'multiple_choice'
-    | 'single_choice'
-    | 'true_false'
-    | 'open_ended';
+    | "multiple_choice"
+    | "single_choice"
+    | "true_false"
+    | "open_ended";
   points: number;
   order_index?: number;
   explanation?: string;
@@ -98,17 +97,16 @@ interface AssignmentFormData {
   classroom_ids: number[];
   start_date: string;
   due_date: string;
-  status: 'assigned';
+  status: "assigned";
 }
 
-const Evaluations: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const Evaluations: NextPageWithLayout = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [editingEvaluation, setEditingEvaluation] = useState<Evaluation | null>(
-    null
+    null,
   );
   const { classrooms } = useClassroomBySupervisor();
   const [isSaving, setIsSaving] = useState(false);
@@ -124,12 +122,12 @@ const Evaluations: React.FC = () => {
 
   // Estado del formulario de evaluación
   const [formData, setFormData] = useState<Evaluation>({
-    title: '',
-    description: '',
+    title: "",
+    description: "",
     duration_minutes: 60,
     total_points: 100,
     passing_score: 60,
-    instructions: '',
+    instructions: "",
     max_attempts: 1,
     show_results_immediately: true,
     is_active: true,
@@ -141,19 +139,19 @@ const Evaluations: React.FC = () => {
     useState<AssignmentFormData>({
       evaluation_sche_id: 0,
       classroom_ids: [],
-      start_date: '',
-      due_date: '',
-      status: 'assigned',
+      start_date: "",
+      due_date: "",
+      status: "assigned",
     });
 
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
-    question_text: '',
-    question_type: 'single_choice',
+    question_text: "",
+    question_type: "single_choice",
     points: 10,
-    explanation: '',
+    explanation: "",
     options: [
-      { option_text: '', is_correct: false },
-      { option_text: '', is_correct: false },
+      { option_text: "", is_correct: false },
+      { option_text: "", is_correct: false },
     ],
   });
 
@@ -186,9 +184,9 @@ const Evaluations: React.FC = () => {
         `${API_EVALUATIONMODULE}/user/${userInfo.id}`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
 
       if (response.ok) {
@@ -200,16 +198,16 @@ const Evaluations: React.FC = () => {
             (question: any) =>
               question &&
               question.question_text &&
-              typeof question.question_text === 'string'
+              typeof question.question_text === "string",
           ),
         }));
         setEvaluations(validEvaluations);
       } else {
-        console.error('Error fetching evaluations:', response.statusText);
+        console.error("Error fetching evaluations:", response.statusText);
         setEvaluations([]);
       }
     } catch (error) {
-      console.error('Error fetching evaluations:', error);
+      console.error("Error fetching evaluations:", error);
       setEvaluations([]);
     } finally {
       setIsLoading(false);
@@ -224,11 +222,11 @@ const Evaluations: React.FC = () => {
   // Función para manejar el clic en la tarjeta de evaluación
   const handleEvaluationClick = (
     evaluation: Evaluation,
-    event: React.MouseEvent
+    event: React.MouseEvent,
   ) => {
     // Verificar si el clic fue en un botón de acción
     const target = event.target as HTMLElement;
-    const isActionButton = target.closest('button');
+    const isActionButton = target.closest("button");
 
     if (!isActionButton && evaluation.evaluation_sche_id) {
       handleViewStudents(evaluation.evaluation_sche_id);
@@ -240,19 +238,19 @@ const Evaluations: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!assignmentFormData.evaluation_sche_id) {
-      newErrors.evaluation_sche_id = 'Debe seleccionar una evaluación';
+      newErrors.evaluation_sche_id = "Debe seleccionar una evaluación";
     }
 
     if (assignmentFormData.classroom_ids.length === 0) {
-      newErrors.classroom_ids = 'Debe seleccionar al menos un aula';
+      newErrors.classroom_ids = "Debe seleccionar al menos un aula";
     }
 
     if (!assignmentFormData.start_date) {
-      newErrors.start_date = 'La fecha de inicio es requerida';
+      newErrors.start_date = "La fecha de inicio es requerida";
     }
 
     if (!assignmentFormData.due_date) {
-      newErrors.due_date = 'La fecha de fin es requerida';
+      newErrors.due_date = "La fecha de fin es requerida";
     }
 
     if (
@@ -262,7 +260,7 @@ const Evaluations: React.FC = () => {
         new Date(assignmentFormData.due_date)
     ) {
       newErrors.due_date =
-        'La fecha de fin debe ser posterior a la fecha de inicio';
+        "La fecha de fin debe ser posterior a la fecha de inicio";
     }
 
     setAssignmentErrors(newErrors);
@@ -290,18 +288,18 @@ const Evaluations: React.FC = () => {
         status: assignmentFormData.status,
       };
 
-      console.log('Enviando datos de asignación:', assignmentData);
+      console.log("Enviando datos de asignación:", assignmentData);
 
       const response = await fetch(
         `${API_EVALUATIONMODULE}/assignments/${userInfo.id}`,
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
           body: JSON.stringify(assignmentData),
-        }
+        },
       );
 
       const result = await response.json();
@@ -312,17 +310,17 @@ const Evaluations: React.FC = () => {
           `${result.message}. Total estudiantes: ${
             result.summary?.total_students_assigned || 0
           }`,
-          'success'
+          "success",
         );
       } else {
         showNotification(
-          result.message || 'Error al asignar la evaluación',
-          'error'
+          result.message || "Error al asignar la evaluación",
+          "error",
         );
       }
     } catch (error) {
-      console.error('Error assigning evaluation:', error);
-      showNotification('Error al asignar la evaluación', 'error');
+      console.error("Error assigning evaluation:", error);
+      showNotification("Error al asignar la evaluación", "error");
     } finally {
       setIsAssigning(false);
     }
@@ -362,11 +360,11 @@ const Evaluations: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'El título es requerido';
+      newErrors.title = "El título es requerido";
     }
 
     if (formData.duration_minutes < 1) {
-      newErrors.duration_minutes = 'La duración debe ser mayor a 0';
+      newErrors.duration_minutes = "La duración debe ser mayor a 0";
     }
 
     if (
@@ -374,11 +372,11 @@ const Evaluations: React.FC = () => {
       formData.passing_score > formData.total_points
     ) {
       newErrors.passing_score =
-        'La puntuación mínima debe estar entre 1 y el total de puntos';
+        "La puntuación mínima debe estar entre 1 y el total de puntos";
     }
 
     if (!formData.questions || formData.questions.length === 0) {
-      newErrors.questions = 'Debe agregar al menos una pregunta';
+      newErrors.questions = "Debe agregar al menos una pregunta";
     }
 
     setErrors(newErrors);
@@ -400,13 +398,13 @@ const Evaluations: React.FC = () => {
         ? `${API_EVALUATIONMODULE}/${editingEvaluation.evaluation_sche_id}`
         : `${API_EVALUATIONMODULE}/profesor/${userInfo.id}/${userInfo.enterprise_id}`;
 
-      const method = editingEvaluation ? 'PUT' : 'POST';
+      const method = editingEvaluation ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
         },
         body: JSON.stringify(formData),
       });
@@ -416,60 +414,60 @@ const Evaluations: React.FC = () => {
         handleCloseModal();
         showNotification(
           editingEvaluation
-            ? 'Evaluación actualizada exitosamente'
-            : 'Evaluación creada exitosamente',
-          'success'
+            ? "Evaluación actualizada exitosamente"
+            : "Evaluación creada exitosamente",
+          "success",
         );
       } else {
         const error = await response.json();
         showNotification(
-          `Error: ${error.message || 'Error al guardar la evaluación'}`,
-          'error'
+          `Error: ${error.message || "Error al guardar la evaluación"}`,
+          "error",
         );
       }
     } catch (error) {
-      console.error('Error saving evaluation:', error);
-      showNotification('Error al guardar la evaluación', 'error');
+      console.error("Error saving evaluation:", error);
+      showNotification("Error al guardar la evaluación", "error");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const showNotification = (message: string, type: 'success' | 'error') => {
+  const showNotification = (message: string, type: "success" | "error") => {
     alert(message);
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm('¿Estás seguro de que deseas eliminar esta evaluación?')) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta evaluación?")) {
       try {
         const response = await fetch(`${API_EVALUATIONMODULE}/${id}`, {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
         });
 
         if (response.ok) {
           await fetchEvaluations();
-          showNotification('Evaluación eliminada exitosamente', 'success');
+          showNotification("Evaluación eliminada exitosamente", "success");
         } else {
-          showNotification('Error al eliminar la evaluación', 'error');
+          showNotification("Error al eliminar la evaluación", "error");
         }
       } catch (error) {
-        console.error('Error deleting evaluation:', error);
-        showNotification('Error al eliminar la evaluación', 'error');
+        console.error("Error deleting evaluation:", error);
+        showNotification("Error al eliminar la evaluación", "error");
       }
     }
   };
 
   const resetForm = () => {
     setFormData({
-      title: '',
-      description: '',
+      title: "",
+      description: "",
       duration_minutes: 60,
       total_points: 100,
       passing_score: 60,
-      instructions: '',
+      instructions: "",
       max_attempts: 1,
       show_results_immediately: true,
       is_active: true,
@@ -481,13 +479,13 @@ const Evaluations: React.FC = () => {
 
   const resetCurrentQuestion = () => {
     setCurrentQuestion({
-      question_text: '',
-      question_type: 'single_choice',
+      question_text: "",
+      question_type: "single_choice",
       points: 10,
-      explanation: '',
+      explanation: "",
       options: [
-        { option_text: '', is_correct: false },
-        { option_text: '', is_correct: false },
+        { option_text: "", is_correct: false },
+        { option_text: "", is_correct: false },
       ],
     });
   };
@@ -507,7 +505,7 @@ const Evaluations: React.FC = () => {
         (question) =>
           question &&
           question.question_text &&
-          typeof question.question_text === 'string'
+          typeof question.question_text === "string",
       ),
     };
     setFormData(safeEvaluation);
@@ -516,40 +514,40 @@ const Evaluations: React.FC = () => {
 
   const validateQuestion = (): boolean => {
     if (!currentQuestion.question_text.trim()) {
-      showNotification('Por favor, ingresa el texto de la pregunta', 'error');
+      showNotification("Por favor, ingresa el texto de la pregunta", "error");
       return false;
     }
 
-    if (currentQuestion.question_type !== 'open_ended') {
+    if (currentQuestion.question_type !== "open_ended") {
       const hasCorrectAnswer = currentQuestion.options?.some(
-        (option) => option.is_correct
+        (option) => option.is_correct,
       );
       if (!hasCorrectAnswer) {
         showNotification(
-          'Debe seleccionar al menos una opción correcta',
-          'error'
+          "Debe seleccionar al menos una opción correcta",
+          "error",
         );
         return false;
       }
 
-      if (currentQuestion.question_type === 'single_choice') {
+      if (currentQuestion.question_type === "single_choice") {
         const correctCount =
           currentQuestion.options?.filter((option) => option.is_correct)
             .length || 0;
         if (correctCount > 1) {
           showNotification(
-            'Para preguntas de selección única, solo puede haber una respuesta correcta',
-            'error'
+            "Para preguntas de selección única, solo puede haber una respuesta correcta",
+            "error",
           );
           return false;
         }
       }
 
       const emptyOptions = currentQuestion.options?.filter(
-        (option) => !option.option_text.trim()
+        (option) => !option.option_text.trim(),
       );
       if (emptyOptions && emptyOptions.length > 0) {
-        showNotification('Todas las opciones deben tener texto', 'error');
+        showNotification("Todas las opciones deben tener texto", "error");
         return false;
       }
     }
@@ -603,7 +601,7 @@ const Evaluations: React.FC = () => {
       options: [
         ...(prev.options || []),
         {
-          option_text: '',
+          option_text: "",
           is_correct: false,
           order_index: (prev.options?.length || 0) + 1,
         },
@@ -615,9 +613,9 @@ const Evaluations: React.FC = () => {
     const newOptions = [...(currentQuestion.options || [])];
 
     if (
-      field === 'is_correct' &&
+      field === "is_correct" &&
       value &&
-      currentQuestion.question_type === 'single_choice'
+      currentQuestion.question_type === "single_choice"
     ) {
       newOptions.forEach((option, i) => {
         if (i !== index) {
@@ -647,18 +645,18 @@ const Evaluations: React.FC = () => {
     }));
   };
 
-  const handleQuestionTypeChange = (type: Question['question_type']) => {
+  const handleQuestionTypeChange = (type: Question["question_type"]) => {
     let options = currentQuestion.options;
 
-    if (type === 'true_false') {
+    if (type === "true_false") {
       options = [
-        { option_text: 'Verdadero', is_correct: false, order_index: 1 },
-        { option_text: 'Falso', is_correct: false, order_index: 2 },
+        { option_text: "Verdadero", is_correct: false, order_index: 1 },
+        { option_text: "Falso", is_correct: false, order_index: 2 },
       ];
-    } else if (type === 'open_ended') {
+    } else if (type === "open_ended") {
       options = [];
-    } else if (type === 'single_choice' || type === 'multiple_choice') {
-      if (type === 'single_choice' && options) {
+    } else if (type === "single_choice" || type === "multiple_choice") {
+      if (type === "single_choice" && options) {
         let foundCorrect = false;
         options = options.map((option) => ({
           ...option,
@@ -671,8 +669,8 @@ const Evaluations: React.FC = () => {
 
       if (!options || options.length < 2) {
         options = [
-          { option_text: '', is_correct: false, order_index: 1 },
-          { option_text: '', is_correct: false, order_index: 2 },
+          { option_text: "", is_correct: false, order_index: 1 },
+          { option_text: "", is_correct: false, order_index: 2 },
         ];
       }
     }
@@ -684,16 +682,16 @@ const Evaluations: React.FC = () => {
     }));
   };
 
-  const getQuestionTypeLabel = (type: Question['question_type']) => {
+  const getQuestionTypeLabel = (type: Question["question_type"]) => {
     switch (type) {
-      case 'multiple_choice':
-        return 'Opción Múltiple';
-      case 'single_choice':
-        return 'Selección Única';
-      case 'true_false':
-        return 'Verdadero/Falso';
-      case 'open_ended':
-        return 'Pregunta Abierta';
+      case "multiple_choice":
+        return "Opción Múltiple";
+      case "single_choice":
+        return "Selección Única";
+      case "true_false":
+        return "Verdadero/Falso";
+      case "open_ended":
+        return "Pregunta Abierta";
       default:
         return type;
     }
@@ -701,7 +699,7 @@ const Evaluations: React.FC = () => {
 
   const renderFormField = (
     error: string | undefined,
-    children: React.ReactNode
+    children: React.ReactNode,
   ) => (
     <div className="space-y-1">
       {children}
@@ -712,7 +710,7 @@ const Evaluations: React.FC = () => {
   // Safe question text display with null checks
   const getQuestionDisplayText = (question: Question): string => {
     if (!question || !question.question_text) {
-      return 'Pregunta sin texto';
+      return "Pregunta sin texto";
     }
     const questionText = question.question_text.toString();
     return questionText.length > 60
@@ -721,17 +719,8 @@ const Evaluations: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-20' : ''
-          }`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             {/* Header */}
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -820,11 +809,11 @@ const Evaluations: React.FC = () => {
                       </div>
 
                       <h3 className="font-bold text-lg text-gray-800 mb-2 line-clamp-2">
-                        {evaluation.title || 'Sin título'}
+                        {evaluation.title || "Sin título"}
                       </h3>
 
                       <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {evaluation.description || 'Sin descripción'}
+                        {evaluation.description || "Sin descripción"}
                       </p>
 
                       <div className="space-y-2">
@@ -846,13 +835,13 @@ const Evaluations: React.FC = () => {
                           <div className="flex items-center text-sm text-gray-600">
                             <CalendarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                             <span className="truncate">
-                              Creada:{' '}
+                              Creada:{" "}
                               {new Date(
-                                evaluation.created_at
-                              ).toLocaleDateString('es-ES', {
-                                day: '2-digit',
-                                month: '2-digit',
-                                year: 'numeric',
+                                evaluation.created_at,
+                              ).toLocaleDateString("es-ES", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
                               })}
                             </span>
                           </div>
@@ -867,11 +856,11 @@ const Evaluations: React.FC = () => {
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               evaluation.is_active
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-gray-100 text-gray-800'
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
                             }`}
                           >
-                            {evaluation.is_active ? 'Activa' : 'Inactiva'}
+                            {evaluation.is_active ? "Activa" : "Inactiva"}
                           </span>
                         </div>
                       </div>
@@ -901,8 +890,6 @@ const Evaluations: React.FC = () => {
                 </div>
               )}
             </div>
-          </div>
-        </main>
       </div>
 
       {/* Modal para Asignar Evaluación */}
@@ -932,8 +919,8 @@ const Evaluations: React.FC = () => {
                     }
                     className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
                       assignmentErrors.evaluation_sche_id
-                        ? 'border-red-300 focus:border-red-500'
-                        : 'border-gray-300 focus:border-green-500'
+                        ? "border-red-300 focus:border-red-500"
+                        : "border-gray-300 focus:border-green-500"
                     }`}
                   >
                     <option value={0}>Seleccione una evaluación</option>
@@ -949,7 +936,7 @@ const Evaluations: React.FC = () => {
                         </option>
                       ))}
                   </select>
-                </div>
+                </div>,
               )}
 
               {/* Fechas */}
@@ -971,11 +958,11 @@ const Evaluations: React.FC = () => {
                       }
                       className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
                         assignmentErrors.start_date
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-green-500'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-300 focus:border-green-500"
                       }`}
                     />
-                  </div>
+                  </div>,
                 )}
 
                 {renderFormField(
@@ -995,11 +982,11 @@ const Evaluations: React.FC = () => {
                       }
                       className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-green-500 transition-colors ${
                         assignmentErrors.due_date
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-green-500'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-300 focus:border-green-500"
                       }`}
                     />
-                  </div>
+                  </div>,
                 )}
               </div>
 
@@ -1022,12 +1009,12 @@ const Evaluations: React.FC = () => {
                               type="checkbox"
                               id={`classroom-${classroom.classroom_id}`}
                               checked={assignmentFormData.classroom_ids.includes(
-                                classroom.classroom_id
+                                classroom.classroom_id,
                               )}
                               onChange={(e) =>
                                 handleClassroomSelection(
                                   classroom.classroom_id,
-                                  e.target.checked
+                                  e.target.checked,
                                 )
                               }
                               className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
@@ -1042,8 +1029,8 @@ const Evaluations: React.FC = () => {
                                     Aula: {classroom.code}
                                   </p>
                                   <p className="text-xs text-gray-500">
-                                    Turno: {classroom.Shift?.name} | Profesor:{' '}
-                                    {classroom.User?.userProfile?.first_name}{' '}
+                                    Turno: {classroom.Shift?.name} | Profesor:{" "}
+                                    {classroom.User?.userProfile?.first_name}{" "}
                                     {classroom.User?.userProfile?.last_name}
                                   </p>
                                 </div>
@@ -1067,7 +1054,7 @@ const Evaluations: React.FC = () => {
                       seleccionada(s)
                     </p>
                   )}
-                </div>
+                </div>,
               )}
             </div>
 
@@ -1096,7 +1083,7 @@ const Evaluations: React.FC = () => {
                     Asignando...
                   </span>
                 ) : (
-                  'Asignar Evaluación'
+                  "Asignar Evaluación"
                 )}
               </button>
             </div>
@@ -1109,7 +1096,7 @@ const Evaluations: React.FC = () => {
         <Modal
           isOpen={showCreateModal}
           onClose={handleCloseModal}
-          title={editingEvaluation ? 'Editar Evaluación' : 'Nueva Evaluación'}
+          title={editingEvaluation ? "Editar Evaluación" : "Nueva Evaluación"}
           size="xl"
           closeOnBackdropClick={false}
         >
@@ -1139,12 +1126,12 @@ const Evaluations: React.FC = () => {
                       }
                       className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors ${
                         errors.title
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-300 focus:border-blue-500"
                       }`}
                       placeholder="Título de la evaluación"
                     />
-                  </div>
+                  </div>,
                 )}
 
                 {renderFormField(
@@ -1166,11 +1153,11 @@ const Evaluations: React.FC = () => {
                       }
                       className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors ${
                         errors.duration_minutes
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-300 focus:border-blue-500"
                       }`}
                     />
-                  </div>
+                  </div>,
                 )}
 
                 {renderFormField(
@@ -1193,11 +1180,11 @@ const Evaluations: React.FC = () => {
                       }
                       className={`block w-full rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 transition-colors ${
                         errors.passing_score
-                          ? 'border-red-300 focus:border-red-500'
-                          : 'border-gray-300 focus:border-blue-500'
+                          ? "border-red-300 focus:border-red-500"
+                          : "border-gray-300 focus:border-blue-500"
                       }`}
                     />
-                  </div>
+                  </div>,
                 )}
 
                 <div>
@@ -1302,8 +1289,8 @@ const Evaluations: React.FC = () => {
                   Preguntas ({formData.questions?.length || 0})
                 </h3>
                 <div className="text-sm text-gray-600">
-                  Total:{' '}
-                  <span className="font-semibold">{formData.total_points}</span>{' '}
+                  Total:{" "}
+                  <span className="font-semibold">{formData.total_points}</span>{" "}
                   puntos
                 </div>
               </div>
@@ -1341,7 +1328,7 @@ const Evaluations: React.FC = () => {
                           <span className="bg-blue-100 px-2 py-1 rounded text-blue-800">
                             {question.points || 0} pts
                           </span>
-                          {question.question_type !== 'open_ended' && (
+                          {question.question_type !== "open_ended" && (
                             <span>
                               {question.options?.length || 0} opciones
                             </span>
@@ -1395,7 +1382,7 @@ const Evaluations: React.FC = () => {
                         value={currentQuestion.question_type}
                         onChange={(e) =>
                           handleQuestionTypeChange(
-                            e.target.value as Question['question_type']
+                            e.target.value as Question["question_type"],
                           )
                         }
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
@@ -1406,14 +1393,14 @@ const Evaluations: React.FC = () => {
                         {/*<option value="open_ended">Pregunta Abierta</option>*/}
                       </select>
                       <p className="mt-1 text-xs text-gray-500">
-                        {currentQuestion.question_type === 'single_choice' &&
-                          'Solo una respuesta correcta'}
-                        {currentQuestion.question_type === 'multiple_choice' &&
-                          'Múltiples respuestas correctas'}
-                        {currentQuestion.question_type === 'true_false' &&
-                          'Solo verdadero o falso'}
-                        {currentQuestion.question_type === 'open_ended' &&
-                          'Respuesta de texto libre'}
+                        {currentQuestion.question_type === "single_choice" &&
+                          "Solo una respuesta correcta"}
+                        {currentQuestion.question_type === "multiple_choice" &&
+                          "Múltiples respuestas correctas"}
+                        {currentQuestion.question_type === "true_false" &&
+                          "Solo verdadero o falso"}
+                        {currentQuestion.question_type === "open_ended" &&
+                          "Respuesta de texto libre"}
                       </p>
                     </div>
 
@@ -1437,15 +1424,15 @@ const Evaluations: React.FC = () => {
                   </div>
 
                   {/* Opciones para preguntas con opciones */}
-                  {currentQuestion.question_type !== 'open_ended' && (
+                  {currentQuestion.question_type !== "open_ended" && (
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <label className="block text-sm font-medium text-gray-700">
                           Opciones *
                         </label>
-                        {(currentQuestion.question_type === 'multiple_choice' ||
+                        {(currentQuestion.question_type === "multiple_choice" ||
                           currentQuestion.question_type ===
-                            'single_choice') && (
+                            "single_choice") && (
                           <button
                             type="button"
                             onClick={addOption}
@@ -1464,7 +1451,7 @@ const Evaluations: React.FC = () => {
                           >
                             <div className="flex-shrink-0">
                               {currentQuestion.question_type ===
-                              'single_choice' ? (
+                              "single_choice" ? (
                                 <input
                                   type="radio"
                                   name="correct_answer"
@@ -1472,8 +1459,8 @@ const Evaluations: React.FC = () => {
                                   onChange={(e) =>
                                     updateOption(
                                       index,
-                                      'is_correct',
-                                      e.target.checked
+                                      "is_correct",
+                                      e.target.checked,
                                     )
                                   }
                                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
@@ -1485,8 +1472,8 @@ const Evaluations: React.FC = () => {
                                   onChange={(e) =>
                                     updateOption(
                                       index,
-                                      'is_correct',
-                                      e.target.checked
+                                      "is_correct",
+                                      e.target.checked,
                                     )
                                   }
                                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -1499,20 +1486,20 @@ const Evaluations: React.FC = () => {
                               onChange={(e) =>
                                 updateOption(
                                   index,
-                                  'option_text',
-                                  e.target.value
+                                  "option_text",
+                                  e.target.value,
                                 )
                               }
                               placeholder={`Opción ${index + 1}`}
                               className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                               disabled={
-                                currentQuestion.question_type === 'true_false'
+                                currentQuestion.question_type === "true_false"
                               }
                             />
                             {(currentQuestion.question_type ===
-                              'multiple_choice' ||
+                              "multiple_choice" ||
                               currentQuestion.question_type ===
-                                'single_choice') &&
+                                "single_choice") &&
                               currentQuestion.options!.length > 2 && (
                                 <button
                                   type="button"
@@ -1580,15 +1567,17 @@ const Evaluations: React.FC = () => {
                     Guardando...
                   </span>
                 ) : (
-                  `${editingEvaluation ? 'Actualizar' : 'Crear'} Evaluación`
+                  `${editingEvaluation ? "Actualizar" : "Crear"} Evaluación`
                 )}
               </button>
             </div>
           </form>
         </Modal>
       )}
-    </div>
+    </>
   );
 };
+
+Evaluations.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Evaluations;

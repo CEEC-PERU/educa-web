@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { UserEnterprise } from '../interfaces/User/UserEnterprise';
-import { getUserEnterprise } from '../services/enterprise';
-import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from "react";
+import { UserEnterprise } from "../interfaces/User/UserEnterprise";
+import { getUserEnterprise } from "../services/enterprise";
+import { useAuth } from "../context/AuthContext";
 
 export const useEnterprise = () => {
   const [enterprise, setEnterprise] = useState<UserEnterprise | null>(null);
@@ -13,23 +13,25 @@ export const useEnterprise = () => {
   const updateEnterprise = async () => {
     setIsLoading(true);
     try {
-      console.log('Updating profile for user:', userInfo.id);
+      console.log("Updating profile for user:", userInfo.id);
       if (!token) {
-        throw new Error('Token is null or undefined');
+        throw new Error("Token is null or undefined");
       }
       const response = await getUserEnterprise(token, userInfo.id);
       setEnterprise(response);
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setError('Error updating profile. Please try again.');
+      console.error("Error updating profile:", error);
+      setError("Error updating profile. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    updateEnterprise();
-  }, []);
+    if (userInfo?.id && token) {
+      updateEnterprise();
+    }
+  }, [userInfo?.id, token]);
 
   return {
     enterprise,

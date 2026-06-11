@@ -9,7 +9,6 @@ import {
   TopRanking,
   AverageTime,
   ActiveUser,
-  ScoreNPS,
 } from '../../interfaces/dashboard';
 
 import { useAuth } from '../../context/AuthContext';
@@ -21,6 +20,11 @@ export const useTop = (selectedCourseId?: number) => {
   const { user, token } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
   useEffect(() => {
+    if (selectedCourseId === undefined) {
+      setTopRanking([]);
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       setError(null);
@@ -120,7 +124,7 @@ export const useAUserActive = () => {
 };
 
 export const useNPS = (cuestypeId: number, courseId?: number) => {
-  const [npsData, setNpsData] = useState<ScoreNPS[]>([]);
+  const [npsData, setNpsData] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -157,7 +161,7 @@ export const useNPS = (cuestypeId: number, courseId?: number) => {
 };
 
 export const useSatisfaccion = (cuestypeId: number, courseId?: number) => {
-  const [satisData, setSatisData] = useState<ScoreNPS[]>([]);
+  const [satisData, setSatisData] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

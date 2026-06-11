@@ -1,8 +1,4 @@
-'use client';
-
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Sidebar from '@/components/supervisor/SibebarSupervisor';
 import { useRouter } from 'next/router';
 import { useTrainingContent } from '@/hooks/resultado/useTrainingContent';
 import { TrainingContent } from '@/interfaces/Training/Training';
@@ -14,14 +10,14 @@ import {
 } from '@/services/training/trainingService';
 import { useAuth } from '@/context/AuthContext';
 import Modal from '@/components/Admin/Modal';
-import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import ContentForm from '@/components/Training/ContentForm';
+import AppLayout from '@/components/layouts/AppLayout';
+import type { NextPageWithLayout } from '@/types/next';
 
-export default function DayDetailPage() {
+const DayDetailPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { programId, dayId } = router.query;
   const { token } = useAuth();
-  const [showSidebar, setShowSidebar] = useState(true);
   const [selectedContent, setSelectedContent] =
     useState<TrainingContent | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -98,15 +94,8 @@ export default function DayDetailPage() {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : 'ml-0'}`}
-          >
-            <div className="mb-6">
+    <>
+      <div className="mb-6">
               <button
                 onClick={() => router.back()}
                 className="mb-4 text-gray-600 hover:text-gray-800"
@@ -164,10 +153,6 @@ export default function DayDetailPage() {
                 </div>
               )}
             </div>
-          </main>
-        </div>
-      </div>
-
       {isModalFormOpen && (
         <Modal
           isOpen={isModalFormOpen}
@@ -242,6 +227,10 @@ export default function DayDetailPage() {
           </div>
         </Modal>
       )}
-    </ProtectedRoute>
+    </>
   );
-}
+};
+
+DayDetailPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+
+export default DayDetailPage;

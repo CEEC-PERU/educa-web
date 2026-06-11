@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
 import ButtonContent from '../../../components/Content/ButtonContent';
 import ClassroomForm from '../../../components/supervisor/ClassromForm';
 import Modal from '../../../components/Admin/Modal';
@@ -15,10 +13,10 @@ import {
 } from '@heroicons/react/24/outline';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import { useCourseStudent } from '../../../hooks/useCourseStudents';
-import './../../../app/globals.css';
+import AppLayout from '../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../types/next';
 
-const Classroom: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const Classroom: NextPageWithLayout = () => {
   const router = useRouter();
   const { classrooms, isLoading } = useClassroomBySupervisor();
   const { courseStudent } = useCourseStudent();
@@ -38,17 +36,8 @@ const Classroom: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-20' : ''
-          }`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <>
+      <div className="max-w-7xl mx-auto">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
               <div>
@@ -174,8 +163,6 @@ const Classroom: React.FC = () => {
                 )}
               </div>
             </div>
-          </div>
-        </main>
       </div>
 
       {/* Classroom Registration Modal */}
@@ -189,8 +176,10 @@ const Classroom: React.FC = () => {
           onSuccess={handleClassroomCreateSuccess}
         />
       </Modal>
-    </div>
+    </>
   );
 };
+
+Classroom.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default Classroom;

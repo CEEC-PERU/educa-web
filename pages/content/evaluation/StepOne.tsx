@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Evaluation } from '../../../interfaces/Evaluation';
 import WizardStepContainer from '../../../components/WizardStepContainer';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import './../../../app/globals.css';
 import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 
 interface StepOneProps {

@@ -1,78 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/supervisor/SibebarSupervisor';
-import { useAuth } from '../../../context/AuthContext';
-import { getCoursesBySupervisor } from '../../../services/courses/courseStudent';
-import Loader from '../../../components/Loader';
-import CourseCard from './../../../components/CourseCard';
-import './../../../app/globals.css';
+import React from "react";
+import { useAuth } from "../../../context/AuthContext";
+import { useCoursesBySupervisorQuery } from "@/features/courses/courses.queries";
+import CourseCard from "../../../components/CourseCard";
+import AppLayout from "../../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../../types/next";
+import { BookOpenIcon } from "@heroicons/react/24/outline";
 
-const CorporateCourses: React.FC = () => {
+const SupervisorCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
-  const userId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
-        .id
-    : null;
+  const userId = (user as { id: number } | null)?.id;
 
-  const [courses, setCourses] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const { data: courses, isLoading, isError } = useCoursesBySupervisorQuery(userId);
 
-  useEffect(() => {
-    if (userId) {
-      const fetchCourses = async () => {
-        setLoading(true);
-        try {
-          const storedUserInfo = localStorage.getItem('userInfo');
-          if (!storedUserInfo) {
-            throw new Error(
-              'No se encontró información del usuario en el localStorage.'
-            );
-          }
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center py-20">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
+      </div>
+    );
+  }
 
-          const { id, enterprise_id } = JSON.parse(storedUserInfo) as {
-            id: number;
-            enterprise_id: number;
-          };
-
-          const response = await getCoursesBySupervisor(id);
-          console.log('Courses data:', response); // Verify that the data is correct
-          setCourses(response);
-        } catch (error) {
-          console.error('Error fetching courses:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchCourses();
-    }
-  }, [userId]);
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-2">
+        <p className="text-red-500 font-medium">Error al cargar los cursos</p>
+        <p className="text-sm text-gray-400">Intenta recargar la página</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main
-          className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}
-        >
-          <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">CURSOS</h2>
-          {loading ? (
-            <Loader />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  course={course}
-                  redirectPath="nota/"
-                />
-              ))}
-            </div>
-          )}
-        </main>
+    <>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Cursos</h1>
+        {courses && (
+          <p className="mt-1 text-sm text-gray-500">
+            {courses.length} {courses.length === 1 ? "curso asignado" : "cursos asignados"}
+          </p>
+        )}
       </div>
-    </div>
+
+      {courses?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 gap-3 text-gray-400">
+          <BookOpenIcon className="h-12 w-12 text-gray-300" />
+          <p className="text-sm">No tienes cursos asignados.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {courses?.map((course) => (
+            <CourseCard
+              key={course.course_id}
+              course={course}
+              redirectPath="nota/"
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
-export default CorporateCourses;
+SupervisorCourses.getLayout = (page) => <AppLayout>{page}</AppLayout>;
+
+export default SupervisorCourses;

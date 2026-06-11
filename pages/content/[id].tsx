@@ -1,61 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { getCourse, deleteCourse } from '../../services/courses/courseService';
-import { getEvaluations } from '../../services/evaluationService';
-import { Course } from '../../interfaces/Courses/Course';
-import { Evaluation } from '../../interfaces/Evaluation';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Content/SideBar';
-import DetailView from '../../components/DetailView';
-import ActionButtons from '../../components/Content/ActionButtons';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import Loader from '../../components/Loader';
-import ModalConfirmation from '../../components/ModalConfirmation';
-import AlertComponent from '../../components/AlertComponent';
-import useModal from '../../hooks/ui/useModal';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
-import './../../app/globals.css';
+import React from "react";
+import { useRouter } from "next/router";
+import { useCourseQuery } from "@/features/courses/courses.queries";
+import { useDeleteCourseMutation } from "@/features/courses/courses.mutations";
+import { useEvaluationsQuery } from "@/features/evaluations/evaluations.queries";
+import { getUserFacingMessage } from "@/lib/http/error";
+import AppLayout from "../../components/layouts/AppLayout";
+import type { NextPageWithLayout } from "../../types/next";
+import DetailView from "../../components/courses/DetailView";
+import {
+  ArrowLeftIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import ModalConfirmation from "../../components/ModalConfirmation";
+import useModal from "../../hooks/ui/useModal";
+import { toast } from "sonner";
 
-const CourseDetail: React.FC = () => {
+const CourseDetail: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query as { id: string };
-  const [course, setCourse] = useState<Course | null>(null);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-  const [showSidebar, setShowSidebar] = useState(true);
-  const [loading, setLoading] = useState(true);
   const { isVisible, showModal, hideModal } = useModal();
-  const [success, setSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (id) {
-      const fetchCourse = async () => {
-        try {
-          const courseData = await getCourse(id);
-          setCourse(courseData);
-        } catch (error) {
-          console.error('Error fetching course details:', error);
-        }
-      };
+  const courseQuery = useCourseQuery(id);
+  const evaluationsQuery = useEvaluationsQuery();
+  const deleteCourseMutation = useDeleteCourseMutation();
 
-      const fetchEvaluations = async () => {
-        try {
-          const evaluationsData = await getEvaluations();
-          setEvaluations(evaluationsData);
-        } catch (error) {
-          console.error('Error fetching evaluations:', error);
-        }
-      };
-
-      Promise.all([fetchCourse(), fetchEvaluations()]).then(() => {
-        setLoading(false);
-      });
-    }
-  }, [id]);
-
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
+  const course = courseQuery.data ?? null;
+  const evaluations = evaluationsQuery.data ?? [];
+  const loading = courseQuery.isLoading || evaluationsQuery.isLoading;
 
   const handleEdit = () => {
     if (course) {
@@ -64,93 +36,81 @@ const CourseDetail: React.FC = () => {
   };
 
   const handleDelete = async () => {
-    if (course) {
-      try {
-        await deleteCourse(course.course_id.toString());
-        setSuccess('Registro eliminado correctamente');
-        router.push('/content');
-      } catch (error) {
-        console.error('Error eliminando el curso:', error);
-      }
+    if (!course) return;
+    try {
+      await deleteCourseMutation.mutateAsync(course.course_id);
+      toast.success("Curso eliminado correctamente");
+      router.push("/content");
+    } catch (err) {
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar el curso");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
-      </div>
-    );
+  if (loading || !course) {
+    return null;
   }
 
-  if (!course) {
-    return <p>Loading...</p>;
+  if (courseQuery.isError) {
+    return (
+      <p className="text-gray-500 text-center mt-20">Curso no encontrado.</p>
+    );
   }
 
   const evaluationName =
     evaluations.find(
-      (evaluation) => evaluation.evaluation_id === course.evaluation_id
-    )?.name || 'No asignado';
-
-  const courseDetails = [
-    { value: course.description_short },
-    { value: course.description_large },
-    { label: 'Evaluación:', value: evaluationName },
-    { label: 'Duración del curso:', value: course.duration_course },
-    { label: 'Activo:', value: course.is_active ? 'Sí' : 'No' },
-  ];
+      (evaluation) => evaluation.evaluation_id === course.evaluation_id,
+    )?.name ?? "No asignado";
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
-            }`}
+    <div className="max-w-3xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors"
+        >
+          <ArrowLeftIcon className="h-4 w-4" />
+          Volver
+        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleEdit}
+            className="flex items-center gap-1.5 text-sm font-medium text-blue-600 border border-blue-200 bg-blue-50 hover:bg-blue-100 rounded-lg px-4 py-2 transition-colors"
           >
-            {success && (
-              <AlertComponent
-                type="success"
-                message={success}
-                onClose={() => setSuccess(null)}
-              />
-            )}
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="flex items-center text-purple-600 mb-4"
-            >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Volver
-            </button>
-            <div className="flex flex-col md:flex-row p-2 flex-1">
-              <DetailView
-                title={course.name}
-                imageUrl={course.image}
-                details={courseDetails}
-                videoUrl={course.intro_video}
-              />
-              <div className="md:ml-8 mt-4 md:mt-0 bg-white rounded-md flex-shrink-0">
-                <ActionButtons
-                  onEdit={handleEdit}
-                  onDelete={showModal}
-                  customSize={true}
-                />
-              </div>
-            </div>
-          </main>
+            <PencilSquareIcon className="h-4 w-4" />
+            Editar
+          </button>
+          <button
+            type="button"
+            onClick={showModal}
+            className="flex items-center gap-1.5 text-sm font-medium text-red-600 border border-red-200 bg-red-50 hover:bg-red-100 rounded-lg px-4 py-2 transition-colors"
+          >
+            <TrashIcon className="h-4 w-4" />
+            Eliminar
+          </button>
         </div>
-        <ModalConfirmation
-          show={isVisible}
-          onClose={hideModal}
-          onConfirm={handleDelete}
-        />
       </div>
-    </ProtectedRoute>
+
+      <DetailView
+        name={course.name}
+        imageUrl={course.image}
+        descriptionShort={course.description_short}
+        descriptionLarge={course.description_large}
+        evaluationName={evaluationName}
+        duration={course.duration_course}
+        isActive={course.is_active}
+        videoUrl={course.intro_video}
+      />
+      <ModalConfirmation
+        show={isVisible}
+        onClose={hideModal}
+        onConfirm={handleDelete}
+      />
+    </div>
   );
 };
+
+CourseDetail.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default CourseDetail;

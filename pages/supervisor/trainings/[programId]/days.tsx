@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
-import Sidebar from '@/components/supervisor/SibebarSupervisor';
-import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import { useTrainingDay } from '@/hooks/resultado/useTrainingDay';
 import { useRouter } from 'next/router';
 import { TrainingDay } from '@/interfaces/Training/Training';
@@ -14,12 +11,13 @@ import {
 import Modal from '@/components/Admin/Modal';
 import { useAuth } from '@/context/AuthContext';
 import DayForm from '@/components/Training/DayForm';
+import AppLayout from '@/components/layouts/AppLayout';
+import type { NextPageWithLayout } from '@/types/next';
 
-const TrainingDaysPage: React.FC = () => {
+const TrainingDaysPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { programId } = router.query;
   const { token } = useAuth();
-  const [showSidebar, setShowSidebar] = useState(true);
   const [isModalFormOpen, setIsModalFormOpen] = useState(false);
   const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState<TrainingDay | null>(null);
@@ -113,13 +111,8 @@ const TrainingDaysPage: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gray-50">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-            <div className="mb-6">
+    <>
+      <div className="mb-6">
               <button
                 onClick={() => router.back()}
                 className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
@@ -179,10 +172,6 @@ const TrainingDaysPage: React.FC = () => {
                 </div>
               )}
             </div>
-          </main>
-        </div>
-      </div>
-
       {/* Modal Unificado de Crear/Editar */}
       {isModalFormOpen && (
         <Modal
@@ -259,8 +248,10 @@ const TrainingDaysPage: React.FC = () => {
           </div>
         </Modal>
       )}
-    </ProtectedRoute>
+    </>
   );
 };
+
+TrainingDaysPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default TrainingDaysPage;

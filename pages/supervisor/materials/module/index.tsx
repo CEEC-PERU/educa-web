@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../../components/Navbar';
 import {
   updateModuleStatus,
   getModule,
@@ -9,12 +8,10 @@ import { getModulesByCourseId } from '../../../../services/courses/courseService
 import { deleteModule } from '../../../../services/moduleService';
 import { deleteSession } from '../../../../services/sessionService';
 import { getEvaluations } from '../../../../services/evaluationService';
-import Sidebar from './../../../../components/supervisor/SibebarSupervisor';
 import { Evaluation } from '../../../../interfaces/Evaluation';
 import ButtonComponent from '../../../../components/ButtonComponent';
 import { Module } from '../../../../interfaces/Module';
 import Link from 'next/link';
-import './../../../../app/globals.css';
 import { Disclosure } from '@headlessui/react';
 import FloatingButton from '../../../../components/FloatingButton';
 import {
@@ -33,12 +30,12 @@ import Modal from '../../../../components/Admin/Modal';
 import AddModuleForm from './../../../content/addModule';
 import EditModuleForm from './../../../content/editModule';
 import ReactTooltip from 'react-tooltip';
-import ProtectedRoute from '../../../../components/Auth/ProtectedRoute';
+import AppLayout from '../../../../components/layouts/AppLayout';
+import type { NextPageWithLayout } from '../../../../types/next';
 
-const ModulesPage: React.FC = () => {
+const ModulesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [showSidebar, setShowSidebar] = useState(true);
   const [modules, setModules] = useState<Module[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
@@ -143,11 +140,6 @@ const ModulesPage: React.FC = () => {
     return evaluation ? evaluation.name : 'N/A';
   };
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    localStorage.setItem('sidebarState', JSON.stringify(!showSidebar));
-  };
-
   const handleCloseSession = () => {
     setSelectedSession(null);
   };
@@ -204,16 +196,7 @@ const ModulesPage: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-          <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
-            }`}
-          >
+    <>
             {successMessage && (
               <AlertComponent
                 type="success"
@@ -388,9 +371,7 @@ const ModulesPage: React.FC = () => {
                 </aside>
               )}
             </div>
-          </main>
-        </div>
-        <ModalConfirmation
+      <ModalConfirmation
           show={isModuleModalVisible}
           onClose={hideModuleModal}
           onConfirm={handleDeleteModule}
@@ -425,9 +406,10 @@ const ModulesPage: React.FC = () => {
             />
           </Modal>
         )}
-      </div>
-    </ProtectedRoute>
+    </>
   );
 };
+
+ModulesPage.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default ModulesPage;
