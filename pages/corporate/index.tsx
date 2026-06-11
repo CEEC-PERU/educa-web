@@ -28,7 +28,7 @@ const CorporateDashboard: React.FC = () => {
   const { user } = useAuth();
   const { courseStudent } = useCourseStudent();
   const [selectedCourse, setSelectedCourse] = useState<number | undefined>(
-    undefined
+    undefined,
   );
   const { courseProgressData } = useCourseProgress(selectedCourse);
   const { topRanking } = useTop(selectedCourse);
@@ -49,7 +49,7 @@ const CorporateDashboard: React.FC = () => {
         <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
           <div className="mr-2 col-span-full">
             <select
-              value={selectedCourse ?? ''}
+              value={selectedCourse ?? ""}
               onChange={(e) =>
                 setSelectedCourse(Number(e.target.value) || undefined)
               }
