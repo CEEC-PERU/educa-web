@@ -1,7 +1,6 @@
-// hooks/useDownloadNotas.ts
-import useDownload from '../useDownload';
-import { API_GET_NOTAS_EXCEL } from '../../utils/Endpoints';
-import { useAuth } from '../../context/AuthContext';
+import useDownload from "../useDownload";
+import { API_GET_NOTAS_EXCEL } from "../../utils/Endpoints";
+import { useAuth } from "../../context/AuthContext";
 
 const useDownloadNotas = () => {
   const { downloadFile, loading, error } = useDownload();
@@ -15,7 +14,7 @@ const useDownloadNotas = () => {
 
     return downloadFile({
       endpoint,
-      fileName: 'reporte_notas.xlsx',
+      fileName: "reporte_notas.xlsx",
     });
   };
 
