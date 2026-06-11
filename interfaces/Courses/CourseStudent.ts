@@ -15,6 +15,7 @@ export interface Course {
   course_id: number;
   description_short: string;
   image: string;
+  diploma_enabled: boolean;
   courseCategory: CourseCategory;
   courseProfessor: CourseProfessor;
 }
