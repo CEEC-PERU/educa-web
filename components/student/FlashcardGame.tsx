@@ -1,137 +1,230 @@
-import React, { useState, useEffect } from 'react';
-import { useFlashcards } from '../../hooks/useFlashCards';
-import { useRouter } from 'next/router';
+import React, { useState, useEffect } from "react";
+import { useFlashcards } from "../../hooks/useFlashCards";
+import { useRouter } from "next/router";
 
 const FlashcardGame: React.FC = () => {
   const router = useRouter();
-  const module_id = Array.isArray(router.query.module_id)
-    ? parseInt(router.query.module_id[0], 10)
-    : parseInt(router.query.module_id as string, 10);
-    
+  const rawId = router.query.module_id;
+  const module_id = Array.isArray(rawId)
+    ? parseInt(rawId[0], 10)
+    : parseInt(rawId as string, 10);
+
   const { flashcards, isLoading } = useFlashcards(module_id);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectOption, setIncorrectOption] = useState<string | null>(null);
   const [gameOver, setGameOver] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
-  const [incorrectOption, setIncorrectOption] = useState<string | null>(null);
-  const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
-  const [completedAllFlashcards, setCompletedAllFlashcards] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [allCompleted, setAllCompleted] = useState(false);
 
-  const currentFlashcard = flashcards[currentFlashcardIndex]; 
+  const currentFlashcard = flashcards[currentIndex];
+
+  const shuffle = (options: string[]) => {
+    const arr = [...options];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
 
   useEffect(() => {
     if (currentFlashcard) {
-      shuffleOptions(); // Solo barajar las opciones la primera vez que se carga la tarjeta
+      setShuffledOptions(
+        shuffle([
+          ...currentFlashcard.correct_answer,
+          ...currentFlashcard.incorrect_answer,
+        ])
+      );
     }
-  }, [currentFlashcardIndex, currentFlashcard]);
+  }, [currentIndex, currentFlashcard]);
 
-  const shuffleOptions = () => {
-    if (currentFlashcard) {
-      const options = [...currentFlashcard.correct_answer, ...currentFlashcard.incorrect_answer];
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [options[i], options[j]] = [options[j], options[i]];
-      }
-      setShuffledOptions(options);
+  const resetRound = (reshuffle = false) => {
+    setSelectedOptions([]);
+    setCorrectAnswers(0);
+    setGameOver(false);
+    setShowModal(false);
+    setIncorrectOption(null);
+    if (reshuffle && currentFlashcard) {
+      setShuffledOptions(
+        shuffle([
+          ...currentFlashcard.correct_answer,
+          ...currentFlashcard.incorrect_answer,
+        ])
+      );
     }
   };
 
   const handleOptionClick = (option: string) => {
     if (gameOver || selectedOptions.includes(option)) return;
 
-    if (currentFlashcard?.correct_answer.includes(option)) {
-      setCorrectAnswers(correctAnswers + 1);
-      setSelectedOptions([...selectedOptions, option]);
-      if (correctAnswers + 1 === currentFlashcard.correct_answer.length) {
+    if (currentFlashcard.correct_answer.includes(option)) {
+      const newCount = correctAnswers + 1;
+      const newSelected = [...selectedOptions, option];
+      setCorrectAnswers(newCount);
+      setSelectedOptions(newSelected);
+      if (newCount === currentFlashcard.correct_answer.length) {
         setGameOver(true);
-        setModalMessage('¡Felicidades! Has seleccionado todas las respuestas correctas 🎉');
+        setModalMessage("¡Correcto! Completaste esta flashcard 🎉");
         setShowModal(true);
       }
     } else {
       setIncorrectOption(option);
-      setModalMessage('¡Has seleccionado una respuesta incorrecta! Inténtalo de nuevo.');
+      setModalMessage("Respuesta incorrecta. Inténtalo de nuevo.");
       setShowModal(true);
     }
   };
 
-  const resetGame = (keepOptions: boolean = true) => {
-    setSelectedOptions([]);
-    setCorrectAnswers(0);
-    setGameOver(false);
-    setShowModal(false);
-    setIncorrectOption(null);
+  const handleRetry = () => resetRound(false);
 
-    if (!keepOptions) {
-      shuffleOptions(); // Solo barajar si es necesario
-    }
-  };
-
-  // Modificado para reiniciar el mismo flashcard sin barajar las opciones
-  const handleRetryFlashcard = () => {
-    resetGame(true); // No reordenar las opciones
-  };
-
-  const handleNextFlashcard = () => {
-    if (currentFlashcardIndex + 1 < flashcards.length) {
-      setCurrentFlashcardIndex(currentFlashcardIndex + 1);
-      resetGame();
+  const handleNext = () => {
+    if (currentIndex + 1 < flashcards.length) {
+      setCurrentIndex(currentIndex + 1);
+      resetRound(false);
     } else {
-      setCompletedAllFlashcards(true);
-      setModalMessage('¡Has completado todos los flashcards! 🎉');
+      setAllCompleted(true);
+      setModalMessage("¡Completaste todos los flashcards! 🎉");
     }
   };
 
   const handleRestart = () => {
-    setCurrentFlashcardIndex(0);
-    setCompletedAllFlashcards(false);
-    resetGame();
+    setCurrentIndex(0);
+    setAllCompleted(false);
+    resetRound(true);
   };
 
-  if (isLoading || !currentFlashcard) {
-    return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-24">
+        <p className="text-white text-lg">Cargando flashcards...</p>
+      </div>
+    );
   }
 
-  return (
-    <div className="min-h-screen from-brand-100 via-brand-200 to-brand-300 flex flex-col items-center justify-center p-4">
-      <h1 className="text-2xl text-white font-bold mb-4">{currentFlashcard.question}</h1>
-      <p className="mb-4 text-white">{correctAnswers}/{currentFlashcard.correct_answer.length} correctas</p>
-      <div className="grid grid-cols-3 gap-4">
-        {shuffledOptions.map((option) => (
-          <div
-            key={option}
-            onClick={() => handleOptionClick(option)}
-            className={`border-4 p-2 cursor-pointer transform transition-transform ${
-              selectedOptions.includes(option)
-                ? 'border-green-500'
-                : incorrectOption === option
-                ? 'border-red-500'
-                : 'border-white'
-            }`}
-          >
-            <img src={option} alt="option" className="w-full h-64 object-cover" />
-          </div>
-        ))}
+  if (flashcards.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <p className="text-white text-lg">Este módulo no tiene flashcards.</p>
+        <button
+          onClick={() => router.back()}
+          className="text-white/70 hover:text-white text-sm underline transition-colors"
+        >
+          ← Volver a módulos
+        </button>
       </div>
+    );
+  }
+
+  const progressPct = ((currentIndex + 1) / flashcards.length) * 100;
+
+  return (
+    <div className="flex flex-col items-center px-4 py-10 sm:px-8 min-h-screen">
+      {/* Header */}
+      <div className="w-full max-w-3xl mb-6">
+        <button
+          onClick={() => router.back()}
+          className="text-white/70 hover:text-white text-sm transition-colors mb-5 flex items-center gap-1"
+        >
+          ← Volver
+        </button>
+
+        <div className="flex items-center justify-between mb-2 text-sm text-white/70">
+          <span>
+            Flashcard {currentIndex + 1} de {flashcards.length}
+          </span>
+          <span>
+            {correctAnswers}/{currentFlashcard.correct_answer.length} correctas
+          </span>
+        </div>
+        <div className="w-full bg-white/20 rounded-full h-1.5">
+          <div
+            className="bg-white rounded-full h-1.5 transition-all duration-300"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Pregunta */}
+      <div className="w-full max-w-3xl mb-8 text-center">
+        <h2 className="text-xl sm:text-2xl font-bold text-white">
+          {currentFlashcard.question}
+        </h2>
+      </div>
+
+      {/* Opciones */}
+      <div className="w-full max-w-3xl grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        {shuffledOptions.map((option) => {
+          const isCorrect = selectedOptions.includes(option);
+          const isWrong = incorrectOption === option;
+          return (
+            <div
+              key={option}
+              onClick={() => handleOptionClick(option)}
+              className={[
+                "rounded-xl overflow-hidden border-4 cursor-pointer transition-all duration-200",
+                isCorrect && "border-green-400",
+                isWrong && "border-red-400",
+                !isCorrect && !isWrong && "border-white/30 hover:border-white",
+                gameOver && !isCorrect && "opacity-40 cursor-default",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            >
+              <img
+                src={option}
+                alt="opción"
+                className="w-full h-40 sm:h-52 object-cover"
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-lg text-center">
-            <p>{modalMessage}</p>
-            {!completedAllFlashcards ? (
+        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 px-4 pb-6 sm:pb-0">
+          <div className="bg-white rounded-2xl p-6 sm:p-8 w-full max-w-sm text-center shadow-xl">
+            <p className="text-gray-800 font-semibold text-lg mb-6">
+              {modalMessage}
+            </p>
+
+            {!allCompleted ? (
               incorrectOption ? (
-                <button onClick={handleRetryFlashcard} className="mt-4 px-4 py-2 bg-red-500 text-white rounded">
+                <button
+                  onClick={handleRetry}
+                  className="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-colors"
+                >
                   Reintentar
                 </button>
               ) : (
-                <button onClick={handleNextFlashcard} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                  Siguiente
+                <button
+                  onClick={handleNext}
+                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors"
+                >
+                  {currentIndex + 1 < flashcards.length
+                    ? "Siguiente"
+                    : "Ver resultado"}
                 </button>
               )
             ) : (
-              <button onClick={handleRestart} className="mt-4 px-4 py-2 bg-green-500 text-white rounded">
-                Finalizar
-              </button>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleRestart}
+                  className="w-full py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-colors"
+                >
+                  Jugar de nuevo
+                </button>
+                <button
+                  onClick={() => router.back()}
+                  className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors"
+                >
+                  Volver a módulos
+                </button>
+              </div>
             )}
           </div>
         </div>

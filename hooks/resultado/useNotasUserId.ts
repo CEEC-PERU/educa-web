@@ -12,7 +12,7 @@ export const useNotas = (course_id: number) => {
   //useEffect
   useEffect(() => {
     const fetchCourseDetail = async () => {
-      if (!token) {
+      if (!token || !course_id) {
         return;
       }
       setIsLoading(true);

@@ -1,140 +1,175 @@
 import React, { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
-import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useNotas } from "../../hooks/resultado/useNotasUserId";
+import type {
+  ModuleResult,
+  ModuleResultDetails,
+  CourseResult,
+} from "../../interfaces/Nota";
 
 const NotasIndex = () => {
-  const { user, profileInfo } = useAuth();
-  const { courseStudent } = useCourseStudent();
+  const { courseStudent, isLoading: loadingCourses } = useCourseStudent();
   const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
-  let name = "";
-  let uri_picture = "";
+  const { courseNota, isLoading, error } = useNotas(selectedCourseId ?? 0);
 
-  if (profileInfo) {
-    const profile = profileInfo as Profile;
-    name = profile.first_name;
-    uri_picture = profile.profile_picture!;
+  const userNota = courseNota?.[0] ?? null;
+  const hasNotas =
+    userNota &&
+    (userNota.ModuleResults?.length > 0 || userNota.CourseResults?.length > 0);
+
+  if (loadingCourses) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+        <p className="text-white">Cargando cursos...</p>
+      </div>
+    );
   }
 
-  // Fetch notas for the selected course
-  const course_id = selectedCourseId;
-  const { courseNota } = useNotas(course_id || 0);
-
-  const renderNotas = () => {
-    if (!courseNota || courseNota.length === 0) {
-      return null;
-    }
-
-    const userNota = courseNota[0];
-
+  if (courseStudent.length === 0) {
     return (
-      <div className="space-y-4 transition-all duration-300 ease-in-out overflow-y-auto max-h-60">
-        {userNota.ModuleResults?.length > 0 && (
-          <div className="max-h-80 p-4 bg-gray-50 rounded-lg shadow-inner ">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Resultados de Módulos
-            </h3>
-            {userNota.ModuleResults.map((moduleResult: any) => (
-              <div
-                key={moduleResult.module_id}
-                className="bg-white p-4 rounded-lg shadow-md mb-4"
-              >
-                <h4 className="text-lg font-bold text-brand-500 mb-2">
-                  Módulo: {moduleResult.module_name}
-                </h4>
-                {moduleResult.results.map((result: any, index: number) => (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+        <p className="text-white">No tienes cursos asignados.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 px-4 py-10 sm:px-8 sm:py-14">
+      <div className="w-full max-w-2xl mx-auto space-y-6">
+        <h1 className="text-2xl font-bold text-white">Mis Notas</h1>
+        <div>
+          <label
+            htmlFor="course-select"
+            className="block text-sm font-medium text-white mb-1.5"
+          >
+            Curso
+          </label>
+          <select
+            id="course-select"
+            className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            value={selectedCourseId ?? ""}
+            onChange={(e) =>
+              setSelectedCourseId(
+                e.target.value ? Number(e.target.value) : null,
+              )
+            }
+          >
+            <option value="">Selecciona un curso</option>
+            {courseStudent.map((item) => (
+              <option key={item.Course.course_id} value={item.Course.course_id}>
+                {item.Course.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {!selectedCourseId ? (
+          <div className="bg-white rounded-xl p-10 text-center text-gray-400 shadow">
+            Selecciona un curso para ver tus notas.
+          </div>
+        ) : isLoading ? (
+          <div className="bg-white rounded-xl p-10 text-center text-gray-500 shadow">
+            Cargando notas...
+          </div>
+        ) : error ? (
+          <div className="bg-white rounded-xl p-10 text-center text-red-500 shadow">
+            {error}
+          </div>
+        ) : !hasNotas ? (
+          <div className="bg-white rounded-xl p-10 text-center text-gray-400 shadow">
+            Sin notas disponibles para este curso.
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl shadow overflow-hidden">
+            {userNota.ModuleResults?.length > 0 && (
+              <div>
+                <div className="px-6 py-4 border-b border-gray-100">
+                  <h2 className="text-base font-semibold text-gray-700">
+                    Módulos
+                  </h2>
+                </div>
+
+                <table className="hidden sm:table w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        Módulo
+                      </th>
+                      <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
+                        Puntaje
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {userNota.ModuleResults.map((mod: ModuleResult) =>
+                      mod.results.map(
+                        (result: ModuleResultDetails, i: number) => (
+                          <tr
+                            key={`${mod.module_id}-${i}`}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="px-6 py-3 text-gray-800">
+                              {mod.module_name}
+                            </td>
+                            <td className="px-6 py-3 text-right font-medium text-gray-900">
+                              {result.puntaje}
+                            </td>
+                          </tr>
+                        ),
+                      ),
+                    )}
+                  </tbody>
+                </table>
+
+                <ul className="sm:hidden divide-y divide-gray-100">
+                  {userNota.ModuleResults.map((mod: ModuleResult) =>
+                    mod.results.map(
+                      (result: ModuleResultDetails, i: number) => (
+                        <li
+                          key={`${mod.module_id}-${i}`}
+                          className="px-4 py-3 flex justify-between items-center"
+                        >
+                          <span className="text-sm text-gray-700">
+                            {mod.module_name}
+                          </span>
+                          <span className="text-sm font-semibold text-gray-900">
+                            {result.puntaje}
+                          </span>
+                        </li>
+                      ),
+                    ),
+                  )}
+                </ul>
+              </div>
+            )}
+
+            {userNota.CourseResults?.length > 0 && (
+              <div className="border-t-2 border-indigo-100 bg-indigo-50">
+                {userNota.CourseResults.map((courseResult: CourseResult) => (
                   <div
-                    key={index}
-                    className="flex justify-between border-b border-gray-200 py-2"
+                    key={courseResult.course_result_id}
+                    className="px-6 py-4 flex justify-between items-center"
                   >
-                    <span className="text-gray-700">Puntaje:</span>
-                    <span className="font-medium text-gray-900">
-                      {result.puntaje}
+                    <span className="font-semibold text-indigo-800">
+                      Nota Final
                     </span>
+                    <div className="text-right">
+                      <span className="text-2xl font-bold text-indigo-700">
+                        {courseResult.puntaje}
+                      </span>
+                      <span className="block text-xs text-indigo-400 mt-0.5">
+                        {new Date(courseResult.created_at).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
-        )}
-        {/* Display final course results */}
-        {userNota.CourseResults?.length > 0 && (
-          <div className="max-h-40 p-4 bg-gray-50 rounded-lg shadow-inner ">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Resultado Final del Curso
-            </h3>
-            {userNota.CourseResults.map((courseResult: any) => (
-              <div
-                key={courseResult.course_result_id}
-                className="bg-white p-4 rounded-lg shadow-md mb-4"
-              >
-                <div className="flex justify-between border-b border-gray-200 py-2">
-                  <span className="text-gray-700">Puntaje:</span>
-                  <span className="font-medium text-gray-900">
-                    {courseResult.puntaje}
-                  </span>
-                </div>
-                <div className="flex justify-between py-2">
-                  <span className="text-gray-700">Fecha:</span>
-                  <span className="font-medium text-gray-900">
-                    {new Date(courseResult.created_at).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            ))}
+            )}
           </div>
         )}
       </div>
-    );
-  };
-
-  const handleToggleNotas = (courseId: number) => {
-    setSelectedCourseId(selectedCourseId === courseId ? null : courseId);
-  };
-
-  return (
-    <>
-      <div className="min-h-screen flex flex-col items-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-2 pt-12">
-        <div className="w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {courseStudent.map((courseStudentItem) => (
-            <div
-              key={courseStudentItem.Course.course_id}
-              className={`bg-white shadow-lg rounded-lg transform transition-all duration-300 ${
-                selectedCourseId === courseStudentItem.Course.course_id
-                  ? "scale-105"
-                  : ""
-              }`}
-            >
-              <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-                {courseStudentItem.Course.name}
-              </h3>
-              <img
-                className="w-full h-40 object-cover rounded-lg"
-                src={courseStudentItem.Course.image}
-                alt={courseStudentItem.Course.name}
-              />
-
-              <button
-                className="bg-indigo-600 text-white w-full py-2 mt-4 rounded-b-lg hover:bg-indigo-800"
-                onClick={() =>
-                  handleToggleNotas(courseStudentItem.Course.course_id)
-                }
-              >
-                {selectedCourseId === courseStudentItem.Course.course_id
-                  ? "Ocultar Notas"
-                  : "Ver Notas"}
-              </button>
-
-              {selectedCourseId === courseStudentItem.Course.course_id && (
-                <div className="p-4">{renderNotas()}</div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
+    </div>
   );
 };
 

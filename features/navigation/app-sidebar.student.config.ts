@@ -1,6 +1,7 @@
 import {
   HomeIcon,
   ComputerDesktopIcon,
+  AcademicCapIcon,
   DocumentArrowUpIcon,
   DocumentIcon,
   PuzzlePieceIcon,
@@ -21,13 +22,12 @@ export const studentSidebarItems: AppSidebarItem[] = [
     label: "Mis Cursos",
     icon: ComputerDesktopIcon,
     href: "/student/cursos",
-    children: [
-      {
-        id: "capacitaciones",
-        label: "Capacitaciones",
-        href: "/student/capacitaciones",
-      },
-    ],
+  },
+  {
+    id: "capacitaciones",
+    label: "Capacitaciones",
+    icon: AcademicCapIcon,
+    href: "/student/capacitaciones",
   },
   {
     id: "evaluaciones",
