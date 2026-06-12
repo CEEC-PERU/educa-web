@@ -34,11 +34,20 @@ export default function PublicNavbar({
     >
       <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
+          {/*
           <img
             src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
             alt="EducaWeb Logo"
             className="h-8 sm:h-10"
+          />*/}
+          <img
+            src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
+            alt="EducaWeb Logo"
+            className="h-8 sm:h-10"
           />
+          <span className={`text-white font-bold text-base sm:text-lg`}>
+            MentorMind
+          </span>
         </Link>
 
         <div className="flex items-center space-x-4">
