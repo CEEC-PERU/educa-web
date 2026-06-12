@@ -57,10 +57,10 @@ const StudentCursosPage = () => {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4">
-        <div className="w-full max-w-screen-lg mt-2 flex gap-4 overflow-x-auto scrollbar-hide overflow-auto">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4 pt-8">
+        <div className="w-full max-w-screen-lg mt-2 flex gap-2 overflow-x-auto scrollbar-hide">
           <button
-            className={`whitespace-nowrap p-4 rounded-lg flex-shrink-0 transition-colors ${
+            className={`whitespace-nowrap px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
               selectedCategoryId === null
                 ? "bg-white/20 text-white font-semibold"
                 : "text-white hover:bg-white/10"
@@ -71,19 +71,18 @@ const StudentCursosPage = () => {
           </button>
 
           {categories.map((category) => (
-            <div key={category.category_id} className="flex items-center space-x-2">
-              <img src={category.logo} alt={category.name} className="h-6 w-6" />
-              <button
-                className={`whitespace-nowrap pr-8 rounded-lg flex-shrink-0 transition-colors ${
-                  selectedCategoryId === category.category_id
-                    ? "text-white font-semibold underline"
-                    : "text-white hover:opacity-80"
-                }`}
-                onClick={() => setSelectedCategoryId(category.category_id)}
-              >
-                {category.name}
-              </button>
-            </div>
+            <button
+              key={category.category_id}
+              className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
+                selectedCategoryId === category.category_id
+                  ? "bg-white/20 text-white font-semibold"
+                  : "text-white hover:bg-white/10"
+              }`}
+              onClick={() => setSelectedCategoryId(category.category_id)}
+            >
+              <img src={category.logo} alt="" className="h-5 w-5 flex-shrink-0" />
+              {category.name}
+            </button>
           ))}
         </div>
 

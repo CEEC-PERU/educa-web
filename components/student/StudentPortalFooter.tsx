@@ -7,10 +7,10 @@ export default function StudentPortalFooter() {
       style={{
         backgroundImage:
           "url('https://res.cloudinary.com/dk2red18f/image/upload/v1724349813/WEB_EDUCA/icddbyrq4uovlhf6332o.png')",
-        height: "500px",
+        minHeight: "500px",
       }}
     >
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pt-20 lg:pt-60 pl-10 lg:pl-40 text-white">
+      <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 py-10 lg:pt-60 lg:pb-10 px-6 lg:pl-40 text-white">
         <div className="flex justify-center">
           <img
             src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"

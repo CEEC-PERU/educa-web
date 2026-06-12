@@ -21,7 +21,7 @@ const CourseCard: React.FC<CourseCardProps> = ({
       className={`rounded-xl overflow-hidden shadow-lg bg-brandazul-600 ${
         isJuegosIndex
           ? 'flex flex-row w-full h-auto'
-          : 'max-w-sm lg:max-w-md xl:max-w-lg'
+          : 'w-full'
       }`}
     >
       <img
