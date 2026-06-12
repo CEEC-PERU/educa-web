@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import {
   DocumentTextIcon,
@@ -33,6 +33,15 @@ const LoadingSpinner = () => (
 );
 
 export default function StudentVerificationModal() {
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const {
     isOpen,
     loading,
@@ -54,6 +63,8 @@ export default function StudentVerificationModal() {
   } = useStudentVerificationFlow();
 
   const canSubmit = Boolean(photo && signature && consentGiven);
+
+  if (!isDesktop) return null;
 
   return (
     <Modal
