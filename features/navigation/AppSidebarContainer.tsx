@@ -9,7 +9,7 @@ import type { Profile } from "../../interfaces/User/UserInterfaces";
 export default function AppSidebarContainer() {
   const router = useRouter();
   const { logout, profileInfo, user: rawUser } = useAuth();
-  const { isSidebarCollapsed, toggleSidebarCollapsed } = useNavigationStore();
+  const { isSidebarCollapsed, toggleSidebarCollapsed, isMobileSidebarOpen, setMobileSidebarOpen } = useNavigationStore();
 
   const profile = profileInfo as Profile | null;
   const user = profile
@@ -37,9 +37,11 @@ export default function AppSidebarContainer() {
     <AppSidebar
       items={items}
       isCollapsed={isSidebarCollapsed}
+      isMobileOpen={isMobileSidebarOpen}
       onToggleCollapse={toggleSidebarCollapsed}
       onNavigate={handleNavigate}
       onAction={handleAction}
+      onCloseMobile={() => setMobileSidebarOpen(false)}
       currentPath={router.pathname}
       bgColor={bgColor}
       user={user}

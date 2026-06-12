@@ -2,11 +2,13 @@ import React from "react";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 type AppSidebarHeaderProps = {
   isCollapsed: boolean;
   onToggleCollapse?: () => void;
+  onCloseMobile?: () => void;
   user?: {
     name?: string;
     profilePicture?: string;
@@ -16,6 +18,7 @@ type AppSidebarHeaderProps = {
 export default function AppSidebarHeader({
   isCollapsed,
   onToggleCollapse,
+  onCloseMobile,
   user,
 }: AppSidebarHeaderProps) {
   return (
@@ -26,17 +29,25 @@ export default function AppSidebarHeader({
           alt="Logo"
           className="h-8 w-8 flex-shrink-0 object-contain"
         />
-        {!isCollapsed && user?.name && (
+        {user?.name && (
           <span className="text-white text-sm font-medium truncate">
             {user.name}
           </span>
         )}
       </div>
 
+      <button
+        onClick={onCloseMobile}
+        className="text-white/80 hover:text-white hover:bg-white/10 p-1 rounded transition-colors flex-shrink-0 lg:hidden"
+        aria-label="Cerrar menú"
+      >
+        <XMarkIcon className="h-5 w-5" />
+      </button>
+
       {onToggleCollapse && (
         <button
           onClick={onToggleCollapse}
-          className="text-white/80 hover:text-white hover:bg-white/10 p-1 rounded transition-colors flex-shrink-0"
+          className="text-white/80 hover:text-white hover:bg-white/10 p-1 rounded transition-colors flex-shrink-0 hidden lg:block"
           aria-label={isCollapsed ? "Expandir menú" : "Colapsar menú"}
         >
           {isCollapsed ? (
