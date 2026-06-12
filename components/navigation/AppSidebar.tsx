@@ -9,9 +9,11 @@ import AppSidebarFooter from "./AppSidebarFooter";
 export type AppSidebarProps = {
   items: AppSidebarItem[];
   isCollapsed: boolean;
+  isMobileOpen?: boolean;
   onToggleCollapse?: () => void;
   onNavigate?: (href: string) => void;
   onAction?: (action: "logout") => void;
+  onCloseMobile?: () => void;
   currentPath?: string;
   variant?: "desktop" | "mobile";
   bgColor?: string;
@@ -24,9 +26,11 @@ export type AppSidebarProps = {
 export default function AppSidebar({
   items,
   isCollapsed,
+  isMobileOpen = false,
   onToggleCollapse,
   onNavigate,
   onAction,
+  onCloseMobile,
   currentPath = "",
   bgColor = "bg-blue-600",
   user,
@@ -34,15 +38,26 @@ export default function AppSidebar({
   const navItems = items.filter((item) => !item.action);
   const actionItems = items.filter((item) => !!item.action);
 
+  const handleNavigate = (href: string) => {
+    onCloseMobile?.();
+    onNavigate?.(href);
+  };
+
+  const handleAction = (action: "logout") => {
+    onCloseMobile?.();
+    onAction?.(action);
+  };
+
   return (
     <div
       className={`fixed top-0 left-0 h-screen z-50 flex flex-col ${bgColor} text-white transition-all duration-300 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
+        isCollapsed ? "lg:w-16" : "lg:w-64"
+      } w-64 ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
     >
       <AppSidebarHeader
         isCollapsed={isCollapsed}
         onToggleCollapse={onToggleCollapse}
+        onCloseMobile={onCloseMobile}
         user={user}
       />
 
@@ -57,7 +72,7 @@ export default function AppSidebar({
                   item={item}
                   isCollapsed={isCollapsed}
                   currentPath={currentPath}
-                  onNavigate={onNavigate}
+                  onNavigate={handleNavigate}
                 />
               ) : (
                 <AppSidebarItemComponent
@@ -65,8 +80,8 @@ export default function AppSidebar({
                   item={item}
                   isCollapsed={isCollapsed}
                   isActive={isSidebarItemActive(item, currentPath)}
-                  onNavigate={onNavigate}
-                  onAction={onAction}
+                  onNavigate={handleNavigate}
+                  onAction={handleAction}
                 />
               ),
             )}
@@ -76,7 +91,7 @@ export default function AppSidebar({
       <AppSidebarFooter
         items={actionItems}
         isCollapsed={isCollapsed}
-        onAction={onAction}
+        onAction={handleAction}
       />
     </div>
   );

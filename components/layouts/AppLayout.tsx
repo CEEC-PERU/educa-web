@@ -18,17 +18,26 @@ export default function AppLayout({
   noPadding = false,
   navbarColor = DEFAULT_NAVBAR_COLOR,
 }: AppLayoutProps) {
-  const isSidebarCollapsed = useNavigationStore((s) => s.isSidebarCollapsed);
+  const { isSidebarCollapsed, isMobileSidebarOpen, setMobileSidebarOpen, toggleMobileSidebar } =
+    useNavigationStore();
 
   return (
     <ProtectedRoute>
       <div className="relative min-h-screen flex flex-col">
-        <AppNavbar bgColor={navbarColor} />
+        <AppNavbar bgColor={navbarColor} onToggleSidebar={toggleMobileSidebar} />
         <div className="flex flex-1 pt-16">
           <AppSidebarContainer />
+
+          {isMobileSidebarOpen && (
+            <div
+              className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+              onClick={() => setMobileSidebarOpen(false)}
+            />
+          )}
+
           <main
             className={`flex-grow transition-all duration-300 ease-in-out ${
-              isSidebarCollapsed ? "ml-16" : "ml-64"
+              isSidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
             } ${noPadding ? "" : "p-6"}`}
           >
             {children}
