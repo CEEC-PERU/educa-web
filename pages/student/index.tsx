@@ -27,6 +27,7 @@ const StudentIndex = () => {
 
   const profile = profileInfo as Profile | null;
   const name = profile?.first_name ?? "";
+  const avatar = profile?.profile_picture ?? null;
 
   const navigateToCourseDetails = () => {
     if (!selectedCourse) return;
@@ -40,8 +41,11 @@ const StudentIndex = () => {
     <>
       <StudentVerificationModal />
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-40 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
-        <StudentHero name={name} coursescount={coursescount} />
-        <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <StudentHero name={name} avatar={avatar} coursescount={coursescount} />
+        <div
+          id="cursos"
+          className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+        >
           {courseStudent.map((item) => (
             <CourseCard
               key={item.Course.course_id}

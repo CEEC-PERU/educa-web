@@ -1,4 +1,5 @@
 import React from "react";
+import { BookOpen, CheckCircle2, Award } from "lucide-react";
 
 interface CoursesCount {
   data?: {
@@ -9,63 +10,92 @@ interface CoursesCount {
 
 interface StudentHeroProps {
   name: string;
+  avatar?: string | null;
   coursescount: CoursesCount | null | undefined;
 }
 
-const STAT_ICONS = [
-  "https://res.cloudinary.com/dk2red18f/image/upload/v1721713563/WEB_EDUCA/ICONOS/jbfxiscml6nrazyi1gda.png",
-  "https://res.cloudinary.com/dk2red18f/image/upload/v1721713562/WEB_EDUCA/ICONOS/fsqde4gvrdhejt02t9xq.png",
-  "https://res.cloudinary.com/dk2red18f/image/upload/v1721713512/WEB_EDUCA/ICONOS/ake0tmixpx9wnbzvessc.png",
+const STATS = [
+  { key: "enrolled", label: "Cursos inscritos", icon: BookOpen },
+  { key: "completed", label: "Cursos completados", icon: CheckCircle2 },
+  { key: "diplomas", label: "Diplomas obtenidos", icon: Award },
 ];
 
-export default function StudentHero({ name, coursescount }: StudentHeroProps) {
-  const statValues = [
-    coursescount?.data?.totalCourses,
-    coursescount?.data?.completedCourses,
-    1,
-  ];
+export default function StudentHero({
+  name,
+  avatar,
+  coursescount,
+}: StudentHeroProps) {
+  const initial = name?.charAt(0)?.toUpperCase() || "?";
 
-  const statLabels = [
-    "Curso inscritos",
-    "Curso completado",
-    "Diploma Obtenido",
+  const statValues = [
+    coursescount?.data?.totalCourses ?? 0,
+    coursescount?.data?.completedCourses ?? 0,
+    0,
   ];
 
   return (
-    <div className="relative flex flex-col lg:flex-row items-center text-left w-full text-white px-4 lg:px-40">
-      <div className="lg:w-1/2 lg:pr-8 mb-8 lg:mb-0 p-10">
-        <p className="text-5xl lg:text-7xl font-bold mb-4 text-brandrosado-800">
-          Hola, {name}
-        </p>
-        <p className="mb-4 text-5xl lg:text-7xl text-white font-bold">
-          ¡Qué bueno verte!
-        </p>
-        <p className="mb-4 text-lg lg:text-base text-white py-8">
-          Este es tu portal de aprendizaje, explora tus cursos y potencia tu
-          desarrollo profesional.
-        </p>
-      </div>
-
-      <div className="lg:w-1/2 px-20">
-        <div className="bg-brandazul-600 border-2 border-white p-4 rounded-xl grid grid-cols-1 md:grid-cols-3 gap-4">
-          {statValues.map((value, i) => (
-            <div
-              key={statLabels[i]}
-              className="bg-brandazul-700 p-2 rounded-lg text-center flex items-center justify-center flex-col"
-            >
-              <div className="flex items-center justify-center">
-                <p className="text-brandfucsia-900 text-4xl lg:text-7xl">
-                  {value}
-                </p>
+    <div className="relative w-full px-4 lg:px-40 pt-10 pb-16">
+      <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-6">
+        <div className="flex-1 text-left text-white">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-brandrosado-800">
+              {avatar ? (
                 <img
-                  src={STAT_ICONS[i]}
-                  className="h-12 w-12 ml-2"
-                  alt="Icon"
+                  src={avatar}
+                  alt={name}
+                  className="h-full w-full object-cover"
                 />
-              </div>
-              <p className="text-white p-3">{statLabels[i]}</p>
+              ) : (
+                <span className="text-xl font-semibold text-brandrosado-800">
+                  {initial}
+                </span>
+              )}
             </div>
-          ))}
+            <p className="text-sm uppercase tracking-wide text-white/70">
+              Portal del estudiante
+            </p>
+          </div>
+
+          <h1 className="text-4xl lg:text-5xl font-bold mb-3">
+            Hola, <span className="text-brandrosado-800">{name}</span>
+          </h1>
+          <p className="text-lg lg:text-xl font-semibold mb-3">
+            ¡Qué bueno verte de nuevo!
+          </p>
+          <p className="text-white/80 max-w-md mb-6">
+            Este es tu portal de aprendizaje, explora tus cursos y potencia tu
+            desarrollo profesional.
+          </p>
+          <a
+            href="#cursos"
+            className="inline-flex items-center rounded-lg bg-brandrosado-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brandfucsia-900"
+          >
+            Continuar aprendiendo
+          </a>
+        </div>
+
+        <div className="w-full lg:w-auto">
+          <div className="flex divide-x divide-white/15 rounded-2xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-sm">
+            {STATS.map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={stat.key}
+                  className="flex min-w-[120px] flex-1 flex-col items-center gap-2 px-6 py-6"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brandrosado-800/20 text-brandrosado-800">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <p className="text-3xl font-bold text-white">
+                    {statValues[i]}
+                  </p>
+                  <p className="text-center text-sm text-white/70">
+                    {stat.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
