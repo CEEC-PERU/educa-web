@@ -13,6 +13,7 @@ import {
   TrashIcon,
   ArrowPathIcon,
   KeyIcon,
+  ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import {
   useClassroomStudentsQuery,
@@ -129,22 +130,46 @@ const Usuarios: NextPageWithLayout = () => {
     setFilter(e.target.value);
   };
 
+  const escapeCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
+
+  const handleExportCSV = () => {
+    const headers = ["Nombre", "Apellido", "DNI", "Perfil", "Estado"];
+    const rows = filteredStudents.map((student) => {
+      const profile = student.User.userProfile;
+      return [
+        profile?.first_name?.toUpperCase() ?? "",
+        profile?.last_name?.toUpperCase() ?? "",
+        student.User.dni,
+        profile ? "Completo" : "Pendiente",
+        student.User.is_active ? "Activo" : "Inactivo",
+      ].map(escapeCsvValue);
+    });
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join(
+      "\n",
+    );
+    const BOM = "﻿";
+    const blob = new Blob([BOM + csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const today = new Date().toISOString().slice(0, 10);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `usuarios_${showActive ? "activos" : "inactivos"}_${today}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Usuarios</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Usuarios</h1>
           {userCountResult && (
-            <p className="mt-1 text-sm text-gray-500">
-              {userCountResult.UserCount} de {userCountResult.maxUserCount}{" "}
-              licencias utilizadas
-            </p>
-          )}
-        </div>
-
-        {userCountResult && (
-          <div className="flex items-center gap-4">
-            <div className="bg-white border border-gray-200 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm">
+            <div className="bg-white border border-gray-200 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm w-fit">
               <UserGroupIcon className="h-6 w-6 text-blue-500" />
               <div>
                 <p className="text-xs text-gray-500">Licencias</p>
@@ -157,6 +182,19 @@ const Usuarios: NextPageWithLayout = () => {
                 </p>
               </div>
             </div>
+          )}
+        </div>
+
+        {userCountResult && (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExportCSV}
+              disabled={filteredStudents.length === 0}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <ArrowDownTrayIcon className="h-4 w-4" />
+              Descargar CSV
+            </button>
 
             <button
               onClick={() => setIsModalOpen(true)}
