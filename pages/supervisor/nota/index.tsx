@@ -17,6 +17,7 @@ import {
   FiXCircle,
   FiGrid,
   FiList,
+  FiInfo,
 } from 'react-icons/fi';
 
 import { FaChalkboardTeacher } from 'react-icons/fa';
@@ -104,10 +105,10 @@ const NotaCourses: NextPageWithLayout = () => {
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
       let notable = 0, aprobado = 0, desaprobado = 0;
-      currentCourseData.forEach((user) => {
-        const examGrade = user.CourseResults?.[0]?.puntaje;
-        if (examGrade === null || examGrade === undefined) return;
-        const status = getStatus(examGrade);
+      currentCourseData.forEach((user: any) => {
+        const finalGrade = user.finalGrade;
+        if (finalGrade === null || finalGrade === undefined) return;
+        const status = getStatus(finalGrade);
         if (status === 'Notable') notable++;
         else if (status === 'Aprobado') aprobado++;
         else if (status === 'Desaprobado') desaprobado++;
@@ -122,9 +123,19 @@ const NotaCourses: NextPageWithLayout = () => {
       <div className="flex flex-col space-y-4">
               <div className="flex justify-between items-center">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-800">
-                    Reporte de Notas
-                  </h1>
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-3xl font-bold text-gray-800">
+                      Reporte de Notas
+                    </h1>
+                    <div className="relative group">
+                      <FiInfo className="h-5 w-5 text-gray-400 hover:text-blue-500 cursor-help" />
+                      <div className="absolute left-0 top-full mt-2 w-72 rounded-lg bg-gray-800 text-white text-xs p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-10">
+                        <p className="font-semibold mb-1">¿Cómo se calcula la Nota Final?</p>
+                        <p>Si el curso tiene evaluaciones por módulo: 40% promedio de módulos + 60% examen final.</p>
+                        <p className="mt-1">Si el curso solo tiene examen final, esa nota se toma como Nota Final.</p>
+                      </div>
+                    </div>
+                  </div>
                   <p className="text-gray-600">
                     Visualización y análisis del rendimiento académico
                   </p>
@@ -308,10 +319,9 @@ const NotaCourses: NextPageWithLayout = () => {
                   {viewMode === 'cards' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                       {filteredStudents?.map((user: any, userIndex: number) => {
-                        const finalGrade = user.CourseResults?.length > 0
-                          ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
-                          : 0;
-                        const status = user.CourseResults?.length > 0
+                        const examGrade = user.examGrade ?? 0;
+                        const finalGrade = user.finalGrade ?? 0;
+                        const status = user.finalGrade !== null && user.finalGrade !== undefined
                           ? getStatus(finalGrade)
                           : 'En Proceso';
                         const progress = user.CourseStudents?.[0]?.progress ?? 0;
@@ -332,21 +342,16 @@ const NotaCourses: NextPageWithLayout = () => {
                             className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
                           >
                             <div className="p-5">
-                              <div className="flex justify-between items-start mb-4">
-                                <div>
-                                  <h3 className="text-lg font-semibold text-gray-800">
-                                    {user?.userProfile?.first_name}{' '}
-                                    {user?.userProfile?.last_name}
-                                  </h3>
-                                  <span
-                                    className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
-                                  >
-                                    {status}
-                                  </span>
-                                </div>
-                                <div className="text-2xl font-bold text-gray-700">
-                                  {finalGrade || '-'}
-                                </div>
+                              <div className="mb-4">
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                  {user?.userProfile?.first_name}{' '}
+                                  {user?.userProfile?.last_name}
+                                </h3>
+                                <span
+                                  className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
+                                >
+                                  {status}
+                                </span>
                               </div>
 
                               {/* Módulo estimado */}
@@ -406,6 +411,30 @@ const NotaCourses: NextPageWithLayout = () => {
                                     );
                                   }
                                 )}
+                              </div>
+
+                              {/* Notas */}
+                              <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-500">
+                                    Examen final:
+                                  </span>
+                                  <span className="text-base font-medium text-gray-700">
+                                    {user.examGrade !== null && user.examGrade !== undefined
+                                      ? examGrade
+                                      : '-'}
+                                  </span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm font-medium text-gray-600">
+                                    NOTA FINAL:
+                                  </span>
+                                  <span className="text-2xl font-bold text-gray-700">
+                                    {user.finalGrade !== null && user.finalGrade !== undefined
+                                      ? finalGrade
+                                      : '-'}
+                                  </span>
+                                </div>
                               </div>
 
                               {/* Fechas */}
@@ -551,16 +580,12 @@ const NotaCourses: NextPageWithLayout = () => {
                                   }
                                 )}
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  {user.CourseResults?.length > 0
-                                    ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
-                                    : '-'}
+                                  {user.finalGrade ?? '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {(() => {
-                                    const grade = user.CourseResults?.length > 0
-                                      ? Math.max(...user.CourseResults.map((r: any) => r.puntaje || 0))
-                                      : 0;
-                                    const rowStatus = user.CourseResults?.length > 0
+                                    const grade = user.finalGrade ?? 0;
+                                    const rowStatus = user.finalGrade !== null && user.finalGrade !== undefined
                                       ? getStatus(grade)
                                       : 'En Proceso';
                                     return (
