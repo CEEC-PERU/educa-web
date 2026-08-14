@@ -87,7 +87,7 @@ const Diplomas = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 px-4 py-10 sm:px-8 sm:py-14">
+    <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
       <div className="w-full max-w-4xl mx-auto">
         <h1 className="text-2xl font-bold text-white mb-8">Mis Diplomas</h1>
 

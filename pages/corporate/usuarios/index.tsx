@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/Corporate/CorporateSideBar';
+import type { NextPageWithLayout } from '../../../types/next';
+import AppLayout from "@/components/layouts/AppLayout";
 import {
   getCompanies,
   getUsersByCompanyAndRole,
@@ -16,13 +16,11 @@ import { useAuth } from '../../../context/AuthContext';
 import { User } from '../../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../../interfaces/Enterprise';
 import { useUserCount } from '../../../hooks/user/useUserCount';
-import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import { useDeleteUser } from '../../../hooks/user/useDeleteUser';
 import './../../../app/globals.css';
 
-const Usuarios: React.FC = () => {
+const Usuarios: NextPageWithLayout = () => {
   const { deleteUser } = useDeleteUser();
-  const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
   const { usercount, isLoading, error } = useUserCount();
   const { logout, user, profileInfo, token } = useAuth();
@@ -184,95 +182,85 @@ const Usuarios: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main
-            className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
-              showSidebar ? 'ml-20' : ''
-            }`}
-          >
-            <div className="pb-4">
-              {userCountResult && (
-                <div>
-                  <h1 className="font-bold text-2xl text-blue-500">
-                    {' '}
-                    {userCountResult.UserCount} / {userCountResult.maxUserCount}{' '}
-                  </h1>
-                  <h1 className="font-bold text-2xl">
-                    {' '}
-                    {userCountResult.message}{' '}
-                  </h1>
-                </div>
-              )}
-            </div>
-            <div className="flex space-x-4 mb-4">
-              <div>
-                <ButtonContent
-                  buttonLabel="Agregar Usuario"
-                  backgroundColor="bg-yellow-500"
-                  textColor="text-white"
-                  fontSize="text-xs"
-                  buttonSize="py-2 px-7"
-                  onClick={handleAddUser}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
-              <FormField
-                id="filter"
-                label="Filtrar por nombre, apellido o DNI"
-                type="text"
-                value={filter}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
-              <div>
-                <h2 className="text-lg font-semibold mb-2">
-                  Datos Actualizados
-                </h2>
-                <TableUser
-                  columns={columnsWithProfile}
-                  data={usersWithProfile}
-                  actionLabel="Editar"
-                  onDeleteClick={handleDeleteClick}
-                />
-              </div>
-              <div>
-                <h2 className="text-lg font-semibold mb-2">
-                  Usuarios sin Perfil
-                </h2>
-                <TableUser
-                  columns={columnsWithoutProfile}
-                  data={usersWithoutProfile}
-                  onDeleteClick={handleDeleteClick}
-                />
-              </div>
-            </div>
-          </main>
-        </div>
-        <Modal
-          show={isModalOpen}
-          onClose={handleModalClose}
-          title="Registrar nuevo usuario"
-        >
-          {userCountResult && (
-            <UserForm
-              roleId={Number(roleId)}
-              maxUsersAllowed={
-                userCountResult.maxUserCount - userCountResult.UserCount
-              }
-              onClose={handleModalClose}
-              onSuccess={handleUserCreateSuccess}
-            />
-          )}
-        </Modal>
+    <div>
+      <div className="pb-4">
+        {userCountResult && (
+          <div>
+            <h1 className="font-bold text-2xl text-blue-500">
+              {' '}
+              {userCountResult.UserCount} / {userCountResult.maxUserCount}{' '}
+            </h1>
+            <h1 className="font-bold text-2xl">
+              {' '}
+              {userCountResult.message}{' '}
+            </h1>
+          </div>
+        )}
       </div>
-    </ProtectedRoute>
+      <div className="flex space-x-4 mb-4">
+        <div>
+          <ButtonContent
+            buttonLabel="Agregar Usuario"
+            backgroundColor="bg-yellow-500"
+            textColor="text-white"
+            fontSize="text-xs"
+            buttonSize="py-2 px-7"
+            onClick={handleAddUser}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 gap-6 w-full max-w-4xl">
+        <FormField
+          id="filter"
+          label="Filtrar por nombre, apellido o DNI"
+          type="text"
+          value={filter}
+          onChange={handleFilterChange}
+        />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
+        <div>
+          <h2 className="text-lg font-semibold mb-2">
+            Datos Actualizados
+          </h2>
+          <TableUser
+            columns={columnsWithProfile}
+            data={usersWithProfile}
+            actionLabel="Editar"
+            onDeleteClick={handleDeleteClick}
+          />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold mb-2">
+            Usuarios sin Perfil
+          </h2>
+          <TableUser
+            columns={columnsWithoutProfile}
+            data={usersWithoutProfile}
+            onDeleteClick={handleDeleteClick}
+          />
+        </div>
+      </div>
+      <Modal
+        show={isModalOpen}
+        onClose={handleModalClose}
+        title="Registrar nuevo usuario"
+      >
+        {userCountResult && (
+          <UserForm
+            roleId={Number(roleId)}
+            maxUsersAllowed={
+              userCountResult.maxUserCount - userCountResult.UserCount
+            }
+            onClose={handleModalClose}
+            onSuccess={handleUserCreateSuccess}
+          />
+        )}
+      </Modal>
+    </div>
   );
 };
+
+Usuarios.getLayout = (page: React.ReactNode) => <AppLayout>{page}</AppLayout>;
 
 export default Usuarios;

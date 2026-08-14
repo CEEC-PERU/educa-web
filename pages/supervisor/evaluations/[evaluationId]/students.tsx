@@ -6,6 +6,9 @@ import { UserDetails } from '../../../../components/Evaluation/UserDetail';
 import AppLayout from '../../../../components/layouts/AppLayout';
 import type { NextPageWithLayout } from '../../../../types/next';
 
+// Vista SUPERVISOR — listado de estudiantes asignados a una evaluación con su progreso
+// (useEvaluationUsers). Igual que en user-detail.tsx, el nombre "CorporateUsers" es
+// heredado de otro rol y no describe el contenido de esta página.
 const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const {

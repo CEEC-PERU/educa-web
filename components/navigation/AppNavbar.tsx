@@ -27,7 +27,7 @@ export default function AppNavbar({
   onToggleSidebar,
   showMenuButton = true,
   title,
-  bgColor = "bg-blue-600",
+  bgColor = "bg-navbar-primary",
 }: AppNavbarProps) {
   const { user, profileInfo, logout } = useAuth();
 
@@ -52,13 +52,7 @@ export default function AppNavbar({
             </button>
           )}
 
-          <Link href={dashboardHref} className="flex items-center ml-2">
-            <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
-              alt="EducaWeb Logo"
-              className="h-8 sm:h-10"
-            />
-          </Link>
+          <Link href={dashboardHref} className="flex items-center ml-2"></Link>
 
           {title && (
             <span className="ml-4 text-white text-sm font-medium hidden sm:block">

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
+import type { NextPageWithLayout } from '../../types/next';
+import AppLayout from "@/components/layouts/AppLayout";
 import ButtonContent from '../../components/Content/ButtonContent';
 import Modal from '../../components/Admin/Modal';
 import Loader from '../../components/Loader';
@@ -11,7 +11,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useProfesor } from '../../hooks/useProfesores';
 import { useClassroom } from '../../hooks/useClassroom';
 import FloatingButton from '../../components/FloatingButton';
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 import {
   UserGroupIcon,
@@ -22,8 +21,7 @@ import {
 import { useCourseStudent } from '../../hooks/useCourseStudents';
 import ProfileForm from '../../components/Corporate/ProfileForm';
 
-const Classroom: React.FC = () => {
-  const [showSidebar, setShowSidebar] = useState(true);
+const Classroom: NextPageWithLayout = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<
     'supervisor' | 'classroom' | 'profile' | null
@@ -60,20 +58,8 @@ const Classroom: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-gray-50">
-      <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-      <div className="flex flex-1 pt-16">
-        <Sidebar
-          showSidebar={showSidebar}
-          setShowSidebar={() => setShowSidebar(!showSidebar)}
-        />
-
-        <main
-          className={`flex-grow p-4 md:p-6 transition-all duration-300 ease-in-out ${
-            showSidebar ? 'ml-20' : ''
-          }`}
-        >
-          <div className="max-w-7xl mx-auto">
+    <div>
+      <div className="max-w-7xl mx-auto">
             {/* Header Section */}
             <div className="mb-8">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
@@ -235,11 +221,9 @@ const Classroom: React.FC = () => {
               </div>
             </div>
           </div>
-        </main>
-      </div>
 
-      {/* Modal */}
-      <Modal
+          {/* Modal */}
+          <Modal
         show={isModalOpen}
         onClose={handleModalClose}
         title={
@@ -273,5 +257,7 @@ const Classroom: React.FC = () => {
     </div>
   );
 };
+
+Classroom.getLayout = (page: React.ReactNode) => <AppLayout>{page}</AppLayout>;
 
 export default Classroom;

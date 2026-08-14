@@ -58,6 +58,9 @@ interface EvaluationResult {
   questions: QuestionResult[];
 }
 
+// Vista STUDENT — resultado inmediato tras enviar un intento de evaluación
+// (attempt_id en la query). Distinta de historial/[evaluation_id].tsx, que muestra
+// todos los intentos pasados en vez de uno recién enviado.
 const EvaluationResults = () => {
   const router = useRouter();
   const { id, attempt_id } = router.query;

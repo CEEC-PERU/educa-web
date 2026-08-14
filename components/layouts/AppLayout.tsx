@@ -4,8 +4,7 @@ import AppNavbar from "../navigation/AppNavbar";
 import AppSidebarContainer from "../../features/navigation/AppSidebarContainer";
 import { useNavigationStore } from "../../features/navigation/navigation.store";
 
-const DEFAULT_NAVBAR_COLOR =
-  "bg-gradient-to-r from-blue-500 to-violet-500 opacity-90";
+const DEFAULT_NAVBAR_COLOR = "bg-navbar-primary";
 
 type AppLayoutProps = {
   children: ReactNode;

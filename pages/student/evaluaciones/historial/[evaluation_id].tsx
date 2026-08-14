@@ -20,6 +20,8 @@ import { useEvaluationResults } from "../../../../hooks/resultado/useEvaluationR
 // Utilidades
 import { calculateEvaluationStats } from "../../../../utils/evaluation/questionAnalysis";
 
+// Vista STUDENT — historial de todos los intentos que el estudiante hizo sobre una
+// misma evaluación (selector de intento vía AttemptSelector). Fuente: useEvaluationResults.
 const EvaluationResults = () => {
   const { attempts, selectedAttempt, loading, error, selectAttemptById } =
     useEvaluationResults();

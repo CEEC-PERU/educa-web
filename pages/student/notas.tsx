@@ -20,7 +20,7 @@ const NotasIndex = () => {
 
   if (loadingCourses) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">Cargando cursos...</p>
       </div>
     );
@@ -28,14 +28,14 @@ const NotasIndex = () => {
 
   if (courseStudent.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">No tienes cursos asignados.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 px-4 py-10 sm:px-8 sm:py-14">
+    <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
       <div className="w-full max-w-2xl mx-auto space-y-6">
         <h1 className="text-2xl font-bold text-white">Mis Notas</h1>
         <div>

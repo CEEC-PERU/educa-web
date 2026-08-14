@@ -42,6 +42,8 @@ interface CertificationResult {
   questions: QuestionResult[];
 }
 
+// Vista STUDENT — resultado inmediato de un intento de certificación recién enviado
+// (attempt_id en la query). Ver historial/[assignment_id].tsx para el histórico completo.
 const ResultadosPage = () => {
   const router = useRouter();
   const { attempt_id } = router.query;

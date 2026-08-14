@@ -4,7 +4,7 @@ import FlashcardGame from "../../../../../components/student/FlashcardGame";
 
 const FlashcardPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+    <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
       <FlashcardGame />
     </div>
   );

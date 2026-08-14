@@ -34,7 +34,7 @@ export default function AppSidebarItem({
         onClick={handleClick}
         title={isCollapsed ? item.label : undefined}
         className={`relative flex items-center w-full p-4 text-white transition-colors text-left ${
-          isActive ? "bg-white/20 font-semibold" : "hover:bg-white/10"
+          isActive ? "bg-sidebar-hover font-semibold" : "hover:bg-sidebar-hover"
         }`}
       >
         {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}

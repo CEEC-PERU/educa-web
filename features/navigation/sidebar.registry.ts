@@ -1,5 +1,6 @@
 import type { SidebarRoleConfig } from "./app-sidebar.types";
 import { contentSidebarBaseItems } from "./app-sidebar.content.config";
+import { corporateSidebarItems } from "./app-sidebar.corporate.config";
 import { studentSidebarItems } from "./app-sidebar.student.config";
 import { supervisorSidebarItems } from "./app-sidebar.supervisor.config";
 
@@ -17,7 +18,12 @@ registerSidebarConfig({
   roleId: 1,
   label: "Estudiante",
   items: studentSidebarItems,
-  bgColor: "bg-brandmorado-700",
+});
+
+registerSidebarConfig({
+  roleId: 2,
+  label: "Corporativo",
+  items: corporateSidebarItems,
 });
 
 registerSidebarConfig({
@@ -30,5 +36,4 @@ registerSidebarConfig({
   roleId: 6,
   label: "Supervisor",
   items: supervisorSidebarItems,
-  bgColor: "bg-blue-600",
 });

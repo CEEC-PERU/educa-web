@@ -13,6 +13,9 @@ import {
   EvaluationOption,
 } from "../../../interfaces/EvaluationModule/EvaluationStudentAttempt";
 
+// Vista SUPERVISOR — detalle del intento de UN estudiante puntual en una evaluación
+// (user_id + evaluation_sche_id por query string). El nombre "CorporateUsers" es un
+// resto de copiar/pegar entre roles, no corresponde al contenido real de la página.
 const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();

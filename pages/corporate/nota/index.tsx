@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/Corporate/CorporateSideBar';
+import type { NextPageWithLayout } from '../../../types/next';
+import AppLayout from "@/components/layouts/AppLayout";
 import useDownloadNotas from '../../../hooks/notas/useDownloadNotas';
 import { useClassroom } from '../../../hooks/useClassroom';
 import { useNotas, useNotasClassroom } from '../../../hooks/resultado/useNotas';
@@ -13,7 +13,6 @@ import {
 import { UserNota } from '../../../interfaces/Nota';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
-import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 import {
   FiDownload,
   FiUsers,
@@ -95,7 +94,7 @@ const formatDate = (dateString: string) => {
 };
 
 // Main component
-const NotaCourses: React.FC = () => {
+const NotaCourses: NextPageWithLayout = () => {
   const router = useRouter();
   const { course_id } = router.query;
   const { classrooms } = useClassroom();
@@ -212,104 +211,94 @@ const NotaCourses: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-gray-50">
-        <Navbar bgColor="bg-gradient-to-r from-blue-600 to-indigo-700" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-4 md:p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
-            <div className="max-w-7xl mx-auto">
-              {/* Header Section */}
-              <div className="mb-6">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-                  Reporte de Notas
-                </h1>
-                <p className="text-gray-600">
-                  Análisis detallado del rendimiento académico
-                </p>
-              </div>
+    <div className="max-w-7xl mx-auto">
+      {/* Header Section */}
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Reporte de Notas
+        </h1>
+        <p className="text-gray-600">
+          Análisis detallado del rendimiento académico
+        </p>
+      </div>
 
-              {/* Filters and Controls */}
-              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <SearchInput
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+      {/* Filters and Controls */}
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <SearchInput
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
-                  <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-                    <ClassroomSelect
-                      classrooms={classrooms}
-                      value={selectedClassroom}
-                      onChange={handleClassroomChange}
-                    />
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+            <ClassroomSelect
+              classrooms={classrooms}
+              value={selectedClassroom}
+              onChange={handleClassroomChange}
+            />
 
-                    <ViewModeToggle
-                      viewMode={viewMode}
-                      onViewModeChange={setViewMode}
-                    />
+            <ViewModeToggle
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
 
-                    <DownloadButton
-                      onClick={() => downloadNotas(courseIdNumber)}
-                      loading={isLoading}
-                    />
+            <DownloadButton
+              onClick={() => downloadNotas(courseIdNumber)}
+              loading={isLoading}
+            />
 
-                  </div>
-                </div>
-              </div>
-
-              {/* Stats Summary */}
-              <StatsSummary
-                totalStudents={filteredStudents?.length || 0}
-                statusCount={statusCount}
-                profileCount={profileCount}
-              />
-
-              {/* Main Content */}
-              {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                  <Loader />
-                </div>
-              ) : (
-                <div className="space-y-8">
-                  {/* Students View */}
-                  {viewMode === 'cards' ? (
-                    <StudentCardsView
-                      students={filteredStudents}
-                      statusStyles={STATUS_STYLES}
-                      formatDate={formatDate}
-                    />
-                  ) : (
-                    <StudentTableView
-                      students={filteredStudents}
-                      statusStyles={STATUS_STYLES}
-                      formatDate={formatDate}
-                    />
-                  )}
-
-                  {/* Charts Section */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <ChartCard
-                      title="Rendimiento Académico"
-                      icon={<FiBarChart2 className="mr-2 text-blue-500" />}
-                    >
-                      <Chart
-                        type="bar"
-                        options={performanceChartData.options}
-                        series={performanceChartData.series}
-                        height={300}
-                      />
-                    </ChartCard>
-
-                    <SessionsChart students={filteredStudents} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </main>
+          </div>
         </div>
       </div>
-    </ProtectedRoute>
+
+      {/* Stats Summary */}
+      <StatsSummary
+        totalStudents={filteredStudents?.length || 0}
+        statusCount={statusCount}
+        profileCount={profileCount}
+      />
+
+      {/* Main Content */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Loader />
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {/* Students View */}
+          {viewMode === 'cards' ? (
+            <StudentCardsView
+              students={filteredStudents}
+              statusStyles={STATUS_STYLES}
+              formatDate={formatDate}
+            />
+          ) : (
+            <StudentTableView
+              students={filteredStudents}
+              statusStyles={STATUS_STYLES}
+              formatDate={formatDate}
+            />
+          )}
+
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <ChartCard
+              title="Rendimiento Académico"
+              icon={<FiBarChart2 className="mr-2 text-blue-500" />}
+            >
+              <Chart
+                type="bar"
+                options={performanceChartData.options}
+                series={performanceChartData.series}
+                height={300}
+              />
+            </ChartCard>
+
+            <SessionsChart students={filteredStudents} />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -536,5 +525,9 @@ const SessionsChart = ({ students }: { students: any[] }) => {
 
   return <p> </p>;
 };
+
+NotaCourses.getLayout = (page: React.ReactNode) => (
+  <AppLayout>{page}</AppLayout>
+);
 
 export default NotaCourses;

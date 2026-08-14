@@ -11,6 +11,8 @@ import {
 } from "@/components/Certification/StateComponent";
 import AttemptSelectorCertification from "@/components/Certification/AttemptSelector";
 
+// Vista STUDENT — historial de intentos de una certificación asignada, con selector de
+// intento (AttemptSelectorCertification). Fuente: useCertificationResult.
 const CertificationResults = () => {
   const { attempts, selectedAttempt, loading, error, selectAttemptById } =
     useCertificationResult();

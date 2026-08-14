@@ -66,6 +66,8 @@ interface EvaluationData {
   attempt_id?: number;
 }
 
+// Vista STUDENT — pantalla de rendición: responde las preguntas de un intento de
+// evaluación (evaluation_id en la ruta). Solo el estudiante dueño del intento la usa.
 const TakeEvaluation = () => {
   const router = useRouter();
   const { id } = router.query;

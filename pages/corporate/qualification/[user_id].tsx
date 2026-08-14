@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Navbar from '../../../components/Navbar';
-import Sidebar from '../../../components/Corporate/CorporateSideBar';
+import type { NextPageWithLayout } from '../../../types/next';
+import AppLayout from "@/components/layouts/AppLayout";
 import {
   getCoursesWithGradesByStudent,
   getModulesByCourseId2,
@@ -10,11 +10,13 @@ import { getUserById } from '../../../services/users/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Loader from '../../../components/Loader';
 import StudentCourseCard from './StudentCourseCard';
-import ProtectedRoute from '../../../components/Auth/ProtectedRoute';
 import GradesModal from './Modal';
 import './../../../app/globals.css';
 
-const StudentGrades: React.FC = () => {
+// Vista CORPORATE — calificaciones/cursos de un estudiante específico de la empresa
+// (user_id en la ruta, llega desde qualification/progress.tsx). Usa StudentCourseCard
+// y GradesModal (archivos hermanos en esta misma carpeta, no componentes compartidos).
+const StudentGrades: NextPageWithLayout = () => {
   const router = useRouter();
   const { user_id } = router.query as { user_id: string };
   const [courses, setCourses] = useState<any[]>([]);
@@ -68,91 +70,87 @@ const StudentGrades: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col bg-[#F5F8FA] ">
-        <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-        <div className="flex flex-1 pt-16">
-          <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className=" flex-grow transition-all duration-300 ease-in-out ml-20">
-            {loading ? (
-              <Loader />
-            ) : (
-              <div>
-                {enterprise && student && (
-                  <div className="relative w-full max-w-full   ">
-                    <img
-                      src={enterprise.image_fondo}
-                      className="w-full h-auto   "
-                      alt="Imagen de la empresa"
-                    />
-                    <div className=" flex items-center border-y-8282FF] bg-[#FFFFFF] ">
-                      <div className="flex-shrink-0 ">
-                        <img
-                          src={
-                            student.userProfile?.profile_picture ||
-                            'default_profile_picture.png'
-                          }
-                          alt="Profile"
-                          className="h-40 w-40  rounded-full  "
-                        />
-                      </div>
-                      <div className="ml-10">
-                        <h2 className="text-2xl font-bold text-blue-600 mb-4">
-                          {student.userProfile?.first_name}{' '}
-                          {student.userProfile?.last_name}
-                        </h2>
-                        <p className="text-lg text-gray-700">
-                          {student.userProfile?.email}
-                        </p>
-                        <p className="text-md text-gray-500">
-                          {student.userProfile?.job_title}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div className="mt-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {courses.map((course) => (
-                      <StudentCourseCard
-                        key={course.course_id}
-                        course={{
-                          image: course.image,
-                          name: course.name,
-                          description_short: course.description_short,
-                          progress: course.progress ?? 0,
-                          completed: course.completed ?? 0,
-                          approved: course.approved ?? 0,
-                          course_id: course.course_id,
-                        }}
-                        onViewGrades={handleViewGrades}
-                        studentId={student.user_id} // Pass studentId here
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => router.back()}
-                    className="mt-12 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-                  >
-                    Volver a la lista de usuarios
-                  </button>
+    <div>
+      {loading ? (
+        <Loader />
+      ) : (
+        <div>
+          {enterprise && student && (
+            <div className="relative w-full max-w-full   ">
+              <img
+                src={enterprise.image_fondo}
+                className="w-full h-auto   "
+                alt="Imagen de la empresa"
+              />
+              <div className=" flex items-center border-y-8282FF] bg-[#FFFFFF] ">
+                <div className="flex-shrink-0 ">
+                  <img
+                    src={
+                      student.userProfile?.profile_picture ||
+                      'default_profile_picture.png'
+                    }
+                    alt="Profile"
+                    className="h-40 w-40  rounded-full  "
+                  />
+                </div>
+                <div className="ml-10">
+                  <h2 className="text-2xl font-bold text-blue-600 mb-4">
+                    {student.userProfile?.first_name}{' '}
+                    {student.userProfile?.last_name}
+                  </h2>
+                  <p className="text-lg text-gray-700">
+                    {student.userProfile?.email}
+                  </p>
+                  <p className="text-md text-gray-500">
+                    {student.userProfile?.job_title}
+                  </p>
                 </div>
               </div>
-            )}
-          </main>
+            </div>
+          )}
+          <div className="mt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {courses.map((course) => (
+                <StudentCourseCard
+                  key={course.course_id}
+                  course={{
+                    image: course.image,
+                    name: course.name,
+                    description_short: course.description_short,
+                    progress: course.progress ?? 0,
+                    completed: course.completed ?? 0,
+                    approved: course.approved ?? 0,
+                    course_id: course.course_id,
+                  }}
+                  onViewGrades={handleViewGrades}
+                  studentId={student.user_id} // Pass studentId here
+                />
+              ))}
+            </div>
+            <button
+              onClick={() => router.back()}
+              className="mt-12 bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+            >
+              Volver a la lista de usuarios
+            </button>
+          </div>
         </div>
-        {selectedCourse && (
-          <GradesModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            course={selectedCourse}
-            modules={modules}
-            finalExam={finalExam}
-          />
-        )}
-      </div>
-    </ProtectedRoute>
+      )}
+      {selectedCourse && (
+        <GradesModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          course={selectedCourse}
+          modules={modules}
+          finalExam={finalExam}
+        />
+      )}
+    </div>
   );
 };
+
+StudentGrades.getLayout = (page: React.ReactNode) => (
+  <AppLayout>{page}</AppLayout>
+);
 
 export default StudentGrades;

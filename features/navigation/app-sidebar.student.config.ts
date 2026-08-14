@@ -29,18 +29,20 @@ export const studentSidebarItems: AppSidebarItem[] = [
     icon: AcademicCapIcon,
     href: "/student/capacitaciones",
   },
-  {
-    id: "evaluaciones",
-    label: "Evaluaciones",
-    href: "/student/evaluaciones",
-    icon: DocumentArrowUpIcon,
-  },
-  {
-    id: "certificaciones",
-    label: "Certificaciones",
-    href: "/student/certificaciones",
-    icon: DocumentIcon,
-  },
+  // Ocultos del sidebar a pedido: no deben aparecer como navegación para student.
+  // Las rutas siguen existiendo, solo se quita el link de acceso.
+  // {
+  //   id: "evaluaciones",
+  //   label: "Evaluaciones",
+  //   href: "/student/evaluaciones",
+  //   icon: DocumentArrowUpIcon,
+  // },
+  // {
+  //   id: "certificaciones",
+  //   label: "Certificaciones",
+  //   href: "/student/certificaciones",
+  //   icon: DocumentIcon,
+  // },
   {
     id: "notas",
     label: "Notas",

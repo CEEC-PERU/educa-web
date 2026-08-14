@@ -7,6 +7,9 @@ import { PendingCertification } from "../../../interfaces/StudentCertification";
 import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/router";
 
+// Vista STUDENT — certificaciones pendientes/asignadas al usuario logueado (self-scoped
+// vía useStudentCertifications(userId propio)). Módulo hermano de "evaluaciones" pero con
+// sus propios hooks/interfaces (StudentCertification) — no reutiliza useEvaluationsList.
 const CertificationsList = () => {
   const { user } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };

@@ -100,6 +100,9 @@ interface AssignmentFormData {
   status: "assigned";
 }
 
+// Vista SUPERVISOR — gestión (crear/editar/programar) de evaluaciones para los classrooms
+// a cargo del supervisor. No es la vista de un estudiante rindiendo: es el panel de
+// administración, análogo en propósito a /corporate/qualification pero con CRUD completo.
 const Evaluations: NextPageWithLayout = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [isLoading, setIsLoading] = useState(true);

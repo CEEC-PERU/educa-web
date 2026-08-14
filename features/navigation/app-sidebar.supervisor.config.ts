@@ -39,13 +39,15 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
     icon: BookOpenIcon,
     matchMode: "prefix",
   },
-  {
-    id: "evaluations",
-    label: "Evaluaciones",
-    href: "/supervisor/evaluations",
-    icon: ClipboardDocumentCheckIcon,
-    matchMode: "prefix",
-  },
+  // Ocultos del sidebar a pedido: no deben aparecer como navegación para supervisor.
+  // Las rutas siguen existiendo, solo se quita el link de acceso.
+  // {
+  //   id: "evaluations",
+  //   label: "Evaluaciones",
+  //   href: "/supervisor/evaluations",
+  //   icon: ClipboardDocumentCheckIcon,
+  //   matchMode: "prefix",
+  // },
   {
     id: "sesion",
     label: "Sesiones",
@@ -53,13 +55,13 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
     icon: ClockIcon,
     matchMode: "prefix",
   },
-  {
-    id: "certificates",
-    label: "Certificados",
-    href: "/supervisor/certificates",
-    icon: AcademicCapIcon,
-    matchMode: "prefix",
-  },
+  // {
+  //   id: "certificates",
+  //   label: "Certificados",
+  //   href: "/supervisor/certificates",
+  //   icon: AcademicCapIcon,
+  //   matchMode: "prefix",
+  // },
   {
     id: "trainings",
     label: "Programas de Formación",

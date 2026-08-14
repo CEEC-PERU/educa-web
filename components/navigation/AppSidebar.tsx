@@ -32,7 +32,7 @@ export default function AppSidebar({
   onAction,
   onCloseMobile,
   currentPath = "",
-  bgColor = "bg-blue-600",
+  bgColor = "bg-gradient-to-b from-sidebar-primary to-sidebar-secondary",
   user,
 }: AppSidebarProps) {
   const navItems = items.filter((item) => !item.action);

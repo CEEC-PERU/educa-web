@@ -39,6 +39,9 @@ const getDate = (date: Date) => {
   return { now, nextWeek };
 };
 
+// Vista SUPERVISOR — gestión de certificaciones: crear/editar y asignar a classrooms.
+// Usa useCertifications (hooks/useCertification.ts), el mismo hook genérico que
+// pages/corporate/certificates.tsx, pero aquí con permisos de administración completos.
 const CertificatesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const [showAssignModal, setShowAssignModal] = useState(false);

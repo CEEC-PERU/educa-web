@@ -14,7 +14,7 @@ const JuegosIndex = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">Cargando cursos...</p>
       </div>
     );
@@ -22,14 +22,14 @@ const JuegosIndex = () => {
 
   if (courseStudent.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">No tienes cursos asignados.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 px-4 py-10 sm:px-8 sm:py-14">
+    <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
       <div className="w-full max-w-screen-lg mx-auto">
         <h1 className="text-2xl font-bold text-white mb-8">Juegos Didácticos</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

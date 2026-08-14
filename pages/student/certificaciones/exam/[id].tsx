@@ -59,6 +59,9 @@ interface StudentAnswer {
   answer_text?: string;
 }
 
+// Vista STUDENT — pantalla de rendición de una certificación (responde preguntas del
+// intento). Equivalente de certificaciones a evaluaciones/[id].tsx, pero contra
+// API_STUDENT_CERTIFICATIONS en vez del endpoint de evaluaciones.
 const TakeCertificationExam = () => {
   const router = useRouter();
   const { id } = router.query;

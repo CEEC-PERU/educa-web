@@ -66,7 +66,7 @@ const ModuleIndex = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">Cargando módulos...</p>
       </div>
     );
@@ -74,7 +74,7 @@ const ModuleIndex = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-red-300">{error}</p>
       </div>
     );
@@ -82,14 +82,14 @@ const ModuleIndex = () => {
 
   if (modules.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
         <p className="text-white">Este curso no tiene módulos.</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 px-4 py-10 sm:px-8 sm:py-14">
+    <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
       <div className="w-full max-w-screen-lg mx-auto">
         <button
           onClick={() => router.back()}

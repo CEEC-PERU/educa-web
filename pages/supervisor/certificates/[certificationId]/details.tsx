@@ -4,6 +4,8 @@ import { useCertificationUser } from "@/hooks/resultado/useCertificationUser";
 import AppLayout from "@/components/layouts/AppLayout";
 import type { NextPageWithLayout } from "@/types/next";
 
+// Vista SUPERVISOR — progreso de asignaciones/estudiantes para una certificación puntual
+// (certificationId en la ruta). Fuente: useCertificationUser.
 const CertificationStudents: NextPageWithLayout = () => {
   const router = useRouter();
   const { certificationId } = router.query;

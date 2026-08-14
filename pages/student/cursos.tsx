@@ -57,7 +57,7 @@ const StudentCursosPage = () => {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 p-4 pt-8">
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end p-4 pt-8">
         <div className="w-full max-w-screen-lg mt-2 flex gap-2 overflow-x-auto scrollbar-hide">
           <button
             className={`whitespace-nowrap px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${

@@ -39,7 +39,7 @@ export default function AppSidebarGroup({
             firstChild?.href ? onNavigate?.(firstChild.href) : undefined
           }
           className={`flex items-center w-full p-4 text-white transition-colors ${
-            isAnyChildActive ? "bg-white/20" : "hover:bg-white/10"
+            isAnyChildActive ? "bg-sidebar-hover" : "hover:bg-sidebar-hover"
           }`}
         >
           {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}

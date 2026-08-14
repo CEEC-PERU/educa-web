@@ -39,6 +39,13 @@ const config: Config = {
         'brandb365-500': '#f0434e',
         'brandhover365-700': '#ba1b25',
         'brandborder365-400': '#f97079',
+        'sidebar-primary': '#21052F',
+        'sidebar-secondary': '#180322',
+        'sidebar-hover': '#351058',
+        'navbar-primary': '#293E8F',
+        'student-bg-start': '#3A075C',
+        'student-bg-mid': '#5517A0',
+        'student-bg-end': '#174FB8',
       },
 
       backgroundImage: {

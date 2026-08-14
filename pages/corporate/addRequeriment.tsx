@@ -1,19 +1,17 @@
 import React, { useState, ChangeEvent } from 'react';
-import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Corporate/CorporateSideBar';
+import type { NextPageWithLayout } from '../../types/next';
+import AppLayout from "@/components/layouts/AppLayout";
 import { createRequirement } from '../../services/requirementService';
 import FormField from '../../components/FormField';
 import Loader from '../../components/Loader';
 import AlertComponent from '../../components/AlertComponent';
 import { useAuth } from '../../context/AuthContext';
 
-import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import './../../app/globals.css';
 
-const RequirementForm: React.FC = () => {
+const RequirementForm: NextPageWithLayout = () => {
     const { user } = useAuth();
     const userId = user as { id: number };
-    const [showSidebar, setShowSidebar] = useState(true);
     const [proposedDate, setProposedDate] = useState('');
     const [courseName, setCourseName] = useState('');
     const [message, setMessage] = useState('');
@@ -133,83 +131,77 @@ const RequirementForm: React.FC = () => {
     };
 
     return (
-        <ProtectedRoute>
-        <div className="relative min-h-screen flex flex-col bg-gradient-to-b">
-            <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
-            <div className="flex flex-1 pt-16">
-                <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-                <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
-                    <div className="container mx-auto p-4">
-                        {loading && <Loader />}
-                        {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
-                        {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
-                        <form onSubmit={handleSubmit}>
-                            <FormField
-                                id="proposedDate"
-                                label="Fecha Propuesta"
-                                type="date"
-                                key={dateKey}
-                                value={proposedDate}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                error={!proposedDate}
-                                touched={touchedFields.proposedDate}
-                            />
-                            <FormField
-                                id="courseName"
-                                label="Nombre del Curso"
-                                type="text"
-                                value={courseName}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                error={!courseName}
-                                touched={touchedFields.courseName}
-                            />
-                            <FormField
-                                id="message"
-                                label="Mensaje"
-                                type="textarea"
-                                value={message}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                error={!message}
-                                touched={touchedFields.message}
-                            />
-                            <FormField
-                                id="courseDuration"
-                                label="Duración del Curso"
-                                type="text"
-                                value={courseDuration}
-                                onChange={handleInputChange}
-                                onBlur={handleBlur}
-                                error={!courseDuration}
-                                touched={touchedFields.courseDuration}
-                            />
-                            {materials.map((_, index) => (
-                                <div key={index} className="mb-4">
-                                    <label className="block text-sm font-medium text-gray-700 mb-4 mt-4">
-                                        Materiales {index + 1}
-                                    </label>
-                                    <input
-                                        type="file"
-                                        key={fileKey}
-                                        multiple
-                                        onChange={handleFileChange(index)}
-                                        className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
-                                    />
-                                </div>
-                            ))}
-                            <button type="button" onClick={addMaterialField} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">Agregar más materiales</button>
-                            <div className="mb-4 mt-4">
-                                <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Enviar Requerimiento</button>
-                            </div>
-                        </form>
+        <div className="container mx-auto p-4">
+            {loading && <Loader />}
+            {success && <AlertComponent type="success" message={success} onClose={() => setSuccess(null)} />}
+            {error && <AlertComponent type="danger" message={error} onClose={() => setError(null)} />}
+            <form onSubmit={handleSubmit}>
+                <FormField
+                    id="proposedDate"
+                    label="Fecha Propuesta"
+                    type="date"
+                    key={dateKey}
+                    value={proposedDate}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    error={!proposedDate}
+                    touched={touchedFields.proposedDate}
+                />
+                <FormField
+                    id="courseName"
+                    label="Nombre del Curso"
+                    type="text"
+                    value={courseName}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    error={!courseName}
+                    touched={touchedFields.courseName}
+                />
+                <FormField
+                    id="message"
+                    label="Mensaje"
+                    type="textarea"
+                    value={message}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    error={!message}
+                    touched={touchedFields.message}
+                />
+                <FormField
+                    id="courseDuration"
+                    label="Duración del Curso"
+                    type="text"
+                    value={courseDuration}
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    error={!courseDuration}
+                    touched={touchedFields.courseDuration}
+                />
+                {materials.map((_, index) => (
+                    <div key={index} className="mb-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-4 mt-4">
+                            Materiales {index + 1}
+                        </label>
+                        <input
+                            type="file"
+                            key={fileKey}
+                            multiple
+                            onChange={handleFileChange(index)}
+                            className="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
+                        />
                     </div>
-                </main>
-            </div>
+                ))}
+                <button type="button" onClick={addMaterialField} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">Agregar más materiales</button>
+                <div className="mb-4 mt-4">
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Enviar Requerimiento</button>
+                </div>
+            </form>
         </div>
-        </ProtectedRoute>
     );
 };
+
+RequirementForm.getLayout = (page: React.ReactNode) => (
+  <AppLayout>{page}</AppLayout>
+);
 
 export default RequirementForm;

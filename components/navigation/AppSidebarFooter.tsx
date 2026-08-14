@@ -24,7 +24,7 @@ export default function AppSidebarFooter({
               <button
                 title={isCollapsed ? item.label : undefined}
                 onClick={() => item.action && onAction?.(item.action)}
-                className="flex items-center w-full p-4 text-white hover:bg-white/10 transition-colors text-left"
+                className="flex items-center w-full p-4 text-white hover:bg-sidebar-hover transition-colors text-left"
               >
                 {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
                 {!isCollapsed && (

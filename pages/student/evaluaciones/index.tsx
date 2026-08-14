@@ -23,6 +23,9 @@ import { CheckCircleIcon } from "@heroicons/react/24/outline";
 import { Profile } from "../../../interfaces/User/UserInterfaces";
 import { useAuth } from "../../../context/AuthContext";
 
+// Vista STUDENT — lista de evaluaciones asignadas al usuario logueado (self-scoped,
+// no recibe userId por prop/query). Módulo independiente del de supervisor/corporate:
+// no comparte hooks ni componentes con /supervisor/evaluations ni /corporate/qualification.
 const EvaluationsList = () => {
   const { evaluations, loading, error, stats } = useEvaluationsList();
 
