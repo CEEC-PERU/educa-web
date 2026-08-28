@@ -35,8 +35,8 @@ export default function StudentHero({
 
   return (
     <div className="relative w-full px-4 lg:px-40 pt-10 pb-16">
-      <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-6">
-        <div className="flex-1 text-left text-white">
+      <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+        <div className="text-left text-white">
           <div className="flex items-center gap-4 mb-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-brandrosado-800">
               {avatar ? (
@@ -74,12 +74,14 @@ export default function StudentHero({
           </a>
         </div>
 
-        <div className="relative flex-shrink-0 flex items-center justify-center">
-          <div className="absolute inset-0 m-auto h-32 w-32 lg:h-48 lg:w-48 rounded-full bg-brandrosado-800/40 blur-2xl" />
+        <div
+          aria-hidden="true"
+          className="hidden flex-shrink-0 items-center justify-center lg:flex"
+        >
           <img
             src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
-            alt="MentorMind"
-            className="relative h-32 w-32 lg:h-48 lg:w-48 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]"
+            alt=""
+            className="h-[340px] w-[340px] object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
           />
         </div>
 
