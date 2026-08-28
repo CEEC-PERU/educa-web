@@ -27,9 +27,11 @@ export default function AppSidebarFooter({
                 className="flex items-center w-full p-4 text-white hover:bg-sidebar-hover transition-colors text-left"
               >
                 {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
-                {!isCollapsed && (
-                  <span className="ml-3 text-sm">{item.label}</span>
-                )}
+                <span
+                  className={`ml-3 text-sm ${isCollapsed ? "lg:hidden" : ""}`}
+                >
+                  {item.label}
+                </span>
               </button>
             </li>
           );

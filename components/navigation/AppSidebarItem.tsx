@@ -39,19 +39,23 @@ export default function AppSidebarItem({
       >
         {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
 
-        {!isCollapsed && (
-          <>
-            <span className="ml-3 text-sm truncate flex-1">{item.label}</span>
-            {hasBadge && (
-              <span className="ml-2 bg-white text-blue-600 text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center">
-                {item.badgeCount}
-              </span>
-            )}
-          </>
+        <span
+          className={`ml-3 text-sm truncate flex-1 ${isCollapsed ? "lg:hidden" : ""}`}
+        >
+          {item.label}
+        </span>
+        {hasBadge && (
+          <span
+            className={`ml-2 bg-white text-blue-600 text-xs font-bold rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center ${
+              isCollapsed ? "lg:hidden" : ""
+            }`}
+          >
+            {item.badgeCount}
+          </span>
         )}
 
         {isCollapsed && hasBadge && (
-          <span className="absolute top-2 right-2 h-2 w-2 bg-red-400 rounded-full" />
+          <span className="hidden lg:block absolute top-2 right-2 h-2 w-2 bg-red-400 rounded-full" />
         )}
       </button>
     </li>

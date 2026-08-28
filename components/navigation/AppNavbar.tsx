@@ -52,7 +52,16 @@ export default function AppNavbar({
             </button>
           )}
 
-          <Link href={dashboardHref} className="flex items-center ml-2"></Link>
+          <Link href={dashboardHref} className="flex items-center ml-2">
+            <img
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
+              alt="EducaWeb Logo"
+              className="h-8 sm:h-10"
+            />
+            <span className="text-white font-bold text-base sm:text-lg ml-2">
+              MentorMind
+            </span>
+          </Link>
 
           {title && (
             <span className="ml-4 text-white text-sm font-medium hidden sm:block">
