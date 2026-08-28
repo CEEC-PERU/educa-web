@@ -75,11 +75,11 @@ export default function StudentHero({
         </div>
 
         <div className="relative flex-shrink-0 flex items-center justify-center">
-          <div className="absolute inset-0 m-auto h-20 w-20 lg:h-32 lg:w-32 rounded-full bg-brandrosado-800/40 blur-2xl" />
+          <div className="absolute inset-0 m-auto h-32 w-32 lg:h-48 lg:w-48 rounded-full bg-brandrosado-800/40 blur-2xl" />
           <img
             src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
             alt="MentorMind"
-            className="relative h-20 w-20 lg:h-32 lg:w-32 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]"
+            className="relative h-32 w-32 lg:h-48 lg:w-48 object-contain drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]"
           />
         </div>
 
