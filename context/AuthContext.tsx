@@ -20,11 +20,11 @@ import { validateToken } from "../helpers/helper-token";
 import { io } from "socket.io-client";
 import axios from "axios";
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
-const socket = io(API_SOCKET_URL);
+const socket = typeof window !== "undefined" ? io(API_SOCKET_URL) : null;
 
-socket.on('reconnect', () => {
-  const token = localStorage.getItem('userToken');
-  if (token) socket.emit('login', { userToken: token });
+socket?.on("reconnect", () => {
+  const token = localStorage.getItem("userToken");
+  if (token) socket?.emit("login", { userToken: token });
 });
 
 export const useAuth = () => {
@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           }),
         );
         if (decodedToken.role === 1) {
-          socket.emit("login", { userToken: response.token });
+          socket?.emit("login", { userToken: response.token });
         }
         const profile = await getProfile(response.token, decodedToken.id);
         if (profile) {
@@ -185,7 +185,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         client_id: number;
       } = jwtDecode(token);
       if (decodedToken.role === 1) {
-        socket.emit("logout");
+        socket?.emit("logout");
       }
     }
 
@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             client_id: number;
           } = jwtDecode(token);
           if (decodedToken.role === 1) {
-            socket.emit("login", { userToken: token });
+            socket?.emit("login", { userToken: token });
           }
         }
         break;

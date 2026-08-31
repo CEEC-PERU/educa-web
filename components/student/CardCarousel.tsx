@@ -1,123 +1,109 @@
 "use client";
-import React, { useEffect, useRef } from 'react';
-import Swiper from 'swiper';
-import 'swiper/swiper-bundle.css';
-import CardImage from './CardImage';
+import React, { useEffect, useRef, useState } from "react";
+import Swiper from "swiper";
+import "swiper/swiper-bundle.css";
+import CardImage from "./CardImage";
+import { fetchCourses } from "@/features/courses/courses.api";
+import type { Course } from "@/interfaces/Courses/Course";
+import { PUBLIC_COURSE_IDS } from "@/utils/publicCourseIds";
+
+const MAX_COURSES = 6;
 
 const CardCarousel: React.FC = () => {
   const swiperRef = useRef<HTMLDivElement>(null);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (swiperRef.current) {
-      new Swiper(swiperRef.current, {
-        slidesPerView: 1, // Default to 1 slide per view
-        spaceBetween: 20,
-        loop: true,
-        autoplay: {
-          delay: 3000,
-          disableOnInteraction: false,
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-        breakpoints: {
-          640: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-          },
-          768: {
-            slidesPerView: 2,
-            spaceBetween: 20,
-          },
-          1024: {
-            slidesPerView: 3,
-            spaceBetween: 20,
-          },
-          1440: {
-            slidesPerView: 4,
-            spaceBetween: 20,
-          },
-        },
+    let isCancelled = false;
+
+    fetchCourses()
+      .then((data) => {
+        if (isCancelled) return;
+        setCourses(
+          data
+            .filter((course) => course.is_active && PUBLIC_COURSE_IDS.includes(course.course_id))
+            .slice(0, MAX_COURSES),
+        );
+      })
+      .catch((error) => {
+        console.error("Error fetching courses:", error);
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false);
       });
-    }
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
+
+  useEffect(() => {
+    if (courses.length === 0 || !swiperRef.current) return;
+
+    new Swiper(swiperRef.current, {
+      slidesPerView: 1, // Default to 1 slide per view
+      spaceBetween: 20,
+      loop: true,
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      },
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 1,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        1024: {
+          slidesPerView: 3,
+          spaceBetween: 20,
+        },
+        1440: {
+          slidesPerView: 4,
+          spaceBetween: 20,
+        },
+      },
+    });
+  }, [courses]);
+
+  if (isLoading) {
+    return (
+      <div className="text-white text-lg animate-pulse py-10">
+        Cargando cursos...
+      </div>
+    );
+  }
+
+  if (courses.length === 0) {
+    return null;
+  }
 
   return (
     <div className="swiper-container overflow-hidden" ref={swiperRef}>
       <div className="swiper-wrapper">
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/10_zyty3h.png"
-            title="MARCA PERSONAL"
-              background='bg-white'
-            buttonLabel=' Desarrollo Personal'
-            usuarios='120 usuarios'
-                     description=""
-            textColor="text-black"
-          />
-        </div>
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820424/11_c8ueq9.png"
-            title="RETENCIÓN DE TALENTO"
-            background='bg-white'
-          buttonLabel='Recursos Humanos '
-            usuarios='30 usuarios'
-                     description=""
-            textColor="text-black"
-          />
-        </div>
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/9_qgwxhr.png"
-            title="HABILIDAD NEGOCIADORA"
-            background='bg-white'
-          buttonLabel='Responsabilidad Social Empresarial'
-                     description=""
-            usuarios='80 usuarios'
-            textColor="text-black"
-          />
-        </div>
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/14_apiwxt.png"
-            usuarios='140 usuarios'
-             buttonLabel='Gestión del Tiempo y Productividad'
-            title="PRODUCTIVIDAD ÁGIL"
-            background='bg-white'
-           
-                     description=""
-            textColor="text-black"
-          />
-        </div>
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/12_u9pqjj.png"
-            buttonLabel='Desarrollo Personal'
-            title="CONEXIONES LABORALES"
-            background='bg-white'
-          
-            usuarios='60 usuarios'
-                     description=""
-            textColor="text-black"
-          />
-        </div>
-        <div className="swiper-slide">
-          <CardImage
-            imageUrl="https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/13_tmklth.png"
-           
-            title="GESTIÓN DE TALENTO MILENIAL"
-            background='bg-white'
-           buttonLabel='Recursos Humanos '
-            usuarios='60 usuarios'
-                     description=""
-            textColor="text-black"
-          />
-        </div>
-        {/* Añade más tarjetas si es necesario */}
+        {courses.map((course) => (
+          <div className="swiper-slide" key={course.course_id}>
+            <CardImage
+              id={course.course_id}
+              name={course.name}
+              description_short={course.description_short}
+              image={course.image}
+              duration_course={course.duration_course}
+              background="bg-white"
+              buttonLabel="Ver detalles"
+              textColor="text-black"
+            />
+          </div>
+        ))}
       </div>
-   
     </div>
   );
 };

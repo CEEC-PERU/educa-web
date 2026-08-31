@@ -17,7 +17,6 @@ interface CardImageProps {
   textColorDescription?:String;
   id?: number; // Hacer el id opcional
   isCircular?: boolean; // Nueva prop opcional
-  onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del botón
 }
 
 const CardImage: React.FC<CardImageProps> = ({
@@ -36,14 +35,13 @@ const CardImage: React.FC<CardImageProps> = ({
   image,
   duration_course,
   isCircular = false, // Valor por defecto
-  onButtonClick // Nueva prop para manejar el clic del botón
 }) => {
   const displayName = name || title;
   const displayDescription = description_short || description;
   const displayImage = image || imageUrl;
 
   return (
-    <div className={`relative flex flex-col w-full ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-1 lg:mx-2 my-4`}>
+    <div className={`relative flex flex-col w-full h-full ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-1 lg:mx-2 my-4`}>
       <div className={`relative mx-2 lg:mx-4 mt-2 lg:mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
@@ -65,19 +63,16 @@ const CardImage: React.FC<CardImageProps> = ({
           className={` h-2 lg:h-3 justify-left mb-2 lg:mb-5 `}
         />
          <div className=" flex justify-center">
-          <ButtonComponent 
+          <ButtonComponent
             buttonLabel={` ${buttonLabel}`}
-            backgroundColor="bg-blue-700" 
-            textColor="text-white" 
-            fontSize="text-[10px] lg:text-xs" 
+            backgroundColor="bg-blue-700"
+            textColor="text-white"
+            fontSize="text-[10px] lg:text-xs"
             buttonSize="p-2"
-            onClick={() => onButtonClick && onButtonClick(id)}
-            navigateTo="/login" // Nueva prop para navegación
+            buttonroute={id ? `/cursos/${id}` : "/login"}
           />
         </div>
-        <div className="flex items-center justify-center mb-2 lg:mb-3 pt-2 lg:pt-4">
-          
-        
+        <div className="flex items-center justify-center min-h-[2.5rem] lg:min-h-[3.5rem] mb-2 lg:mb-3 pt-2 lg:pt-4">
             {/* Título */}
             <h5 className={`block font-sans text-sm lg:text-xl text-center antialiased font-bold leading-snug tracking-normal ${textColor} line-clamp-2`}>
             {displayName}
