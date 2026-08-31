@@ -225,6 +225,30 @@ video.no-seekbar::-webkit-media-controls-timeline {
   animation: scaleIn 1s ease-out 1.2s both;
 }
 
+@keyframes bounceHint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(10px);
+    opacity: 0.35;
+  }
+}
+
+.hero-scroll-hint {
+  animation:
+    slideUp 0.8s ease-out 1.5s both,
+    bounceHint 1.4s ease-in-out 2.3s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-hint {
+    animation: slideUp 0.8s ease-out 1.5s both;
+  }
+}
+
 /* Efecto de carga inicial */
 @media (prefers-reduced-motion: no-preference) {
   .hero-section {

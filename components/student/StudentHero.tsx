@@ -79,9 +79,9 @@ export default function StudentHero({
           className="hidden flex-shrink-0 items-center justify-center lg:flex"
         >
           <img
-            src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
+            src="https://res.cloudinary.com/dk2red18f/image/upload/v1788194743/MentorMind/Inicio-de-usuario-v2_jscaea.png"
             alt=""
-            className="h-[340px] w-[340px] object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
+            className="h-[420px] w-[420px] object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
           />
         </div>
 

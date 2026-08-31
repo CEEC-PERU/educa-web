@@ -21,14 +21,32 @@ export default function AppSidebarHeader({
   onCloseMobile,
   user,
 }: AppSidebarHeaderProps) {
+  const initial = user?.name?.charAt(0)?.toUpperCase() || "?";
+
   return (
-    <div className="flex items-center justify-between px-3 h-16 border-b border-white/10 flex-shrink-0">
-      <div className="flex items-center gap-2 overflow-hidden">
-        <img
-          src="https://res.cloudinary.com/dk2red18f/image/upload/v1746032069/vercel_uj8xt5.png"
-          alt="Logo"
-          className="h-8 w-8 flex-shrink-0 object-contain"
-        />
+    <div
+      className={`flex items-center justify-between px-3 h-16 border-b border-white/10 flex-shrink-0 ${
+        isCollapsed ? "lg:justify-center" : ""
+      }`}
+    >
+      <div
+        className={`flex items-center gap-2 overflow-hidden ${
+          isCollapsed ? "lg:hidden" : ""
+        }`}
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-brandrosado-800">
+          {user?.profilePicture ? (
+            <img
+              src={user.profilePicture}
+              alt={user?.name ?? "Usuario"}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <span className="text-sm font-semibold text-brandrosado-800">
+              {initial}
+            </span>
+          )}
+        </div>
         {user?.name && (
           <span className="text-white text-sm font-medium truncate">
             {user.name}

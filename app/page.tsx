@@ -11,6 +11,7 @@ import CompanyForm from "@/components/FormComponent";
 import IndividualForm from "@/components/IndividualForm";
 import { useEffect } from "react";
 import SplashScreen from "@/components/SplashScreen";
+import { ChevronDown } from "lucide-react";
 import "./globals.css";
 
 export default function Home() {
@@ -35,7 +36,7 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
       <PublicNavbar variant="landing" />
 
-      <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-60 bg-brand-500 overflow-hidden">
+      <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-24 md:pb-40 lg:pb-52 bg-brand-500 overflow-hidden">
         <div
           className="hero-bg absolute inset-0 bg-cover bg-center"
           style={{
@@ -66,17 +67,33 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-image md:w-1/2 relative z-10 px-6 animate-image">
+          <div className="hero-image md:w-1/2 relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1724337541/WEB_EDUCA/WEB-IMAGENES/nnejbmnffrzbibtpm4vq.png"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1788192193/MentorMind/Imagen-Portada-inicio.png_kroo6x.png"
               className="w-full max-w-5xl mx-auto"
               alt="Imagen descriptiva"
             />
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() =>
+            document
+              .getElementById("cursos-section")
+              ?.scrollIntoView({ behavior: "smooth" })
+          }
+          aria-label="Desplazarse hacia abajo para ver más contenido"
+          className="hero-scroll-hint absolute bottom-4 md:bottom-8 lg:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center w-14 h-14 rounded-full text-white/80 hover:text-white transition-colors"
+        >
+          <ChevronDown className="w-12 h-12" strokeWidth={1.5} />
+        </button>
       </section>
 
-      <section className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20 ">
+      <section
+        id="cursos-section"
+        className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20 "
+      >
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -190,16 +207,6 @@ export default function Home() {
             Empresas que confian en QTech
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-4 pt-5">
-            <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1721634377/WEB_EDUCA/WEB-IMAGENES/jbxefvsczjuhs9ve525i.png"
-              className="w-30 h-30 object-contain px-8"
-              alt="Empresa 1"
-            />
-            <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1721634381/WEB_EDUCA/WEB-IMAGENES/jnvagrdzflir0q6vvo6p.png"
-              className="w-30 h-30 object-contain px-8"
-              alt="Empresa 1"
-            />
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1721634377/WEB_EDUCA/WEB-IMAGENES/jbxefvsczjuhs9ve525i.png"
               className="w-30 h-30 object-contain px-8"

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import AppLayout from "@/components/layouts/AppLayout";
 import {
   useCourseStudent,
@@ -12,6 +13,7 @@ import Footter from "../../components/Footter";
 const StudentCursosPage = () => {
   const { courseStudent, isLoading } = useCourseStudent();
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const { categories } = useCategoriesl();
   const router = useRouter();
 
@@ -55,41 +57,80 @@ const StudentCursosPage = () => {
   const displayedCourses = selectedCategoryId ? courseStudentCategory : courseStudent;
   const loading = selectedCategoryId ? categoryLoading : isLoading;
 
+  const assignedCategoryIds = new Set(
+    courseStudent
+      .map((item) => item.Course?.courseCategory?.category_id)
+      .filter((id): id is number => id != null),
+  );
+  const availableCategories = categories.filter((category) =>
+    assignedCategoryIds.has(category.category_id),
+  );
+
+  const MOBILE_VISIBLE_CATEGORIES = 5;
+  const hasHiddenMobileCategories =
+    availableCategories.length > MOBILE_VISIBLE_CATEGORIES;
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end p-4 pt-8">
-        <div className="w-full max-w-screen-lg mt-2 flex gap-2 overflow-x-auto scrollbar-hide">
-          <button
-            className={`whitespace-nowrap px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
-              selectedCategoryId === null
-                ? "bg-white/20 text-white font-semibold"
-                : "text-white hover:bg-white/10"
-            }`}
-            onClick={() => setSelectedCategoryId(null)}
-          >
-            Todos
-          </button>
-
-          {categories.map((category) => (
+        {courseStudent.length > 0 && (
+          <div className="w-full max-w-screen-2xl mt-2 flex flex-wrap gap-2">
             <button
-              key={category.category_id}
-              className={`whitespace-nowrap flex items-center gap-2 px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
-                selectedCategoryId === category.category_id
+              className={`whitespace-nowrap px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
+                selectedCategoryId === null
                   ? "bg-white/20 text-white font-semibold"
                   : "text-white hover:bg-white/10"
               }`}
-              onClick={() => setSelectedCategoryId(category.category_id)}
+              onClick={() => setSelectedCategoryId(null)}
             >
-              <img src={category.logo} alt="" className="h-5 w-5 flex-shrink-0" />
-              {category.name}
+              Todos
             </button>
-          ))}
-        </div>
+
+            {availableCategories.map((category, index) => (
+              <button
+                key={category.category_id}
+                className={`${
+                  index >= MOBILE_VISIBLE_CATEGORIES && !showAllCategories
+                    ? "hidden lg:flex"
+                    : "flex"
+                } whitespace-nowrap items-center gap-2 px-4 py-2 rounded-lg flex-shrink-0 transition-colors ${
+                  selectedCategoryId === category.category_id
+                    ? "bg-white/20 text-white font-semibold"
+                    : "text-white hover:bg-white/10"
+                }`}
+                onClick={() => setSelectedCategoryId(category.category_id)}
+              >
+                <img src={category.logo} alt="" className="h-5 w-5 flex-shrink-0" />
+                {category.name}
+              </button>
+            ))}
+
+            {hasHiddenMobileCategories && (
+              <button
+                onClick={() => setShowAllCategories((prev) => !prev)}
+                className="flex items-center justify-center px-3 py-2 rounded-lg flex-shrink-0 text-white hover:bg-white/10 transition-colors lg:hidden"
+                aria-label={
+                  showAllCategories
+                    ? "Ver menos categorías"
+                    : "Ver todas las categorías"
+                }
+              >
+                {showAllCategories ? (
+                  <ChevronUp className="h-5 w-5" />
+                ) : (
+                  <ChevronDown className="h-5 w-5" />
+                )}
+              </button>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <div className="mt-16 text-white text-lg animate-pulse">Cargando cursos...</div>
+        ) : courseStudent.length === 0 ? (
+          <div className="mt-16 text-white text-lg">No tienes cursos asignados.</div>
         ) : (
-          <div className="w-full max-w-screen-lg mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="w-full max-w-screen-2xl mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
             {displayedCourses?.map((item) => (
               <CourseCard
                 key={item.Course?.course_id}

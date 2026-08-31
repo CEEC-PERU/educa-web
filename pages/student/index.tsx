@@ -1,5 +1,4 @@
-﻿import React, { useState } from "react";
-import Modal from "react-modal";
+﻿import React from "react";
 import { useAuth } from "../../context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
@@ -8,32 +7,23 @@ import CourseCard from "../../components/student/CourseCard";
 import { useRouter } from "next/router";
 import { useCoursesCount } from "../../hooks/user/useUserCourses";
 import StudentVerificationModal from "../../components/student/StudentVerificationModal";
-import StudentCoursePreviewModal, {
-  CoursePreview,
-} from "../../components/student/StudentCoursePreviewModal";
 import StudentHero from "../../components/student/StudentHero";
 import StudentPortalFooter from "../../components/student/StudentPortalFooter";
-
-Modal.setAppElement("#__next");
 
 const StudentIndex = () => {
   const { profileInfo } = useAuth();
   const { courseStudent } = useCourseStudent();
   const { coursescount } = useCoursesCount();
-  const [selectedCourse, setSelectedCourse] = useState<CoursePreview | null>(
-    null,
-  );
   const router = useRouter();
 
   const profile = profileInfo as Profile | null;
   const name = profile?.first_name ?? "";
   const avatar = profile?.profile_picture ?? null;
 
-  const navigateToCourseDetails = () => {
-    if (!selectedCourse) return;
+  const navigateToCourseDetails = (courseId: number) => {
     router.push({
       pathname: "/student/course-details",
-      query: { course_id: selectedCourse.course_id },
+      query: { course_id: courseId },
     });
   };
 
@@ -58,18 +48,11 @@ const StudentIndex = () => {
               profesor={item.Course.courseProfessor.full_name}
               categoria={item.Course.courseCategory.name}
               course_id={item.Course.course_id}
-              onClick={() => setSelectedCourse(item.Course)}
+              onClick={() => navigateToCourseDetails(item.Course.course_id)}
             />
           ))}
         </div>
       </div>
-      {selectedCourse && (
-        <StudentCoursePreviewModal
-          course={selectedCourse}
-          onClose={() => setSelectedCourse(null)}
-          onViewDetails={navigateToCourseDetails}
-        />
-      )}
       <StudentPortalFooter />
     </>
   );
