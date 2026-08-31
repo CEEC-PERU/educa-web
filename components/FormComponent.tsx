@@ -1,36 +1,58 @@
-import React from 'react';
+import React from "react";
+
 const CompanyForm: React.FC = () => {
   return (
-    <div className="bg-white p-6 shadow-lg rounded-3xl w-70">
-      <form className="space-y-4 m-7">
-        {/* Company Name */}
-        <div className="pb-3">
-          <label className="block text-gray-700 font-bold pb-2">Company Name</label>
-          <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Company Name" />
-        </div>
-
-        {/* Email */}
-        <div className="pb-3">
-          <label className="block text-gray-700 font-bold pb-2">Email</label>
-          <input type="email" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Email" />
-        </div>
-
-        {/* Phone Number */}
-        <div className="pb-3">
-          <label className="block text-gray-700 font-bold">Phone Number</label>
-          <input type="text" className="w-full p-2 border border-gray-300 rounded-full" placeholder="Phone Number" />
-        </div>
-
-        {/* Questions */}
-        <div className="pb-3">
-          <label className="block text-gray-700 font-bold pb-2">Questions</label>
-          <textarea className="w-full h-50 p-2 border border-gray-300 rounded-full" placeholder="Write your questions here"></textarea>
-        </div>
-
-        {/* Submit Button */}
+    <div className="bg-white p-8 shadow-xl rounded-3xl w-full max-w-md mx-auto">
+      <form className="space-y-5">
         <div>
-          <button type="submit" className="w-full bg-[#8204E7] text-white p-3 rounded-full">Enviar</button>
+          <label className="block text-gray-700 font-semibold text-sm mb-1.5">
+            Nombre de la empresa
+          </label>
+          <input
+            type="text"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
+            placeholder="Escribe el nombre de tu empresa"
+          />
         </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold text-sm mb-1.5">
+            Correo electrónico
+          </label>
+          <input
+            type="email"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
+            placeholder="nombre@empresa.com"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold text-sm mb-1.5">
+            Teléfono
+          </label>
+          <input
+            type="text"
+            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
+            placeholder="Número de contacto"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700 font-semibold text-sm mb-1.5">
+            Consultas
+          </label>
+          <textarea
+            className="w-full h-28 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 resize-none transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
+            placeholder="Cuéntanos en qué podemos ayudarte"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          className="w-full bg-brandrosa-800 text-white font-semibold py-3 rounded-xl transition-colors hover:bg-brandfucsia-900"
+        >
+          Enviar
+        </button>
       </form>
     </div>
   );

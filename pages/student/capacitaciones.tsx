@@ -14,16 +14,16 @@ const CapacitacionesPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen p-6">
+    <div className="bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 Mis Capacitaciones
               </h1>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-white/70">
                 {!loading && myTrainings.length > 0 && (
                   <>
                     Tienes {myTrainings.length} programa(s) de capacitación

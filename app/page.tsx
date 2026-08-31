@@ -226,23 +226,23 @@ export default function Home() {
 
           <div className="w-full md:w-1/2 flex flex-col px-4 mb-40">
             <div className="flex flex-col items-center w-full">
-              <div className="flex flex-col sm:flex-row mb-6 space-y-4 sm:space-y-0 sm:space-x-4  mt-8">
+              <div className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-sm rounded-full p-1 mb-6 mt-8">
                 <button
                   onClick={() => setFormType("individual")}
-                  className={`px-6 py-2 rounded-lg transition-all duration-300 ${
+                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
                     formType === "individual"
-                      ? "bg-gray-800 text-white"
-                      : "bg-gray-200 text-black"
+                      ? "bg-white text-brandrosa-800 shadow-md"
+                      : "text-white/80 hover:text-white"
                   }`}
                 >
                   Individual
                 </button>
                 <button
                   onClick={() => setFormType("company")}
-                  className={`px-6 py-2 rounded-lg transition-all duration-300 ${
+                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
                     formType === "company"
-                      ? "bg-gray-800 text-white"
-                      : "bg-gray-200 text-black"
+                      ? "bg-white text-brandrosa-800 shadow-md"
+                      : "text-white/80 hover:text-white"
                   }`}
                 >
                   Empresa
