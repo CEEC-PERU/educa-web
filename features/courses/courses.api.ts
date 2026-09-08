@@ -54,6 +54,22 @@ export async function fetchModulesByCourseId(
   return data;
 }
 
+export type PublicSyllabusModule = {
+  module_id: number;
+  name: string;
+  is_active: boolean;
+  moduleSessions: { session_id: number; name: string }[];
+};
+
+export async function fetchPublicCourseSyllabus(
+  courseId: number,
+): Promise<PublicSyllabusModule[]> {
+  const { data } = await http.get<PublicSyllabusModule[]>(
+    `${API_COURSES}/${courseId}/syllabus`,
+  );
+  return data;
+}
+
 export async function createCourse(input: CreateCourseInput): Promise<void> {
   await http.post(API_COURSES, toFormData(input), {
     headers: { "Content-Type": "multipart/form-data" },

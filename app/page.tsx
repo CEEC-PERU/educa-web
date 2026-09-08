@@ -47,12 +47,12 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r"></div>
         </div>
 
-        <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto md:pl-40">
-          <div className="hero-text md:w-1/2 relative z-10 md:px-6 text-left md:mr-10 pt-40">
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight animate-text-1">
+        <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto lg:pl-40">
+          <div className="hero-text md:w-[35%] lg:w-[42%] xl:w-1/2 relative z-10 md:px-6 text-left md:mr-10 pt-40">
+            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight animate-text-1">
               Tu aliado para inspirar
             </h1>
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl font-black mb-3 leading-tight animate-text-2">
+            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight animate-text-2">
               la lealtad a tus clientes
             </h1>
 
@@ -67,7 +67,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-image md:w-1/2 relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
+          <div className="hero-image w-full md:w-[65%] lg:w-[58%] xl:w-1/2 relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1788192193/MentorMind/Imagen-Portada-inicio.png_kroo6x.png"
               className="w-full max-w-5xl mx-auto"
@@ -143,7 +143,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative w-full py-20 flex items-center justify-center overflow-hidden bg-[#070f41] ">
+      <section className="relative w-full py-4 flex items-center justify-center overflow-hidden bg-[#070f41] ">
         <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300  "></div>
 
         <div className="relative z-10 max-w-4xl px-4 text-center">
@@ -191,7 +191,7 @@ export default function Home() {
       </section>
 
       <section
-        className="relative flex items-center justify-center w-full p-6 text-center text-white"
+        className="relative flex items-center justify-center w-full px-6 pt-6 pb-0 text-center text-white"
         style={{ backgroundColor: "#7C3AED" }}
       >
         <div
@@ -202,14 +202,14 @@ export default function Home() {
         >
           <div className="absolute inset-0 bg-brand-500"></div>
         </div>
-        <div className="relative z-10 container mx-auto p-6">
+        <div className="relative z-10 container mx-auto px-6 pt-2 pb-0">
           <h2 className="text-3xl font-bold mb-4 text-gray-600">
             Empresas que confian en QTech
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-4 pt-5">
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1721634377/WEB_EDUCA/WEB-IMAGENES/jbxefvsczjuhs9ve525i.png"
-              className="w-30 h-30 object-contain px-8"
+              src="https://res.cloudinary.com/dk2red18f/image/upload/v1770755434/WEB_EDUCA/LOGO_A365_BLANCO_sin_texto_dnmnm9.png"
+              className="h-28 md:h-36 w-auto object-contain px-8"
               alt="Empresa 1"
             />
           </div>

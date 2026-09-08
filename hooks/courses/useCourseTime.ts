@@ -3,12 +3,15 @@ import {
   CourseTime,
   CourseTimeEnd,
   CourseTimeAverage,
+  CourseTimeSummary,
 } from "../../interfaces/Courses/CourseTime";
 import {
   createCourseTime,
   createCourseTimeEndTime,
   getCourseTimeAverage,
+  getCourseTimeSummary,
 } from "../../services/courses/courseTimeService";
+import { getLearningTimeSummary } from "../../services/courses/courseStudent";
 import { useAuth } from "../../context/AuthContext";
 
 export const useCourseTime = () => {
@@ -77,6 +80,41 @@ export const useCourseTimeEnd = () => {
   };
 };
 
+export const useCourseTimeSummary = (limit?: number) => {
+  const [summary, setSummary] = useState<CourseTimeSummary | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchSummary = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getCourseTimeSummary(token, limit);
+        setSummary(data);
+      } catch (err) {
+        console.error("Error fetching course time summary:", err);
+        setError("Error al obtener el resumen de tiempo.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSummary();
+  }, [token, limit]);
+
+  return {
+    summary,
+    error,
+    isLoading,
+  };
+};
+
 export const useAverageCourse = (course_id?: number) => {
   const [coursetimeaverage, setCourseTimeAverage] = useState<
     CourseTimeAverage[]
@@ -118,5 +156,41 @@ export const useAverageCourse = (course_id?: number) => {
     coursetimeaverage,
     error,
     isLoadingAverage,
+  };
+};
+
+export const useLearningTimeSummary = () => {
+  const [totalSeconds, setTotalSeconds] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { user, token } = useAuth();
+  const userInfo = user as { id: number } | null;
+
+  useEffect(() => {
+    if (!token || !userInfo?.id) {
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchLearningTime = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getLearningTimeSummary(token, userInfo.id);
+        setTotalSeconds(data.totalSeconds);
+      } catch (err) {
+        console.error("Error fetching learning time summary:", err);
+        setError("Error al obtener el tiempo de formación.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLearningTime();
+  }, [token, userInfo?.id]);
+
+  return {
+    totalSeconds,
+    error,
+    isLoading,
   };
 };

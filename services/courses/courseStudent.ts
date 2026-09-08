@@ -8,6 +8,7 @@ import {
   API_POST_COURSESTUDENT,
   API_GET_COURSESTUDENT_ASSIGNED,
   API_GET_COURSESTUDENT_SUPERVISOR,
+  API_GET_LEARNING_TIME,
 } from "../../utils/Endpoints";
 import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
 
@@ -158,4 +159,26 @@ export const getCoursesWithGradesByStudent = async (userId: number) => {
     `${API_GET_COURSESTUDENTS}/${userId}/grades`,
   );
   return response.data;
+};
+
+// Tiempo de formación dedicado (suma de duración de sesiones completadas)
+export const getLearningTimeSummary = async (
+  userToken: string,
+  userId: number,
+): Promise<{ totalSeconds: number }> => {
+  try {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    };
+    const response = await axios.get(
+      `${API_GET_LEARNING_TIME}/${userId}`,
+      config,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching learning time summary:", error);
+    throw new Error("Error fetching learning time summary");
+  }
 };

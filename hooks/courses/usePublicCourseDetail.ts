@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CourseDetail } from "@/interfaces/Courses/CourseDetail";
-import { fetchCourse, fetchModulesByCourseId } from "@/features/courses/courses.api";
+import { fetchCourse, fetchPublicCourseSyllabus } from "@/features/courses/courses.api";
 import { fetchProfessor } from "@/features/professors/professors.api";
 
 export const usePublicCourseDetail = (course_id: number) => {
@@ -17,11 +17,11 @@ export const usePublicCourseDetail = (course_id: number) => {
       setIsLoading(true);
       setError(null);
       try {
-        const [course, modules] = await Promise.all([
-          fetchCourse(course_id),
-          fetchModulesByCourseId(course_id),
+        const course = await fetchCourse(course_id);
+        const [modules, professor] = await Promise.all([
+          fetchPublicCourseSyllabus(course_id),
+          fetchProfessor(course.professor_id),
         ]);
-        const professor = await fetchProfessor(course.professor_id);
 
         if (isCancelled) return;
 

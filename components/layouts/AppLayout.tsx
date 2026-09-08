@@ -3,6 +3,7 @@ import ProtectedRoute from "../Auth/ProtectedRoute";
 import AppNavbar from "../navigation/AppNavbar";
 import AppSidebarContainer from "../../features/navigation/AppSidebarContainer";
 import { useNavigationStore } from "../../features/navigation/navigation.store";
+import WhatsAppBubble from "../WhatsAppBubble";
 
 const DEFAULT_NAVBAR_COLOR = "bg-navbar-primary";
 
@@ -42,6 +43,8 @@ export default function AppLayout({
             {children}
           </main>
         </div>
+
+        <WhatsAppBubble />
       </div>
     </ProtectedRoute>
   );

@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Swiper from "swiper";
 import "swiper/swiper-bundle.css";
 import CardImage from "./CardImage";
-import { fetchCourses } from "@/features/courses/courses.api";
+import { fetchCourse } from "@/features/courses/courses.api";
 import type { Course } from "@/interfaces/Courses/Course";
 import { PUBLIC_COURSE_IDS } from "@/utils/publicCourseIds";
 
@@ -17,14 +17,12 @@ const CardCarousel: React.FC = () => {
   useEffect(() => {
     let isCancelled = false;
 
-    fetchCourses()
+    Promise.all(
+      PUBLIC_COURSE_IDS.slice(0, MAX_COURSES).map((id) => fetchCourse(id)),
+    )
       .then((data) => {
         if (isCancelled) return;
-        setCourses(
-          data
-            .filter((course) => course.is_active && PUBLIC_COURSE_IDS.includes(course.course_id))
-            .slice(0, MAX_COURSES),
-        );
+        setCourses(data.filter((course) => course.is_active));
       })
       .catch((error) => {
         console.error("Error fetching courses:", error);
