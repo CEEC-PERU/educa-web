@@ -68,6 +68,9 @@ export const API_GET_COURSESTUDENT_ENTERPRISE = `${baseURL}/api/coursestudents/e
 
 export const API_GET_COURSESTUDENT_SUPERVISOR = `${baseURL}/api/coursestudents`;
 
+//tiempo de formación (learning time) del estudiante
+export const API_GET_LEARNING_TIME = `${baseURL}/api/coursestudents/learning-time`;
+
 export const API_GET_COURSESTUDENTS = `${baseURL}/api/coursestudents/students`;
 
 export const API_GET_COURSESTUDENT_ASSIGNED = `${baseURL}/api/courseStudents/assigned`;
