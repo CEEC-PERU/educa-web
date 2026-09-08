@@ -33,7 +33,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 text-white">
       <PublicNavbar variant="landing" />
 
       <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-24 md:pb-40 lg:pb-52 bg-brand-500 overflow-hidden">
@@ -143,7 +143,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative w-full py-4 flex items-center justify-center overflow-hidden bg-[#070f41] ">
+      <section className="relative w-full py-4 flex items-center justify-center overflow-hidden bg-brand-500 ">
         <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300  "></div>
 
         <div className="relative z-10 max-w-4xl px-4 text-center">
@@ -161,7 +161,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative w-full h-[300px] bg-[#071144] overflow-hidden">
+      <section className="relative w-full h-[300px] bg-brand-500 overflow-hidden">
         <div className="absolute inset-0">
           <svg
             viewBox="0 0 1440 320"
@@ -190,10 +190,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section
-        className="relative flex items-center justify-center w-full px-6 pt-6 pb-0 text-center text-white"
-        style={{ backgroundColor: "#7C3AED" }}
-      >
+      <section className="relative flex items-center justify-center w-full px-6 pt-6 pb-0 text-center text-white bg-brand-500">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -203,7 +200,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-brand-500"></div>
         </div>
         <div className="relative z-10 container mx-auto px-6 pt-2 pb-0">
-          <h2 className="text-3xl font-bold mb-4 text-gray-600">
+          <h2 className="text-3xl font-bold mb-4 text-white">
             Empresas que confian en QTech
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-4 pt-5">

@@ -48,7 +48,7 @@ const StudentIndex = () => {
           className="h-64 w-64 object-contain"
         />
       </div>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-4 pb-10 from-student-bg-start via-student-bg-mid to-student-bg-end p-4">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-4 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
         <StudentHero
           name={name}
           avatar={avatar}

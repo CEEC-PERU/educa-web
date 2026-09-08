@@ -5,7 +5,8 @@ import AppSidebarContainer from "../../features/navigation/AppSidebarContainer";
 import { useNavigationStore } from "../../features/navigation/navigation.store";
 import WhatsAppBubble from "../WhatsAppBubble";
 
-const DEFAULT_NAVBAR_COLOR = "bg-navbar-primary";
+const DEFAULT_NAVBAR_COLOR =
+  "bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300";
 
 type AppLayoutProps = {
   children: ReactNode;

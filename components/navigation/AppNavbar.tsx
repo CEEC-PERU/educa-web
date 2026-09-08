@@ -38,7 +38,7 @@ export default function AppNavbar({
     <nav
       role="navigation"
       aria-label="Navegación de la aplicación"
-      className={`${bgColor} h-16 fixed top-0 left-0 w-full z-50`}
+      className={`${bgColor} h-16 fixed top-0 left-0 w-full z-50 border-b border-white/30`}
     >
       <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center">
