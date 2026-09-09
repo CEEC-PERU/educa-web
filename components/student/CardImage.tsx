@@ -41,12 +41,12 @@ const CardImage: React.FC<CardImageProps> = ({
   const displayImage = image || imageUrl;
 
   return (
-    <div className={`relative flex flex-col w-full h-full ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg mx-1 lg:mx-2 my-4`}>
+    <div className={`relative flex flex-col w-full h-full ${background} rounded-xl bg-clip-border text-gray-700 shadow-lg my-4`}>
       <div className={`relative mx-2 lg:mx-4 mt-2 lg:mt-4 overflow-hidden text-white shadow-lg ${isCircular ? 'rounded-full' : 'rounded-xl'} bg-blue-gray-500 bg-clip-border shadow-blue-gray-500/40`}>
         <img
           src={displayImage}
           alt={displayName}
-          className={`w-full h-32 md:h-36 lg:h-48 object-cover ${isCircular ? 'rounded-full' : ''}`}
+          className={`w-full h-52 md:h-36 lg:h-48 object-cover object-top ${isCircular ? 'rounded-full' : ''}`}
         />
          
         <div className="absolute inset-0 w-full h-full bg-gradient-to-tr from-transparent via-transparent to-black/60">
@@ -74,7 +74,7 @@ const CardImage: React.FC<CardImageProps> = ({
         </div>
         <div className="flex items-center justify-center min-h-[2.5rem] lg:min-h-[3.5rem] mb-2 lg:mb-3 pt-2 lg:pt-4">
             {/* Título */}
-            <h5 className={`block font-sans text-sm lg:text-xl text-center antialiased font-bold leading-snug tracking-normal ${textColor} line-clamp-2`}>
+            <h5 className={`block font-sans text-sm lg:text-base text-center antialiased font-bold leading-snug tracking-normal ${textColor} line-clamp-2`}>
             {displayName}
           </h5>
         </div>

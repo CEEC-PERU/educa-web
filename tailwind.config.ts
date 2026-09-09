@@ -55,6 +55,7 @@ const config: Config = {
       },
       fontFamily: {
         montserrat: ['Montserrat', 'sans-serif'],
+        'space-grotesk': ['var(--font-space-grotesk)', 'sans-serif'],
       },
     },
   },

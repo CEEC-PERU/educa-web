@@ -85,12 +85,6 @@ export default function StudentHero({
             Este es tu portal de aprendizaje, explora tus cursos y potencia tu
             desarrollo profesional.
           </p>
-          <a
-            href="#cursos"
-            className="inline-flex items-center rounded-lg bg-brandrosado-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brandfucsia-900"
-          >
-            Continuar aprendiendo
-          </a>
         </div>
 
         <div

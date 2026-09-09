@@ -48,7 +48,7 @@ const LoginPage: React.FC = () => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-500 to-blue-500 relative py-12 lg:py-0">
+    <div className="min-h-screen flex items-center justify-center relative py-12 lg:py-0">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -68,11 +68,11 @@ const LoginPage: React.FC = () => {
 
         <div className="w-full lg:w-1/2 flex justify-center">
           <div className="bg-gray-800 bg-opacity-50 p-8 rounded-lg shadow-md max-w-md w-full">
-            <h1 className="text-4xl font-bold text-center text-gray-200 mb-6">
-              ¡Nos alegra verte de nuevo por aquí!
+            <h1 className="text-2xl font-bold text-center text-gray-200 mb-3">
+              ¡Estás a un paso de seguir potenciando tus conocimientos!
             </h1>
-            <p className="text-4xl text-center text-gray-200 mb-6">
-              Inicia sesión para acceder a tu cuenta
+            <p className="text-lg text-center text-gray-200 mb-6">
+              Ingresa e inicia tu experiencia
             </p>
             <form className="space-y-4" onSubmit={handleLogin}>
               <div>
@@ -80,7 +80,7 @@ const LoginPage: React.FC = () => {
                   className="block text-sm font-medium text-gray-300"
                   htmlFor="dni"
                 >
-                  Username
+                  USUARIO
                 </label>
                 <input
                   id="dni"
@@ -97,7 +97,7 @@ const LoginPage: React.FC = () => {
                   className="block text-sm font-medium text-gray-300"
                   htmlFor="password"
                 >
-                  Contraseña
+                  CONTRASEÑA
                 </label>
                 <input
                   type={showPassword ? "text" : "password"}
@@ -179,12 +179,12 @@ const LoginPage: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  className={`w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  className={`w-full py-2 px-4 bg-brandrosado-800 hover:bg-brandfucsia-900 text-white font-semibold rounded-md shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brandrosado-800 transition-colors ${
                     loading ? "opacity-50 cursor-not-allowed" : ""
                   }`}
                   disabled={loading}
                 >
-                  Iniciar sesión
+                  INICIAR SESIÓN
                 </button>
               </div>
             </form>

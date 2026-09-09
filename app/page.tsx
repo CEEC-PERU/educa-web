@@ -1,18 +1,51 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 import CardImage from "../components/student/CardImage";
 import CardCarousel from "../components/student/CardCarousel";
 import Footer from "../components/Footter";
 import PublicNavbar from "../components/navigation/PublicNavbar";
 import Proyectos from "@/components/Proyectos";
 import { proyectosData } from "@/components/CursosData";
-import ButtonComponent from "@/components/ButtonComponent";
 import CompanyForm from "@/components/FormComponent";
 import IndividualForm from "@/components/IndividualForm";
 import { useEffect } from "react";
 import SplashScreen from "@/components/SplashScreen";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Brain } from "lucide-react";
 import "./globals.css";
+
+const HERO_LINE_1 = [
+  "Potencia",
+  "tu",
+  "futuro",
+  "con",
+  "conocimiento",
+  "de",
+  "valor",
+];
+const HERO_LINE_2 = ["y", "domina", "el", "cambio"];
+const HERO_HIGHLIGHT_WORDS = new Set(["Potencia", "domina"]);
+const HERO_WORD_BASE_DELAY_S = 0.15;
+const HERO_WORD_STAGGER_S = 0.06;
+
+function renderHeroWords(words: string[], startIndex: number) {
+  return words.map((word, i) => (
+    <span
+      key={`${startIndex + i}-${word}`}
+      className={`hero-word inline-block${
+        HERO_HIGHLIGHT_WORDS.has(word) ? " text-brandrosado-800" : ""
+      }`}
+      style={{
+        animationDelay: `${
+          HERO_WORD_BASE_DELAY_S + (startIndex + i) * HERO_WORD_STAGGER_S
+        }s`,
+      }}
+    >
+      {word}
+      {i < words.length - 1 ? " " : ""}
+    </span>
+  ));
+}
 
 export default function Home() {
   const [formType, setFormType] = useState<"company" | "individual">(
@@ -44,26 +77,35 @@ export default function Home() {
               "url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)",
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent from-50% to-brand-500"></div>
         </div>
 
         <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto lg:pl-40">
-          <div className="hero-text md:w-[35%] lg:w-[42%] xl:w-1/2 relative z-10 md:px-6 text-left md:mr-10 pt-40">
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight animate-text-1">
-              Tu aliado para inspirar
+          <div className="hero-text w-full md:w-[35%] lg:w-[42%] xl:w-1/2 relative z-10 px-4 md:px-6 text-left md:mr-10 pt-40">
+            <h1 className="font-space-grotesk text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight">
+              {renderHeroWords(HERO_LINE_1, 0)}
+              <br />
+              {renderHeroWords(HERO_LINE_2, HERO_LINE_1.length)}
             </h1>
-            <h1 className="hero-title text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight animate-text-2">
-              la lealtad a tus clientes
-            </h1>
+            <p className="hero-subtitle text-lg sm:text-xl md:text-2xl xl:text-3xl font-medium mb-6 animate-text-3">
+              Tu futuro profesional se construye hoy
+            </p>
 
             <div className="hero-button flex flex-col md:flex-row gap-4 pt-6 animate-button">
-              <ButtonComponent
-                buttonLabel="Empezar"
-                backgroundColor="bg-brand-500"
-                fontSize="px-6 py-2"
-                buttonSize="py-3 px-5 w-auto"
-                textColor="white"
-              />
+              <Link
+                href="/login"
+                className="relative flex items-center overflow-hidden rounded-full bg-brandrosado-800 py-3 pl-6 pr-16 text-sm font-semibold uppercase text-white shadow-lg transition-shadow hover:shadow-xl"
+              >
+                <span className="relative z-10">
+                  Aquí inicia tu ruta de aprendizaje
+                </span>
+                <span
+                  className="absolute inset-y-0 right-0 flex w-14 items-center justify-center bg-brandfucsia-900"
+                  style={{ clipPath: "polygon(40% 0, 100% 0, 100% 100%, 0% 100%)" }}
+                >
+                  <Brain className="h-5 w-5 text-white" aria-hidden="true" />
+                </span>
+              </Link>
             </div>
           </div>
 
@@ -90,31 +132,45 @@ export default function Home() {
         </button>
       </section>
 
+      <section className="relative w-full h-[220px] bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 overflow-hidden">
+        <div className="absolute inset-0">
+          <svg
+            viewBox="0 0 1440 220"
+            className="w-full h-full"
+            preserveAspectRatio="none"
+          >
+            <path fill="#071144" d="M0,0C480,160,960,160,1440,0Z"></path>
+          </svg>
+        </div>
+      </section>
+
       <section
         id="cursos-section"
-        className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-20 "
+        className="relative flex flex-col items-center justify-center w-full p-6 text-center text-white overflow-hidden pt-20 pb-10 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"
       >
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0"
           style={{
-            backgroundImage: "url(https://source.unsplash.com/random/1600x900)",
+            background:
+              "radial-gradient(120% 90% at 50% 0%, rgba(169,89,255,0.16), transparent 60%)",
           }}
-        >
-          <div className="absolute inset-0 bg-brand-500 "></div>
-        </div>
+        ></div>
 
         <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-6xl mx-auto px-4 sm:px-6 mt-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold w-full mb-4">
-            Cursos de Calidad
+          <h2 className="font-space-grotesk text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold w-full mb-4">
+            Aprende con los mejores cursos, a tu propio ritmo
           </h2>
         </div>
 
-        <div className="relative flex flex-col md:flex-row items-center justify-center w-full max-w-4xl mx-auto mt-8 mb-12 px-4 sm:px-6 text-center">
+        <div className="relative flex flex-col items-center justify-center w-full max-w-4xl mx-auto mt-8 mb-6 px-4 sm:px-6 text-center">
           <p className="text-white text-base sm:text-lg">
-            Actualizados y elaborados por expertos en cada materia. Con recursos
-            interactivos, lecciones dinámicas y evaluaciones prácticas, te
-            proporcionamos las herramientas para adquirir habilidades y
-            conocimientos de forma efectiva.
+            Sumérgete en una experiencia de aprendizaje de primer nivel con
+            contenido actualizado y de valor para tu crecimiento profesional.
+            Nuestra plataforma te ofrece recursos multimedia interactivos y
+            guías prácticas de aprendizaje efectivo y atractivo.
+          </p>
+          <p className="text-white text-base sm:text-lg mt-4">
+            Avanza a tu propia velocidad y alcanza tu mejor versión.
           </p>
         </div>
 
@@ -123,7 +179,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative w-full h-[300px] bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 overflow-hidden">
+      <section className="relative w-full h-[220px] bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300 overflow-hidden">
         <div className="absolute inset-0">
           <svg
             viewBox="0 0 1440 320"
@@ -135,8 +191,10 @@ export default function Home() {
               d="M0,64L60,74.7C120,85,240,107,360,138.7C480,171,600,213,720,197.3C840,181,960,107,1080,74.7C1200,43,1320,53,1380,58.7L1440,64L1440,0L1380,0C1320,0,1200,0,1080,0C960,0,840,0,720,0C600,0,480,0,360,0C240,0,120,0,60,0L0,0Z"
             ></path>
             <defs>
-              <linearGradient id="gradient" gradientTransform="rotate(90)">
-                <stop offset="0%" stopColor="#071144" />
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#000E57" />
+                <stop offset="50%" stopColor="#1C0955" />
+                <stop offset="100%" stopColor="#24033D" />
               </linearGradient>
             </defs>
           </svg>
@@ -147,7 +205,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0 bg-gradient-to-r  from-brand-100 via-brand-200 to-brand-300  "></div>
 
         <div className="relative z-10 max-w-4xl px-4 text-center">
-          <div className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
+          <div className="font-space-grotesk text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
             <span className="text-white">“</span> Suma a tu empresa{" "}
             <span className="text-white">"</span>
           </div>
@@ -200,7 +258,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-brand-500"></div>
         </div>
         <div className="relative z-10 container mx-auto px-6 pt-2 pb-0">
-          <h2 className="text-3xl font-bold mb-4 text-white">
+          <h2 className="font-space-grotesk text-3xl font-bold mb-4 text-white">
             Empresas que confian en QTech
           </h2>
           <div className="flex flex-wrap justify-center items-center gap-4 pt-5">
@@ -216,7 +274,7 @@ export default function Home() {
       <section className="relative flex items-center justify-center w-full p-6 bg-brand-500 text-white pt-40">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-4">
           <div className="w-full md:w-1/2 flex items-center justify-center  mr-8  ">
-            <h2 className="text-5xl md:text-5xl lg:text-7xl font-extrabold leading-tight text-center text-white">
+            <h2 className="font-space-grotesk text-5xl md:text-5xl lg:text-7xl font-extrabold leading-tight text-center text-white">
               Tu equipo crezca <br className="hidden md:block" /> con nosotros
             </h2>
           </div>

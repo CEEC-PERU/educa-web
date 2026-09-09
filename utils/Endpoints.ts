@@ -156,6 +156,9 @@ export const API_TEMPLATE = `${baseURL}/api/template`;
 
 export const API_COURSETIME = `${baseURL}/api/coursetime`;
 
+//frase del día
+export const API_GET_QUOTES_DAILY = `${baseURL}/api/quotes/daily`;
+
 export const API_ANSWER_TEMPLATE = `${baseURL}/api/answertemplate`;
 
 export const API_RESPONSE = `${baseURL}/api/resultado`;

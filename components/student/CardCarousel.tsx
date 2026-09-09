@@ -41,7 +41,7 @@ const CardCarousel: React.FC = () => {
 
     new Swiper(swiperRef.current, {
       slidesPerView: 1, // Default to 1 slide per view
-      spaceBetween: 20,
+      spaceBetween: 12,
       loop: true,
       autoplay: {
         delay: 3000,
@@ -54,19 +54,19 @@ const CardCarousel: React.FC = () => {
       breakpoints: {
         640: {
           slidesPerView: 1,
-          spaceBetween: 20,
+          spaceBetween: 12,
         },
         768: {
           slidesPerView: 2,
-          spaceBetween: 20,
+          spaceBetween: 12,
         },
         1024: {
           slidesPerView: 3,
-          spaceBetween: 20,
+          spaceBetween: 12,
         },
         1440: {
           slidesPerView: 4,
-          spaceBetween: 20,
+          spaceBetween: 12,
         },
       },
     });

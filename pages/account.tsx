@@ -7,6 +7,7 @@ import { Profile } from "../interfaces/User/UserInterfaces";
 import type { NextPageWithLayout } from "../types/next";
 import { HomeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
 import ChangePasswordModal from "../components/ChangePasswordModal";
+import DailyQuoteBanner from "../components/student/DailyQuoteBanner";
 
 const DASHBOARD_BY_ROLE: Record<number, string> = {
   1: "/student",
@@ -47,10 +48,10 @@ const AccountPage: NextPageWithLayout = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brandazul-600 mx-auto mb-4" />
-          <p className="text-gray-500 text-base">Cargando perfil...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brandrosado-800 mx-auto mb-4" />
+          <p className="text-white/70 text-base">Cargando perfil...</p>
         </div>
       </div>
     );
@@ -58,7 +59,7 @@ const AccountPage: NextPageWithLayout = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
         <div className="bg-white border border-gray-200 p-8 rounded-2xl text-center max-w-md shadow-sm">
           <p className="text-gray-700 text-base font-semibold mb-4">
             Error al cargar el perfil
@@ -75,8 +76,9 @@ const AccountPage: NextPageWithLayout = () => {
   }
 
   return (
-    <div className="min-h-screen w-full bg-gray-50">
+    <div className="min-h-screen w-full bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="relative w-full max-w-4xl mx-auto">
+        {/* Banner detrás del avatar, oculto por ahora.
         <div className="relative w-full h-52 lg:h-64 overflow-hidden rounded-b-2xl">
           <img
             src={
@@ -90,6 +92,8 @@ const AccountPage: NextPageWithLayout = () => {
           />
           <div className="absolute inset-0 bg-black/20" />
         </div>
+        */}
+        <DailyQuoteBanner />
 
         <div className="absolute left-1/2 -translate-x-1/2 lg:left-8 lg:translate-x-0 -bottom-14 h-28 w-28 lg:h-32 lg:w-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100">
           <img
@@ -108,11 +112,11 @@ const AccountPage: NextPageWithLayout = () => {
       <div className="w-full max-w-4xl mx-auto px-4 pt-20 pb-12">
         <div className="flex flex-col lg:flex-row justify-between items-center lg:items-end mb-8 gap-4">
           <div className="text-center lg:text-left">
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl lg:text-3xl font-bold text-white">
               {fullName}
             </h1>
             {enterprise?.enterprise.name && (
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-white/70 mt-1">
                 {enterprise.enterprise.name}
               </p>
             )}
@@ -120,7 +124,7 @@ const AccountPage: NextPageWithLayout = () => {
           <div className="flex gap-2">
             <button
               onClick={() => setShowPasswordModal(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all text-sm font-medium shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium shadow-sm backdrop-blur-sm"
             >
               <LockClosedIcon className="h-4 w-4" />
               Cambiar contraseña
@@ -128,7 +132,7 @@ const AccountPage: NextPageWithLayout = () => {
             <button
               onClick={() => router.push(dashboardHref)}
               title="Ir al Dashboard"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 hover:border-gray-300 transition-all text-sm font-medium shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium shadow-sm backdrop-blur-sm"
             >
               <HomeIcon className="h-4 w-4" />
               Dashboard
@@ -136,8 +140,8 @@ const AccountPage: NextPageWithLayout = () => {
           </div>
         </div>
 
-        <hr className="border-gray-200 mb-8" />
-        <h2 className="text-base font-semibold text-gray-500 uppercase tracking-wider mb-5">
+        <hr className="border-white/20 mb-8" />
+        <h2 className="text-base font-semibold text-white/70 uppercase tracking-wider mb-5">
           Datos Personales
         </h2>
 

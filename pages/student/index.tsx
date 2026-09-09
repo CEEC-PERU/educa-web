@@ -17,8 +17,10 @@ const StudentIndex = () => {
   const { profileInfo } = useAuth();
   const { coursescount } = useCoursesCount();
   const { summary, isLoading: isSummaryLoading } = useCourseTimeSummary(4);
-  const { totalSeconds: learningTimeSeconds, isLoading: isLearningTimeLoading } =
-    useLearningTimeSummary();
+  const {
+    totalSeconds: learningTimeSeconds,
+    isLoading: isLearningTimeLoading,
+  } = useLearningTimeSummary();
   const router = useRouter();
 
   const profile = profileInfo as Profile | null;
@@ -57,15 +59,15 @@ const StudentIndex = () => {
           isLearningTimeLoading={isLearningTimeLoading}
         />
 
-        <div className="w-full max-w-screen-xl mt-1 pt-2 border-t border-white/10 flex items-center justify-between flex-wrap gap-2">
+        <div className="w-full px-4 lg:px-40 mt-1 flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-2xl font-bold text-white">
-            Vistos recientemente
+            Cursos que ya has explorado
           </h2>
         </div>
 
         <div
           id="cursos"
-          className="w-full max-w-screen-xl mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
+          className="w-full px-4 lg:px-40 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
         >
           {isSummaryLoading ? (
             <p className="text-white/70 col-span-full">Cargando...</p>

@@ -30,7 +30,7 @@ const RecentCourseCard: React.FC<RecentCourseCardProps> = ({
       className="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-2xl hover:bg-white/10"
     >
       <img
-        className="w-full h-32 object-cover"
+        className="w-full h-56 sm:h-48 lg:h-44 object-cover object-top"
         src={image}
         alt={name}
       />
