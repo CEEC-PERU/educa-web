@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 type PublicNavbarLink = {
@@ -11,6 +12,7 @@ type PublicNavbarProps = {
   loginHref?: string;
   className?: string;
   variant?: "landing" | "minimal";
+  lightSectionId?: string;
 };
 
 export default function PublicNavbar({
@@ -18,19 +20,39 @@ export default function PublicNavbar({
   loginHref = "/login",
   className = "",
   variant = "landing",
+  lightSectionId = "hero-section",
 }: PublicNavbarProps) {
-  const bgClass =
-    variant === "minimal"
-      ? "bg-white border-b border-gray-200"
-      : "bg-gradient-to from-brand-mor-600 via-brandfucsia-900 to-brand-800";
+  const [overDarkBackground, setOverDarkBackground] = useState(false);
 
-  const textClass = variant === "minimal" ? "text-gray-800" : "text-white";
+  useEffect(() => {
+    const navHeight = 64;
+    const handleScroll = () => {
+      const lightSection = document.getElementById(lightSectionId);
+      if (!lightSection) {
+        setOverDarkBackground(false);
+        return;
+      }
+      const { bottom } = lightSection.getBoundingClientRect();
+      setOverDarkBackground(bottom <= navHeight);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lightSectionId]);
+
+  const bgClass = "bg-transparent";
+
+  const textClass = overDarkBackground
+    ? "text-white"
+    : "text-gray-800";
+  const logoTextClass = overDarkBackground ? "text-white" : "text-black";
 
   return (
     <nav
       role="navigation"
       aria-label="Navegación principal"
-      className={`${bgClass} h-16 fixed top-0 left-0 w-full z-50 ${className}`}
+      className={`${bgClass} h-16 fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${className}`}
     >
       <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
@@ -45,7 +67,9 @@ export default function PublicNavbar({
             alt="EducaWeb Logo"
             className="h-8 sm:h-10"
           />
-          <span className={`text-white font-bold text-base sm:text-lg`}>
+          <span
+            className={`${logoTextClass} font-bold text-base sm:text-lg transition-colors duration-300`}
+          >
             MentorMind
           </span>
         </Link>

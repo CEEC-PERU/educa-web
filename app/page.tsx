@@ -69,12 +69,15 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300 text-white">
       <PublicNavbar variant="landing" />
 
-      <section className="hero-section relative flex items-center justify-center w-full text-center text-white pb-24 md:pb-40 lg:pb-52 bg-brand-500 overflow-hidden">
+      <section
+        id="hero-section"
+        className="hero-section relative flex items-center justify-center w-full text-center text-white pb-24 md:pb-40 lg:pb-52 bg-brand-500 overflow-hidden"
+      >
         <div
           className="hero-bg absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              "url(https://res.cloudinary.com/dk2red18f/image/upload/v1724341328/WEB_EDUCA/WEB-IMAGENES/vho1lfqexzzexa9dfo3h.png)",
+              "url(https://res.cloudinary.com/dk2red18f/image/upload/v1788973855/WEB_EDUCA/fondo-mentor_yydqw3.jpg)",
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-transparent from-50% to-brand-500"></div>
@@ -82,12 +85,12 @@ export default function Home() {
 
         <div className="hero-content relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-15xll mx-auto lg:pl-40">
           <div className="hero-text w-full md:w-[35%] lg:w-[42%] xl:w-1/2 relative z-10 px-4 md:px-6 text-left md:mr-10 pt-40">
-            <h1 className="font-space-grotesk text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight">
+            <h1 className="font-space-grotesk text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-black mb-3 leading-tight text-black">
               {renderHeroWords(HERO_LINE_1, 0)}
               <br />
               {renderHeroWords(HERO_LINE_2, HERO_LINE_1.length)}
             </h1>
-            <p className="hero-subtitle text-lg sm:text-xl md:text-2xl xl:text-3xl font-medium mb-6 animate-text-3">
+            <p className="hero-subtitle text-lg sm:text-xl md:text-2xl xl:text-3xl font-medium mb-6 animate-text-3 text-brandrosa-800">
               Tu futuro profesional se construye hoy
             </p>
 
@@ -105,15 +108,18 @@ export default function Home() {
                 <span className="relative z-10">
                   Aquí inicia tu ruta de aprendizaje
                 </span>
-                <Brain className="h-6 w-6 shrink-0 text-white" aria-hidden="true" />
+                <Brain
+                  className="h-6 w-6 shrink-0 text-white"
+                  aria-hidden="true"
+                />
               </Link>
             </div>
           </div>
 
-          <div className="hero-image w-full md:w-[65%] lg:w-[58%] xl:w-1/2 relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
+          <div className="hero-image w-full md:w-[50%] lg:w-[44%] xl:w-[38%] relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
             <img
-              src="https://res.cloudinary.com/dk2red18f/image/upload/v1788192193/MentorMind/Imagen-Portada-inicio.png_kroo6x.png"
-              className="w-full max-w-5xl mx-auto"
+              src="/robot-hero.gif"
+              className="w-full max-w-sm mx-auto"
               alt="Imagen descriptiva"
             />
           </div>
@@ -207,8 +213,9 @@ export default function Home() {
 
         <div className="relative z-10 max-w-4xl px-4 text-center">
           <div className="font-space-grotesk text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
-            <span className="text-white">“</span> Suma a tu empresa{" "}
-            <span className="text-white">"</span>
+            <span className="text-white">“</span> Confianza de nivel para la
+            educación de{" "}
+            <span className="text-white">tus equipos de trabajo"</span>{" "}
           </div>
           <p className="text-white text-base sm:text-lg font-medium">
             En un mercado educativo lleno de opciones, tú puedes sobresalir con
@@ -272,15 +279,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative flex items-center justify-center w-full p-6 bg-brand-500 text-white pt-40">
+      <section className="relative flex items-center justify-center w-full p-6 bg-brand-500 text-white pt-40 pb-32 md:pb-40">
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-4">
           <div className="w-full md:w-1/2 flex items-center justify-center  mr-8  ">
             <h2 className="font-space-grotesk text-5xl md:text-5xl lg:text-7xl font-extrabold leading-tight text-center text-white">
-              Tu equipo crezca <br className="hidden md:block" /> con nosotros
+              Juntos creamos la mejor versión de
+              <br className="hidden md:block" />
+              educación en línea
             </h2>
           </div>
 
-          <div className="w-full md:w-1/2 flex flex-col px-4 mb-40">
+          <div className="w-full md:w-1/2 flex flex-col px-4">
             <div className="flex flex-col items-center w-full">
               <div className="inline-flex items-center gap-1 bg-white/10 backdrop-blur-sm rounded-full p-1 mb-6 mt-8">
                 <button
