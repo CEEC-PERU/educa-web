@@ -11,7 +11,7 @@ import CompanyForm from "@/components/FormComponent";
 import IndividualForm from "@/components/IndividualForm";
 import { useEffect } from "react";
 import SplashScreen from "@/components/SplashScreen";
-import { ChevronDown, Brain } from "lucide-react";
+import { ChevronDown, Brain, Play } from "lucide-react";
 import "./globals.css";
 
 const HERO_LINE_1 = [
@@ -94,17 +94,18 @@ export default function Home() {
             <div className="hero-button flex flex-col md:flex-row gap-4 pt-6 animate-button">
               <Link
                 href="/login"
-                className="relative flex items-center overflow-hidden rounded-full bg-brandrosado-800 py-3 pl-6 pr-16 text-sm font-semibold uppercase text-white shadow-lg transition-shadow hover:shadow-xl"
+                className="cta-heartbeat relative flex items-center gap-4 rounded-full bg-gradient-to-r from-brandrosa-800 to-brandmc-100 py-2 pl-2 pr-6 text-sm font-semibold uppercase text-white shadow-lg"
               >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white shadow-md">
+                  <Play
+                    className="h-4 w-4 fill-brandrosa-800 text-brandrosa-800"
+                    aria-hidden="true"
+                  />
+                </span>
                 <span className="relative z-10">
                   Aquí inicia tu ruta de aprendizaje
                 </span>
-                <span
-                  className="absolute inset-y-0 right-0 flex w-14 items-center justify-center bg-brandfucsia-900"
-                  style={{ clipPath: "polygon(40% 0, 100% 0, 100% 100%, 0% 100%)" }}
-                >
-                  <Brain className="h-5 w-5 text-white" aria-hidden="true" />
-                </span>
+                <Brain className="h-6 w-6 shrink-0 text-white" aria-hidden="true" />
               </Link>
             </div>
           </div>
