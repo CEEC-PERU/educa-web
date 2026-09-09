@@ -92,6 +92,33 @@ export const getProfile = async (
   }
 };
 
+export const updateProfileAvatar = async (
+  userToken: string,
+  user_id: number,
+  file: File
+): Promise<{ profile_picture: string }> => {
+  try {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    const response = await axios.put(
+      `${API_PUT_PROFILE}/${user_id}/avatar`,
+      formData,
+      config
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error updating avatar:', error);
+    throw error;
+  }
+};
+
 export const updatedProfile = async (
   userToken: string,
   user_id: number,

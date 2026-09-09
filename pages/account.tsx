@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 import { useAuth } from "../context/AuthContext";
 import { useEnterprise } from "../hooks/useEnterprise";
+import { useUpdateAvatar } from "../hooks/user/useUpdateAvatar";
 import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../interfaces/User/UserInterfaces";
 import type { NextPageWithLayout } from "../types/next";
-import { HomeIcon, LockClosedIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  LockClosedIcon,
+  CameraIcon,
+} from "@heroicons/react/24/outline";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import DailyQuoteBanner from "../components/student/DailyQuoteBanner";
 
@@ -36,6 +42,25 @@ const AccountPage: NextPageWithLayout = () => {
   const [avatarError, setAvatarError] = useState(false);
   const [coverError, setCoverError] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const { isLoading: isUploadingAvatar, submitAvatarUpdate } =
+    useUpdateAvatar();
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const errorMessage = await submitAvatarUpdate(file);
+    if (errorMessage) {
+      toast.error(errorMessage);
+    } else {
+      setAvatarError(false);
+      toast.success("Foto de perfil actualizada");
+    }
+  };
 
   const role = (user as { role: number } | null)?.role;
   const dashboardHref =
@@ -95,16 +120,41 @@ const AccountPage: NextPageWithLayout = () => {
         */}
         <DailyQuoteBanner />
 
-        <div className="absolute left-1/2 -translate-x-1/2 lg:left-8 lg:translate-x-0 -bottom-14 h-28 w-28 lg:h-32 lg:w-32 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100">
-          <img
-            src={
-              avatarError
-                ? "/default-avatar.png"
-                : (profile?.profile_picture ?? "/default-avatar.png")
-            }
-            alt={fullName}
-            className="w-full h-full object-cover"
-            onError={() => setAvatarError(true)}
+        <div className="absolute left-1/2 -translate-x-1/2 lg:left-8 lg:translate-x-0 -bottom-14 h-28 w-28 lg:h-32 lg:w-32">
+          <div className="relative h-full w-full rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100">
+            <img
+              src={
+                avatarError
+                  ? "/default-avatar.png"
+                  : (profile?.profile_picture ?? "/default-avatar.png")
+              }
+              alt={fullName}
+              className="w-full h-full object-cover"
+              onError={() => setAvatarError(true)}
+            />
+            {isUploadingAvatar && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+              </div>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => avatarInputRef.current?.click()}
+            disabled={isUploadingAvatar}
+            aria-label="Cambiar foto de perfil"
+            className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-brandrosado-800 text-white shadow-md transition-colors hover:bg-brandfucsia-900 disabled:opacity-50"
+          >
+            <CameraIcon className="h-4 w-4" />
+          </button>
+
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={handleAvatarChange}
           />
         </div>
       </div>
