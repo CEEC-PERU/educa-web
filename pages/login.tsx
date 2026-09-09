@@ -57,16 +57,16 @@ const LoginPage: React.FC = () => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"></div>
       </div>
-      <div className="relative z-10 flex flex-col-reverse lg:flex-row-reverse items-center justify-center gap-y-16 lg:gap-y-0 lg:gap-x-72 w-full max-w-7xl mx-auto px-4">
-        <div className="w-full lg:w-1/2 flex justify-center px-6 animate-image">
+      <div className="relative z-10 flex flex-col-reverse lg:flex-row-reverse items-center justify-center gap-y-16 lg:gap-y-0 lg:gap-x-28 w-full max-w-7xl mx-auto px-4">
+        <div className="w-full lg:w-3/5 flex justify-center animate-image">
           <img
-            src="https://res.cloudinary.com/dk2red18f/image/upload/v1788192524/MentorMind/Imagen-usuario-bienvenida_inomi6.png"
-            className="w-full max-w-xl lg:max-w-2xl"
+            src="/login.gif"
+            className="w-full max-w-3xl lg:max-w-5xl"
             alt="Imagen descriptiva"
           />
         </div>
 
-        <div className="w-full lg:w-1/2 flex justify-center">
+        <div className="w-full lg:w-2/5 flex justify-center">
           <div className="login-card-animate bg-brandrosado-800 bg-opacity-80 p-8 rounded-3xl shadow-md max-w-md w-full">
             <h1 className="text-2xl font-bold text-center text-white mb-3">
               ¡Estás a un paso de seguir potenciando tus conocimientos!
