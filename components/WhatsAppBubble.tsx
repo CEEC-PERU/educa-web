@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { X } from "lucide-react";
+import { X, Sparkles, ArrowRight } from "lucide-react";
 import {
   WHATSAPP_NUMBER,
   WHATSAPP_PREFILLED_MESSAGE,
@@ -44,21 +44,42 @@ export default function WhatsAppBubble() {
       className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
       <div
-        className={`w-72 origin-bottom-right rounded-2xl border border-black/5 bg-white p-4 shadow-2xl transition-all duration-200 ${
+        className={`w-80 origin-bottom-right rounded-2xl border border-white/10 bg-gradient-to-br from-brandfucsia-900 to-brandmorado-700 p-5 shadow-2xl transition-all duration-200 ${
           isOpen
             ? "scale-100 opacity-100"
             : "pointer-events-none scale-95 opacity-0"
         }`}
       >
-        <p className="text-sm text-gray-700">{WHATSAPP_BUBBLE_MESSAGE}</p>
+        <div className="mb-2 flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-brandrosado-800" />
+          <span className="text-sm font-bold text-white">¿Tienes dudas?</span>
+        </div>
+        <p className="mb-4 text-sm text-white/80">
+          Nuestro equipo de soporte está listo para ayudarte a resolver
+          cualquier consulta sobre tu ruta de aprendizaje.
+        </p>
+
+        <div className="mb-4 flex items-end gap-1">
+          <div className="flex-1 rounded-2xl rounded-tl-sm bg-white px-3 py-2 text-sm text-gray-800 shadow">
+            {WHATSAPP_BUBBLE_MESSAGE}
+          </div>
+          <img
+            src="/robot-bubble.png"
+            alt=""
+            aria-hidden="true"
+            className="-mb-2 -mr-2 h-16 w-16 shrink-0 object-contain drop-shadow-lg"
+          />
+        </div>
+
         <a
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1DA851]"
+          className="flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-brandfucsia-900 transition hover:bg-white/90"
         >
-          <FaWhatsapp className="h-5 w-5" />
-          Chatear por WhatsApp
+          <FaWhatsapp className="h-4 w-4" />
+          Escríbenos por WhatsApp
+          <ArrowRight className="h-4 w-4" />
         </a>
       </div>
 
