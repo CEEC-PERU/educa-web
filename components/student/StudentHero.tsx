@@ -92,9 +92,9 @@ export default function StudentHero({
           className="hidden flex-shrink-0 items-center justify-center lg:flex"
         >
           <img
-            src="https://res.cloudinary.com/dk2red18f/image/upload/v1788276570/MentorMind/inicio_student__v3_vdt7i1.png"
+            src="/cerebrito_transparent.gif"
             alt=""
-            className="h-[420px] w-[420px] object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
+            className="w-[720px] h-auto object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
           />
         </div>
 

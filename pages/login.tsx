@@ -52,10 +52,11 @@ const LoginPage: React.FC = () => {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url(https://source.unsplash.com/random/1600x900)",
+          backgroundImage:
+            "url(https://res.cloudinary.com/dk2red18f/image/upload/v1788973855/WEB_EDUCA/fondo-mentor_yydqw3.jpg)",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-50% to-brand-500"></div>
       </div>
       <div className="relative z-10 flex flex-col-reverse lg:flex-row-reverse items-center justify-center gap-y-16 lg:gap-y-0 lg:gap-x-28 w-full max-w-7xl mx-auto px-4">
         <div className="w-full lg:w-3/5 flex justify-center animate-image">
@@ -87,7 +88,7 @@ const LoginPage: React.FC = () => {
                   type="text"
                   value={dni}
                   onChange={handleChangeDni}
-                  className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm"
+                  className="mt-1 block w-full px-3 py-2 bg-transparent border-b border-white text-white placeholder-white/70 focus:outline-none focus:ring-0 focus:border-white sm:text-sm"
                   placeholder="Introduce tu usuario"
                   disabled={loading}
                 />
@@ -105,7 +106,7 @@ const LoginPage: React.FC = () => {
                     id="password"
                     value={password}
                     onChange={handleChangePassword}
-                    className="block w-full px-3 py-2 pr-10 bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-white sm:text-sm"
+                    className="block w-full px-3 py-2 pr-10 bg-transparent border-b border-white text-white placeholder-white/70 focus:outline-none focus:ring-0 focus:border-white sm:text-sm"
                     placeholder="Introduce tu contraseña"
                     disabled={loading}
                   />
