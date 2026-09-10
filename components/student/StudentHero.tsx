@@ -55,7 +55,7 @@ export default function StudentHero({
   return (
     <div className="relative w-full px-4 lg:px-40 pt-4 pb-16">
       <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <div className="text-left text-white">
+        <div className="text-left text-black">
           <div className="flex items-center gap-4 mb-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-brandrosado-800">
               {avatar ? (
@@ -70,20 +70,22 @@ export default function StudentHero({
                 </span>
               )}
             </div>
-            <p className="text-sm uppercase tracking-wide text-white/70">
+            <p className="text-sm uppercase tracking-wide text-black/70">
               Portal del estudiante
             </p>
           </div>
-
-          <h1 className="text-4xl lg:text-5xl font-bold mb-3">
+          <h1 className="font-space-grotesk text-6xl lg:text-7xl font-bold mb-3">
             Hola, <span className="text-brandrosado-800">{name}</span>
           </h1>
-          <p className="text-lg lg:text-xl font-semibold mb-3">
-            ¡Qué bueno verte de nuevo!
+          <p className="text-2xl lg:text-3xl font-semibold mb-3">
+            <strong>¡Qué bueno verte de nuevo!</strong>
           </p>
-          <p className="text-white/80 max-w-md mb-6">
-            Este es tu portal de aprendizaje, explora tus cursos y potencia tu
-            desarrollo profesional.
+          <div className="w-full max-w-md h-1 rounded-full bg-brandrosado-800 mb-4" />
+          <p className="text-lg lg:text-xl text-black/80 max-w-md mb-6">
+            <strong>
+              Este es tu espacio para aprender, descubrir nuevos cursos y seguir
+              creciendo profesionalmente.
+            </strong>
           </p>
         </div>
 
@@ -98,8 +100,9 @@ export default function StudentHero({
           />
         </div>
 
-        <div className="w-full lg:w-auto">
-          <div className="rounded-2xl border border-white/10 bg-white/5 shadow-xl backdrop-blur-sm">
+        <div className="relative w-full pb-2.5 pr-2.5 lg:w-auto">
+          <div className="absolute inset-0 translate-x-2.5 translate-y-2.5 rounded-2xl bg-[#626fa6]" />
+          <div className="relative rounded-2xl border border-white/10 bg-[#38226d] shadow-xl backdrop-blur-sm">
             <div className="flex divide-x divide-white/15">
               {STATS.map((stat, i) => {
                 const Icon = stat.icon;

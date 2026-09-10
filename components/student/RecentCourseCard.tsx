@@ -27,7 +27,7 @@ const RecentCourseCard: React.FC<RecentCourseCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-2xl hover:bg-white/10"
+      className="group cursor-pointer rounded-2xl overflow-hidden border border-white/10 bg-[#38226d] backdrop-blur-sm shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-2xl hover:bg-[#6a3fc4]"
     >
       <img
         className="w-full h-56 sm:h-48 lg:h-44 object-cover object-top"

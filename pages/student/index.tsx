@@ -50,52 +50,64 @@ const StudentIndex = () => {
           className="h-64 w-64 object-contain"
         />
       </div>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r pt-4 pb-10 from-brand-100 via-brand-200 to-brand-300 p-4">
-        <StudentHero
-          name={name}
-          avatar={avatar}
-          coursescount={coursescount}
-          learningTimeSeconds={learningTimeSeconds}
-          isLearningTimeLoading={isLearningTimeLoading}
-        />
-
-        <div className="w-full px-4 lg:px-40 mt-1 flex items-center justify-between flex-wrap gap-2">
-          <h2 className="text-2xl font-bold text-white">
-            Cursos que ya has explorado
-          </h2>
+      <div className="relative min-h-screen flex flex-col items-center justify-center pt-4 pb-10 p-4 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url(https://res.cloudinary.com/dk2red18f/image/upload/v1788973855/WEB_EDUCA/fondo-mentor_yydqw3.jpg)",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent from-50% to-brand-500"></div>
         </div>
 
-        <div
-          id="cursos"
-          className="w-full px-4 lg:px-40 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
-        >
-          {isSummaryLoading ? (
-            <p className="text-white/70 col-span-full">Cargando...</p>
-          ) : hasRecentCourses ? (
-            recentCourses.map((item) => (
-              <RecentCourseCard
-                key={item.course_id}
-                course_id={item.course_id}
-                name={item.name}
-                image={item.image}
-                categoria={item.category_name}
-                lastViewedAt={item.last_viewed_at}
-                totalDurationSeconds={item.total_duration_seconds}
-                progress={item.progress}
-                onClick={() => navigateToCourseDetails(item.course_id)}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center text-white/80 py-6">
-              <p className="mb-3">Aún no has explorado ningún curso.</p>
-              <a
-                href="/student/cursos"
-                className="inline-flex items-center rounded-lg bg-brandrosado-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brandfucsia-900"
-              >
-                Ver mis cursos
-              </a>
-            </div>
-          )}
+        <div className="relative z-10 w-full flex flex-col items-center">
+          <StudentHero
+            name={name}
+            avatar={avatar}
+            coursescount={coursescount}
+            learningTimeSeconds={learningTimeSeconds}
+            isLearningTimeLoading={isLearningTimeLoading}
+          />
+
+          <div className="w-full px-4 lg:px-40 mt-1 flex items-center justify-between flex-wrap gap-2">
+            <h2 className="font-space-grotesk text-2xl font-bold text-black">
+              Cursos que ya has explorado
+            </h2>
+          </div>
+
+          <div
+            id="cursos"
+            className="w-full px-4 lg:px-40 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
+          >
+            {isSummaryLoading ? (
+              <p className="text-white/70 col-span-full">Cargando...</p>
+            ) : hasRecentCourses ? (
+              recentCourses.map((item) => (
+                <RecentCourseCard
+                  key={item.course_id}
+                  course_id={item.course_id}
+                  name={item.name}
+                  image={item.image}
+                  categoria={item.category_name}
+                  lastViewedAt={item.last_viewed_at}
+                  totalDurationSeconds={item.total_duration_seconds}
+                  progress={item.progress}
+                  onClick={() => navigateToCourseDetails(item.course_id)}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center text-white/80 py-6">
+                <p className="mb-3">Aún no has explorado ningún curso.</p>
+                <a
+                  href="/student/cursos"
+                  className="inline-flex items-center rounded-lg bg-brandrosado-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brandfucsia-900"
+                >
+                  Ver mis cursos
+                </a>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <Footer />
