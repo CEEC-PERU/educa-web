@@ -12,7 +12,7 @@ import type { AppSidebarItem } from "./app-sidebar.types";
 export const studentSidebarItems: AppSidebarItem[] = [
   {
     id: "home",
-    label: "Home",
+    label: "Inicio",
     href: "/student",
     icon: HomeIcon,
     matchMode: "exact",
