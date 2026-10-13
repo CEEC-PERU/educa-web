@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
+import ChartErrorBoundary from "./ChartErrorBoundary";
 
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
@@ -15,6 +16,27 @@ interface ChartCardProps {
   className?: string;
 }
 
+function hasRenderableSeries(
+  series: ApexAxisChartSeries | ApexNonAxisChartSeries | undefined,
+) {
+  if (!Array.isArray(series) || series.length === 0) {
+    return false;
+  }
+
+  if (typeof series[0] === "number") {
+    return series.some((value) => Number.isFinite(Number(value)));
+  }
+
+  return series.some(
+    (entry) =>
+      typeof entry === "object" &&
+      entry !== null &&
+      "data" in entry &&
+      Array.isArray(entry.data) &&
+      entry.data.length > 0,
+  );
+}
+
 const ChartCard = ({
   title,
   subtitle,
@@ -26,6 +48,8 @@ const ChartCard = ({
   showUpdateDate = true,
   className = "",
 }: ChartCardProps) => {
+  const canRenderChart = hasRenderableSeries(series);
+
   // Configuración base que se fusionará con las opciones personalizadas
   const baseOptions: ApexOptions = {
     chart: {
@@ -108,17 +132,28 @@ const ChartCard = ({
         )}
       </div>
 
-      <div
-        className="relative"
-        style={{ height: typeof height === "number" ? `${height}px` : height }}
-      >
-        <Chart
-          type={type}
-          series={series}
-          options={baseOptions}
-          height="100%"
-        />
-      </div>
+      {canRenderChart ? (
+        <div
+          className="relative"
+          style={{ height: typeof height === "number" ? `${height}px` : height }}
+        >
+          <ChartErrorBoundary title={title}>
+            <Chart
+              type={type}
+              series={series}
+              options={baseOptions}
+              height="100%"
+            />
+          </ChartErrorBoundary>
+        </div>
+      ) : (
+        <div
+          className="relative flex items-center justify-center text-sm text-gray-400"
+          style={{ height: typeof height === "number" ? `${height}px` : height }}
+        >
+          Sin datos disponibles
+        </div>
+      )}
 
       {showUpdateDate && (
         <div className="mt-3 text-xs text-gray-500 text-right">
