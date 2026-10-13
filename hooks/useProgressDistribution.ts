@@ -17,20 +17,30 @@ export const useProgressDistribution = (selectedCourseId?: number) => {
       return;
     }
 
+    let isCurrent = true;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
         const data = await fetchProgressDistributionSupervisor(token, selectedCourseId);
-        setDistributionData(data);
+        if (isCurrent) {
+          setDistributionData(data);
+        }
       } catch (err) {
-        setError('Error al obtener la distribución de progreso.');
+        if (isCurrent) {
+          setError('Error al obtener la distribución de progreso.');
+        }
       } finally {
-        setLoading(false);
+        if (isCurrent) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+    return () => {
+      isCurrent = false;
+    };
   }, [token, selectedCourseId]);
 
   return { distributionData, loading, error };

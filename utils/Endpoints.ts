@@ -1,9 +1,9 @@
-export const baseURL = `https://educa-web-api.onrender.com`;
-//export const baseURL = `http://localhost:4100`;
+export const baseURL =
+  process.env.NEXT_PUBLIC_API_URL || "https://educa-web-api.onrender.com";
 
 //socket
-export const API_SOCKET_URL = `https://educa-web-api.onrender.com`;
-//export const API_SOCKET_URL = `http://localhost:4100`;
+export const API_SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || baseURL;
 
 // authentication datos
 export const API_AUTH = `${baseURL}/api/auth/signin`;

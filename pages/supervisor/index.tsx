@@ -3,9 +3,12 @@ import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useProgressDistribution } from "../../hooks/useProgressDistribution";
 import { useCourseTimeAverage } from "../../hooks/useCourseTimeAverage";
 import {
-  useTop,
-  useAverageTime,
-} from "../../hooks/dashboard/useDashboardCorporative";
+  useSupervisorActiveStudents,
+  useSupervisorAverageTime,
+  useSupervisorNps,
+  useSupervisorSatisfaction,
+  useSupervisorTop,
+} from "../../hooks/dashboard/useDashboardSupervisor";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import {
@@ -27,8 +30,11 @@ const SupervisorDashboard: NextPageWithLayout = () => {
   );
   const { distributionData } = useProgressDistribution(selectedCourse);
   const { courseTimeData } = useCourseTimeAverage(selectedCourse);
-  const { topRanking } = useTop(selectedCourse);
-  const { averagetime } = useAverageTime();
+  const { topRanking } = useSupervisorTop(selectedCourse);
+  const { averageTime } = useSupervisorAverageTime();
+  const { activeStudents } = useSupervisorActiveStudents();
+  const { npsData } = useSupervisorNps(selectedCourse);
+  const { satisfactionData } = useSupervisorSatisfaction(selectedCourse);
 
   return (
     <>
@@ -47,10 +53,10 @@ const SupervisorDashboard: NextPageWithLayout = () => {
         <ProgressDistributionChart data={distributionData} />
         <CourseTimeChart data={courseTimeData} />
         <TopAdvisorsChart data={topRanking} />
-        <AverageTimeChart data={averagetime} />
-        <DailyParticipationChart data={[]} />
-        <SatisfactionChart data={[]} />
-        <NPSChart data={[]} />
+        <AverageTimeChart data={averageTime} />
+        <DailyParticipationChart data={activeStudents} />
+        <SatisfactionChart data={satisfactionData} />
+        <NPSChart data={npsData} />
       </div>
     </>
   );

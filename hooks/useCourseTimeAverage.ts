@@ -17,20 +17,30 @@ export const useCourseTimeAverage = (selectedCourseId?: number) => {
       return;
     }
 
+    let isCurrent = true;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
         const data = await fetchCourseTimeAverageSupervisor(token, selectedCourseId);
-        setCourseTimeData(data);
+        if (isCurrent) {
+          setCourseTimeData(data);
+        }
       } catch (err) {
-        setError('Error al obtener el tiempo promedio por curso.');
+        if (isCurrent) {
+          setError('Error al obtener el tiempo promedio por curso.');
+        }
       } finally {
-        setLoading(false);
+        if (isCurrent) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+    return () => {
+      isCurrent = false;
+    };
   }, [token, selectedCourseId]);
 
   return { courseTimeData, loading, error };
