@@ -3,10 +3,12 @@ import React from "react";
 interface ModalConfirmationProps {
   show: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
   message?: string;
   confirmLabel?: string;
   confirmClassName?: string;
+  isLoading?: boolean;
+  errorMessage?: string | null;
 }
 
 const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
@@ -16,17 +18,21 @@ const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
   message = "¿Estas seguro que deseas inhabilitar este registro?",
   confirmLabel = "Sí, inhabilitar",
   confirmClassName = "text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-500 dark:hover:bg-red-600 focus:outline-none dark:focus:ring-red-700",
+  isLoading = false,
+  errorMessage = null,
 }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+    <div className="fixed inset-0 z-[60] bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" role="presentation">
       <div className="relative p-4 w-full max-w-lg md:max-w-md h-full md:h-auto">
-        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <div className="relative bg-white rounded-lg shadow dark:bg-gray-700" role="dialog" aria-modal="true" aria-describedby="modal-confirmation-message">
           <div className="flex justify-end p-2">
             <button
               onClick={onClose}
               type="button"
+              disabled={isLoading}
+              aria-label="Cerrar diálogo"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
             >
               <svg
@@ -59,19 +65,34 @@ const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
                 d="M13 16h-1v-4h-1m1-4h.01M12 17h.01M12 9h.01m6.938 2.938A8.001 8.001 0 1112 3v1a7 7 0 100 14v1a8.001 8.001 0 006.938-10.062z"
               ></path>
             </svg>
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+            <h3 id="modal-confirmation-message" className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
               {message}
             </h3>
+            {errorMessage && (
+              <p role="alert" className="mb-4 text-sm text-red-600">
+                {errorMessage}
+              </p>
+            )}
             <button
               onClick={onConfirm}
               type="button"
-              className={confirmClassName}
+              disabled={isLoading}
+              className={`${confirmClassName} disabled:cursor-wait disabled:opacity-60`}
             >
-              {confirmLabel}
+              {isLoading ? (
+                <span className="inline-flex items-center gap-2">
+                  <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                  Procesando…
+                </span>
+              ) : confirmLabel}
             </button>
             <button
               onClick={onClose}
               type="button"
+              disabled={isLoading}
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
               Cancel
