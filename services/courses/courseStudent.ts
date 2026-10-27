@@ -12,6 +12,13 @@ import {
 } from "../../utils/Endpoints";
 import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
 
+const getAuthConfig = () => {
+  const token =
+    typeof window === "undefined" ? null : localStorage.getItem("userToken");
+  if (!token) throw new Error("La sesión expiró. Inicia sesión nuevamente.");
+  return { headers: { Authorization: `Bearer ${token}` } };
+};
+
 export const getCourseStudent = async (
   userToken: string,
   userId: number,
@@ -71,6 +78,7 @@ export const getModulesByCourseId2 = async (
 ) => {
   const response = await axios.get(
     `${API_GET_COURSEMODULE}/${courseId}/${userId}`,
+    getAuthConfig(),
   );
   return response.data;
 };
@@ -125,6 +133,7 @@ export const getCoursesByEnterpriseCalidad = async (enterpriseId: number) => {
 export const getCoursesBySupervisor = async (userId: number) => {
   const response = await axios.get(
     `${API_GET_COURSESTUDENT_SUPERVISOR}/supervisor/${userId}`,
+    getAuthConfig(),
   );
   return response.data;
 };
@@ -157,6 +166,7 @@ export const getStudentsByEnterprise = async (enterpriseId: number) => {
 export const getCoursesWithGradesByStudent = async (userId: number) => {
   const response = await axios.get(
     `${API_GET_COURSESTUDENTS}/${userId}/grades`,
+    getAuthConfig(),
   );
   return response.data;
 };

@@ -66,8 +66,9 @@ export function useResetPasswordMutation(
 ) {
   const queryClient = useQueryClient();
 
-  return useMutation<void, AppError, number>({
-    mutationFn: resetUserPassword,
+  return useMutation<void, AppError, { userId: number; newPassword: string }>({
+    mutationFn: ({ userId, newPassword }) =>
+      resetUserPassword(userId, newPassword),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: usersKeys.classroom(userId ?? 0, enterpriseId ?? 0),

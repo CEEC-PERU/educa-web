@@ -32,7 +32,7 @@ export async function createUser(userData: Record<string, unknown>): Promise<voi
 }
 
 export async function deleteUser(userId: number): Promise<void> {
-  await http.delete(`${API_USERU}/users/${userId}`);
+  await http.delete(`${API_USERU}/users/${userId}`, { timeout: 15000 });
 }
 
 export async function reactivateUser(userId: number): Promise<void> {
@@ -44,6 +44,13 @@ export async function fetchUserById(userId: number): Promise<unknown> {
   return data;
 }
 
-export async function resetUserPassword(userId: number): Promise<void> {
-  await http.put(`${API_RESET_PASSWORD}/${userId}`);
+export async function resetUserPassword(
+  userId: number,
+  newPassword: string,
+): Promise<void> {
+  await http.put(
+    `${API_RESET_PASSWORD}/${userId}`,
+    { newPassword },
+    { timeout: 15000 },
+  );
 }

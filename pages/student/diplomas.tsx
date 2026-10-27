@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AppLayout from "@/components/layouts/AppLayout";
 import { useAuth } from "../../context/AuthContext";
 import { Profile } from "../../interfaces/User/UserInterfaces";
@@ -7,10 +7,15 @@ import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
+const CERTIFICATE_WIDTH = 3600;
+const CERTIFICATE_HEIGHT = 2025;
+
 const Diplomas = () => {
   const { profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
   const [generatingId, setGeneratingId] = useState<number | null>(null);
+  const [pendingDiploma, setPendingDiploma] = useState<CourseStudent | null>(null);
+  const diplomaRef = useRef<HTMLDivElement | null>(null);
 
   let fullName = "";
   if (profileInfo) {
@@ -21,149 +26,75 @@ const Diplomas = () => {
   const diplomaCourses = courseStudent.filter(
     (cs: CourseStudent) => cs.is_approved && cs.Course.diploma_enabled,
   );
+  const obtainedDate = new Date().toLocaleDateString("es-PE", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
-  const handleDownloadDiploma = async (cs: CourseStudent) => {
-    const courseId = cs.Course.course_id;
-    const certificateWidth = 3600;
-    const certificateHeight = 2025;
-    let certificateRoot: HTMLDivElement | null = null;
-    setGeneratingId(courseId);
-
-    try {
-      certificateRoot = document.createElement("div");
-      Object.assign(certificateRoot.style, {
-        position: "fixed",
-        left: "-10000px",
-        top: "0",
-        width: `${certificateWidth}px`,
-        height: `${certificateHeight}px`,
-        overflow: "hidden",
-        backgroundColor: "#ffffff",
-      });
-
-      const templateImage = document.createElement("img");
-      templateImage.src = "/templates/qtech_certificado.png";
-      templateImage.alt = "";
-      Object.assign(templateImage.style, {
-        position: "absolute",
-        inset: "0",
-        width: "100%",
-        height: "100%",
-        display: "block",
-        objectFit: "fill",
-      });
-      certificateRoot.appendChild(templateImage);
-      document.body.appendChild(certificateRoot);
-      await templateImage.decode();
-
-      const imageWidth = templateImage.naturalWidth || certificateWidth;
-      const imageHeight = templateImage.naturalHeight || certificateHeight;
-      certificateRoot.style.width = `${imageWidth}px`;
-      certificateRoot.style.height = `${imageHeight}px`;
-
-      const oldCourseTextCover = document.createElement("div");
-      Object.assign(oldCourseTextCover.style, {
-        position: "absolute",
-        left: "50%",
-        top: "58%",
-        transform: "translateX(-50%)",
-        width: "85%",
-        height: "12%",
-        backgroundColor: "#ffffff",
-        zIndex: "10",
-      });
-      certificateRoot.appendChild(oldCourseTextCover);
-
-      const createCenteredText = (
-        text: string,
-        top: string,
-        fontSize: number,
-        width: string,
-      ) => {
-        const textElement = document.createElement("div");
-        textElement.textContent = text;
-        Object.assign(textElement.style, {
-          position: "absolute",
-          top,
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width,
-          textAlign: "center",
-          fontFamily: "'Times New Roman', Times, serif",
-          fontSize: `${fontSize}px`,
-          lineHeight: "1.15",
-          color: "#3b0764",
-          overflowWrap: "anywhere",
-          zIndex: "20",
-        });
-        certificateRoot?.appendChild(textElement);
-      };
-
-      createCenteredText(fullName, "50%", 55, "90%");
-      const courseStatement = document.createElement("p");
-      courseStatement.textContent = "Por haber completado satisfactoriamente el curso de ";
-      Object.assign(courseStatement.style, {
-        position: "absolute",
-        top: "60%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "85%",
-        margin: "0",
-        textAlign: "center",
-        fontFamily: "'Times New Roman', Times, serif",
-        fontSize: "25px",
-        lineHeight: "1.15",
-        color: "#4a0e78",
-        textTransform: "uppercase",
-        zIndex: "20",
-      });
-      const dynamicCourseName = document.createElement("span");
-      dynamicCourseName.textContent = cs.Course.name;
-      Object.assign(dynamicCourseName.style, {
-        display: "block",
-        fontSize: "32px",
-        fontWeight: "bold",
-      });
-      courseStatement.appendChild(dynamicCourseName);
-      certificateRoot.appendChild(courseStatement);
-
-      const obtainedDate = new Date().toLocaleDateString("es-PE", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-      createCenteredText(`Obtenido el: ${obtainedDate}`, "68%", 25, "90%");
-
-      await document.fonts.ready;
-      const canvas = await html2canvas(certificateRoot, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        width: imageWidth,
-        height: imageHeight,
-        windowWidth: imageWidth,
-        windowHeight: imageHeight,
-        scrollX: 0,
-        scrollY: 0,
-      });
-
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "px",
-        format: [imageWidth, imageHeight],
-        compress: true,
-        hotfixes: ["px_scaling"],
-      });
-      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imageWidth, imageHeight);
-      pdf.save(`Diploma_${cs.Course.name}.pdf`);
-    } catch (error) {
-      console.error("Error generando el diploma:", error);
-      alert("Error generando el diploma. Por favor, intentalo de nuevo.");
-    } finally {
-      certificateRoot?.remove();
-      setGeneratingId(null);
-    }
+  const handleDownloadDiploma = (cs: CourseStudent) => {
+    setGeneratingId(cs.Course.course_id);
+    setPendingDiploma(cs);
   };
+
+  useEffect(() => {
+    if (!pendingDiploma) return;
+
+    const generatePdf = async () => {
+      try {
+        const certificateRoot = diplomaRef.current;
+        const templateImage = certificateRoot?.querySelector("img");
+        if (!certificateRoot || !templateImage) {
+          throw new Error("No se encontró la plantilla del diploma.");
+        }
+
+        await templateImage.decode();
+        await document.fonts.ready;
+
+        const imageWidth = templateImage.naturalWidth || CERTIFICATE_WIDTH;
+        const imageHeight = templateImage.naturalHeight || CERTIFICATE_HEIGHT;
+        certificateRoot.style.width = `${imageWidth}px`;
+        certificateRoot.style.height = `${imageHeight}px`;
+
+        const canvas = await html2canvas(certificateRoot, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          width: imageWidth,
+          height: imageHeight,
+          windowWidth: imageWidth,
+          windowHeight: imageHeight,
+          scrollX: 0,
+          scrollY: 0,
+        });
+
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "px",
+          format: [imageWidth, imageHeight],
+          compress: true,
+          hotfixes: ["px_scaling"],
+        });
+        pdf.addImage(
+          canvas.toDataURL("image/png"),
+          "PNG",
+          0,
+          0,
+          imageWidth,
+          imageHeight,
+        );
+        pdf.save(`Diploma_${pendingDiploma.Course.name}.pdf`);
+      } catch (error) {
+        console.error("Error generando el diploma:", error);
+        alert("Error generando el diploma. Por favor, intentalo de nuevo.");
+      } finally {
+        setGeneratingId(null);
+        setPendingDiploma(null);
+      }
+    };
+
+    void generatePdf();
+  }, [pendingDiploma]);
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
@@ -202,7 +133,7 @@ const Diplomas = () => {
                   </p>
                   <button
                     className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-4 py-2.5 rounded-lg transition-colors font-medium"
-                    disabled={generatingId === cs.Course.course_id}
+                    disabled={generatingId !== null}
                     onClick={() => handleDownloadDiploma(cs)}
                   >
                     {generatingId === cs.Course.course_id
@@ -215,6 +146,102 @@ const Diplomas = () => {
           </div>
         )}
       </div>
+
+      {pendingDiploma && (
+        <div
+          ref={diplomaRef}
+          aria-hidden="true"
+          style={{
+            position: "fixed",
+            left: "-10000px",
+            top: 0,
+            width: `${CERTIFICATE_WIDTH}px`,
+            height: `${CERTIFICATE_HEIGHT}px`,
+            overflow: "hidden",
+            backgroundColor: "#ffffff",
+            pointerEvents: "none",
+          }}
+        >
+          <img
+            src="/templates/qtech_certificado.png"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+
+          <p
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
+              margin: 0,
+              textAlign: "center",
+              fontFamily: "'Times New Roman', serif",
+              fontSize: "55px",
+              lineHeight: 1.15,
+              color: "#4a0e78",
+              overflowWrap: "anywhere",
+              zIndex: 20,
+            }}
+          >
+            {fullName}
+          </p>
+
+          <p
+            className="absolute z-20 flex flex-col items-center justify-center bg-white text-center"
+            style={{
+              position: "absolute",
+              top: "58%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: "fit-content",
+              maxWidth: "50%",
+              boxSizing: "border-box",
+              padding: "20px 40px",
+              margin: 0,
+              fontFamily: "'Times New Roman', Times, serif",
+              fontSize: "40px",
+              lineHeight: 1.15,
+              color: "#4a0e78",
+              textTransform: "uppercase",
+              zIndex: 20,
+            }}
+          >
+            <span>Por haber completado satisfactoriamente el curso de</span>
+            <span
+              style={{
+                display: "block",
+                marginTop: "8px",
+                fontSize: "60px",
+                lineHeight: 1.1,
+                fontWeight: "bold",
+                overflowWrap: "anywhere",
+              }}
+            >
+              {pendingDiploma.Course.name}
+            </span>
+          </p>
+
+          <p
+            style={{
+              position: "absolute",
+              top: "70%",
+              left: 0,
+              width: "100%",
+              margin: 0,
+              textAlign: "center",
+              fontFamily: "'Times New Roman', Times, serif",
+              fontSize: "40px",
+              lineHeight: 1.15,
+              color: "#3b0764",
+              zIndex: 20,
+            }}
+          >
+            Obtenido el: {obtainedDate}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

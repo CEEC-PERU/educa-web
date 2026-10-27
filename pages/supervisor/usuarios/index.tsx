@@ -7,6 +7,7 @@ import ModalConfirmation from "@/components/ModalConfirmation";
 import { Student } from "@/interfaces/User/UsuariosSupervisor";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { getUserFacingMessage } from "@/lib/http/error";
 import {
   UserGroupIcon,
   EyeIcon,
@@ -28,6 +29,9 @@ import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
 
 const STUDENT_ROLE_ID = 1;
+const PASSWORD_REQUIREMENTS = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).{8,}$/;
+const PASSWORD_REQUIREMENTS_MESSAGE =
+  "Usa al menos 8 caracteres, una mayúscula, un número y un carácter especial.";
 
 const Usuarios: NextPageWithLayout = () => {
   const router = useRouter();
@@ -50,6 +54,9 @@ const Usuarios: NextPageWithLayout = () => {
   const [userToDelete, setUserToDelete] = useState<Student | null>(null);
   const [userToReactivate, setUserToReactivate] = useState<Student | null>(null);
   const [userToReset, setUserToReset] = useState<Student | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const PAGE_SIZE = 20;
 
@@ -90,26 +97,49 @@ const Usuarios: NextPageWithLayout = () => {
 
   const handleDeleteConfirm = async () => {
     if (!userToDelete) return;
+    setDeleteError(null);
     try {
       await deleteUserMutation.mutateAsync(userToDelete.User.user_id);
       toast.success("Usuario desactivado correctamente.");
-    } catch {
-      toast.error("Error al desactivar el usuario.");
-    } finally {
       setUserToDelete(null);
+    } catch (error) {
+      const message = getUserFacingMessage(error);
+      setDeleteError(message);
+      toast.error(message);
     }
   };
 
-  const handleResetPasswordConfirm = async () => {
+  const handleResetPasswordConfirm = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
+    event.preventDefault();
     if (!userToReset) return;
-    try {
-      await resetPasswordMutation.mutateAsync(userToReset.User.user_id);
-      toast.success("Contraseña restablecida al DNI del usuario.");
-    } catch {
-      toast.error("Error al restablecer la contraseña.");
-    } finally {
-      setUserToReset(null);
+    if (!PASSWORD_REQUIREMENTS.test(newPassword)) {
+      setPasswordError(PASSWORD_REQUIREMENTS_MESSAGE);
+      return;
     }
+
+    setPasswordError(null);
+    try {
+      await resetPasswordMutation.mutateAsync({
+        userId: userToReset.User.user_id,
+        newPassword,
+      });
+      toast.success("Contraseña actualizada correctamente.");
+      setUserToReset(null);
+      setNewPassword("");
+    } catch (error) {
+      const message = getUserFacingMessage(error);
+      setPasswordError(message);
+      toast.error(message);
+    }
+  };
+
+  const closePasswordModal = () => {
+    if (resetPasswordMutation.isPending) return;
+    setUserToReset(null);
+    setNewPassword("");
+    setPasswordError(null);
   };
 
   const handleReactivateConfirm = async () => {
@@ -361,7 +391,10 @@ const Usuarios: NextPageWithLayout = () => {
                             <button
                               type="button"
                               aria-label="Desactivar usuario"
-                              onClick={() => setUserToDelete(student)}
+                              onClick={() => {
+                                setDeleteError(null);
+                                setUserToDelete(student);
+                              }}
                               className="text-red-400 hover:text-red-600 transition-colors"
                               title="Desactivar"
                             >
@@ -445,8 +478,16 @@ const Usuarios: NextPageWithLayout = () => {
 
       <ModalConfirmation
         show={!!userToDelete}
-        onClose={() => setUserToDelete(null)}
+        onClose={() => {
+          if (deleteUserMutation.isPending) return;
+          setUserToDelete(null);
+          setDeleteError(null);
+        }}
         onConfirm={handleDeleteConfirm}
+        message={`¿Seguro que deseas desactivar a ${userToDelete?.User.userProfile?.first_name ?? "este usuario"}?`}
+        confirmLabel="Sí, desactivar"
+        isLoading={deleteUserMutation.isPending}
+        errorMessage={deleteError}
       />
 
       <ModalConfirmation
@@ -456,16 +497,69 @@ const Usuarios: NextPageWithLayout = () => {
         message="¿Estás seguro que deseas reactivar este usuario?"
         confirmLabel="Sí, reactivar"
         confirmClassName="text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
+        isLoading={reactivateUserMutation.isPending}
       />
 
-      <ModalConfirmation
+      <Modal
         show={!!userToReset}
-        onClose={() => setUserToReset(null)}
-        onConfirm={handleResetPasswordConfirm}
-        message={`¿Restablecer la contraseña de ${userToReset?.User.userProfile?.first_name ?? "este usuario"}? Se usará su DNI como nueva contraseña.`}
-        confirmLabel="Sí, restablecer"
-        confirmClassName="text-white bg-amber-500 hover:bg-amber-700 focus:ring-4 focus:ring-amber-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
-      />
+        onClose={closePasswordModal}
+        title={`Cambiar contraseña${userToReset?.User.userProfile?.first_name ? ` de ${userToReset.User.userProfile.first_name}` : ""}`}
+        closeOnBackdropClick={!resetPasswordMutation.isPending}
+      >
+        <form onSubmit={handleResetPasswordConfirm} className="space-y-5">
+          <div>
+            <label htmlFor="new-user-password" className="mb-2 block text-sm font-medium text-gray-700">
+              Nueva contraseña
+            </label>
+            <input
+              id="new-user-password"
+              name="newPassword"
+              type="password"
+              autoComplete="new-password"
+              required
+              minLength={8}
+              value={newPassword}
+              onChange={(event) => {
+                setNewPassword(event.target.value);
+                setPasswordError(null);
+              }}
+              disabled={resetPasswordMutation.isPending}
+              aria-describedby="new-password-requirements"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:bg-gray-100"
+            />
+            <p id="new-password-requirements" className="mt-2 text-xs text-gray-500">
+              {PASSWORD_REQUIREMENTS_MESSAGE}
+            </p>
+          </div>
+
+          {passwordError && (
+            <p role="alert" className="text-sm text-red-600">
+              {passwordError}
+            </p>
+          )}
+
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={closePasswordModal}
+              disabled={resetPasswordMutation.isPending}
+              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={resetPasswordMutation.isPending || !newPassword}
+              className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
+            >
+              {resetPasswordMutation.isPending && (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />
+              )}
+              {resetPasswordMutation.isPending ? "Guardando…" : "Guardar contraseña"}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </>
   );
 };
