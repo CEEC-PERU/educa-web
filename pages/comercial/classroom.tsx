@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
@@ -68,7 +68,7 @@ const Classroom: React.FC = () => {
         />
 
         <main
-          className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+          className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
             showSidebar ? 'ml-20' : 'ml-0'
           }`}
         >
@@ -278,3 +278,4 @@ const Classroom: React.FC = () => {
 };
 
 export default Classroom;
+

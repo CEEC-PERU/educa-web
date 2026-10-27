@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getUserById, updateUser } from '../../../services/users/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
@@ -102,7 +102,7 @@ const EditUser: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
         <main
-          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+          className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
             true ? 'ml-20' : ''
           }`}
         >
@@ -298,3 +298,4 @@ const EditUser: React.FC = () => {
 };
 
 export default EditUser;
+

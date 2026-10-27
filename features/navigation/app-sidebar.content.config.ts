@@ -5,8 +5,8 @@ import {
   CubeIcon,
   DocumentTextIcon,
   RectangleStackIcon,
-  ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
+import { LogoutIcon } from "../../components/icons/LogoutIcon";
 import type { AppSidebarItem } from "./app-sidebar.types";
 
 export const contentSidebarBaseItems: AppSidebarItem[] = [
@@ -55,7 +55,7 @@ export const contentSidebarBaseItems: AppSidebarItem[] = [
   {
     id: "logout",
     label: "Cerrar Sesión",
-    icon: ArrowRightStartOnRectangleIcon,
+    icon: LogoutIcon,
     action: "logout",
   },
 ];

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from 'react';
+﻿import React, { useState, ChangeEvent } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
 import { createRequirement } from '../../services/requirementService';
@@ -153,7 +153,7 @@ const RequirementForm: React.FC = () => {
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
           <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+            className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
               showSidebar ? 'ml-20' : ''
             }`}
           >
@@ -254,3 +254,4 @@ const RequirementForm: React.FC = () => {
 };
 
 export default RequirementForm;
+

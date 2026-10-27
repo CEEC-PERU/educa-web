@@ -73,6 +73,7 @@ export default function AppSidebar({
                   isCollapsed={isCollapsed}
                   currentPath={currentPath}
                   onNavigate={handleNavigate}
+                  onCloseMobile={onCloseMobile}
                 />
               ) : (
                 <AppSidebarItemComponent
@@ -80,8 +81,7 @@ export default function AppSidebar({
                   item={item}
                   isCollapsed={isCollapsed}
                   isActive={isSidebarItemActive(item, currentPath)}
-                  onNavigate={handleNavigate}
-                  onAction={handleAction}
+                  onCloseMobile={onCloseMobile}
                 />
               ),
             )}

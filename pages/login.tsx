@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./../app/globals.css";
 
@@ -62,7 +62,7 @@ const LoginPage: React.FC = () => {
         <div className="w-full lg:w-3/5 flex justify-center animate-image">
           <img
             src="/login.gif"
-            className="w-full max-w-3xl lg:max-w-5xl"
+            className="w-full h-auto max-w-lg"
             alt="Imagen descriptiva"
           />
         </div>
@@ -200,3 +200,11 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
+
+
+
+
+
+
+
+

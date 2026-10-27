@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import {
@@ -112,7 +112,7 @@ const Detail: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="flex-grow transition-all duration-300 ease-in-out ml-20 px-4 sm:px-6 lg:px-8">
+        <main className="min-w-0 flex-1 transition-all duration-300 ease-in-out ml-20 px-4 sm:px-6 lg:px-8">
           {loading ? (
             <Loader />
           ) : (
@@ -240,3 +240,4 @@ const Detail: React.FC = () => {
 };
 
 export default Detail;
+

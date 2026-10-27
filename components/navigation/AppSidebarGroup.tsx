@@ -9,6 +9,7 @@ type AppSidebarGroupProps = {
   isCollapsed: boolean;
   currentPath: string;
   onNavigate?: (href: string) => void;
+  onCloseMobile?: () => void;
 };
 
 export default function AppSidebarGroup({
@@ -16,8 +17,10 @@ export default function AppSidebarGroup({
   isCollapsed,
   currentPath,
   onNavigate,
+  onCloseMobile,
 }: AppSidebarGroupProps) {
-  const Icon = item.icon;
+  const Icon = typeof item.icon === "string" ? undefined : item.icon;
+  const imageIcon = typeof item.icon === "string" ? item.icon : undefined;
 
   const isAnyChildActive =
     item.children?.some((child) => isSidebarItemActive(child, currentPath)) ??
@@ -30,6 +33,17 @@ export default function AppSidebarGroup({
   }, [isAnyChildActive]);
 
   const firstChild = item.children?.[0];
+  const renderedIcon = imageIcon ? (
+    <img src={imageIcon} alt="" aria-hidden="true" className="h-6 w-6 flex-shrink-0 object-contain mix-blend-screen" />
+  ) : (
+    Icon && <Icon className="h-6 w-6 flex-shrink-0" />
+  );
+  const collapsedClassName =
+    "flex items-center w-full p-4 text-white transition-colors " +
+    (isAnyChildActive ? "bg-sidebar-hover" : "hover:bg-sidebar-hover");
+  const groupClassName =
+    "flex items-center w-full p-4 text-white transition-colors " +
+    (isAnyChildActive ? "bg-white/20" : "hover:bg-white/10");
 
   return (
     <>
@@ -40,11 +54,9 @@ export default function AppSidebarGroup({
             onClick={() =>
               firstChild?.href ? onNavigate?.(firstChild.href) : undefined
             }
-            className={`flex items-center w-full p-4 text-white transition-colors ${
-              isAnyChildActive ? "bg-sidebar-hover" : "hover:bg-sidebar-hover"
-            }`}
+            className={collapsedClassName}
           >
-            {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
+            {renderedIcon}
           </button>
         </li>
       )}
@@ -55,11 +67,9 @@ export default function AppSidebarGroup({
             if (item.href) onNavigate?.(item.href);
             setIsExpanded((prev) => !prev);
           }}
-          className={`flex items-center w-full p-4 text-white transition-colors ${
-            isAnyChildActive ? "bg-white/20" : "hover:bg-white/10"
-          }`}
+          className={groupClassName}
         >
-          {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
+          {renderedIcon}
           <span className="ml-3 text-sm truncate flex-1">{item.label}</span>
           {isExpanded ? (
             <ChevronDownIcon className="h-4 w-4 flex-shrink-0" />
@@ -76,7 +86,7 @@ export default function AppSidebarGroup({
                 item={child}
                 isCollapsed={false}
                 isActive={isSidebarItemActive(child, currentPath)}
-                onNavigate={onNavigate}
+                onCloseMobile={onCloseMobile}
               />
             ))}
           </ul>

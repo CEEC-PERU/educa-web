@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/comercial/ComercialSidebar';
@@ -52,7 +52,7 @@ const CorporateUsers: React.FC = () => {
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
+          <main className="min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ml-20">
             <h2 className="text-2xl font-bold mb-6">Usuarios de la Empresa</h2>
             <div className="mb-4">
               <input
@@ -110,3 +110,4 @@ const CorporateUsers: React.FC = () => {
 };
 
 export default CorporateUsers;
+

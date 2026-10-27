@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+﻿import React, { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/comercial/ComercialSidebar";
@@ -91,7 +91,7 @@ const ComercialUsers: React.FC = () => {
         />
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20">
+          <main className="min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ml-20">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
@@ -235,3 +235,4 @@ const ComercialUsers: React.FC = () => {
 };
 
 export default ComercialUsers;
+

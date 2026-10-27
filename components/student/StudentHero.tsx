@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { BookOpen, CheckCircle2, Award } from "lucide-react";
 
 interface CoursesCount {
@@ -43,9 +43,9 @@ export default function StudentHero({
   const clockSeconds = safeLearningSeconds % 60;
 
   return (
-    <div className="relative w-full px-4 lg:px-40 pt-4 pb-16">
-      <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
-        <div className="text-left text-black">
+    <div className="relative mx-auto w-full min-w-0 max-w-screen-2xl px-4 sm:px-6 lg:px-8 pt-4 pb-12">
+      <div className="flex min-w-0 flex-col items-center gap-8 2xl:flex-row 2xl:items-center 2xl:justify-between 2xl:gap-6">
+        <div className="w-full min-w-0 text-left text-black 2xl:flex-1">
           <div className="flex items-center gap-4 mb-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white/10 ring-2 ring-brandrosado-800">
               {avatar ? (
@@ -64,7 +64,7 @@ export default function StudentHero({
               Portal del estudiante
             </p>
           </div>
-          <h1 className="font-space-grotesk text-6xl lg:text-7xl font-bold mb-3">
+          <h1 className="font-space-grotesk text-4xl sm:text-5xl 2xl:text-6xl font-bold mb-3 break-words">
             Hola, <span className="text-brandrosado-800">{name}</span>
           </h1>
           <p className="text-2xl lg:text-3xl font-semibold mb-3">
@@ -81,20 +81,20 @@ export default function StudentHero({
 
         <div
           aria-hidden="true"
-          className="hidden flex-shrink-0 items-center justify-center lg:flex"
+          className="hidden w-full max-w-md min-w-0 flex-shrink-0 items-center justify-center 2xl:flex"
         >
           <img
             src="/cerebrito_transparent.gif"
             alt=""
-            className="w-[720px] h-auto object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
+            className="h-auto w-full max-w-md object-contain drop-shadow-[0_0_35px_rgba(255,255,255,0.6)]"
           />
         </div>
 
-        <div className="w-full lg:w-auto">
+        <div className="w-full min-w-0 2xl:w-auto">
           <div className="relative pb-2.5 pr-2.5">
             <div className="absolute inset-0 translate-x-2.5 translate-y-2.5 rounded-2xl bg-[#626fa6]" />
             <div className="relative rounded-2xl border border-white/10 bg-[#38226d] shadow-xl backdrop-blur-sm">
-              <div className="flex divide-x divide-white/15">
+              <div className="flex min-w-0 divide-x divide-white/15">
                 {STATS.map((stat, i) => {
                   const Icon = stat.icon;
                   return (
@@ -203,3 +203,5 @@ export default function StudentHero({
     </div>
   );
 }
+
+

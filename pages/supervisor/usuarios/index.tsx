@@ -241,7 +241,7 @@ const Usuarios: NextPageWithLayout = () => {
         />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="relative z-10 isolate bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
@@ -333,6 +333,8 @@ const Usuarios: NextPageWithLayout = () => {
                         <div className="flex items-center gap-2">
                           {profile && (
                             <button
+                              type="button"
+                              aria-label="Ver perfil"
                               onClick={() =>
                                 router.push(
                                   `/supervisor/usuarios/view-user/${student.User.user_id}`,
@@ -346,6 +348,8 @@ const Usuarios: NextPageWithLayout = () => {
                           )}
                           {student.User.is_active && profile && (
                             <button
+                              type="button"
+                              aria-label="Restablecer contraseña"
                               onClick={() => setUserToReset(student)}
                               className="text-amber-500 hover:text-amber-700 transition-colors"
                               title="Restablecer contraseña"
@@ -355,6 +359,8 @@ const Usuarios: NextPageWithLayout = () => {
                           )}
                           {student.User.is_active ? (
                             <button
+                              type="button"
+                              aria-label="Desactivar usuario"
                               onClick={() => setUserToDelete(student)}
                               className="text-red-400 hover:text-red-600 transition-colors"
                               title="Desactivar"
@@ -363,6 +369,8 @@ const Usuarios: NextPageWithLayout = () => {
                             </button>
                           ) : (
                             <button
+                              type="button"
+                              aria-label="Reactivar usuario"
                               onClick={() => setUserToReactivate(student)}
                               className="text-green-500 hover:text-green-700 transition-colors"
                               title="Reactivar"

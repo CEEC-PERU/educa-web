@@ -5,10 +5,10 @@ import {
   UserGroupIcon,
   ClipboardDocumentCheckIcon,
   BuildingOfficeIcon,
-  ArrowRightStartOnRectangleIcon,
   UserPlusIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
+import { LogoutIcon } from "../icons/LogoutIcon";
 import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirementsbar } from '../../services/requirementService';
 
@@ -24,6 +24,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
+  const isActivePath = (path: string, exact = false) => {
+    const currentPath = router.pathname.replace(/\/+$/, "") || "/";
+    const targetPath = path.replace(/\/+$/, "") || "/";
+    return currentPath === targetPath || (!exact && currentPath.startsWith(`${targetPath}/`));
+  };
   const { logout, profileInfo } = useAuth();
 
   let name = '';
@@ -52,7 +57,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
       fetchRequirements();
     };
 
-    // Escucha un evento personalizado para la actualización de los requerimientos
+    // Escucha un evento personalizado para la actualizaciÃƒÂ³n de los requerimientos
     window.addEventListener('requirementUpdate', handleRequirementUpdate);
 
     return () => {
@@ -71,7 +76,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer después de la navegación
+    setIsOpen(false); // Cerrar el drawer despuÃƒÂ©s de la navegaciÃƒÂ³n
   };
 
   const handleMouseEnter = () => {
@@ -97,39 +102,83 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
             <li>
               <button
                 onClick={() => handleNavigation('/admin')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <AcademicCapIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Estudiantes</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin", true) ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/admin", true) && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <AcademicCapIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Estudiantes</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation('/admin/user-enterprise')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BuildingOfficeIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Empresas</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/user-enterprise") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/admin/user-enterprise") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <BuildingOfficeIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Empresas</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation('/admin/users')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Usuarios</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/users") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/admin/users") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <UserGroupIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Usuarios</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation('/admin/requirements')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left relative"
-              >
-                <ClipboardDocumentCheckIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Requerimientos</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/requirements") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/admin/requirements") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <ClipboardDocumentCheckIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Requerimientos</span>}
                 {requirements.length > 0 && (
-                  <span className="absolute right-4 top-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute right-4 top-2 z-10 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {requirements.length}
                   </span>
                 )}
@@ -140,19 +189,30 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                 onClick={() =>
                   handleNavigation('/admin/student/AssignStudents')
                 }
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserPlusIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Asignación de Cursos</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/student/AssignStudents") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/admin/student/AssignStudents") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <UserPlusIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">AsignaciÃƒÂ³n de Cursos</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={logout}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
               >
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cerrar Sesión</span>}
+                <LogoutIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Cerrar SesiÃƒÂ³n</span>}
               </button>
             </li>
           </ul>

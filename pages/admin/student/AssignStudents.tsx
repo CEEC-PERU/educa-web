@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+﻿import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import { Enterprise } from '../../../interfaces/Enterprise';
@@ -221,7 +221,7 @@ const AssignStudents: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main
-          className={`p-6 flex-grow transition-all duration-300 ease-in-out ${
+          className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
             showSidebar ? 'ml-20' : ''
           }`}
         >
@@ -379,3 +379,4 @@ const AssignStudents: React.FC = () => {
 };
 
 export default AssignStudents;
+

@@ -6,10 +6,10 @@ import {
   AcademicCapIcon,
   ClipboardDocumentCheckIcon,
   ClockIcon,
-  ArrowRightStartOnRectangleIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
+import { LogoutIcon } from "../icons/LogoutIcon";
 import { Profile } from '../../interfaces/User/UserInterfaces';
 import { getAllRequirements } from '../../services/requirementService';
 
@@ -25,6 +25,11 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
+  const isActivePath = (path: string, exact = false) => {
+    const currentPath = router.pathname.replace(/\/+$/, "") || "/";
+    const targetPath = path.replace(/\/+$/, "") || "/";
+    return currentPath === targetPath || (!exact && currentPath.startsWith(`${targetPath}/`));
+  };
   const { logout, profileInfo } = useAuth();
 
   let name = '';
@@ -50,7 +55,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer después de la navegación
+    setIsOpen(false); // Cerrar el drawer despuÃƒÂ©s de la navegaciÃƒÂ³n
   };
 
   const handleMouseEnter = () => {
@@ -76,20 +81,31 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
             <li>
               <button
                 onClick={() => handleNavigation('/calidad')}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cursos</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/calidad") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/calidad") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <BookOpenIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Cursos</span>}
               </button>
             </li>
 
             <li>
               <button
                 onClick={logout}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
               >
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cerrar Sesión</span>}
+                <LogoutIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Cerrar SesiÃƒÂ³n</span>}
               </button>
             </li>
           </ul>

@@ -4,7 +4,8 @@ import { useAuth } from "../../context/AuthContext";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
-import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 const Diplomas = () => {
   const { profileInfo } = useAuth();
@@ -23,65 +24,143 @@ const Diplomas = () => {
 
   const handleDownloadDiploma = async (cs: CourseStudent) => {
     const courseId = cs.Course.course_id;
+    const certificateWidth = 3600;
+    const certificateHeight = 2025;
+    let certificateRoot: HTMLDivElement | null = null;
     setGeneratingId(courseId);
+
     try {
-      const templateBytes = await fetch("/templates/Certificado.pdf").then(
-        (res) => res.arrayBuffer(),
-      );
-      const pdfDoc = await PDFDocument.load(templateBytes);
-      const page = pdfDoc.getPages()[0];
-      const { width, height } = page.getSize();
-      const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-      const nameSize = 24;
-      const nameWidth = font.widthOfTextAtSize(fullName, nameSize);
-      page.drawText(fullName, {
-        x: (width - nameWidth) / 2,
-        y: height / 2,
-        size: nameSize,
-        font,
-        color: rgb(0.1, 0.1, 0.1),
+      certificateRoot = document.createElement("div");
+      Object.assign(certificateRoot.style, {
+        position: "fixed",
+        left: "-10000px",
+        top: "0",
+        width: `${certificateWidth}px`,
+        height: `${certificateHeight}px`,
+        overflow: "hidden",
+        backgroundColor: "#ffffff",
       });
 
-      const courseSize = 14;
-      const courseWidth = font.widthOfTextAtSize(cs.Course.name, courseSize);
-      page.drawText(cs.Course.name, {
-        x: (width - courseWidth) / 2,
-        y: height / 2 - 40,
-        size: courseSize,
-        font,
-        color: rgb(0.2, 0.2, 0.2),
+      const templateImage = document.createElement("img");
+      templateImage.src = "/templates/qtech_certificado.png";
+      templateImage.alt = "";
+      Object.assign(templateImage.style, {
+        position: "absolute",
+        inset: "0",
+        width: "100%",
+        height: "100%",
+        display: "block",
+        objectFit: "fill",
+      });
+      certificateRoot.appendChild(templateImage);
+      document.body.appendChild(certificateRoot);
+      await templateImage.decode();
+
+      const imageWidth = templateImage.naturalWidth || certificateWidth;
+      const imageHeight = templateImage.naturalHeight || certificateHeight;
+      certificateRoot.style.width = `${imageWidth}px`;
+      certificateRoot.style.height = `${imageHeight}px`;
+
+      const oldCourseTextCover = document.createElement("div");
+      Object.assign(oldCourseTextCover.style, {
+        position: "absolute",
+        left: "50%",
+        top: "58%",
+        transform: "translateX(-50%)",
+        width: "85%",
+        height: "12%",
+        backgroundColor: "#ffffff",
+        zIndex: "10",
+      });
+      certificateRoot.appendChild(oldCourseTextCover);
+
+      const createCenteredText = (
+        text: string,
+        top: string,
+        fontSize: number,
+        width: string,
+      ) => {
+        const textElement = document.createElement("div");
+        textElement.textContent = text;
+        Object.assign(textElement.style, {
+          position: "absolute",
+          top,
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width,
+          textAlign: "center",
+          fontFamily: "'Times New Roman', Times, serif",
+          fontSize: `${fontSize}px`,
+          lineHeight: "1.15",
+          color: "#3b0764",
+          overflowWrap: "anywhere",
+          zIndex: "20",
+        });
+        certificateRoot?.appendChild(textElement);
+      };
+
+      createCenteredText(fullName, "50%", 55, "90%");
+      const courseStatement = document.createElement("p");
+      courseStatement.textContent = "Por haber completado satisfactoriamente el curso de ";
+      Object.assign(courseStatement.style, {
+        position: "absolute",
+        top: "60%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "85%",
+        margin: "0",
+        textAlign: "center",
+        fontFamily: "'Times New Roman', Times, serif",
+        fontSize: "25px",
+        lineHeight: "1.15",
+        color: "#4a0e78",
+        textTransform: "uppercase",
+        zIndex: "20",
+      });
+      const dynamicCourseName = document.createElement("span");
+      dynamicCourseName.textContent = cs.Course.name;
+      Object.assign(dynamicCourseName.style, {
+        display: "block",
+        fontSize: "32px",
+        fontWeight: "bold",
+      });
+      courseStatement.appendChild(dynamicCourseName);
+      certificateRoot.appendChild(courseStatement);
+
+      const obtainedDate = new Date().toLocaleDateString("es-PE", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+      createCenteredText(`Obtenido el: ${obtainedDate}`, "68%", 25, "90%");
+
+      await document.fonts.ready;
+      const canvas = await html2canvas(certificateRoot, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        width: imageWidth,
+        height: imageHeight,
+        windowWidth: imageWidth,
+        windowHeight: imageHeight,
+        scrollX: 0,
+        scrollY: 0,
       });
 
-      if (cs.deadline) {
-        const dateStr = new Date(cs.deadline).toLocaleDateString("es-PE", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        const dateSize = 12;
-        const dateWidth = font.widthOfTextAtSize(dateStr, dateSize);
-        page.drawText(dateStr, {
-          x: (width - dateWidth) / 2,
-          y: height / 2 - 70,
-          size: dateSize,
-          font,
-          color: rgb(0.4, 0.4, 0.4),
-        });
-      }
-
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes.buffer as ArrayBuffer], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `Diploma_${cs.Course.name}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "px",
+        format: [imageWidth, imageHeight],
+        compress: true,
+        hotfixes: ["px_scaling"],
+      });
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 0, 0, imageWidth, imageHeight);
+      pdf.save(`Diploma_${cs.Course.name}.pdf`);
     } catch (error) {
       console.error("Error generando el diploma:", error);
-      alert("Error generando el diploma. Por favor, inténtalo de nuevo.");
+      alert("Error generando el diploma. Por favor, intentalo de nuevo.");
     } finally {
+      certificateRoot?.remove();
       setGeneratingId(null);
     }
   };

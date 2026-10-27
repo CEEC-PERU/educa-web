@@ -1,4 +1,4 @@
-// src/pages/admin/requirements.tsx
+﻿// src/pages/admin/requirements.tsx
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
@@ -71,7 +71,7 @@ const RequirementsPage: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
+        <main className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${showSidebar ? 'ml-20' : ''}`}>
           {success && (
             <AlertComponent
               type="success"
@@ -112,3 +112,4 @@ const RequirementsPage: React.FC = () => {
 };
 
 export default RequirementsPage;
+

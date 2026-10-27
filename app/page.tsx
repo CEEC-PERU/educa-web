@@ -116,10 +116,10 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hero-image w-full md:w-[50%] lg:w-[44%] xl:w-[38%] relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
+          <div className="hero-image w-full md:w-[50%] lg:w-[48%] xl:w-[48%] flex justify-end relative z-10 px-6 md:pt-16 lg:pt-24 animate-image">
             <img
               src="/robot-hero.gif"
-              className="w-full max-w-sm mx-auto"
+              className="w-full max-w-[600px] h-auto object-contain drop-shadow-2xl"
               alt="Imagen descriptiva"
             />
           </div>
