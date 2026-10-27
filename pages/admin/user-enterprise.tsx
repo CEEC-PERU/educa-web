@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
@@ -85,7 +85,7 @@ const EnterpriseList: React.FC = () => {
       <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
-        <main className={`p-6 flex-grow ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
+        <main className={`min-w-0 flex-1 p-6 ${showSidebar ? 'ml-20' : ''} transition-all duration-300 ease-in-out`}>
         {alert && <Alert type={alert.type} message={alert.message} onClose={() => setAlert(null)} />}
           <div className="flex justify-between items-center mb-4">
             <div onClick={handleAddEnterprise}>
@@ -127,3 +127,4 @@ const EnterpriseList: React.FC = () => {
 };
 
 export default EnterpriseList;
+

@@ -5,9 +5,9 @@ import {
   AcademicCapIcon,
   TagIcon,
   ClipboardDocumentCheckIcon,
-  ArrowRightStartOnRectangleIcon,
   HomeIcon,
 } from "@heroicons/react/24/outline";
+import { LogoutIcon } from "../../components/icons/LogoutIcon";
 import type { AppSidebarItem } from "./app-sidebar.types";
 
 export const supervisorSidebarItems: AppSidebarItem[] = [
@@ -90,7 +90,7 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
   {
     id: "logout",
     label: "Cerrar Sesión",
-    icon: ArrowRightStartOnRectangleIcon,
+    icon: LogoutIcon,
     action: "logout",
   },
 ];

@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+﻿import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import ChartErrorBoundary from "./ChartErrorBoundary";
 
@@ -116,7 +116,7 @@ const ChartCard = ({
 
   return (
     <div
-      className={`border border-gray-200 p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}
+      className={`min-w-0 w-full border border-gray-200 p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 ${className}`}
     >
       <div className="flex justify-between items-center mb-4">
         <div>
@@ -165,3 +165,4 @@ const ChartCard = ({
 };
 
 export default ChartCard;
+

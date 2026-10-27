@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   BookOpenIcon,
-  ArrowRightStartOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../../context/AuthContext";
+import { LogoutIcon } from "../icons/LogoutIcon";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { getAllRequirements } from "../../services/requirementService";
 
@@ -83,7 +83,7 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({
                 onClick={logout}
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
+                <LogoutIcon className="h-6 w-6" />
                 {isOpen && <span className="ml-2">Cerrar Sesión</span>}
               </button>
             </li>

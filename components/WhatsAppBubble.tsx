@@ -41,12 +41,12 @@ export default function WhatsAppBubble() {
   return (
     <div
       ref={containerRef}
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
+      className="pointer-events-none fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
     >
       <div
         className={`w-80 origin-bottom-right rounded-2xl border border-white/10 bg-gradient-to-br from-brandfucsia-900 to-brandmorado-700 p-5 shadow-2xl transition-all duration-200 ${
           isOpen
-            ? "scale-100 opacity-100"
+            ? "pointer-events-auto scale-100 opacity-100"
             : "pointer-events-none scale-95 opacity-0"
         }`}
       >
@@ -88,7 +88,7 @@ export default function WhatsAppBubble() {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? "Cerrar contacto" : "Contactar por WhatsApp"}
         aria-expanded={isOpen}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:bg-[#1DA851]"
+        className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition hover:bg-[#1DA851]"
       >
         {isOpen ? (
           <X className="h-6 w-6" />

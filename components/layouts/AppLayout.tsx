@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+﻿import type { ReactNode } from "react";
 import ProtectedRoute from "../Auth/ProtectedRoute";
 import AppNavbar from "../navigation/AppNavbar";
 import AppSidebarContainer from "../../features/navigation/AppSidebarContainer";
@@ -24,9 +24,9 @@ export default function AppLayout({
 
   return (
     <ProtectedRoute>
-      <div className="relative min-h-screen flex flex-col">
+      <div className="relative min-h-screen min-w-0 flex flex-col overflow-x-hidden">
         <AppNavbar bgColor={navbarColor} onToggleSidebar={toggleMobileSidebar} />
-        <div className="flex flex-1 pt-16">
+        <div className="flex min-w-0 flex-1 pt-16">
           <AppSidebarContainer />
 
           {isMobileSidebarOpen && (
@@ -37,11 +37,17 @@ export default function AppLayout({
           )}
 
           <main
-            className={`flex-grow transition-all duration-300 ease-in-out ${
+            className={`min-w-0 w-full flex-grow overflow-x-hidden transition-all duration-300 ease-in-out ${
               isSidebarCollapsed ? "lg:ml-16" : "lg:ml-64"
             } ${noPadding ? "" : "p-6"}`}
           >
-            {children}
+            <div
+              className={`mx-auto w-full min-w-0 ${
+                noPadding ? "" : "max-w-screen-2xl"
+              }`}
+            >
+              {children}
+            </div>
           </main>
         </div>
 
@@ -50,3 +56,6 @@ export default function AppLayout({
     </ProtectedRoute>
   );
 }
+
+
+

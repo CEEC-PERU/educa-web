@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+﻿import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
@@ -173,7 +173,7 @@ const RoleDetail: React.FC = () => {
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={true} setShowSidebar={() => {}} />
           <main
-            className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+            className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
               showSidebar ? 'ml-20' : ''
             }`}
           >
@@ -269,3 +269,4 @@ const RoleDetail: React.FC = () => {
 };
 
 export default RoleDetail;
+

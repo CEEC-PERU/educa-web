@@ -6,10 +6,10 @@ import {
   AcademicCapIcon,
   ClipboardDocumentCheckIcon,
   ClockIcon,
-  ArrowRightStartOnRectangleIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline";
 import { useAuth } from "../../context/AuthContext";
+import { LogoutIcon } from "../icons/LogoutIcon";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import { getAllRequirements } from "../../services/requirementService";
 
@@ -25,6 +25,11 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [requirements, setRequirements] = useState([]);
   const router = useRouter();
+  const isActivePath = (path: string, exact = false) => {
+    const currentPath = router.pathname.replace(/\/+$/, "") || "/";
+    const targetPath = path.replace(/\/+$/, "") || "/";
+    return currentPath === targetPath || (!exact && currentPath.startsWith(`${targetPath}/`));
+  };
   const { logout, profileInfo } = useAuth();
 
   let name = "";
@@ -50,7 +55,7 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer después de la navegación
+    setIsOpen(false); // Cerrar el drawer despuÃƒÂ©s de la navegaciÃƒÂ³n
   };
 
   const handleMouseEnter = () => {
@@ -76,46 +81,101 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Dashboard</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/", true) ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/", true) && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <BookOpenIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Dashboard</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/usuarios")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Usuarios</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/usuarios") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/usuarios") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <UserGroupIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Usuarios</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/classroom")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <UserGroupIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Classroom</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/classroom") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/classroom") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <UserGroupIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Classroom</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/courses")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <BookOpenIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cursos</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/courses") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/courses") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <BookOpenIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Cursos</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/certificates")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <TagIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Certificaciones</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/certificates") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/certificates") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <TagIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Certificaciones</span>}
               </button>
             </li>
             <li>
@@ -123,37 +183,70 @@ const SidebarCorporate: React.FC<SidebarCorporateProps> = ({
                 onClick={() =>
                   handleNavigation("/corporate/qualification/progress")
                 }
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <AcademicCapIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Detalle Estudiante</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/qualification/progress") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/qualification/progress") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <AcademicCapIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Detalle Estudiante</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/sesion")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <ClockIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Sesiones</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/sesion") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/sesion") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <ClockIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Sesiones</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={() => handleNavigation("/corporate/addRequeriment")}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
-              >
-                <ClipboardDocumentCheckIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Nuevo Requerimiento</span>}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/corporate/addRequeriment") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >                {isActivePath("/corporate/addRequeriment") && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
+                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
+                  </svg>
+                )}
+                <ClipboardDocumentCheckIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Nuevo Requerimiento</span>}
               </button>
             </li>
             <li>
               <button
                 onClick={logout}
-                className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
+                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
               >
-                <ArrowRightStartOnRectangleIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cerrar Sesión</span>}
+                <LogoutIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Cerrar SesiÃƒÂ³n</span>}
               </button>
             </li>
           </ul>

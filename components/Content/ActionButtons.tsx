@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface ActionButtonsProps {
   onEdit?: () => void;
@@ -12,8 +12,8 @@ interface ActionButtonsProps {
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({ onEdit, onCancel, onDelete, onSave, isEditing, onAbort, customSize }) => {
   return (
-    <div className={`w-full p-4 bg-gradient-to-br from-gray-200 to-gray-400 rounded-lg shadow-md ${customSize ? 'w-[400px]' : ''}`}>
-      <div className={`flex flex-col space-y-2 ${customSize ? 'md:w-96 w-full' : ''}`}>
+    <div className={`w-full p-4 bg-gradient-to-br from-gray-200 to-gray-400 rounded-lg shadow-md ${customSize ? 'w-full max-w-[400px]' : ''}`}>
+      <div className={`flex flex-col space-y-2 ${customSize ? 'w-full max-w-sm' : ''}`}>
         {!isEditing && onEdit && (
           <button onClick={onEdit} className="w-full relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400">
             <span className="w-full relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
@@ -55,3 +55,4 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ onEdit, onCancel, onDelet
 };
 
 export default ActionButtons;
+

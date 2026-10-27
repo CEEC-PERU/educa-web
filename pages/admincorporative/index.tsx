@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
@@ -212,7 +212,7 @@ const AdminCorporative: React.FC = () => {
       />
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="p-6 flex-grow transition-all duration-300 ease-in-out ml-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <main className="min-w-0 flex-1 overflow-x-hidden p-6 transition-all duration-300 ease-in-out ml-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="bg-white shadow-lg rounded-lg p-4 border-2 h-64">
             <Line
               data={lineChartData}
@@ -271,3 +271,4 @@ const AdminCorporative: React.FC = () => {
 };
 
 export default SidebarAdminCorporate;
+

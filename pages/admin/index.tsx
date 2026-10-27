@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
@@ -101,7 +101,7 @@ const AdminPage: React.FC = () => {
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
           <main
-            className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+            className={`min-w-0 flex-1 overflow-x-hidden p-6 transition-all duration-300 ease-in-out ${
               showSidebar ? 'ml-20' : ''
             }`}
           >
@@ -217,3 +217,4 @@ const AdminPage: React.FC = () => {
 };
 
 export default AdminPage;
+

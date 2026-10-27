@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import type { NextPageWithLayout } from '../../types/next';
 import AppLayout from "@/components/layouts/AppLayout";
 import { useAuth } from '../../context/AuthContext';
@@ -38,7 +38,7 @@ const CorporateDashboard: NextPageWithLayout = () => {
   const { coursetimeaverage } = useAverageCourse(selectedCourse);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid min-w-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="mr-2 col-span-full">
         <select
           value={selectedCourse ?? ""}
@@ -84,3 +84,4 @@ CorporateDashboard.getLayout = (page: React.ReactNode) => (
 );
 
 export default CorporateDashboard;
+

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic
 import Navbar from '../../components/Navbar';
 import ChartCard from '../../components/dashboard/ChartCard';
@@ -133,7 +133,7 @@ const CorporateDashboard: React.FC = () => {
       />
       <div className="flex flex-1 pt-16 ">
         <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-        <main className="p-6 flex-grow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
+        <main className="min-w-0 flex-1 overflow-x-hidden p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pl-20">
           {/* Dropdown Selector for Courses */}
           <div className="mr-2 col-span-full">
             {/*<select 
@@ -910,3 +910,4 @@ const CorporateDashboard: React.FC = () => {
 };
 
 export default CorporateDashboard;
+

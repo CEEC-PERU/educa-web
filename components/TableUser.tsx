@@ -18,7 +18,7 @@ interface TableProps {
 
 const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionClick , onDeleteClick }) => {
   return (
-    <div className="overflow-x-auto mt-4">
+    <div className="relative z-10 isolate overflow-x-auto mt-4">
       <table className="min-w-full bg-white text-black">
         <thead>
           <tr>
@@ -53,12 +53,12 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
               {(onActionClick || onDeleteClick) && (
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                   {onActionClick && (
-                    <button className="text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
+                    <button type="button" aria-label={actionLabel ?? 'Editar usuario'} className="relative z-10 text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
                       <PencilIcon className="h-5 w-5" />
                     </button>
                   )}
                   {onDeleteClick && (
-                    <button className="ml-2 text-red-500 hover:text-red-700" onClick={() => onDeleteClick(row)}>
+                    <button type="button" aria-label="Eliminar usuario" className="relative z-10 ml-2 text-red-500 hover:text-red-700" onClick={() => onDeleteClick(row)}>
                       <TrashIcon className="h-5 w-5" />
                     </button>
                   )}

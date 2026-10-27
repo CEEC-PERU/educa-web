@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { useAuth } from "../../context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
@@ -42,15 +42,15 @@ const StudentIndex = () => {
       <StudentVerificationModal />
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 translate-x-[8%] lg:block"
+        className="pointer-events-none fixed right-4 top-1/2 z-20 hidden -translate-y-1/2 2xl:block"
       >
         <img
           src="/qtech_robot_transparent.gif"
           alt=""
-          className="h-64 w-64 object-contain"
+          className="h-56 w-56 max-w-full object-contain"
         />
       </div>
-      <div className="relative min-h-screen flex flex-col items-center justify-center pt-4 pb-10 p-4 overflow-hidden">
+      <div className="relative min-h-screen w-full min-w-0 flex flex-col items-center justify-center pt-4 pb-10 p-4">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -61,7 +61,7 @@ const StudentIndex = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent from-50% to-brand-500"></div>
         </div>
 
-        <div className="relative z-10 w-full flex flex-col items-center">
+        <div className="relative z-10 mx-auto w-full min-w-0 max-w-screen-2xl flex flex-col items-center">
           <StudentHero
             name={name}
             avatar={avatar}
@@ -70,7 +70,7 @@ const StudentIndex = () => {
             isLearningTimeLoading={isLearningTimeLoading}
           />
 
-          <div className="w-full px-4 lg:px-40 mt-1 flex items-center justify-between flex-wrap gap-2">
+          <div className="w-full min-w-0 mt-1 flex items-center justify-between flex-wrap gap-2">
             <h2 className="font-space-grotesk text-2xl font-bold text-black">
               Cursos que ya has explorado
             </h2>
@@ -78,7 +78,7 @@ const StudentIndex = () => {
 
           <div
             id="cursos"
-            className="w-full px-4 lg:px-40 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
+            className="w-full min-w-0 mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 min-h-[100px]"
           >
             {isSummaryLoading ? (
               <p className="text-white/70 col-span-full">Cargando...</p>
@@ -120,3 +120,5 @@ StudentIndex.getLayout = (page: React.ReactNode) => (
 );
 
 export default StudentIndex;
+
+

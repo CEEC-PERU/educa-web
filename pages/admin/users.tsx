@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import CardUser from '../../components/Admin/CardUser';
@@ -49,7 +49,7 @@ const Usuarios: React.FC = () => {
         <Navbar bgColor="bg-gradient-to-r from-blue-500 to-violet-500 opacity-90" />
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={true} setShowSidebar={() => {}} />
-          <main className="p-6 flex-grow transition-all duration-300 ease-in-out flex flex-wrap justify-center">
+          <main className="min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out flex flex-wrap justify-center">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {roles.map((role) => {
                 const Icon = iconMapping[role.name.toLowerCase()] || PencilIcon;
@@ -72,3 +72,4 @@ const Usuarios: React.FC = () => {
 };
 
 export default Usuarios;
+

@@ -1,4 +1,4 @@
-// pages/exportCsv.tsx
+﻿// pages/exportCsv.tsx
 import React, { useState } from 'react';
 import Wizard from '../../../components/WizardComponet';
 import UploadStep from './UploadStep';
@@ -119,7 +119,7 @@ const ExportCsvPage: React.FC = () => {
       <div className="flex flex-1 pt-16">
         <Sidebar showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
         <main
-          className={`flex-grow p-6 transition-all duration-300 ease-in-out ${
+          className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ${
             showSidebar ? 'ml-20' : ''
           }`}
         >

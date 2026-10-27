@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useProgressDistribution } from "../../hooks/useProgressDistribution";
 import { useCourseTimeAverage } from "../../hooks/useCourseTimeAverage";
@@ -39,7 +39,7 @@ const SupervisorDashboard: NextPageWithLayout = () => {
   return (
     <>
       <SurveyModal />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid min-w-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="col-span-full">
           <CourseSelect
             courses={courseStudent}
@@ -65,3 +65,4 @@ const SupervisorDashboard: NextPageWithLayout = () => {
 SupervisorDashboard.getLayout = (page) => <AppLayout>{page}</AppLayout>;
 
 export default SupervisorDashboard;
+

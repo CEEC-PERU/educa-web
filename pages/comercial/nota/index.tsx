@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic'; // Para la carga dinámica de react-apexcharts
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/comercial/ComercialSidebar';
@@ -161,7 +161,7 @@ const NotaCourses: React.FC = () => {
         <div className="flex flex-1 pt-16">
           <Sidebar showSidebar={true} setShowSidebar={() => {}} />
           <main
-            className={`p-6 flex-grow transition-all duration-300 ease-in-out ml-20`}
+            className={`min-w-0 flex-1 p-6 transition-all duration-300 ease-in-out ml-20`}
           >
             <h2 className="text-4xl font-bold mb-6 text-[#0010F7]">USUARIOS</h2>
             <div className="flex items-center space-x-4 mb-10">
@@ -477,3 +477,4 @@ const NotaCourses: React.FC = () => {
 };
 
 export default NotaCourses;
+
