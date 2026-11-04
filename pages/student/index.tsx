@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { useAuth } from "../../context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
@@ -98,7 +98,7 @@ const StudentIndex = () => {
               ))
             ) : (
               <div className="col-span-full text-center text-white/80 py-6">
-                <p className="mb-3">Aún no has explorado ningún curso.</p>
+                <p className="mb-3">Aun no has explorado ningun curso.</p>
                 <a
                   href="/student/cursos"
                   className="inline-flex items-center rounded-lg bg-brandrosado-800 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brandfucsia-900"

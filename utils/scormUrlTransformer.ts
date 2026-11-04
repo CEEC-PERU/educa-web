@@ -32,7 +32,7 @@ export const transformS3ToCdn = (s3Url: string | null | undefined): string => {
     return `/cdn/${s3Url}`;
   }
 
-  // Si no coincide con ningún patrón conocido, retornar como está
+  // Si no coincide con ningun patron conocido, retornar como esta
   return s3Url;
 };
 
@@ -48,7 +48,7 @@ export const getScormPlayerUrl = (
     return transformS3ToCdn(contentUrl);
   }
 
-  // Para otros tipos de contenido, también usar CDN para mejor performance
+  // Para otros tipos de contenido, tambien usar CDN para mejor performance
   if (contentUrl.includes("mentormind-qtech.s3")) {
     return transformS3ToCdn(contentUrl);
   }

@@ -34,12 +34,12 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     error: classroomsError,
   } = useClassroomBySupervisor();
 
-  // SINCRONIZACIÓN DE ESTADOS
+  // SINCRONIZACION DE ESTADOS
   useEffect(() => {
     setSelectedClassrooms(formData.classroom_ids);
   }, [formData.classroom_ids]);
 
-  // FUNCIÓN PARA RENDERIZAR MENSAJES DE ERROR MEJORADOS
+  // FUNCION PARA RENDERIZAR MENSAJES DE ERROR MEJORADOS
   const renderErrorSection = () => {
     if (!errors.general) return null;
 
@@ -71,9 +71,9 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     const getErrorTitle = () => {
       switch (errors.errorType) {
         case "duplicate_assignment":
-          return "Asignación duplicada";
+          return "Asignacion duplicada";
         case "invalid_id":
-          return "ID inválido";
+          return "ID invalido";
         case "questions_count":
           return "Error en cantidad de preguntas";
         case "classroom_error":
@@ -81,7 +81,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
         case "server_error":
           return "Error del servidor";
         case "network_error":
-          return "Error de conexión";
+          return "Error de conexion";
         case "timeout_error":
           return "Tiempo de espera agotado";
         default:
@@ -92,19 +92,19 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     const getErrorSuggestion = () => {
       switch (errors.errorType) {
         case "duplicate_assignment":
-          return "Una o más aulas seleccionadas ya tienen este certificado asignado. Deselecciónelas para continuar.";
+          return "Una o mas aulas seleccionadas ya tienen este certificado asignado. Deseleccionelas para continuar.";
         case "invalid_id":
           return "Verifique que todos los IDs de aulas y certificados existan en el sistema.";
         case "questions_count":
           return "La cantidad de preguntas asignadas debe ser menor o igual al total disponible en el certificado.";
         case "classroom_error":
-          return "Hay un problema con alguna de las aulas seleccionadas. Verifique que estén activas.";
+          return "Hay un problema con alguna de las aulas seleccionadas. Verifique que esten activas.";
         case "server_error":
           return "Este error puede ser temporal. Intente nuevamente en unos minutos o contacte al administrador.";
         case "network_error":
-          return "Verifique su conexión a internet e intente nuevamente.";
+          return "Verifique su conexion a internet e intente nuevamente.";
         case "timeout_error":
-          return "La solicitud tardó demasiado tiempo. Intente nuevamente con una conexión más estable.";
+          return "La solicitud tardo demasiado tiempo. Intente nuevamente con una conexion mas estable.";
         default:
           return "Por favor, verifique los datos e intente nuevamente.";
       }
@@ -181,7 +181,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             {/*MENSAJE PRINCIPAL DEL BACKEND */}
             <p className={`text-sm ${styles.message} mb-2`}>{errors.general}</p>
 
-            {/* DETALLES TÉCNICOS (si existen y son diferentes al mensaje principal) */}
+            {/* DETALLES TECNICOS (si existen y son diferentes al mensaje principal) */}
             {errors.backendDetails &&
               errors.backendDetails !== errors.general && (
                 <div
@@ -190,7 +190,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
                     .replace("200", "300")}`}
                 >
                   <p className={`text-xs font-medium mb-1 ${styles.title}`}>
-                    Detalles técnicos:
+                    Detalles tecnicos:
                   </p>
                   <p className={`text-xs ${styles.details}`}>
                     {errors.backendDetails}
@@ -248,7 +248,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
       [field]: value,
     });
 
-    // Limpiar error de validación cuando el usuario corrige
+    // Limpiar error de validacion cuando el usuario corrige
     if (validationErrors[field]) {
       setValidationErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -265,7 +265,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
       await onSubmit(e);
     } catch (error) {
       // El error se maneja en el componente padre
-      console.error("Error en envío del formulario:", error);
+      console.error("Error en envio del formulario:", error);
     }
   };
 
@@ -297,7 +297,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
 
       if (dueDate <= new Date(startDate.getTime() + 60000)) {
         newErrors.due_date =
-          "La fecha límite debe ser posterior a la fecha de inicio";
+          "La fecha limite debe ser posterior a la fecha de inicio";
       }
     }
 
@@ -321,21 +321,21 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
     }
 
     if (!formData.due_date) {
-      newErrors.due_date = "La fecha límite es requerida";
+      newErrors.due_date = "La fecha limite es requerida";
     }
 
-    // Validaciones de formato y lógica
+    // Validaciones de formato y logica
     if (formData.start_date && formData.due_date) {
       const startDate = new Date(formData.start_date);
       const dueDate = new Date(formData.due_date);
       const now = new Date();
 
       if (isNaN(startDate.getTime())) {
-        newErrors.start_date = "Fecha de inicio inválida";
+        newErrors.start_date = "Fecha de inicio invalida";
       }
 
       if (isNaN(dueDate.getTime())) {
-        newErrors.due_date = "Fecha límite inválida";
+        newErrors.due_date = "Fecha limite invalida";
       }
 
       if (startDate < new Date(now.getTime() - 60000)) {
@@ -344,7 +344,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
 
       if (dueDate <= new Date(startDate.getTime() + 60000)) {
         newErrors.due_date =
-          "La fecha límite debe ser posterior a la fecha de inicio";
+          "La fecha limite debe ser posterior a la fecha de inicio";
       }
     }
 
@@ -381,7 +381,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
       {/* COMPONENTE DE ERROR MEJORADO */}
       {renderErrorSection()}
 
-      {/* SECCIÓN DE CERTIFICADO */}
+      {/* SECCION DE CERTIFICADO */}
       <div className="bg-gray-50 p-6 rounded-lg border">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
           <CheckCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
@@ -430,18 +430,18 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             <div className="flex items-center text-sm text-blue-600">
               <ClockIcon className="h-4 w-4 mr-1" />
               <span>
-                Duración: {selectedCertification.duration_in_minutes} minutos
+                Duracion: {selectedCertification.duration_in_minutes} minutos
               </span>
             </div>
           </div>
         )}
       </div>
 
-      {/* SECCIÓN DE CONFIGURACIÓN */}
+      {/* SECCION DE CONFIGURACION */}
       <div className="bg-gray-50 p-6 rounded-lg border">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
           <CalendarIcon className="h-5 w-5 mr-2 text-blue-600" />
-          Configuración de Asignación
+          Configuracion de Asignacion
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {renderFormField(
@@ -468,7 +468,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             "due_date",
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Fecha límite *
+                Fecha limite *
               </label>
               <input
                 type="datetime-local"
@@ -501,7 +501,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
                     : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
               >
-                <option value="yes">Sí</option>
+                <option value="yes">Si</option>
                 <option value="no">No</option>
               </select>
             </div>
@@ -511,7 +511,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             "questions_count",
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Número de preguntas asignadas
+                Numero de preguntas asignadas
               </label>
               <input
                 type="number"
@@ -536,7 +536,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
         </div>
       </div>
 
-      {/* SECCIÓN DE AULAS */}
+      {/* SECCION DE AULAS */}
       <div className="bg-gray-50 p-6 rounded-lg border">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
           <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
@@ -558,7 +558,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
             ) : classroomsError ? (
               <div className="p-4 bg-yellow-50 border border-yellow-200 rounded">
                 <p className="text-sm text-yellow-700">
-                  Error al cargar las aulas. Por favor, recargue la página.
+                  Error al cargar las aulas. Por favor, recargue la pagina.
                 </p>
               </div>
             ) : classrooms && classrooms.length > 0 ? (
@@ -612,7 +612,7 @@ const AssignmentForm: React.FC<AssignmentFormProps> = ({
         )}
       </div>
 
-      {/* BOTONES DE ACCIÓN */}
+      {/* BOTONES DE ACCION */}
       <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
         <button
           type="button"

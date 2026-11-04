@@ -57,7 +57,7 @@ export const useAverageTime = () => {
     const storedUserInfo = localStorage.getItem('userInfo');
     if (!storedUserInfo) {
       throw new Error(
-        'No se encontró información del usuario en el localStorage.'
+        'No se encontro informacion del usuario en el localStorage.'
       );
     }
 
@@ -95,7 +95,7 @@ export const useAUserActive = () => {
     const storedUserInfo = localStorage.getItem('userInfo');
     if (!storedUserInfo) {
       throw new Error(
-        'No se encontró información del usuario en el localStorage.'
+        'No se encontro informacion del usuario en el localStorage.'
       );
     }
 
@@ -131,7 +131,7 @@ export const useNPS = (cuestypeId: number, courseId?: number) => {
   useEffect(() => {
     const storedUserInfo = localStorage.getItem('userInfo');
     if (!storedUserInfo) {
-      setError('No se encontró información del usuario en el localStorage.');
+      setError('No se encontro informacion del usuario en el localStorage.');
       setLoading(false);
       return;
     }
@@ -155,7 +155,7 @@ export const useNPS = (cuestypeId: number, courseId?: number) => {
     };
 
     fetchData();
-  }, [cuestypeId, courseId]); // Añadir courseId a las dependencias
+  }, [cuestypeId, courseId]); // Anadir courseId a las dependencias
 
   return { npsData, loading, error };
 };
@@ -168,7 +168,7 @@ export const useSatisfaccion = (cuestypeId: number, courseId?: number) => {
   useEffect(() => {
     const storedUserInfo = localStorage.getItem('userInfo');
     if (!storedUserInfo) {
-      setError('No se encontró información del usuario en el localStorage.');
+      setError('No se encontro informacion del usuario en el localStorage.');
       setLoading(false);
       return;
     }
@@ -192,7 +192,7 @@ export const useSatisfaccion = (cuestypeId: number, courseId?: number) => {
     };
 
     fetchData();
-  }, [cuestypeId, courseId]); // Añadir courseId a las dependencias
+  }, [cuestypeId, courseId]); // Anadir courseId a las dependencias
 
   return { satisData, loading, error };
 };

@@ -20,25 +20,25 @@ export default function StudentPortalFooter() {
         </div>
 
         <div className="pl-0 lg:pl-10">
-          <h3 className="font-semibold text-lg">PÁGINAS</h3>
+          <h3 className="font-semibold text-lg">PAGINAS</h3>
           <ul>
             <li>INICIO</li>
             <li>RECURSOS</li>
             <li>BENEFICIOS</li>
-            <li>SUSCRÍBETE</li>
+            <li>SUSCRIBETE</li>
           </ul>
         </div>
 
         <div className="pl-0 lg:pl-10">
           <h3 className="font-semibold text-lg">LINKS</h3>
           <ul>
-            <li>TÉRMINOS Y CONDICIONES</li>
-            <li>POLÍTICA DE PRIVACIDAD</li>
+            <li>TERMINOS Y CONDICIONES</li>
+            <li>POLITICA DE PRIVACIDAD</li>
           </ul>
         </div>
 
         <div className="pl-0 lg:pl-10">
-          <h3 className="font-semibold text-lg">CONTÁCTANOS</h3>
+          <h3 className="font-semibold text-lg">CONTACTANOS</h3>
           <ul>
             <li>+51 9912785156</li>
             <li>administrador.app@ceec.com.pe</li>

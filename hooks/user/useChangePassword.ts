@@ -2,11 +2,11 @@ import { useState } from "react";
 import { changePassword } from "../../services/authService";
 
 export const validateNewPassword = (password: string): string | null => {
-  if (password.length < 8) return "Mínimo 8 caracteres";
-  if (!/[A-Z]/.test(password)) return "Debe contener al menos una mayúscula";
-  if (!/\d/.test(password)) return "Debe contener al menos un número";
+  if (password.length < 8) return "Minimo 8 caracteres";
+  if (!/[A-Z]/.test(password)) return "Debe contener al menos una mayuscula";
+  if (!/\d/.test(password)) return "Debe contener al menos un numero";
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password))
-    return "Debe contener al menos un carácter especial";
+    return "Debe contener al menos un caracter especial";
   return null;
 };
 
@@ -29,7 +29,7 @@ export const useChangePassword = () => {
     }
 
     if (currentPassword === newPassword) {
-      setError("La nueva contraseña no puede ser igual a la actual");
+      setError("La nueva contrasena no puede ser igual a la actual");
       return false;
     }
 
@@ -39,7 +39,7 @@ export const useChangePassword = () => {
       setSuccess(true);
       return true;
     } catch (err: any) {
-      const msg = err?.response?.data?.msg ?? "Error al cambiar la contraseña";
+      const msg = err?.response?.data?.msg ?? "Error al cambiar la contrasena";
       setError(msg);
       return false;
     } finally {

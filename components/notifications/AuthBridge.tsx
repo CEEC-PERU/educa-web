@@ -14,7 +14,7 @@ const AuthBridge: React.FC = () => {
       clearAuthToken();
       notify({
         type: "warning",
-        message: "Tu sesión expiró. Inicia sesión nuevamente.",
+        message: "Tu sesion expiro. Inicia sesion nuevamente.",
       });
       if (router.pathname !== LOGIN_PATH) {
         router.push(LOGIN_PATH);

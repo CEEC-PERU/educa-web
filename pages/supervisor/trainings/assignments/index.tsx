@@ -62,9 +62,9 @@ const AssignmentsPage: NextPageWithLayout = () => {
       closeDeleteModal();
       await refetch();
     } catch (error) {
-      console.error('Error al intentar desactivar la asignación:', error);
+      console.error('Error al intentar desactivar la asignacion:', error);
       alert(
-        'Hubo un error al desactivar la asignación. Por favor, inténtalo de nuevo.',
+        'Hubo un error al desactivar la asignacion. Por favor, intentalo de nuevo.',
       );
     } finally {
       setIsDeleting(false);
@@ -80,7 +80,7 @@ const AssignmentsPage: NextPageWithLayout = () => {
                   Asignaciones
                 </h1>
                 <p className="mt-2 text-sm text-gray-600">
-                  Gestiona las asignaciones de los programas de formación aquí.
+                  Gestiona las asignaciones de los programas de formacion aqui.
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
@@ -126,7 +126,7 @@ const AssignmentsPage: NextPageWithLayout = () => {
         <Modal
           isOpen={showAssignModal}
           onClose={() => setShowAssignModal(false)}
-          title="Asignar programa de formación"
+          title="Asignar programa de formacion"
           size="lg"
           closeOnBackdropClick={false}
         >
@@ -141,18 +141,18 @@ const AssignmentsPage: NextPageWithLayout = () => {
         <Modal
           isOpen={isModalDeleteOpen}
           onClose={closeDeleteModal}
-          title="Desactivar Asignación"
+          title="Desactivar Asignacion"
           size="md"
         >
           <div className="space-y-4">
             <p className="text-gray-700">
-              ¿Estás seguro de que deseas desactivar esta asignación?
+              ¿Estas seguro de que deseas desactivar esta asignacion?
             </p>
 
             <p className="text-sm text-gray-500">
-              La asignación pasará a estado inactivo y los estudiantes ya no
-              podrán ver el programa. Si vuelves a asignar el mismo programa
-              a la misma campaña, se reactivará automáticamente.
+              La asignacion pasara a estado inactivo y los estudiantes ya no
+              podran ver el programa. Si vuelves a asignar el mismo programa
+              a la misma campana, se reactivara automaticamente.
             </p>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

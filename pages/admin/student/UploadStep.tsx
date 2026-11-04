@@ -29,8 +29,8 @@ const UploadStep: React.FC<UploadStepProps> = ({ initialFile, onNext }) => {
           Sube tus archivos
         </h2>
         <p className="mb-6 mt-6 text-center">
-          Antes de subir los archivos en la sección de abajo, asegúrate de que
-          el archivo está listo para importarse
+          Antes de subir los archivos en la seccion de abajo, asegurate de que
+          el archivo esta listo para importarse
         </p>
         {/* File upload component with drag and drop support 
       <FileUpload
@@ -39,7 +39,7 @@ const UploadStep: React.FC<UploadStepProps> = ({ initialFile, onNext }) => {
           fileName={selectedFile?.name}
           fileSize={selectedFile ? Number((selectedFile.size / 1024).toFixed(2)) : undefined}
           title="Click to upload."
-          description="Aquí puedes arrastrar y soltar o elegir un archivo para subir tu lista de Usuarios."
+          description="Aqui puedes arrastrar y soltar o elegir un archivo para subir tu lista de Usuarios."
           instructions="Todos los tipos de archivos .csv y .xlsx son compatibles."
           icon={
             <svg

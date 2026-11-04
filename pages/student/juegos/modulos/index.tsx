@@ -52,7 +52,7 @@ const ModuleIndex = () => {
         const data = await getModulesByCourseId(Number(courseid));
         setModules(data);
       } catch {
-        setError("No se pudieron cargar los módulos. Intenta nuevamente.");
+        setError("No se pudieron cargar los modulos. Intenta nuevamente.");
       } finally {
         setIsLoading(false);
       }
@@ -67,7 +67,7 @@ const ModuleIndex = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
-        <p className="text-white">Cargando módulos...</p>
+        <p className="text-white">Cargando modulos...</p>
       </div>
     );
   }
@@ -83,7 +83,7 @@ const ModuleIndex = () => {
   if (modules.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
-        <p className="text-white">Este curso no tiene módulos.</p>
+        <p className="text-white">Este curso no tiene modulos.</p>
       </div>
     );
   }
@@ -97,7 +97,7 @@ const ModuleIndex = () => {
         >
           ← Volver
         </button>
-        <h1 className="text-2xl font-bold text-white mb-8">Módulos</h1>
+        <h1 className="text-2xl font-bold text-white mb-8">Modulos</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {modules.map((module) => (
             <ModuleCard

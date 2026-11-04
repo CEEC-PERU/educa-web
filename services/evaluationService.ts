@@ -95,15 +95,15 @@ export const updateEvaluation = async (
       questions,
     });
   } catch (error: any) {
-    console.error('Error al actualizar la evaluación:', error.message);
+    console.error('Error al actualizar la evaluacion:', error.message);
     if (error.response) {
       console.error('Detalles del error:', error.response.data);
       throw new Error(
-        `Error en la solicitud de actualización: ${error.response.data.message}`
+        `Error en la solicitud de actualizacion: ${error.response.data.message}`
       );
     } else {
       throw new Error(
-        'Error en la solicitud de actualización: El servidor respondió con un error, pero no proporcionó un mensaje específico.'
+        'Error en la solicitud de actualizacion: El servidor respondio con un error, pero no proporciono un mensaje especifico.'
       );
     }
   }

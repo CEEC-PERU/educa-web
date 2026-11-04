@@ -13,9 +13,9 @@ import {
   EvaluationOption,
 } from "../../../interfaces/EvaluationModule/EvaluationStudentAttempt";
 
-// Vista SUPERVISOR — detalle del intento de UN estudiante puntual en una evaluación
+// Vista SUPERVISOR — detalle del intento de UN estudiante puntual en una evaluacion
 // (user_id + evaluation_sche_id por query string). El nombre "CorporateUsers" es un
-// resto de copiar/pegar entre roles, no corresponde al contenido real de la página.
+// resto de copiar/pegar entre roles, no corresponde al contenido real de la pagina.
 const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const router = useRouter();
@@ -125,11 +125,11 @@ const CorporateUsers: NextPageWithLayout = () => {
     <>
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2 text-black">
-          Intentos de Evaluación del Usuario
+          Intentos de Evaluacion del Usuario
         </h2>
         {user_id && evaluation_sche_id && (
           <p className="text-gray-600">
-            Usuario ID: {user_id} | Evaluación ID: {evaluation_sche_id}
+            Usuario ID: {user_id} | Evaluacion ID: {evaluation_sche_id}
           </p>
         )}
       </div>
@@ -166,10 +166,10 @@ const CorporateUsers: NextPageWithLayout = () => {
                     Intento #
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Evaluación
+                    Evaluacion
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Puntuación
+                    Puntuacion
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Porcentaje
@@ -243,7 +243,7 @@ const CorporateUsers: NextPageWithLayout = () => {
       {!loading && !error && evaluationAttempts.length === 0 && (
         <div className="text-center py-8">
           <div className="text-gray-500 text-lg">
-            No se encontraron intentos de evaluación para este usuario.
+            No se encontraron intentos de evaluacion para este usuario.
           </div>
         </div>
       )}
@@ -251,7 +251,7 @@ const CorporateUsers: NextPageWithLayout = () => {
       {/* Missing Parameters State */}
       {(!user_id || !evaluation_sche_id) && (
         <div className="bg-amber-100 border border-amber-400 text-amber-700 px-4 py-3 rounded">
-          <strong>Información requerida:</strong> Se necesitan los parámetros
+          <strong>Informacion requerida:</strong> Se necesitan los parametros
           user_id y evaluation_sche_id en la URL.
         </div>
       )}
@@ -278,7 +278,7 @@ const CorporateUsers: NextPageWithLayout = () => {
                       {selectedAttempt.status}
                     </span>
                     <span className="text-sm text-gray-600">
-                      Puntuación: {selectedAttempt.score}/
+                      Puntuacion: {selectedAttempt.score}/
                       {selectedAttempt.evaluation.total_points} (
                       {selectedAttempt.percentage}%)
                     </span>
@@ -430,7 +430,7 @@ const CorporateUsers: NextPageWithLayout = () => {
                           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
                             <div className="flex items-start space-x-2">
                               <div className="text-blue-600 font-medium text-sm">
-                                💡 Explicación:
+                                💡 Explicacion:
                               </div>
                               <div className="text-blue-900 text-sm">
                                 {question.explanation}
@@ -443,7 +443,7 @@ const CorporateUsers: NextPageWithLayout = () => {
                         {!userAnswer && (
                           <div className="mt-3 p-2 bg-gray-100 border border-gray-300 rounded-md">
                             <span className="text-gray-600 text-sm">
-                              ⚠️ No se respondió esta pregunta
+                              ⚠️ No se respondio esta pregunta
                             </span>
                           </div>
                         )}

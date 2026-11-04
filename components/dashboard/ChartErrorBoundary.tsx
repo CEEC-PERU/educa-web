@@ -34,7 +34,7 @@ export default class ChartErrorBoundary extends Component<Props, State> {
         <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-sm text-amber-700">
           <span className="font-semibold">⚠️ No se pudo cargar: {this.props.title}</span>
           <span className="text-amber-600">
-            Este gráfico no está disponible temporalmente
+            Este grafico no esta disponible temporalmente
           </span>
         </div>
       );

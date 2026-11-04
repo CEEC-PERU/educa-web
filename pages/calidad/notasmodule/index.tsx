@@ -42,12 +42,12 @@ const NotasIndex: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [courseData, setCourseData] = useState<Course | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
-  const [observaciones, setObservaciones] = useState<string>(""); // Estado para guardar la nota de auditoría
+  const [observaciones, setObservaciones] = useState<string>(""); // Estado para guardar la nota de auditoria
   const [codllamada, setCodLlamada] = useState<string>("");
   const [resultado, setResultado] = useState<string>("");
   const [,] = useState<string>("");
   const [,] = useState<string>("");
-  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null); // Estado para guardar el módulo seleccionado
+  const [selectedModuleId, setSelectedModuleId] = useState<number | null>(null); // Estado para guardar el modulo seleccionado
   const router = useRouter();
   const { user_id, course_id } = router.query;
 
@@ -95,7 +95,7 @@ const NotasIndex: React.FC = () => {
   //envio post a base de datos
   const handleSubmitAuditoria = async () => {
     if (codllamada.trim() === "") {
-      alert("Por favor, ingrese el código de llamada.");
+      alert("Por favor, ingrese el codigo de llamada.");
       return;
     }
 
@@ -127,13 +127,13 @@ const NotasIndex: React.FC = () => {
         setCodLlamada("");
         setResultado("");
         setObservaciones("");
-        fetchCourseData(); // Refrescar los datos después de registrar
+        fetchCourseData(); // Refrescar los datos despues de registrar
       } else {
         alert("Error al registrar resultado");
       }
     } catch (error) {
       console.error("Error enviando datos:", error);
-      alert("Error en la conexión al servidor");
+      alert("Error en la conexion al servidor");
     }
   };
 
@@ -173,7 +173,7 @@ const NotasIndex: React.FC = () => {
                       </div>
                     ))}
 
-                  {/* Mostrar resultado de auditoría si existe */}
+                  {/* Mostrar resultado de auditoria si existe */}
                   {module.ResultAuditoria.length > 0 ? (
                     <div className="text-gray-700">
                       <p>
@@ -181,7 +181,7 @@ const NotasIndex: React.FC = () => {
                         {module.ResultAuditoria[0].cod_llamada || "Ninguno"}
                       </p>
                       <p>
-                        <strong>Resultado Auditoría:</strong>{" "}
+                        <strong>Resultado Auditoria:</strong>{" "}
                         {module.ResultAuditoria[0].resultado
                           ? "Aprobado"
                           : "Desaprobado"}
@@ -192,13 +192,13 @@ const NotasIndex: React.FC = () => {
                       </p>
                     </div>
                   ) : (
-                    // Si no hay resultado de auditoría, mostrar botón para registrar
+                    // Si no hay resultado de auditoria, mostrar boton para registrar
                     <div className="flex justify-between items-center pt-5">
                       <button
                         className="btn bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg px-4 py-2 transition-colors"
                         onClick={() => handleOpenModal(module.module_id)}
                       >
-                        Registrar Resultado Auditoría
+                        Registrar Resultado Auditoria
                       </button>
                     </div>
                   )}
@@ -208,12 +208,12 @@ const NotasIndex: React.FC = () => {
         </div>
       </div>
 
-      {/* Modal para registrar la auditoría */}
+      {/* Modal para registrar la auditoria */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-10 rounded-2xl shadow-md hover:shadow-lg transition-transform transform hover:scale-105 border border-gray-200">
             <h3 className="text-xl font-bold mb-4">
-              Registrar Resultado Auditoría
+              Registrar Resultado Auditoria
             </h3>
 
             <input

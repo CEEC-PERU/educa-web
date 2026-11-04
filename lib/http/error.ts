@@ -16,7 +16,7 @@ export type AppError = {
   cause?: unknown;
 };
 
-const DEFAULT_MESSAGE = "Ocurrió un error inesperado. Inténtalo nuevamente.";
+const DEFAULT_MESSAGE = "Ocurrio un error inesperado. Intentalo nuevamente.";
 
 function pickMessage(data: unknown, fallback: string): string {
   if (typeof data === "string" && data.trim().length > 0) return data;

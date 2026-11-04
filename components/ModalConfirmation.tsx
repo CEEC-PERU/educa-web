@@ -16,7 +16,7 @@ const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
   onClose,
   onConfirm,
   message = "¿Estas seguro que deseas inhabilitar este registro?",
-  confirmLabel = "Sí, inhabilitar",
+  confirmLabel = "Si, inhabilitar",
   confirmClassName = "text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 dark:bg-red-500 dark:hover:bg-red-600 focus:outline-none dark:focus:ring-red-700",
   isLoading = false,
   errorMessage = null,
@@ -32,7 +32,7 @@ const ModalConfirmation: React.FC<ModalConfirmationProps> = ({
               onClick={onClose}
               type="button"
               disabled={isLoading}
-              aria-label="Cerrar diálogo"
+              aria-label="Cerrar dialogo"
               className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
             >
               <svg

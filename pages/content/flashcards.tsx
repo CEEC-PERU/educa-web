@@ -49,7 +49,7 @@ const Flashcards: NextPageWithLayout = () => {
         <CourseCard
           key={course.course_id}
           course={course}
-          buttonLabel="Ver Módulos"
+          buttonLabel="Ver Modulos"
           onButtonClick={handleViewModules}
         />
       ))}

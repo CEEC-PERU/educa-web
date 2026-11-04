@@ -113,7 +113,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({
         <FormField
           id="code"
           className="text-black "
-          label="Código"
+          label="Codigo"
           type="text"
           value={formData.code}
           onChange={handleChange}

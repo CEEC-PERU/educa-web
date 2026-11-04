@@ -12,8 +12,8 @@ export const StarForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSu
 
   return (
     <div className="flex flex-col items-center justify-center h-full bg-gradient-to-b from-blue-900 to-cyan-700 p-6 rounded-lg shadow-lg">
-      <h2 className="text-white text-3xl mb-4">¿Cómo calificarías el curso?</h2>
-      <h6 className="text-white text-xl mb-4">Selecciona una calificación de estrellas</h6>
+      <h2 className="text-white text-3xl mb-4">¿Como calificarias el curso?</h2>
+      <h6 className="text-white text-xl mb-4">Selecciona una calificacion de estrellas</h6>
 
       {/* Contenedor de las estrellas */}
       <div className="flex justify-around w-full mb-4">
@@ -22,7 +22,7 @@ export const StarForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSu
             key={star}
             className={`text-5xl p-2 transition-transform ${
               selectedStar && selectedStar >= star
-                ? 'text-yellow-400'  // Color amarillo cuando está seleccionado
+                ? 'text-yellow-400'  // Color amarillo cuando esta seleccionado
                 : 'text-white'
             }`}
             onClick={() => setSelectedStar(star)}  // Asignar puntaje al hacer clic
@@ -32,7 +32,7 @@ export const StarForm: React.FC<{ onSubmit: (score: number) => void }> = ({ onSu
         ))}
       </div>
 
-      {/* Botón enviar solo si se selecciona una estrella */}
+      {/* Boton enviar solo si se selecciona una estrella */}
       {selectedStar !== null && (
         <button
           onClick={handleSubmit}

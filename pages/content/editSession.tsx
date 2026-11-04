@@ -35,7 +35,7 @@ const EditSession: NextPageWithLayout = () => {
         });
       })
       .catch((err: unknown) => {
-        toast.error(getUserFacingMessage(err) ?? "Error al cargar la sesión");
+        toast.error(getUserFacingMessage(err) ?? "Error al cargar la sesion");
       })
       .finally(() => setIsLoading(false));
   }, [id]);
@@ -65,10 +65,10 @@ const EditSession: NextPageWithLayout = () => {
     setIsSubmitting(true);
     try {
       await updateSession(id, session);
-      toast.success("Sesión actualizada exitosamente");
+      toast.success("Sesion actualizada exitosamente");
       router.back();
     } catch (err: unknown) {
-      toast.error(getUserFacingMessage(err) ?? "Error al actualizar la sesión");
+      toast.error(getUserFacingMessage(err) ?? "Error al actualizar la sesion");
     } finally {
       setIsSubmitting(false);
     }
@@ -93,7 +93,7 @@ const EditSession: NextPageWithLayout = () => {
         Volver
       </button>
 
-      <SectionCard title="Editar Sesión">
+      <SectionCard title="Editar Sesion">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex flex-col gap-1.5">
             <label
@@ -123,7 +123,7 @@ const EditSession: NextPageWithLayout = () => {
               htmlFor="duracion_minutos"
               className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
             >
-              Duración (minutos)
+              Duracion (minutos)
             </label>
             <input
               id="duracion_minutos"
@@ -142,7 +142,7 @@ const EditSession: NextPageWithLayout = () => {
               }`}
             />
             {touched && session.duracion_minutos === 0 && (
-              <p className="text-xs text-red-500">La duración es requerida</p>
+              <p className="text-xs text-red-500">La duracion es requerida</p>
             )}
           </div>
 
@@ -173,7 +173,7 @@ const EditSession: NextPageWithLayout = () => {
                   />
                 </svg>
               )}
-              {isSubmitting ? "Guardando..." : "Guardar sesión"}
+              {isSubmitting ? "Guardando..." : "Guardar sesion"}
             </button>
             <button
               type="button"

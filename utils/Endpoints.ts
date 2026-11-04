@@ -68,7 +68,7 @@ export const API_GET_COURSESTUDENT_ENTERPRISE = `${baseURL}/api/coursestudents/e
 
 export const API_GET_COURSESTUDENT_SUPERVISOR = `${baseURL}/api/coursestudents`;
 
-//tiempo de formación (learning time) del estudiante
+//tiempo de formacion (learning time) del estudiante
 export const API_GET_LEARNING_TIME = `${baseURL}/api/coursestudents/learning-time`;
 
 export const API_GET_COURSESTUDENTS = `${baseURL}/api/coursestudents/students`;
@@ -133,6 +133,12 @@ export const API_CLASSROOM = `${baseURL}/api/classrooms/enterprise`;
 export const API_CLASSROOM_CREATE = `${baseURL}/api/classrooms`;
 
 export const API_USERS_CREATE = `${baseURL}/api/users/bulk`;
+export const API_USERS_CREATE_MANUAL = `${baseURL}/api/users/create`;
+export const API_USERS_BULK = `${baseURL}/api/users/bulk`;
+export const API_USERS_SYNC_PREVIEW = `${baseURL}/api/users/sync/preview`;
+export const API_USERS_SYNC_CONFIRM = `${baseURL}/api/users/sync/confirm`;
+export const API_USERS_CHECK_DOCUMENT = `${baseURL}/api/users/check-document`;
+export const API_PRODUCTS = `${baseURL}/api/products`;
 
 export const API_USERS_COURSE_CREATE = `${baseURL}/api/users/courseusers`;
 
@@ -156,7 +162,7 @@ export const API_TEMPLATE = `${baseURL}/api/template`;
 
 export const API_COURSETIME = `${baseURL}/api/coursetime`;
 
-//frase del día
+//frase del dia
 export const API_GET_QUOTES_DAILY = `${baseURL}/api/quotes/daily`;
 
 export const API_ANSWER_TEMPLATE = `${baseURL}/api/answertemplate`;

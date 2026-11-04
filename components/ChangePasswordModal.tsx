@@ -9,6 +9,8 @@ import { useAuth } from "../context/AuthContext";
 interface Props {
   show: boolean;
   onClose: () => void;
+  mandatory?: boolean;
+  onPasswordChanged?: () => void;
 }
 
 interface FieldState {
@@ -65,7 +67,7 @@ const PasswordField = ({
   </div>
 );
 
-const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
+const ChangePasswordModal: React.FC<Props> = ({ show, onClose, mandatory = false, onPasswordChanged }) => {
   const { logout } = useAuth();
   const { isLoading, error, success, submitChangePassword } =
     useChangePassword();
@@ -98,7 +100,7 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
 
   const handleConfirmChange = (v: string) => {
     setConfirm((s) => ({ ...s, value: v }));
-    setConfirmError(v !== next.value ? "Las contraseñas no coinciden" : null);
+    setConfirmError(v !== next.value ? "Las contrasenas no coinciden" : null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,13 +113,17 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
     }
 
     if (next.value !== confirm.value) {
-      setConfirmError("Las contraseñas no coinciden");
+      setConfirmError("Las contrasenas no coinciden");
       return;
     }
 
     const ok = await submitChangePassword(current.value, next.value);
     if (ok) {
       setTimeout(() => {
+        if (mandatory) {
+          onPasswordChanged?.();
+          return;
+        }
         handleClose();
         logout();
       }, 1500);
@@ -131,21 +137,21 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100">
           <h2 className="text-base font-semibold text-gray-800">
-            Cambiar contraseña
+            {mandatory ? "Actualiza tu contrasena para continuar" : "Cambiar contrasena"}
           </h2>
-          <button
+          {!mandatory && <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             aria-label="Cerrar"
           >
             <XMarkIcon className="h-5 w-5" />
-          </button>
+          </button>}
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <PasswordField
             id="current-password"
-            label="Contraseña actual"
+            label="Contrasena actual"
             field={current}
             onChange={(v) => setCurrent((s) => ({ ...s, value: v }))}
             onToggle={() => setCurrent((s) => ({ ...s, visible: !s.visible }))}
@@ -153,7 +159,7 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
 
           <PasswordField
             id="new-password"
-            label="Nueva contraseña"
+            label="Nueva contrasena"
             field={next}
             onChange={handleNewPasswordChange}
             onToggle={() => setNext((s) => ({ ...s, visible: !s.visible }))}
@@ -162,7 +168,7 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
 
           <PasswordField
             id="confirm-password"
-            label="Confirmar nueva contraseña"
+            label="Confirmar nueva contrasena"
             field={confirm}
             onChange={handleConfirmChange}
             onToggle={() => setConfirm((s) => ({ ...s, visible: !s.visible }))}
@@ -170,7 +176,7 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
           />
 
           <p className="text-xs text-gray-400">
-            Mínimo 8 caracteres, una mayúscula, un número y un carácter
+            Minimo 8 caracteres, una mayuscula, un numero y un caracter
             especial.
           </p>
 
@@ -182,17 +188,18 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose }) => {
 
           {success && (
             <div className="px-3 py-2.5 rounded-lg bg-green-50 border border-green-200 text-sm text-green-700">
-              Contraseña actualizada. Cerrando sesión...
+              {mandatory ? "Contrasena actualizada. Continuando..." : "Contrasena actualizada. Cerrando sesion..."}
             </div>
           )}
 
           <div className="flex justify-end gap-2 pt-2">
             <button
               type="button"
-              onClick={handleClose}
+              onClick={mandatory ? undefined : handleClose}
+              disabled={mandatory}
               className="px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
             >
-              Cancelar
+              {mandatory ? "Cambio obligatorio" : "Cancelar"}
             </button>
             <button
               type="submit"

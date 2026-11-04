@@ -39,10 +39,10 @@ const AddSession: NextPageWithLayout = () => {
         video_enlace: videoUrl,
         module_id: moduleId,
       });
-      toast.success("Sesión creada exitosamente");
+      toast.success("Sesion creada exitosamente");
       router.back();
     } catch (err: unknown) {
-      toast.error(getUserFacingMessage(err) ?? "Error al crear la sesión");
+      toast.error(getUserFacingMessage(err) ?? "Error al crear la sesion");
     } finally {
       setIsSubmitting(false);
     }
@@ -59,7 +59,7 @@ const AddSession: NextPageWithLayout = () => {
         Volver
       </button>
 
-      <SectionCard title="Nueva Sesión">
+      <SectionCard title="Nueva Sesion">
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormField
             id="name"
@@ -73,7 +73,7 @@ const AddSession: NextPageWithLayout = () => {
           />
           <FormField
             id="duracion_minutos"
-            label="Duración (minutos)"
+            label="Duracion (minutos)"
             type="text"
             value={duracion}
             onChange={(e) => {
@@ -126,7 +126,7 @@ const AddSession: NextPageWithLayout = () => {
                   />
                 </svg>
               )}
-              {isSubmitting ? "Guardando..." : "Guardar sesión"}
+              {isSubmitting ? "Guardando..." : "Guardar sesion"}
             </button>
             <button
               type="button"

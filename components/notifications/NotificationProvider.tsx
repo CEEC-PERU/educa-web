@@ -47,7 +47,7 @@ const NotificationProvider: React.FC = () => {
           <button
             type="button"
             onClick={() => dismiss(item.id)}
-            aria-label="Cerrar notificación"
+            aria-label="Cerrar notificacion"
             className="ml-2 p-1 rounded hover:bg-black/5"
           >
             <XMarkIcon className="w-4 h-4" />

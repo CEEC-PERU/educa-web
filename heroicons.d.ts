@@ -8,7 +8,7 @@ declare module '@heroicons/react/24/solid' {
   export const XIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const SearchIcon: ComponentType<SVGProps<SVGSVGElement>>;
 
-  // Añadir íconos adicionales
+  // Anadir iconos adicionales
   export const AcademicCapIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const ChevronDownIcon: ComponentType<SVGProps<SVGSVGElement>>;
   export const ChatIcon: ComponentType<SVGProps<SVGSVGElement>>;

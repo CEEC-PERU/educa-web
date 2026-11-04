@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/calidad/SibebarCalidad";
 import { useAuth } from "../../context/AuthContext";
@@ -9,7 +9,7 @@ import CourseCard from "./../../components/CourseCard";
 const Calidad: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [courses, setCourses] = useState<any[]>([]);
@@ -36,35 +36,35 @@ const Calidad: React.FC = () => {
   // Datos de ejemplo para la tabla
   const studentData = [
     {
-      name: "Juan Pérez",
-      module1: "Introducción a React",
+      name: "Juan Perez",
+      module1: "Introduccion a React",
       module2: "React Avanzado",
       finalGrade: "A",
       status: "Completado",
     },
     {
-      name: "Ana Gómez",
+      name: "Ana Gomez",
       module1: "Fundamentos de JavaScript",
       module2: "JavaScript ES6",
       finalGrade: "B",
       status: "En progreso",
     },
     {
-      name: "Luis Martínez",
-      module1: "HTML & CSS Básico",
+      name: "Luis Martinez",
+      module1: "HTML & CSS Basico",
       module2: "HTML & CSS Avanzado",
       finalGrade: "C",
       status: "Completado",
     },
     {
-      name: "Laura Sánchez",
-      module1: "Programación en Python",
+      name: "Laura Sanchez",
+      module1: "Programacion en Python",
       module2: "Data Science con Python",
       finalGrade: "B",
       status: "Completado",
     },
     {
-      name: "Carlos Ramírez",
+      name: "Carlos Ramirez",
       module1: "Bases de Datos SQL",
       module2: "Bases de Datos NoSQL",
       finalGrade: "A",

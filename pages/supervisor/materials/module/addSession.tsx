@@ -125,7 +125,7 @@ const AddSession: NextPageWithLayout = () => {
               {showAlert && (
                 <AlertComponent
                   type="danger"
-                  message={error || "Sesión agregada exitosamente."}
+                  message={error || "Sesion agregada exitosamente."}
                   onClose={() => setShowAlert(false)}
                 />
               )}
@@ -152,7 +152,7 @@ const AddSession: NextPageWithLayout = () => {
               />
               <FormField
                 id="duracion_minutos"
-                label="Duración (minutos)"
+                label="Duracion (minutos)"
                 type="text"
                 value={session.duracion_minutos.toString()}
                 onChange={handleChange}

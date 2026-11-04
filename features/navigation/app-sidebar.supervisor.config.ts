@@ -39,7 +39,7 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
     icon: BookOpenIcon,
     matchMode: "prefix",
   },
-  // Ocultos del sidebar a pedido: no deben aparecer como navegación para supervisor.
+  // Ocultos del sidebar a pedido: no deben aparecer como navegacion para supervisor.
   // Las rutas siguen existiendo, solo se quita el link de acceso.
   // {
   //   id: "evaluations",
@@ -64,7 +64,7 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
   // },
   //{
   //  id: "trainings",
-  //  label: "Programas de Formación",
+  //  label: "Programas de Formacion",
   //  href: "/supervisor/trainings",
   //  icon: TagIcon,
   // children: [
@@ -89,7 +89,7 @@ export const supervisorSidebarItems: AppSidebarItem[] = [
   //},
   {
     id: "logout",
-    label: "Cerrar Sesión",
+    label: "Cerrar Sesion",
     icon: LogoutIcon,
     action: "logout",
   },

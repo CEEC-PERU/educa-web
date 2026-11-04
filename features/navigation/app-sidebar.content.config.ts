@@ -19,7 +19,7 @@ export const contentSidebarBaseItems: AppSidebarItem[] = [
   },
   {
     id: "categories",
-    label: "Categorías",
+    label: "Categorias",
     href: "/content/category",
     icon: TagIcon,
     matchMode: "exact",
@@ -40,7 +40,7 @@ export const contentSidebarBaseItems: AppSidebarItem[] = [
   },
   {
     id: "modules",
-    label: "Módulos",
+    label: "Modulos",
     href: "/content/module",
     icon: RectangleStackIcon,
     matchMode: "prefix",
@@ -54,7 +54,7 @@ export const contentSidebarBaseItems: AppSidebarItem[] = [
   },
   {
     id: "logout",
-    label: "Cerrar Sesión",
+    label: "Cerrar Sesion",
     icon: LogoutIcon,
     action: "logout",
   },

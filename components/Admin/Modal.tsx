@@ -44,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({
 
   if (!modalIsOpen) return null;
 
-  // Definir tamaños del modal
+  // Definir tamanos del modal
   const sizeClasses = {
     sm: "max-w-md",
     md: "max-w-2xl",

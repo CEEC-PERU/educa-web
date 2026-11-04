@@ -29,7 +29,7 @@ export const useTrainingAssignment = (programId: number | undefined) => {
           setError(null);
         } else {
           setError(
-            'Error al cargar los estudiantes asignados al programa de formación',
+            'Error al cargar los estudiantes asignados al programa de formacion',
           );
           console.error(err);
         }
@@ -51,7 +51,7 @@ export const useTrainingAssignment = (programId: number | undefined) => {
       setError(null);
     } catch (err) {
       setError(
-        'Error al cargar los estudiantes asignados al programa de formación',
+        'Error al cargar los estudiantes asignados al programa de formacion',
       );
     } finally {
       setLoading(false);

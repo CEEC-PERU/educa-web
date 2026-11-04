@@ -2,6 +2,7 @@ export interface LoginResponse {
     code?: number;
     msg?: string;
     token?: string;
+    must_change_password?: boolean;
     possibleAttempts?: number
 }
 

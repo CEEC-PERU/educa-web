@@ -4,7 +4,7 @@ import { useCertificationUser } from "@/hooks/resultado/useCertificationUser";
 import AppLayout from "@/components/layouts/AppLayout";
 import type { NextPageWithLayout } from "@/types/next";
 
-// Vista SUPERVISOR — progreso de asignaciones/estudiantes para una certificación puntual
+// Vista SUPERVISOR — progreso de asignaciones/estudiantes para una certificacion puntual
 // (certificationId en la ruta). Fuente: useCertificationUser.
 const CertificationStudents: NextPageWithLayout = () => {
   const router = useRouter();
@@ -41,7 +41,7 @@ const CertificationStudents: NextPageWithLayout = () => {
 
         const id = Number(certificationId);
 
-        // Cargar detalles de la certificación y estudiantes
+        // Cargar detalles de la certificacion y estudiantes
         const [detailsData, progressData] = await Promise.all([
           getCertificationAssignmentDetails(id),
           getCertificationStudentsProgress(id),
@@ -83,7 +83,7 @@ const CertificationStudents: NextPageWithLayout = () => {
     return matchesSearch && matchesStatus && matchesClassroom;
   });
 
-  // Función para badges de estado
+  // Funcion para badges de estado
   const getStatusBadge = (status: string) => {
     const styles: any = {
       in_progress: "bg-blue-100 text-blue-800",
@@ -144,7 +144,7 @@ const CertificationStudents: NextPageWithLayout = () => {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-black mb-2">
-                    {certificationInfo?.title || "Estudiantes de Certificación"}
+                    {certificationInfo?.title || "Estudiantes de Certificacion"}
                   </h2>
                   <p className="text-gray-600">
                     Total estudiantes: {students.length}
@@ -153,7 +153,7 @@ const CertificationStudents: NextPageWithLayout = () => {
               </div>
             </div>
 
-            {/* Estadísticas rápidas */}
+            {/* Estadisticas rapidas */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
               <div className="bg-white p-4 rounded-lg shadow">
                 <div className="text-2xl font-bold text-blue-600">
@@ -259,7 +259,7 @@ const CertificationStudents: NextPageWithLayout = () => {
                           Estado
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Puntuación
+                          Puntuacion
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           Porcentaje para aprobar
@@ -271,7 +271,7 @@ const CertificationStudents: NextPageWithLayout = () => {
                           Tiempo (min)
                         </th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                          Último intento
+                          Ultimo intento
                         </th>
                       </tr>
                     </thead>
@@ -339,7 +339,7 @@ const CertificationStudents: NextPageWithLayout = () => {
                 <div className="text-center py-12">
                   <p className="text-gray-500 text-lg">
                     {students.length === 0
-                      ? "No hay estudiantes registrados para esta certificación."
+                      ? "No hay estudiantes registrados para esta certificacion."
                       : "No se encontraron estudiantes con los filtros aplicados."}
                   </p>
                 </div>

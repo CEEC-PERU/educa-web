@@ -91,7 +91,7 @@ const DayContentsModal: React.FC<DayContentsModalProps> = ({
               onClick={() => handleContentClick(content.content_id)}
               className="group relative bg-white border-2 border-gray-200 hover:border-blue-400 rounded-xl p-4 cursor-pointer transition-all hover:shadow-lg"
             >
-              {/* Número */}
+              {/* Numero */}
               <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md">
                 {index + 1}
               </div>
@@ -131,7 +131,7 @@ const DayContentsModal: React.FC<DayContentsModalProps> = ({
         </div>
       </div>
 
-      {/* Animación */}
+      {/* Animacion */}
       <style jsx>{`
         @keyframes slide-in {
           from {

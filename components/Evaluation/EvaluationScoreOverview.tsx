@@ -28,7 +28,7 @@ const EvaluationScoreOverview: React.FC<EvaluationScoreOverviewProps> = ({
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center">
         <div>
           <h3 className="text-2xl font-bold text-gray-900 mb-2">
-            Puntuación Final
+            Puntuacion Final
           </h3>
           <div className="flex items-center gap-4 mb-4">
             <span className={`text-4xl font-bold ${scoreColors.text}`}>
@@ -58,7 +58,7 @@ const EvaluationScoreOverview: React.FC<EvaluationScoreOverviewProps> = ({
           </div>
           <div className="text-center">
             <TargetIcon className="h-8 w-8 text-blue-500 mx-auto mb-1" />
-            <p className="text-sm text-gray-600">Puntuación Mínima</p>
+            <p className="text-sm text-gray-600">Puntuacion Minima</p>
             <p className="font-bold text-lg">{passingScore} pts</p>
           </div>
         </div>

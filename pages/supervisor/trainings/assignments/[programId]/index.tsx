@@ -20,7 +20,7 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
     Number(programId),
   );
 
-  // Helper para obtener color según progreso
+  // Helper para obtener color segun progreso
   const getProgressColor = (percentage: number) => {
     if (percentage === 0) return 'from-gray-400 to-gray-500';
     if (percentage < 30) return 'from-red-400 to-red-500';
@@ -51,9 +51,9 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
   };
 
   const exportToCSV = () => {
-    const headers = ['DNI', 'Campaña', 'Contenidos Completados', 'Total Contenidos', 'Progreso (%)'];
+    const headers = ['Estudiante', 'Campana', 'Contenidos Completados', 'Total Contenidos', 'Progreso (%)'];
     const rows = studentAssignments.map((s) => [
-      s.dni,
+      `Usuario ${s.student_id}`,
       `"${(s.classroom.name || '').replace(/"/g, '""')}"`,
       s.progress.completed_contents,
       s.progress.total_contents,
@@ -77,7 +77,7 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
   return (
     <>
       <div className="max-w-7xl mx-auto">
-            {/* Header con estadísticas rápidas */}
+            {/* Header con estadisticas rapidas */}
             <div className="mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
                 <div>
@@ -273,8 +273,8 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
                     No hay estudiantes asignados
                   </h3>
                   <p className="text-gray-600 max-w-sm mx-auto">
-                    Aún no se han asignado estudiantes a este programa. Asigna
-                    campañas para comenzar.
+                    Aun no se han asignado estudiantes a este programa. Asigna
+                    campanas para comenzar.
                   </p>
                 </div>
               ) : (
@@ -305,10 +305,10 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
                                 </div>
                                 <div>
                                   <p className="text-xs text-gray-500 font-medium">
-                                    DNI
+                                    Estudiante
                                   </p>
                                   <p className="text-lg font-bold text-gray-900">
-                                    {student.dni}
+                                    {`Usuario ${student.student_id}`}
                                   </p>
                                 </div>
                               </div>
@@ -322,12 +322,12 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
                               </span>
                             </div>
 
-                            {/* Campaña */}
+                            {/* Campana */}
                             <div className="mb-5">
                               <div className="flex items-center gap-2 mb-1.5">
                                 <Building2 className="w-4 h-4 text-gray-400" />
                                 <p className="text-xs text-gray-500 font-medium">
-                                  Campaña
+                                  Campana
                                 </p>
                               </div>
                               <p className="text-sm font-semibold text-gray-700 pl-6">
@@ -393,7 +393,7 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
             </div>
       </div>
 
-      {/* Estilos para la animación del shimmer */}
+      {/* Estilos para la animacion del shimmer */}
       <style jsx>{`
         @keyframes shimmer {
           0% {

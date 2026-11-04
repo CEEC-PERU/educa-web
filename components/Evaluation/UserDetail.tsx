@@ -72,7 +72,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
                 {getUserDisplayName(selectedUser.student)}
               </h3>
               <p className="text-gray-600">
-                Asignación #{selectedUser.assignment_id}
+                Asignacion #{selectedUser.assignment_id}
               </p>
             </div>
             <div className="text-right">
@@ -85,7 +85,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
             </div>
           </div>
 
-          {/* Botón Ver Detalles Completos */}
+          {/* Boton Ver Detalles Completos */}
           <div className="mt-4">
             <button
               onClick={handleViewDetails}
@@ -110,37 +110,18 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                 />
               </svg>
-              Ver Evaluación Completa
+              Ver Evaluacion Completa
             </button>
           </div>
         </div>
 
-        {/* Información del Usuario */}
+        {/* Informacion del Usuario */}
         <div className="mb-6">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">
-            Información Personal
+            Informacion Personal
           </h4>
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-medium text-gray-500">DNI</label>
-              <p className="text-gray-900">
-                {selectedUser.student?.dni || 'No disponible'}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">Email</label>
-              <p className="text-gray-900">
-                {selectedUser.student?.userProfile?.email || 'No disponible'}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-500">
-                Teléfono
-              </label>
-              <p className="text-gray-900">
-                {selectedUser.student?.userProfile?.phone || 'No disponible'}
-              </p>
-            </div>
+
             <div>
               <label className="text-sm font-medium text-gray-500">
                 Estado
@@ -160,32 +141,11 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
           </div>
         </div>
 
-        {/* Información de IDs para debugging */}
-        <div className="mb-6 p-3 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-semibold mb-2 text-gray-700">
-            IDs de Sistema
-          </h4>
-          <div className="grid grid-cols-2 gap-4 text-xs">
-            <div>
-              <span className="text-gray-500">User ID:</span>
-              <span className="ml-2 font-mono">
-                {selectedUser.student?.user_id || 'N/A'}
-              </span>
-            </div>
-            <div>
-              <span className="text-gray-500">Evaluation Sche ID:</span>
-              <span className="ml-2 font-mono">
-                {selectedUser.evaluation_sche_id || 'N/A'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Fechas de la Evaluación */}
+        {/* Fechas de la Evaluacion */}
         {(selectedUser.start_date || selectedUser.due_date) && (
           <div className="mb-6">
             <h4 className="text-lg font-semibold mb-3 text-gray-800">
-              Fechas de la Evaluación
+              Fechas de la Evaluacion
             </h4>
             <div className="grid grid-cols-2 gap-4">
               {selectedUser.start_date && (
@@ -212,11 +172,11 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
           </div>
         )}
 
-        {/* Estadísticas de Intentos */}
+        {/* Estadisticas de Intentos */}
         {selectedUser.evaluation && (
           <div className="mb-6">
             <h4 className="text-lg font-semibold mb-3 text-gray-800">
-              Estadísticas de Evaluación
+              Estadisticas de Evaluacion
             </h4>
             <div className="grid grid-cols-3 gap-4 mb-4">
               <div className="text-center p-3 bg-blue-50 rounded-lg">
@@ -229,13 +189,13 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
                 <p className="text-2xl font-bold text-gray-600">
                   {selectedUser.evaluation?.max_attempts || 0}
                 </p>
-                <p className="text-sm text-gray-600">Intentos Máximos</p>
+                <p className="text-sm text-gray-600">Intentos Maximos</p>
               </div>
               <div className="text-center p-3 bg-green-50 rounded-lg">
                 <p className="text-2xl font-bold text-green-600">
                   {getLatestScore(selectedUser) || 'N/A'}
                 </p>
-                <p className="text-sm text-gray-600">Última Puntuación</p>
+                <p className="text-sm text-gray-600">Ultima Puntuacion</p>
               </div>
             </div>
           </div>
@@ -256,7 +216,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({
                         #
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                        Puntuación
+                        Puntuacion
                       </th>
                       <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
                         Estado

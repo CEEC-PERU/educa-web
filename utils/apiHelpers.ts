@@ -29,12 +29,12 @@ export const fetchWithTimeout = async (
     clearTimeout(timeoutId);
     if (error instanceof Error && error.name === 'AbortError') {
       throw new ApiError(
-        'La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.',
+        'La solicitud tardo demasiado tiempo. Por favor, intente nuevamente.',
         408
       );
     }
     throw new ApiError(
-      'Error de conexión. Verifique su internet e intente nuevamente.',
+      'Error de conexion. Verifique su internet e intente nuevamente.',
       0
     );
   }
@@ -56,7 +56,7 @@ export const handleApiResponse = async (response: Response): Promise<any> => {
         backendMessage = errorData.message || errorData.error || errorText;
         errorMessage = errorData.message || `Error ${response.status}`;
 
-        if (errorData.message?.includes('ya está asignado')) {
+        if (errorData.message?.includes('ya esta asignado')) {
           errorType = 'duplicate_assignment';
         } else if (errorData.message?.includes('IDs proporcionado')) {
           errorType = 'invalid_id';

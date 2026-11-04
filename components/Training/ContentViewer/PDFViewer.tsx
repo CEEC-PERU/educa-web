@@ -48,19 +48,19 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
           <>
             <p className="text-green-400 text-xs flex items-center gap-1.5">
               <CheckCircle className="w-4 h-4" />
-              Tiempo de lectura completado. Ya puedes marcar como leído.
+              Tiempo de lectura completado. Ya puedes marcar como leido.
             </p>
             <button
               onClick={onComplete}
               className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-lg transition-all shadow-lg animate-fade-in"
             >
-              Marcar como leído
+              Marcar como leido
             </button>
           </>
         ) : (
           <>
             <p className="text-gray-400 text-xs">
-              Lee el documento completo antes de marcarlo como leído.
+              Lee el documento completo antes de marcarlo como leido.
             </p>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1.5 text-amber-400 text-sm font-mono font-semibold">
@@ -71,7 +71,7 @@ const PDFViewer: React.FC<PDFViewerProps> = ({
                 disabled
                 className="px-4 py-2 bg-gray-600 text-gray-400 text-sm font-bold rounded-lg cursor-not-allowed opacity-50"
               >
-                Marcar como leído
+                Marcar como leido
               </button>
             </div>
           </>

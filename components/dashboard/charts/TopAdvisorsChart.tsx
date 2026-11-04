@@ -24,7 +24,7 @@ const TopAdvisorsChart = ({ data }: Props) => {
           <h2 className="text-xl font-bold text-gray-800">Top 5 de Asesores</h2>
         </div>
         <div className="relative flex items-center justify-center text-gray-400 text-sm" style={{ height: "300px" }}>
-          Ningún alumno ha completado este curso
+          Ningun alumno ha completado este curso
         </div>
       </div>
     );

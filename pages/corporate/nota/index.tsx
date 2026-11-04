@@ -52,31 +52,31 @@ const getStatus = (finalExamGrade: number) => {
   return 'Desaprobado';
 };
 
-// MEJORADA: Función unificada para obtener el puntaje (último intento con fallback al primero)
+// MEJORADA: Funcion unificada para obtener el puntaje (ultimo intento con fallback al primero)
 const getLastAttemptGrade = (courseResults: any[]) => {
   if (!courseResults || courseResults.length === 0) return null;
 
-  // Función helper para validar si un puntaje es válido
+  // Funcion helper para validar si un puntaje es valido
   const isValidScore = (score: any) => {
     return score !== null && score !== undefined && !isNaN(Number(score));
   };
 
-  // Si solo hay un resultado, devolverlo si es válido
+  // Si solo hay un resultado, devolverlo si es valido
   if (courseResults.length === 1) {
     const score = courseResults[0]?.puntaje;
     return isValidScore(score) ? score : null;
   }
 
-  // Si hay múltiples resultados, intentar obtener el último (más reciente)
+  // Si hay multiples resultados, intentar obtener el ultimo (mas reciente)
   const lastResult = courseResults[courseResults.length - 1];
   const lastScore = lastResult?.puntaje;
 
-  // Si el último intento tiene puntaje válido, usarlo
+  // Si el ultimo intento tiene puntaje valido, usarlo
   if (isValidScore(lastScore)) {
     return lastScore;
   }
 
-  // FALLBACK: Si el último intento no tiene puntaje válido, usar el primero
+  // FALLBACK: Si el ultimo intento no tiene puntaje valido, usar el primero
   const firstResult = courseResults[0];
   const firstScore = firstResult?.puntaje;
 
@@ -152,7 +152,7 @@ const NotaCourses: NextPageWithLayout = () => {
       const profileCounts = { withProfile: 0, withoutProfile: 0 };
 
       currentCourseData.forEach((user) => {
-        // UNIFICADA: Usar la misma lógica para ambas vistas (general y aula específica)
+        // UNIFICADA: Usar la misma logica para ambas vistas (general y aula especifica)
         const examGrade = getLastAttemptGrade(user.CourseResults);
 
         if (examGrade !== null && examGrade !== undefined) {
@@ -218,7 +218,7 @@ const NotaCourses: NextPageWithLayout = () => {
           Reporte de Notas
         </h1>
         <p className="text-gray-600">
-          Análisis detallado del rendimiento académico
+          Analisis detallado del rendimiento academico
         </p>
       </div>
 
@@ -283,7 +283,7 @@ const NotaCourses: NextPageWithLayout = () => {
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <ChartCard
-              title="Rendimiento Académico"
+              title="Rendimiento Academico"
               icon={<FiBarChart2 className="mr-2 text-blue-500" />}
             >
               <Chart

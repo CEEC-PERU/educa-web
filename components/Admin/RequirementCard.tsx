@@ -78,7 +78,7 @@ const RequirementCard: React.FC<RequirementCardProps> = ({ requirement, onUpdate
       <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <p className="text-gray-700 mb-2"><strong>Nombre del Curso:</strong> {requirement.course_name}</p>
-          <p className="text-gray-700 mb-2"><strong>Duración del Curso:</strong> {requirement.course_duration}</p>
+          <p className="text-gray-700 mb-2"><strong>Duracion del Curso:</strong> {requirement.course_duration}</p>
           <p className="text-gray-700 mb-2"><strong>Fecha propuesta:</strong> {formatDate(requirement.proposed_date)}</p>
           <p className="text-gray-700 mb-2"><strong>Materiales:</strong></p>
           {requirement.materials && requirement.materials.length > 0 ? (

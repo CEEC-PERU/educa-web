@@ -63,10 +63,10 @@ const Classroom: NextPageWithLayout = () => {
             {/* Header Section */}
             <div className="mb-8">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-                Gestión de Aulas
+                Gestion de Aulas
               </h1>
               <p className="text-gray-600">
-                Administra profesores, aulas y cursos de tu institución
+                Administra profesores, aulas y cursos de tu institucion
               </p>
             </div>
 
@@ -81,7 +81,7 @@ const Classroom: NextPageWithLayout = () => {
                   </h2>
                   <FloatingButton
                     onClick={handleAddUser}
-                    label="Añadir Profesor"
+                    label="Anadir Profesor"
                   />
                 </div>
 
@@ -128,7 +128,7 @@ const Classroom: NextPageWithLayout = () => {
                     </h2>
                     <FloatingButton
                       onClick={handleAddClassroom}
-                      label="Añadir Aula"
+                      label="Anadir Aula"
                     />
                   </div>
 

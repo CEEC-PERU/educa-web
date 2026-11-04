@@ -7,7 +7,6 @@ import {
 } from "@heroicons/react/24/solid";
 import { useStudentVerificationFlow } from "@/hooks/student/useStudentVerificationFlow";
 import SignatureCanvasSection from "./verification/SignatureCanvasSection";
-import IdentityCaptureSection from "./verification/IdentityCaptureSection";
 import ConsentSection from "./verification/ConsentSection";
 
 const LoadingSpinner = () => (
@@ -46,23 +45,18 @@ export default function StudentVerificationModal() {
     isOpen,
     loading,
     signature,
-    photo,
     consentGiven,
     setConsentGiven,
     canvasRef,
-    videoRef,
-    cameraStream,
     handleStartDrawing,
     handleDrawing,
     handleStopDrawing,
     clearCanvas,
     confirmSignature,
-    startCamera,
-    capturePhoto,
     submit,
   } = useStudentVerificationFlow();
 
-  const canSubmit = Boolean(photo && signature && consentGiven);
+  const canSubmit = Boolean(signature && consentGiven);
 
   if (!isDesktop) return null;
 
@@ -83,10 +77,10 @@ export default function StudentVerificationModal() {
               <DocumentTextIcon className="w-10 h-10 text-blue-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900">
-              Autorización de Tratamiento de Datos
+              Autorizacion de Tratamiento de Datos
             </h2>
             <p className="text-lg text-gray-500 mt-2">
-              Complete su información de verificación
+              Revise y firme su declaracion de consentimiento
             </p>
           </div>
 
@@ -97,13 +91,13 @@ export default function StudentVerificationModal() {
               </div>
               <div className="ml-3">
                 <h3 className="text-lg font-semibold text-blue-800 mb-2">
-                  Declaración de Consentimiento
+                  Declaracion de Consentimiento
                 </h3>
                 <p className="text-gray-700">
-                  "Autorizo el tratamiento de mis datos personales (incluyendo
-                  imagen y firma) para efectos de registro de asistencia y
+                  "Autorizo el tratamiento de mis datos personales y de mi
+                  firma para efectos de registro de asistencia y
                   control de ingreso, conforme a lo dispuesto en la Ley N.º
-                  29733 - Ley de Protección de Datos Personales."
+                  29733 - Ley de Proteccion de Datos Personales."
                 </p>
               </div>
             </div>
@@ -117,14 +111,6 @@ export default function StudentVerificationModal() {
             clearCanvas={clearCanvas}
             confirmSignature={confirmSignature}
             signature={signature}
-          />
-
-          <IdentityCaptureSection
-            videoRef={videoRef}
-            cameraStream={cameraStream}
-            photo={photo}
-            startCamera={startCamera}
-            capturePhoto={capturePhoto}
           />
 
           <ConsentSection

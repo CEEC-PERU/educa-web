@@ -62,7 +62,7 @@ const DetailView: React.FC<CourseDetailViewProps> = ({
               <ClockIcon className="w-4 h-4 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-400 leading-none mb-0.5">
-                  Duración
+                  Duracion
                 </p>
                 <p className="text-sm font-medium text-gray-700">{duration}</p>
               </div>
@@ -74,7 +74,7 @@ const DetailView: React.FC<CourseDetailViewProps> = ({
               <DocumentCheckIcon className="w-4 h-4 text-gray-400" />
               <div>
                 <p className="text-xs text-gray-400 leading-none mb-0.5">
-                  Evaluación
+                  Evaluacion
                 </p>
                 <p className="text-sm font-medium text-gray-700">
                   {evaluationName}
@@ -108,7 +108,7 @@ const DetailView: React.FC<CourseDetailViewProps> = ({
         {videoUrl && (
           <div className="flex flex-col gap-2 pt-2">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
-              Video de introducción
+              Video de introduccion
             </p>
             <div className="aspect-video rounded-xl overflow-hidden bg-black">
               <video src={videoUrl} controls className="w-full h-full" />

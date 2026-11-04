@@ -42,18 +42,18 @@ export const UsersList: React.FC<UsersListProps> = ({
 
   return (
     <div className="w-1/2 bg-white rounded-lg shadow-md">
-      {/* Controles de Búsqueda y Filtros */}
+      {/* Controles de Busqueda y Filtros */}
       <div className="p-4 border-b border-gray-200">
         <div className="space-y-4">
           {/* Info sobre doble click */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-xs text-blue-600">
               💡 <strong>Tip:</strong> Haz doble clic en un usuario para ver su
-              evaluación completa
+              evaluacion completa
             </p>
           </div>
 
-          {/* Barra de Búsqueda */}
+          {/* Barra de Busqueda */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg
@@ -72,7 +72,7 @@ export const UsersList: React.FC<UsersListProps> = ({
             </div>
             <input
               type="text"
-              placeholder="Buscar por DNI, nombre o email..."
+              placeholder="Buscar por nombre..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -133,7 +133,7 @@ export const UsersList: React.FC<UsersListProps> = ({
                 }`}
                 onClick={() => setSelectedUser(assignment)}
                 onDoubleClick={() => handleUserDoubleClick(assignment)}
-                title="Doble clic para ver evaluación completa"
+                title="Doble clic para ver evaluacion completa"
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
@@ -141,7 +141,6 @@ export const UsersList: React.FC<UsersListProps> = ({
                       {getUserDisplayName(assignment.student)}
                     </h4>
                     <p className="text-sm text-gray-500">
-                      DNI: {assignment.student?.dni || 'N/A'}
                     </p>
                     <p className="text-sm text-gray-500">
                       {assignment.student?.userProfile?.email || 'Sin email'}
@@ -152,15 +151,10 @@ export const UsersList: React.FC<UsersListProps> = ({
                       )}
                       {getLatestScore(assignment) && (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                          Puntuación: {getLatestScore(assignment)}
+                          Puntuacion: {getLatestScore(assignment)}
                         </span>
                       )}
                     </div>
-                    {/* IDs en pequeño para debug */}
-                    <p className="text-xs text-gray-400 mt-1">
-                      User: {assignment.student?.user_id} | Eval:{' '}
-                      {assignment.evaluation_sche_id}
-                    </p>
                   </div>
                   <div className="text-right text-xs text-gray-500">
                     <p>ID: {assignment.assignment_id}</p>
@@ -197,7 +191,7 @@ export const UsersList: React.FC<UsersListProps> = ({
                 d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.501-.881-6.119-2.333l-.135-.135A7.962 7.962 0 0112 5a7.958 7.958 0 0114 7.083"
               />
             </svg>
-            <p>No se encontraron usuarios que coincidan con la búsqueda</p>
+            <p>No se encontraron usuarios que coincidan con la busqueda</p>
           </div>
         )}
       </div>

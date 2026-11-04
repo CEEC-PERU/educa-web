@@ -13,12 +13,12 @@ const ProgressDistributionChart = ({ data }: Props) => {
       <div className="border border-gray-200 p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300">
         <div className="flex justify-between items-center mb-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Distribución de progreso</h2>
+            <h2 className="text-xl font-bold text-gray-800">Distribucion de progreso</h2>
             <p className="text-sm text-gray-500 mt-1">Estudiantes por rango de avance</p>
           </div>
         </div>
         <div className="relative flex items-center justify-center text-gray-400 text-sm" style={{ height: "300px" }}>
-          Selecciona un curso para ver la distribución
+          Selecciona un curso para ver la distribucion
         </div>
       </div>
     );
@@ -26,7 +26,7 @@ const ProgressDistributionChart = ({ data }: Props) => {
 
   return (
     <ChartCard
-      title="Distribución de progreso"
+      title="Distribucion de progreso"
       subtitle="Estudiantes por rango de avance"
       type="donut"
       series={data.map((item) => item.count)}

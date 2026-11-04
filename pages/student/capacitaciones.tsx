@@ -26,7 +26,7 @@ const CapacitacionesPage = () => {
               <p className="text-sm text-white/70">
                 {!loading && myTrainings.length > 0 && (
                   <>
-                    Tienes {myTrainings.length} programa(s) de capacitación
+                    Tienes {myTrainings.length} programa(s) de capacitacion
                     disponible(s)
                   </>
                 )}
@@ -127,8 +127,8 @@ const CapacitacionesPage = () => {
                 No tienes capacitaciones asignadas
               </h3>
               <p className="text-gray-600 max-w-sm mx-auto">
-                Aún no se te han asignado programas de capacitación. Contacta a
-                tu supervisor para más información.
+                Aun no se te han asignado programas de capacitacion. Contacta a
+                tu supervisor para mas informacion.
               </p>
             </div>
           ) : (
@@ -145,7 +145,7 @@ const CapacitacionesPage = () => {
                     <div className="h-2 bg-gradient-to-r from-blue-500 to-purple-500" />
 
                     <div className="p-6">
-                      {/* Título */}
+                      {/* Titulo */}
                       <div className="mb-4">
                         <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                           {training.title}
@@ -157,16 +157,16 @@ const CapacitacionesPage = () => {
                         )}
                       </div>
 
-                      {/* Información */}
+                      {/* Informacion */}
                       <div className="space-y-3 mb-6">
-                        {/* Campaña */}
+                        {/* Campana */}
                         <div className="flex items-center gap-3">
                           <div className="p-2 bg-purple-50 rounded-lg flex-shrink-0">
                             <Building2 className="w-5 h-5 text-purple-600" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-gray-500 font-medium">
-                              Campaña
+                              Campana
                             </p>
                             <p className="text-sm font-semibold text-gray-900 truncate">
                               {training.classroom.code}
@@ -174,24 +174,24 @@ const CapacitacionesPage = () => {
                           </div>
                         </div>
 
-                        {/* Total Días */}
+                        {/* Total Dias */}
                         <div className="flex items-center gap-3">
                           <div className="p-2 bg-blue-50 rounded-lg flex-shrink-0">
                             <Calendar className="w-5 h-5 text-blue-600" />
                           </div>
                           <div className="flex-1">
                             <p className="text-xs text-gray-500 font-medium">
-                              Duración del programa
+                              Duracion del programa
                             </p>
                             <p className="text-sm font-semibold text-gray-900">
                               {training.total_days}{" "}
-                              {training.total_days === 1 ? "día" : "días"}
+                              {training.total_days === 1 ? "dia" : "dias"}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      {/* Botón CTA */}
+                      {/* Boton CTA */}
                       <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 group-hover:shadow-lg">
                         <span>Ver Programa</span>
                         <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

@@ -22,7 +22,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
   const addOption = () => {
     if (currentQuestion.options.length >= 6) {
-      alert("Máximo 6 opciones por pregunta");
+      alert("Maximo 6 opciones por pregunta");
       return;
     }
 
@@ -42,7 +42,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
     const updatedOptions = [...currentQuestion.options];
     updatedOptions[index] = { ...updatedOptions[index], [field]: value };
 
-    // Para opción simple, cuando se marca una como correcta, desmarcar las demás
+    // Para opcion simple, cuando se marca una como correcta, desmarcar las demas
     if (field === "is_correct" && value === true) {
       updatedOptions.forEach((opt, i) => {
         if (i !== index) opt.is_correct = false;
@@ -57,7 +57,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
   const removeOption = (index: number) => {
     if (currentQuestion.options.length <= 2) {
-      alert("Mínimo 2 opciones por pregunta");
+      alert("Minimo 2 opciones por pregunta");
       return;
     }
 
@@ -117,7 +117,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
       {/* formulario para agregar nueva pregunta */}
       <div className="border-t border-gray-200 pt-6">
         <h4 className="font-medium text-gray-700 mb-4">
-          Agregar Nueva Pregunta (Opción Simple)
+          Agregar Nueva Pregunta (Opcion Simple)
         </h4>
 
         <div className="space-y-4">
@@ -151,14 +151,14 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               </label>
               <input
                 type="text"
-                value="Opción Simple"
+                value="Opcion Simple"
                 readOnly
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 bg-gray-100 focus:outline-none"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Puntuación de la Pregunta *
+                Puntuacion de la Pregunta *
               </label>
               <input
                 type="number"
@@ -172,7 +172,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                   })
                 }
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-                placeholder="Ingrese la puntuación de la pregunta"
+                placeholder="Ingrese la puntuacion de la pregunta"
               />
               {errors.points_value && (
                 <p className="text-sm text-red-600 mt-1">
@@ -182,7 +182,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
             </div>
           </div>
 
-          {/* Opciones para preguntas de tipo opción simple */}
+          {/* Opciones para preguntas de tipo opcion simple */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <label className="block text-sm font-medium text-gray-700">
@@ -198,7 +198,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                 className="text-sm text-blue-600 hover:text-blue-800 flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <PlusCircleIcon className="h-4 w-4 mr-1" />
-                Añadir Opción
+                Anadir Opcion
               </button>
             </div>
 
@@ -224,7 +224,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                       updateOption(index, "option_text", e.target.value)
                     }
                     className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
-                    placeholder={`Escribe la opción ${index + 1}`}
+                    placeholder={`Escribe la opcion ${index + 1}`}
                   />
                   <button
                     type="button"
@@ -233,8 +233,8 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     className="text-red-600 hover:text-red-800 p-1 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     title={
                       currentQuestion.options.length <= 2
-                        ? "Mínimo 2 opciones requeridas"
-                        : "Eliminar opción"
+                        ? "Minimo 2 opciones requeridas"
+                        : "Eliminar opcion"
                     }
                   >
                     <XCircleIcon className="h-4 w-4" />
@@ -253,7 +253,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
                     className="mt-2 text-blue-600 hover:text-blue-800 text-sm flex items-center justify-center mx-auto"
                   >
                     <PlusCircleIcon className="h-4 w-4 mr-1" />
-                    Agregar primera opción
+                    Agregar primera opcion
                   </button>
                 </div>
               )}
@@ -263,7 +263,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               <p className="text-sm text-red-600 mt-2">{errors.options}</p>
             )}
 
-            {/* Información de validación */}
+            {/* Informacion de validacion */}
             <div className="mt-3 space-y-1">
               {currentQuestion.options.length < 2 && (
                 <p className="text-xs text-red-600">
@@ -273,7 +273,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               {currentQuestion.options.length >= 2 &&
                 !currentQuestion.options.some((opt) => opt.is_correct) && (
                   <p className="text-xs text-red-600">
-                    ✗ Selecciona una opción como correcta
+                    ✗ Selecciona una opcion como correcta
                   </p>
                 )}
               {currentQuestion.options.some(
@@ -285,7 +285,7 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
               )}
               {canAddQuestion() && (
                 <p className="text-xs text-green-600">
-                  ✓ La pregunta está lista para agregar
+                  ✓ La pregunta esta lista para agregar
                 </p>
               )}
             </div>
@@ -302,9 +302,9 @@ const QuestionForm: React.FC<QuestionFormProps> = ({
 
           {/* Indicadores de estado */}
           <div className="text-xs text-gray-500 space-y-1">
-            <p>• Tipo: Opción Simple (solo una respuesta correcta)</p>
-            <p>• Mínimo: 2 opciones, Máximo: 6 opciones</p>
-            <p>• Una opción debe marcarse como correcta</p>
+            <p>• Tipo: Opcion Simple (solo una respuesta correcta)</p>
+            <p>• Minimo: 2 opciones, Maximo: 6 opciones</p>
+            <p>• Una opcion debe marcarse como correcta</p>
           </div>
         </div>
       </div>

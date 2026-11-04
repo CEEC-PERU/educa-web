@@ -74,7 +74,7 @@ const FlashcardGame: React.FC = () => {
       }
     } else {
       setIncorrectOption(option);
-      setModalMessage("Respuesta incorrecta. Inténtalo de nuevo.");
+      setModalMessage("Respuesta incorrecta. Intentalo de nuevo.");
       setShowModal(true);
     }
   };
@@ -108,12 +108,12 @@ const FlashcardGame: React.FC = () => {
   if (flashcards.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <p className="text-white text-lg">Este módulo no tiene flashcards.</p>
+        <p className="text-white text-lg">Este modulo no tiene flashcards.</p>
         <button
           onClick={() => router.back()}
           className="text-white/70 hover:text-white text-sm underline transition-colors"
         >
-          ← Volver a módulos
+          ← Volver a modulos
         </button>
       </div>
     );
@@ -176,7 +176,7 @@ const FlashcardGame: React.FC = () => {
             >
               <img
                 src={option}
-                alt="opción"
+                alt="opcion"
                 className="w-full h-40 sm:h-52 object-cover"
               />
             </div>
@@ -222,7 +222,7 @@ const FlashcardGame: React.FC = () => {
                   onClick={() => router.back()}
                   className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-colors"
                 >
-                  Volver a módulos
+                  Volver a modulos
                 </button>
               </div>
             )}

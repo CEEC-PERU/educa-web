@@ -15,7 +15,7 @@ import { CourseStudent } from "../../interfaces/Courses/CourseStudent";
 const getAuthConfig = () => {
   const token =
     typeof window === "undefined" ? null : localStorage.getItem("userToken");
-  if (!token) throw new Error("La sesión expiró. Inicia sesión nuevamente.");
+  if (!token) throw new Error("La sesion expiro. Inicia sesion nuevamente.");
   return { headers: { Authorization: `Bearer ${token}` } };
 };
 
@@ -154,7 +154,7 @@ export const getUsersByEnterpriseWithSessions = async (
   );
   return response.data;
 };
-// Nueva función para obtener estudiantes por empresa
+// Nueva funcion para obtener estudiantes por empresa
 export const getStudentsByEnterprise = async (enterpriseId: number) => {
   const response = await axios.get(
     `${API_GET_COURSESTUDENT_ENTERPRISE}/${enterpriseId}/students`,
@@ -162,7 +162,7 @@ export const getStudentsByEnterprise = async (enterpriseId: number) => {
   return response.data;
 };
 
-// Nueva función para obtener cursos y notas por estudiante
+// Nueva funcion para obtener cursos y notas por estudiante
 export const getCoursesWithGradesByStudent = async (userId: number) => {
   const response = await axios.get(
     `${API_GET_COURSESTUDENTS}/${userId}/grades`,
@@ -171,7 +171,7 @@ export const getCoursesWithGradesByStudent = async (userId: number) => {
   return response.data;
 };
 
-// Tiempo de formación dedicado (suma de duración de sesiones completadas)
+// Tiempo de formacion dedicado (suma de duracion de sesiones completadas)
 export const getLearningTimeSummary = async (
   userToken: string,
   userId: number,

@@ -66,8 +66,8 @@ interface EvaluationData {
   attempt_id?: number;
 }
 
-// Vista STUDENT — pantalla de rendición: responde las preguntas de un intento de
-// evaluación (evaluation_id en la ruta). Solo el estudiante dueño del intento la usa.
+// Vista STUDENT — pantalla de rendicion: responde las preguntas de un intento de
+// evaluacion (evaluation_id en la ruta). Solo el estudiante dueno del intento la usa.
 const TakeEvaluation = () => {
   const router = useRouter();
   const { id } = router.query;
@@ -149,7 +149,7 @@ const TakeEvaluation = () => {
         const data: EvaluationData = await response.json();
 
         if (!data.is_active) {
-          setError("Esta evaluación no está disponible");
+          setError("Esta evaluacion no esta disponible");
           return;
         }
 
@@ -158,12 +158,12 @@ const TakeEvaluation = () => {
         const dueDate = new Date(data.due_date);
 
         if (now < startDate) {
-          setError("Esta evaluación aún no ha comenzado");
+          setError("Esta evaluacion aun no ha comenzado");
           return;
         }
 
         if (now > dueDate) {
-          setError("Esta evaluación ya ha expirado");
+          setError("Esta evaluacion ya ha expirado");
           return;
         }
 
@@ -172,7 +172,7 @@ const TakeEvaluation = () => {
       } catch (error) {
         console.error("Error fetching evaluation:", error);
         setError(
-          "Error al cargar la evaluación. Por favor, intenta nuevamente.",
+          "Error al cargar la evaluacion. Por favor, intenta nuevamente.",
         );
       } finally {
         setLoading(false);
@@ -214,21 +214,16 @@ const TakeEvaluation = () => {
   const startEvaluation = async () => {
     try {
       if (!evaluation?.evaluation_sche_id) {
-        alert("Error: No se ha cargado la evaluación correctamente");
+        alert("Error: No se ha cargado la evaluacion correctamente");
         return;
       }
 
       if (!userId) {
         alert(
-          "Error: Usuario no identificado. Por favor, inicia sesión nuevamente.",
+          "Error: Usuario no identificado. Por favor, inicia sesion nuevamente.",
         );
         return;
       }
-
-      console.log("Datos a enviar:", {
-        evaluation_sche_id: evaluation.evaluation_sche_id,
-        user_id: userId,
-      });
 
       const response = await fetch(
         `${API_EVALUATIONS_R}/scheduled/start-attempt`,
@@ -246,17 +241,15 @@ const TakeEvaluation = () => {
 
       const data = await response.json();
 
-      console.log("Respuesta del servidor:", data);
-
       if (data.success) {
         setAttemptId(data.data.attempt_id);
         setIsStarted(true);
       } else {
-        alert(data.message || "Error al iniciar la evaluación");
+        alert(data.message || "Error al iniciar la evaluacion");
       }
     } catch (error) {
       console.error("Error starting evaluation:", error);
-      alert("Error al iniciar la evaluación");
+      alert("Error al iniciar la evaluacion");
     }
   };
 
@@ -372,7 +365,7 @@ const TakeEvaluation = () => {
   };
 
   const handleTimeExpired = () => {
-    alert("El tiempo ha expirado. La evaluación se enviará automáticamente.");
+    alert("El tiempo ha expirado. La evaluacion se enviara automaticamente.");
     submitEvaluation(true);
   };
 
@@ -387,12 +380,6 @@ const TakeEvaluation = () => {
         time_spent_seconds: questionTimes[answer.question_id] || 30,
       }));
 
-      console.log("Enviando evaluación:", {
-        attempt_id: attemptId,
-        answers: formattedAnswers,
-        time_expired: timeExpired,
-      });
-
       const response = await fetch(`${API_EVALUATIONS_R}/scheduled/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -404,19 +391,17 @@ const TakeEvaluation = () => {
       });
 
       const data = await response.json();
-      console.log("Respuesta del envío:", data);
-
       if (data.success) {
         router.push(
           `/student/evaluaciones/${id}/resultados?attempt_id=${attemptId}`,
         );
       } else {
-        alert(data.message || "Error al enviar la evaluación");
+        alert(data.message || "Error al enviar la evaluacion");
         setIsSubmitting(false);
       }
     } catch (error) {
       console.error("Error submitting evaluation:", error);
-      alert("Error al enviar la evaluación");
+      alert("Error al enviar la evaluacion");
       setIsSubmitting(false);
     }
   };
@@ -425,15 +410,15 @@ const TakeEvaluation = () => {
   const getQuestionTypeLabel = (type: string) => {
     switch (type) {
       case "multiple_choice":
-        return "Selección múltiple";
+        return "Seleccion multiple";
       case "single_choice":
-        return "Selección única";
+        return "Seleccion unica";
       case "true_false":
         return "Verdadero/Falso";
       case "open_ended":
         return "Respuesta abierta";
       default:
-        return "Selección única";
+        return "Seleccion unica";
     }
   };
 
@@ -443,7 +428,7 @@ const TakeEvaluation = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-200 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando evaluación...</p>
+          <p className="text-gray-600">Cargando evaluacion...</p>
         </div>
       </div>
     );
@@ -456,7 +441,7 @@ const TakeEvaluation = () => {
         <div className="text-center max-w-md mx-auto p-6">
           <ExclamationTriangleIcon className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            Error al cargar la evaluación
+            Error al cargar la evaluacion
           </h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
@@ -473,7 +458,7 @@ const TakeEvaluation = () => {
   if (!evaluation) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-gray-600">No se encontró la evaluación</p>
+        <p className="text-gray-600">No se encontro la evaluacion</p>
       </div>
     );
   }
@@ -487,7 +472,7 @@ const TakeEvaluation = () => {
             Usuario no identificado
           </h2>
           <p className="text-gray-600 mb-4">
-            Por favor, inicia sesión para continuar con la evaluación.
+            Por favor, inicia sesion para continuar con la evaluacion.
           </p>
           <button
             onClick={() => router.push("/login")}
@@ -540,14 +525,14 @@ const TakeEvaluation = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-600">
-                Puntuación mínima para aprobar:
+                Puntuacion minima para aprobar:
               </p>
               <p className="text-lg font-semibold text-gray-900">
                 {evaluation.passing_score} de {evaluation.total_points} puntos
               </p>
             </div>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">Intentos máximos:</p>
+              <p className="text-sm text-gray-600">Intentos maximos:</p>
               <p className="text-lg font-semibold text-gray-900">
                 {evaluation.max_attempts}
               </p>
@@ -565,16 +550,16 @@ const TakeEvaluation = () => {
                   {evaluation.instructions}
                 </p>
                 <ul className="text-yellow-700 text-sm space-y-1">
-                  <li>• Una vez iniciada, no podrás pausar la evaluación</li>
+                  <li>• Una vez iniciada, no podras pausar la evaluacion</li>
                   <li>• Guarda tus respuestas frecuentemente</li>
-                  <li>• Asegúrate de tener conexión estable a internet</li>
+                  <li>• Asegurate de tener conexion estable a internet</li>
                   <li>• Revisa todas tus respuestas antes de enviar</li>
                   <li>
-                    • Para preguntas de selección múltiple, puedes elegir más de
-                    una opción
+                    • Para preguntas de seleccion multiple, puedes elegir mas de
+                    una opcion
                   </li>
                   <li>
-                    • Puntuación mínima para aprobar: {evaluation.passing_score}{" "}
+                    • Puntuacion minima para aprobar: {evaluation.passing_score}{" "}
                     puntos
                   </li>
                 </ul>
@@ -588,7 +573,7 @@ const TakeEvaluation = () => {
               className="inline-flex items-center gap-2 px-8 py-4 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200 font-semibold text-lg"
             >
               <CheckIcon className="h-6 w-6" />
-              Iniciar Evaluación
+              Iniciar Evaluacion
             </button>
           </div>
         </div>
@@ -674,7 +659,7 @@ const TakeEvaluation = () => {
                   </span>
                   {isMultipleChoice && (
                     <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                      Puedes seleccionar múltiples opciones
+                      Puedes seleccionar multiples opciones
                     </span>
                   )}
                 </div>
@@ -687,7 +672,7 @@ const TakeEvaluation = () => {
                 <textarea
                   className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-200 focus:border-transparent resize-none"
                   rows={6}
-                  placeholder="Escribe tu respuesta aquí..."
+                  placeholder="Escribe tu respuesta aqui..."
                   value={
                     getCurrentAnswer(currentQuestion.question_sche_id)
                       ?.answer_text || ""
@@ -757,7 +742,7 @@ const TakeEvaluation = () => {
                     );
                     const selectedCount =
                       answer?.selected_option_ids?.length || 0;
-                    return `${selectedCount} opción${
+                    return `${selectedCount} opcion${
                       selectedCount !== 1 ? "es" : ""
                     } seleccionada${selectedCount !== 1 ? "s" : ""}`;
                   })()}
@@ -786,7 +771,7 @@ const TakeEvaluation = () => {
                   className="inline-flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
                 >
                   <CheckIcon className="h-4 w-4" />
-                  Finalizar Evaluación
+                  Finalizar Evaluacion
                 </button>
               ) : (
                 <button
@@ -810,7 +795,7 @@ const TakeEvaluation = () => {
           {/* Question navigator */}
           <div className="mt-8 pt-6 border-t border-gray-200">
             <h3 className="text-sm font-medium text-gray-700 mb-3">
-              Navegación rápida:
+              Navegacion rapida:
             </h3>
             <div className="grid grid-cols-10 gap-2">
               {evaluation.questions.map((question, index) => (
@@ -840,7 +825,7 @@ const TakeEvaluation = () => {
             <div className="mt-2 text-xs text-gray-500">
               <span className="inline-flex items-center gap-1">
                 <span className="w-3 h-3 bg-amber-400 rounded-full inline-block"></span>
-                M = Selección múltiple
+                M = Seleccion multiple
               </span>
             </div>
           </div>
@@ -852,12 +837,12 @@ const TakeEvaluation = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-mx-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Confirmar envío de evaluación
+              Confirmar envio de evaluacion
             </h3>
             <p className="text-gray-600 mb-6">
-              ¿Estás seguro de que quieres enviar tu evaluación? Has respondido{" "}
+              ¿Estas seguro de que quieres enviar tu evaluacion? Has respondido{" "}
               {getAnsweredCount()} de {evaluation.questions.length} preguntas.
-              Una vez enviada, no podrás hacer cambios.
+              Una vez enviada, no podras hacer cambios.
             </p>
             <div className="flex gap-3 justify-end">
               <button
@@ -871,7 +856,7 @@ const TakeEvaluation = () => {
                 disabled={isSubmitting}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 disabled:opacity-50"
               >
-                {isSubmitting ? "Enviando..." : "Enviar Evaluación"}
+                {isSubmitting ? "Enviando..." : "Enviar Evaluacion"}
               </button>
             </div>
           </div>

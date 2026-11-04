@@ -21,7 +21,7 @@ const TrainingsPage: NextPageWithLayout = () => {
     useState<TrainingProgram | null>(null);
 
   const { user } = useAuth();
-  //obtenemos el enterprise_id y id del usuario logueado, pero carga después de renderizar
+  //obtenemos el enterprise_id y id del usuario logueado, pero carga despues de renderizar
   const userInfo = user as UserInfo;
 
   const { trainings, loading, error, refetch } = useTrainings(userInfo?.id);
@@ -58,7 +58,7 @@ const TrainingsPage: NextPageWithLayout = () => {
   };
 
   const handleDeleteTraining = (training: TrainingProgram) => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar el programa')) {
+    if (window.confirm('¿Estas seguro de que deseas eliminar el programa')) {
       deleteProgram(
         training.program_id,
         localStorage.getItem('userToken') || '',
@@ -68,7 +68,7 @@ const TrainingsPage: NextPageWithLayout = () => {
         })
         .catch((error) => {
           console.error('Error al eliminar el programa:', error);
-          alert('Ocurrió un error al eliminar el programa.');
+          alert('Ocurrio un error al eliminar el programa.');
         });
     }
   };
@@ -78,15 +78,15 @@ const TrainingsPage: NextPageWithLayout = () => {
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Programas de Formación
+                  Programas de Formacion
                 </h1>
                 <p className="mt-1 text-sm text-gray-600">
                   Administra las capacitaciones para tus estudiantes desde esta
-                  sección.
+                  seccion.
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
-                {/* contenido y eventos para creación de capacitaciones */}
+                {/* contenido y eventos para creacion de capacitaciones */}
                 <button
                   onClick={() => setShowCreateModal(true)}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -134,8 +134,8 @@ const TrainingsPage: NextPageWithLayout = () => {
           onClose={handleCloseCreateModal}
           title={
             editingTraining
-              ? 'Editar programa de formación'
-              : 'Crear nuevo programa de formación'
+              ? 'Editar programa de formacion'
+              : 'Crear nuevo programa de formacion'
           }
           size="xl"
           closeOnBackdropClick={false}
@@ -153,7 +153,7 @@ const TrainingsPage: NextPageWithLayout = () => {
         <Modal
           isOpen={showAssignModal}
           onClose={() => setShowAssignModal(false)}
-          title="Asignar programa de formación"
+          title="Asignar programa de formacion"
           size="lg"
           closeOnBackdropClick={false}
         >

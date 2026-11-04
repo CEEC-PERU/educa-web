@@ -38,7 +38,7 @@ export const useStudentCertifications = (studentId: number) => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error('No se encontró el token de autenticación');
+        throw new Error('No se encontro el token de autenticacion');
       }
 
       const response = await fetchWithTimeout(
@@ -85,7 +85,7 @@ export const useStudentCertifications = (studentId: number) => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error('No se encontró el token de autenticación');
+        throw new Error('No se encontro el token de autenticacion');
       }
 
       const response = await fetchWithTimeout(
@@ -122,7 +122,7 @@ export const useStudentCertifications = (studentId: number) => {
       try {
         const token = localStorage.getItem('userToken');
         if (!token) {
-          throw new Error('No se encontró el token de autenticación');
+          throw new Error('No se encontro el token de autenticacion');
         }
 
         const response = await fetchWithTimeout(
@@ -160,7 +160,7 @@ export const useStudentCertifications = (studentId: number) => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error('No se encontró el token de autenticación');
+        throw new Error('No se encontro el token de autenticacion');
       }
 
       const response = await fetchWithTimeout(
@@ -187,7 +187,7 @@ export const useStudentCertifications = (studentId: number) => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error('No se encontró el token de autenticación');
+        throw new Error('No se encontro el token de autenticacion');
       }
 
       const response = await fetchWithTimeout(
@@ -214,7 +214,7 @@ export const useStudentCertifications = (studentId: number) => {
     try {
       const token = localStorage.getItem('userToken');
       if (!token) {
-        throw new Error('No se encontró el token de autenticación');
+        throw new Error('No se encontro el token de autenticacion');
       }
 
       const response = await fetchWithTimeout(
@@ -263,7 +263,7 @@ export const useStudentCertifications = (studentId: number) => {
     submissionLoading,
     submissionError,
 
-    // Métodos
+    // Metodos
     fetchPendingCertifications,
     startExamAttempt,
     submitExamAttempt,

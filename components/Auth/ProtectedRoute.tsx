@@ -13,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     const userToken = localStorage.getItem('userToken'); // Obtiene el token directamente de localStorage
 
     if (!isLoading) {
-      // Redirige al login si el token no está presente
+      // Redirige al login si el token no esta presente
       if (!userToken) {
         router.push('/login');
       }
@@ -21,7 +21,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, [isLoading, router]);
 
   if (isLoading) {
-    return <p>Cargando...</p>; // Mostrar una pantalla de carga mientras se verifica la autenticación
+    return <p>Cargando...</p>; // Mostrar una pantalla de carga mientras se verifica la autenticacion
   }
 
   return <>{children}</>;

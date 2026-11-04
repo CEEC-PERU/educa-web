@@ -5,16 +5,16 @@ export default function PrivacyPolicyContent() {
         <table className="w-full">
           <tbody>
             <tr className="border-b border-gray-200">
-              <td className="font-semibold bg-gray-50 p-2 w-1/3">Versión</td>
+              <td className="font-semibold bg-gray-50 p-2 w-1/3">Version</td>
               <td className="p-2">1.0</td>
             </tr>
             <tr className="border-b border-gray-200">
-              <td className="font-semibold bg-gray-50 p-2">Fecha de emisión</td>
+              <td className="font-semibold bg-gray-50 p-2">Fecha de emision</td>
               <td className="p-2">31 de agosto de 2026</td>
             </tr>
             <tr className="border-b border-gray-200">
               <td className="font-semibold bg-gray-50 p-2">Responsable</td>
-              <td className="p-2">[RAZÓN SOCIAL / TITULAR DE MENTORMIND]</td>
+              <td className="p-2">[RAZON SOCIAL / TITULAR DE MENTORMIND]</td>
             </tr>
             <tr className="border-b border-gray-200">
               <td className="font-semibold bg-gray-50 p-2">RUC</td>
@@ -33,19 +33,19 @@ export default function PrivacyPolicyContent() {
       <section>
         <h3 className="font-bold text-gray-900 mb-2">1. Objeto y alcance</h3>
         <p className="mb-2">
-          La presente Política de Privacidad describe cómo MentorMind
+          La presente Politica de Privacidad describe como MentorMind
           recopila, utiliza, almacena, comparte y protege los datos
           personales de las personas que acceden o utilizan su plataforma,
-          sitio web, aplicaciones, módulos de aprendizaje, funcionalidades de
-          seguimiento académico, analítica, evaluaciones y demás servicios
+          sitio web, aplicaciones, modulos de aprendizaje, funcionalidades de
+          seguimiento academico, analitica, evaluaciones y demas servicios
           asociados.
         </p>
         <p>
-          Esta Política aplica a usuarios finales, estudiantes,
+          Esta Politica aplica a usuarios finales, estudiantes,
           colaboradores, supervisores, formadores, administradores, clientes
-          corporativos y demás personas cuyos datos personales sean tratados
-          a través de MentorMind, según corresponda al servicio contratado y
-          al rol que desempeñen.
+          corporativos y demas personas cuyos datos personales sean tratados
+          a traves de MentorMind, segun corresponda al servicio contratado y
+          al rol que desempenen.
         </p>
       </section>
 
@@ -54,20 +54,20 @@ export default function PrivacyPolicyContent() {
           2. Identidad del responsable del tratamiento
         </h3>
         <p className="mb-2">
-          El responsable del tratamiento de los datos personales es [RAZÓN
+          El responsable del tratamiento de los datos personales es [RAZON
           SOCIAL / TITULAR DE MENTORMIND], identificado con RUC [RUC], con
           domicilio en [DOMICILIO], en adelante, "MentorMind".
         </p>
         <p className="mb-2">
-          Para consultas relacionadas con privacidad y protección de datos
+          Para consultas relacionadas con privacidad y proteccion de datos
           personales, los titulares pueden comunicarse al correo [CORREO DE
           PRIVACIDAD] o mediante [CANAL ADICIONAL, SI APLICA].
         </p>
         <p>
           Cuando MentorMind opere por encargo de una empresa cliente y trate
-          datos siguiendo instrucciones de dicha organización, MentorMind
-          podrá actuar como encargado del tratamiento y la empresa cliente
-          será responsable de determinar las finalidades y medios del
+          datos siguiendo instrucciones de dicha organizacion, MentorMind
+          podra actuar como encargado del tratamiento y la empresa cliente
+          sera responsable de determinar las finalidades y medios del
           tratamiento, de acuerdo con la normativa aplicable.
         </p>
       </section>
@@ -75,16 +75,16 @@ export default function PrivacyPolicyContent() {
       <section>
         <h3 className="font-bold text-gray-900 mb-2">3. Marco normativo</h3>
         <p className="mb-2">
-          Esta Política se interpreta de conformidad con la Ley N.º 29733,
-          Ley de Protección de Datos Personales del Perú, y su Reglamento
-          aprobado por Decreto Supremo N.º 016-2024-JUS, así como con las
-          demás normas, directivas y criterios emitidos por la Autoridad
-          Nacional de Protección de Datos Personales que resulten aplicables.
+          Esta Politica se interpreta de conformidad con la Ley N.º 29733,
+          Ley de Proteccion de Datos Personales del Peru, y su Reglamento
+          aprobado por Decreto Supremo N.º 016-2024-JUS, asi como con las
+          demas normas, directivas y criterios emitidos por la Autoridad
+          Nacional de Proteccion de Datos Personales que resulten aplicables.
         </p>
         <p>
-          Si el servicio es utilizado en otras jurisdicciones, podrán
-          resultar aplicables obligaciones adicionales, las cuales deberán
-          ser evaluadas según el país, tipo de cliente y naturaleza de los
+          Si el servicio es utilizado en otras jurisdicciones, podran
+          resultar aplicables obligaciones adicionales, las cuales deberan
+          ser evaluadas segun el pais, tipo de cliente y naturaleza de los
           datos tratados.
         </p>
       </section>
@@ -94,59 +94,59 @@ export default function PrivacyPolicyContent() {
           4. Datos personales que podemos tratar
         </h3>
         <p className="mb-2">
-          Dependiendo del servicio, configuración y relación contractual,
-          MentorMind podrá tratar las siguientes categorías:
+          Dependiendo del servicio, configuracion y relacion contractual,
+          MentorMind podra tratar las siguientes categorias:
         </p>
         <ul className="list-disc pl-5 space-y-1">
           <li>
             <span className="font-semibold">
-              Datos de identificación y contacto:
+              Datos de identificacion y contacto:
             </span>{" "}
             nombres y apellidos, documento de identidad cuando corresponda,
-            correo electrónico, teléfono, empresa, cargo, área y país.
+            correo electronico, telefono, empresa, cargo, area y pais.
           </li>
           <li>
             <span className="font-semibold">
-              Datos de cuenta y autenticación:
+              Datos de cuenta y autenticacion:
             </span>{" "}
             usuario, identificadores internos, credenciales protegidas, rol,
             permisos, estado de la cuenta y registros de acceso.
           </li>
           <li>
             <span className="font-semibold">
-              Datos de formación y desempeño:
+              Datos de formacion y desempeno:
             </span>{" "}
             cursos asignados, avance, fechas de acceso, tiempo de estudio,
             evaluaciones, resultados, intentos, certificaciones, asistencia y
             actividades realizadas.
           </li>
           <li>
-            <span className="font-semibold">Datos de interacción:</span>{" "}
-            respuestas, comentarios, consultas, participación en contenidos,
-            retroalimentación y registros generados dentro de la plataforma.
+            <span className="font-semibold">Datos de interaccion:</span>{" "}
+            respuestas, comentarios, consultas, participacion en contenidos,
+            retroalimentacion y registros generados dentro de la plataforma.
           </li>
           <li>
-            <span className="font-semibold">Datos técnicos:</span> dirección
+            <span className="font-semibold">Datos tecnicos:</span> direccion
             IP, tipo de dispositivo, navegador, sistema operativo,
-            identificadores técnicos, fecha y hora de conexión, logs, eventos
-            de seguridad y diagnóstico.
+            identificadores tecnicos, fecha y hora de conexion, logs, eventos
+            de seguridad y diagnostico.
           </li>
           <li>
             <span className="font-semibold">Datos audiovisuales:</span>{" "}
             grabaciones de sesiones, voz, imagen o material audiovisual
-            únicamente cuando la funcionalidad correspondiente esté
+            unicamente cuando la funcionalidad correspondiente este
             habilitada y exista base legal para su tratamiento.
           </li>
           <li>
             <span className="font-semibold">Datos de soporte:</span>{" "}
-            información proporcionada al solicitar asistencia, reportar
+            informacion proporcionada al solicitar asistencia, reportar
             incidentes o comunicarse con el equipo de soporte.
           </li>
           <li>
             <span className="font-semibold">
-              Datos generados por analítica:
+              Datos generados por analitica:
             </span>{" "}
-            métricas de uso, indicadores de adopción, patrones de navegación,
+            metricas de uso, indicadores de adopcion, patrones de navegacion,
             progreso, cumplimiento y otros indicadores derivados del uso de
             MentorMind.
           </li>
@@ -164,19 +164,19 @@ export default function PrivacyPolicyContent() {
             funcionalidades de aprendizaje.
           </li>
           <li>
-            Registrar y mostrar el avance, participación, asistencia,
+            Registrar y mostrar el avance, participacion, asistencia,
             resultados y certificaciones.
           </li>
           <li>
-            Generar reportes de uso, cumplimiento, adopción y desempeño para
+            Generar reportes de uso, cumplimiento, adopcion y desempeno para
             usuarios autorizados y clientes corporativos.
           </li>
           <li>
             Personalizar la experiencia de aprendizaje, recomendaciones y
-            contenidos cuando dicha funcionalidad esté habilitada.
+            contenidos cuando dicha funcionalidad este habilitada.
           </li>
           <li>
-            Atender consultas, solicitudes de soporte, incidencias técnicas y
+            Atender consultas, solicitudes de soporte, incidencias tecnicas y
             comunicaciones operativas.
           </li>
           <li>
@@ -185,16 +185,16 @@ export default function PrivacyPolicyContent() {
           </li>
           <li>
             Detectar accesos no autorizados, fraude, abuso, incidentes de
-            ciberseguridad y uso contrario a los términos del servicio.
+            ciberseguridad y uso contrario a los terminos del servicio.
           </li>
           <li>
-            Mejorar la calidad, usabilidad y desempeño técnico del producto
-            mediante información agregada o anonimizada cuando resulte
+            Mejorar la calidad, usabilidad y desempeno tecnico del producto
+            mediante informacion agregada o anonimizada cuando resulte
             posible.
           </li>
           <li>
             Cumplir obligaciones legales, contractuales, regulatorias y
-            requerimientos válidos de autoridades competentes.
+            requerimientos validos de autoridades competentes.
           </li>
         </ul>
       </section>
@@ -204,119 +204,119 @@ export default function PrivacyPolicyContent() {
           6. Base que legitima el tratamiento
         </h3>
         <p className="mb-2">
-          MentorMind tratará datos personales únicamente cuando exista una
-          base jurídica válida. Dependiendo del contexto, el tratamiento
-          podrá sustentarse en el consentimiento del titular, la ejecución de
-          una relación contractual, el cumplimiento de una obligación legal,
-          la relación entre la organización cliente y sus colaboradores o
+          MentorMind tratara datos personales unicamente cuando exista una
+          base juridica valida. Dependiendo del contexto, el tratamiento
+          podra sustentarse en el consentimiento del titular, la ejecucion de
+          una relacion contractual, el cumplimiento de una obligacion legal,
+          la relacion entre la organizacion cliente y sus colaboradores o
           usuarios, u otra base reconocida por la normativa aplicable.
         </p>
         <p>
-          Cuando corresponda solicitar consentimiento, este deberá ser
-          libre, previo, expreso, inequívoco e informado. El titular podrá
+          Cuando corresponda solicitar consentimiento, este debera ser
+          libre, previo, expreso, inequivoco e informado. El titular podra
           revocarlo conforme a la normativa, sin afectar la licitud del
-          tratamiento realizado antes de la revocación.
+          tratamiento realizado antes de la revocacion.
         </p>
       </section>
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          7. Tratamiento de información en clientes corporativos
+          7. Tratamiento de informacion en clientes corporativos
         </h3>
         <p className="mb-2">
           En servicios contratados por empresas, instituciones educativas u
-          otras organizaciones, determinados datos y reportes podrán ser
+          otras organizaciones, determinados datos y reportes podran ser
           visibles para administradores, supervisores, formadores u otros
           perfiles autorizados por el cliente.
         </p>
         <p>
-          El acceso estará limitado, en la medida técnica y contractualmente
-          posible, según roles y permisos. La organización cliente es
-          responsable de definir qué usuarios están autorizados para acceder
-          a información de su personal o participantes y de comunicar a sus
+          El acceso estara limitado, en la medida tecnica y contractualmente
+          posible, segun roles y permisos. La organizacion cliente es
+          responsable de definir que usuarios estan autorizados para acceder
+          a informacion de su personal o participantes y de comunicar a sus
           titulares las finalidades propias que correspondan.
         </p>
       </section>
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          8. Inteligencia artificial, automatización y analítica
+          8. Inteligencia artificial, automatizacion y analitica
         </h3>
         <p className="mb-2">
-          MentorMind puede incorporar funcionalidades de analítica,
-          automatización o inteligencia artificial destinadas a facilitar la
-          búsqueda de contenidos, resumir información, recomendar recursos,
-          apoyar procesos de formación o generar indicadores.
+          MentorMind puede incorporar funcionalidades de analitica,
+          automatizacion o inteligencia artificial destinadas a facilitar la
+          busqueda de contenidos, resumir informacion, recomendar recursos,
+          apoyar procesos de formacion o generar indicadores.
         </p>
         <p className="mb-2">
           Cuando dichas funcionalidades impliquen tratamiento de datos
-          personales, se aplicarán controles de acceso, minimización de
+          personales, se aplicaran controles de acceso, minimizacion de
           datos y medidas de seguridad acordes con el riesgo. MentorMind no
-          deberá utilizar datos personales de clientes para entrenar modelos
-          de inteligencia artificial de propósito general para fines propios,
-          salvo que exista autorización expresa, base legal aplicable y una
-          comunicación transparente al titular o al cliente, según
+          debera utilizar datos personales de clientes para entrenar modelos
+          de inteligencia artificial de proposito general para fines propios,
+          salvo que exista autorizacion expresa, base legal aplicable y una
+          comunicacion transparente al titular o al cliente, segun
           corresponda.
         </p>
         <p>
-          Las decisiones que produzcan efectos jurídicos o impactos
-          significativos sobre una persona no deberían basarse únicamente en
-          resultados automatizados sin la revisión humana y las garantías
-          que exija la legislación aplicable.
+          Las decisiones que produzcan efectos juridicos o impactos
+          significativos sobre una persona no deberian basarse unicamente en
+          resultados automatizados sin la revision humana y las garantias
+          que exija la legislacion aplicable.
         </p>
       </section>
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          9. Cookies y tecnologías similares
+          9. Cookies y tecnologias similares
         </h3>
         <p className="mb-2">
           El sitio web o la plataforma pueden utilizar cookies,
-          almacenamiento local y tecnologías equivalentes necesarias para
+          almacenamiento local y tecnologias equivalentes necesarias para
           mantener sesiones, recordar configuraciones, proteger cuentas,
-          medir desempeño y comprender el uso de las funcionalidades.
+          medir desempeno y comprender el uso de las funcionalidades.
         </p>
         <p>
           Cuando se utilicen cookies no estrictamente necesarias, se
-          implementarán mecanismos de información y consentimiento cuando así
-          lo exija la normativa. La configuración específica deberá
-          detallarse en una Política de Cookies o panel de preferencias, si
+          implementaran mecanismos de informacion y consentimiento cuando asi
+          lo exija la normativa. La configuracion especifica debera
+          detallarse en una Politica de Cookies o panel de preferencias, si
           corresponde.
         </p>
       </section>
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          10. Compartición y destinatarios de los datos
+          10. Comparticion y destinatarios de los datos
         </h3>
         <p className="mb-2">
-          MentorMind podrá compartir datos personales, de manera limitada,
+          MentorMind podra compartir datos personales, de manera limitada,
           con:
         </p>
         <ul className="list-disc pl-5 space-y-1 mb-2">
-          <li>La organización cliente que contrató el servicio y sus usuarios autorizados.</li>
+          <li>La organizacion cliente que contrato el servicio y sus usuarios autorizados.</li>
           <li>
             Proveedores de infraestructura en la nube, alojamiento, base de
-            datos, autenticación, mensajería, analítica, soporte,
+            datos, autenticacion, mensajeria, analitica, soporte,
             videoconferencia o seguridad.
           </li>
           <li>
-            Proveedores tecnológicos que actúen como encargados o
+            Proveedores tecnologicos que actuen como encargados o
             subencargados del tratamiento bajo obligaciones de
             confidencialidad y seguridad.
           </li>
           <li>
             Autoridades administrativas, judiciales o regulatorias cuando
-            exista obligación legal o requerimiento válido.
+            exista obligacion legal o requerimiento valido.
           </li>
           <li>
             Asesores profesionales cuando resulte necesario para la defensa
-            de derechos, auditoría, cumplimiento o gestión de riesgos.
+            de derechos, auditoria, cumplimiento o gestion de riesgos.
           </li>
         </ul>
         <p>
           MentorMind no vende datos personales. Los proveedores deben acceder
-          únicamente a la información necesaria para prestar el servicio
+          unicamente a la informacion necesaria para prestar el servicio
           contratado.
         </p>
       </section>
@@ -327,9 +327,9 @@ export default function PrivacyPolicyContent() {
         </h3>
         <p>
           La infraestructura o determinados proveedores de MentorMind pueden
-          encontrarse en Perú o en otros países. Cuando exista flujo
+          encontrarse en Peru o en otros paises. Cuando exista flujo
           transfronterizo de datos personales, MentorMind y/o la
-          organización responsable adoptarán las medidas contractuales,
+          organizacion responsable adoptaran las medidas contractuales,
           organizativas y legales necesarias conforme a la normativa peruana
           y a las reglas aplicables al servicio.
         </p>
@@ -337,46 +337,46 @@ export default function PrivacyPolicyContent() {
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          12. Plazo de conservación
+          12. Plazo de conservacion
         </h3>
         <p className="mb-2">
-          Los datos personales serán conservados durante el tiempo necesario
+          Los datos personales seran conservados durante el tiempo necesario
           para cumplir las finalidades informadas, prestar el servicio,
           mantener registros contractuales o atender obligaciones legales.
-          Los plazos pueden variar según el tipo de información, la relación
-          con el cliente y las obligaciones de conservación aplicables.
+          Los plazos pueden variar segun el tipo de informacion, la relacion
+          con el cliente y las obligaciones de conservacion aplicables.
         </p>
         <p>
-          Una vez finalizada la finalidad, los datos serán eliminados,
-          anonimizados, bloqueados o conservados únicamente durante el plazo
-          legalmente exigible, según corresponda. Los respaldos técnicos
-          podrán mantenerse temporalmente hasta completar sus ciclos
-          normales de rotación.
+          Una vez finalizada la finalidad, los datos seran eliminados,
+          anonimizados, bloqueados o conservados unicamente durante el plazo
+          legalmente exigible, segun corresponda. Los respaldos tecnicos
+          podran mantenerse temporalmente hasta completar sus ciclos
+          normales de rotacion.
         </p>
       </section>
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          13. Seguridad de la información
+          13. Seguridad de la informacion
         </h3>
         <p className="mb-2">
-          MentorMind aplicará medidas técnicas, organizativas y de seguridad
+          MentorMind aplicara medidas tecnicas, organizativas y de seguridad
           razonables y proporcionales al riesgo para proteger los datos
-          personales contra pérdida, acceso no autorizado, alteración,
-          divulgación o destrucción.
+          personales contra perdida, acceso no autorizado, alteracion,
+          divulgacion o destruccion.
         </p>
         <ul className="list-disc pl-5 space-y-1">
-          <li>Gestión de accesos y permisos por roles.</li>
-          <li>Controles de autenticación y registro de actividad.</li>
-          <li>Protección de comunicaciones y credenciales.</li>
-          <li>Copias de seguridad y mecanismos de recuperación.</li>
-          <li>Monitoreo de eventos de seguridad y gestión de vulnerabilidades.</li>
+          <li>Gestion de accesos y permisos por roles.</li>
+          <li>Controles de autenticacion y registro de actividad.</li>
+          <li>Proteccion de comunicaciones y credenciales.</li>
+          <li>Copias de seguridad y mecanismos de recuperacion.</li>
+          <li>Monitoreo de eventos de seguridad y gestion de vulnerabilidades.</li>
           <li>
-            Políticas de confidencialidad y acceso restringido para personal
+            Politicas de confidencialidad y acceso restringido para personal
             autorizado.
           </li>
           <li>
-            Evaluación razonable de proveedores que procesen información por
+            Evaluacion razonable de proveedores que procesen informacion por
             cuenta de MentorMind.
           </li>
         </ul>
@@ -387,11 +387,11 @@ export default function PrivacyPolicyContent() {
           14. Incidentes de seguridad
         </h3>
         <p>
-          MentorMind mantendrá procedimientos para detectar, analizar,
+          MentorMind mantendra procedimientos para detectar, analizar,
           contener y gestionar incidentes que puedan comprometer datos
-          personales. Cuando corresponda conforme a la legislación vigente,
-          se realizarán las comunicaciones o notificaciones necesarias a la
-          organización cliente, a los titulares y/o a la autoridad
+          personales. Cuando corresponda conforme a la legislacion vigente,
+          se realizaran las comunicaciones o notificaciones necesarias a la
+          organizacion cliente, a los titulares y/o a la autoridad
           competente.
         </p>
       </section>
@@ -401,24 +401,24 @@ export default function PrivacyPolicyContent() {
           15. Derechos de los titulares
         </h3>
         <p className="mb-2">
-          Los titulares podrán ejercer los derechos reconocidos por la
-          normativa peruana de protección de datos personales, incluyendo,
-          según corresponda, los derechos de información, acceso,
-          actualización, inclusión, rectificación, supresión o cancelación,
-          oposición, impedir el suministro, tratamiento objetivo, tutela y
-          los demás derechos aplicables.
+          Los titulares podran ejercer los derechos reconocidos por la
+          normativa peruana de proteccion de datos personales, incluyendo,
+          segun corresponda, los derechos de informacion, acceso,
+          actualizacion, inclusion, rectificacion, supresion o cancelacion,
+          oposicion, impedir el suministro, tratamiento objetivo, tutela y
+          los demas derechos aplicables.
         </p>
         <p className="mb-2">
-          Las solicitudes podrán enviarse a [CORREO DE PRIVACIDAD], indicando
-          el derecho que se desea ejercer y adjuntando la información
+          Las solicitudes podran enviarse a [CORREO DE PRIVACIDAD], indicando
+          el derecho que se desea ejercer y adjuntando la informacion
           necesaria para verificar la identidad del solicitante. MentorMind
-          atenderá las solicitudes dentro de los plazos establecidos por la
+          atendera las solicitudes dentro de los plazos establecidos por la
           normativa aplicable.
         </p>
         <p>
-          Cuando MentorMind actúe únicamente como encargado de tratamiento de
-          una organización cliente, podrá derivar o coordinar la solicitud
-          con dicha organización, por ser quien determina las finalidades del
+          Cuando MentorMind actue unicamente como encargado de tratamiento de
+          una organizacion cliente, podra derivar o coordinar la solicitud
+          con dicha organizacion, por ser quien determina las finalidades del
           tratamiento.
         </p>
       </section>
@@ -428,10 +428,10 @@ export default function PrivacyPolicyContent() {
           16. Datos de menores de edad
         </h3>
         <p>
-          MentorMind no está dirigido de forma general a menores de edad
+          MentorMind no esta dirigido de forma general a menores de edad
           salvo que el servicio haya sido expresamente contratado para un
           contexto educativo o formativo que los incluya. En dichos casos, el
-          tratamiento deberá realizarse con las garantías, autorizaciones y
+          tratamiento debera realizarse con las garantias, autorizaciones y
           medidas reforzadas que exija la ley.
         </p>
       </section>
@@ -440,8 +440,8 @@ export default function PrivacyPolicyContent() {
         <h3 className="font-bold text-gray-900 mb-2">17. Confidencialidad</h3>
         <p>
           El personal y terceros autorizados que accedan a datos personales
-          deberán mantener deberes de confidencialidad y utilizar la
-          información únicamente para las funciones o servicios autorizados.
+          deberan mantener deberes de confidencialidad y utilizar la
+          informacion unicamente para las funciones o servicios autorizados.
         </p>
       </section>
 
@@ -451,8 +451,8 @@ export default function PrivacyPolicyContent() {
         </h3>
         <p>
           MentorMind puede incluir enlaces o integraciones con servicios de
-          terceros. El tratamiento de información realizado directamente por
-          dichos terceros podrá estar sujeto a sus propias políticas de
+          terceros. El tratamiento de informacion realizado directamente por
+          dichos terceros podra estar sujeto a sus propias politicas de
           privacidad. Se recomienda revisar las condiciones de privacidad de
           cada servicio externo.
         </p>
@@ -460,13 +460,13 @@ export default function PrivacyPolicyContent() {
 
       <section>
         <h3 className="font-bold text-gray-900 mb-2">
-          19. Actualizaciones de esta Política
+          19. Actualizaciones de esta Politica
         </h3>
         <p>
-          MentorMind podrá actualizar esta Política para reflejar cambios en
-          sus servicios, tecnologías, proveedores o requisitos legales. La
-          versión vigente indicará su fecha de actualización. Cuando los
-          cambios sean sustanciales y corresponda, se comunicarán a los
+          MentorMind podra actualizar esta Politica para reflejar cambios en
+          sus servicios, tecnologias, proveedores o requisitos legales. La
+          version vigente indicara su fecha de actualizacion. Cuando los
+          cambios sean sustanciales y corresponda, se comunicaran a los
           usuarios o clientes por medios adecuados.
         </p>
       </section>
@@ -480,7 +480,7 @@ export default function PrivacyPolicyContent() {
                 <td className="font-semibold bg-gray-50 p-2 w-1/3">
                   Responsable / empresa
                 </td>
-                <td className="p-2">[RAZÓN SOCIAL]</td>
+                <td className="p-2">[RAZON SOCIAL]</td>
               </tr>
               <tr className="border-b border-gray-200">
                 <td className="font-semibold bg-gray-50 p-2">RUC</td>
@@ -494,9 +494,9 @@ export default function PrivacyPolicyContent() {
               </tr>
               <tr>
                 <td className="font-semibold bg-gray-50 p-2">
-                  Domicilio / canal físico
+                  Domicilio / canal fisico
                 </td>
-                <td className="p-2">[DOMICILIO O CANAL DE ATENCIÓN]</td>
+                <td className="p-2">[DOMICILIO O CANAL DE ATENCION]</td>
               </tr>
             </tbody>
           </table>
@@ -504,14 +504,14 @@ export default function PrivacyPolicyContent() {
       </section>
 
       <section>
-        <h3 className="font-bold text-gray-900 mb-2">21. Control de versión</h3>
+        <h3 className="font-bold text-gray-900 mb-2">21. Control de version</h3>
         <div className="border border-gray-200 rounded-lg overflow-hidden text-xs">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="text-left font-semibold p-2">Versión</th>
+                <th className="text-left font-semibold p-2">Version</th>
                 <th className="text-left font-semibold p-2">Fecha</th>
-                <th className="text-left font-semibold p-2">Descripción</th>
+                <th className="text-left font-semibold p-2">Descripcion</th>
                 <th className="text-left font-semibold p-2">Aprobado por</th>
               </tr>
             </thead>
@@ -520,7 +520,7 @@ export default function PrivacyPolicyContent() {
                 <td className="p-2 align-top">1.0</td>
                 <td className="p-2 align-top">31/08/2026</td>
                 <td className="p-2 align-top">
-                  Emisión inicial de la Política de Privacidad
+                  Emision inicial de la Politica de Privacidad
                 </td>
                 <td className="p-2 align-top">[RESPONSABLE]</td>
               </tr>
@@ -531,10 +531,10 @@ export default function PrivacyPolicyContent() {
 
       <p className="text-xs text-gray-400 italic border-t border-gray-200 pt-4">
         Nota legal: Este documento es un modelo general y no sustituye
-        asesoría legal. Antes de su publicación debe verificarse la razón
+        asesoria legal. Antes de su publicacion debe verificarse la razon
         social responsable, los bancos de datos personales involucrados,
         proveedores/subencargados, transferencias internacionales, plazos
-        reales de conservación, canales ARCO, cookies y las funcionalidades
+        reales de conservacion, canales ARCO, cookies y las funcionalidades
         efectivamente habilitadas en MentorMind.
       </p>
     </div>

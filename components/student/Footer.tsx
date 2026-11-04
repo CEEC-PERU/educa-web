@@ -23,7 +23,7 @@ export default function Footer() {
 
           {/* Pages */}
           <nav className="text-center md:text-left lg:pl-8">
-            <h3 className="font-semibold text-lg mb-4">PÁGINAS</h3>
+            <h3 className="font-semibold text-lg mb-4">PAGINAS</h3>
             <ul className="space-y-2">
               <li>
                 <a
@@ -54,7 +54,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-brand-200 transition-colors duration-200"
                 >
-                  SUSCRÍBETE
+                  SUSCRIBETE
                 </a>
               </li>
             </ul>
@@ -69,7 +69,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-brand-200 transition-colors duration-200 text-sm md:text-base"
                 >
-                  TÉRMINOS Y CONDICIONES
+                  TERMINOS Y CONDICIONES
                 </a>
               </li>
               <li>
@@ -77,7 +77,7 @@ export default function Footer() {
                   href="#"
                   className="hover:text-brand-200 transition-colors duration-200 text-sm md:text-base"
                 >
-                  POLÍTICA DE PRIVACIDAD
+                  POLITICA DE PRIVACIDAD
                 </a>
               </li>
             </ul>
@@ -85,7 +85,7 @@ export default function Footer() {
 
           {/* Contact Information */}
           <address className="not-italic text-center md:text-left">
-            <h3 className="font-semibold text-lg mb-4">CONTÁCTANOS</h3>
+            <h3 className="font-semibold text-lg mb-4">CONTACTANOS</h3>
             <ul className="space-y-2">
               <li>
                 <a

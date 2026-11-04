@@ -16,14 +16,14 @@ interface CardCoursesProps {
   textColorDescription?:String;
   id?: number; // Hacer el id opcional
   isCircular?: boolean; // Nueva prop opcional
-  onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del botón
+  onButtonClick?: (id?: number) => void; // Nueva prop para manejar el clic del boton
 }
 
 const CardCourses: React.FC<CardCoursesProps> = ({
   imageUrl = 'https://via.placeholder.com/150',
   title = 'Nombre del curso',
   rating = 0,
-  description = 'Descripción corta del curso',
+  description = 'Descripcion corta del curso',
   buttonLabel = 'Ver detalles',
   textColor = 'text-gray-900',
   background= ' bg-violet-200',
@@ -34,7 +34,7 @@ const CardCourses: React.FC<CardCoursesProps> = ({
   image,
   duration_course,
   isCircular = false, // Valor por defecto
-  onButtonClick // Nueva prop para manejar el clic del botón
+  onButtonClick // Nueva prop para manejar el clic del boton
 }) => {
   const displayName = name || title;
   const displayDescription = description_short || description;

@@ -12,7 +12,7 @@ const SatisfactionChart = ({ data }: Props) => {
 
   return hasData ? (
     <ChartCard
-      title="Encuesta de Satisfacción"
+      title="Encuesta de Satisfaccion"
       type="donut"
       series={safeData}
       options={{
@@ -26,9 +26,9 @@ const SatisfactionChart = ({ data }: Props) => {
     />
   ) : (
     <div className="border border-gray-200 p-6 rounded-xl bg-white shadow-lg">
-      <h2 className="text-xl font-bold text-gray-800">Encuesta de Satisfacción</h2>
+      <h2 className="text-xl font-bold text-gray-800">Encuesta de Satisfaccion</h2>
       <div className="relative flex items-center justify-center text-gray-400 text-sm" style={{ height: "300px" }}>
-        Aún no hay respuestas de satisfacción
+        Aun no hay respuestas de satisfaccion
       </div>
     </div>
   );

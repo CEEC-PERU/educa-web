@@ -37,7 +37,7 @@ const NotasIndex = () => {
   if (coursesWithNotas.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end">
-        <p className="text-white">Aún no tienes notas registradas.</p>
+        <p className="text-white">Aun no tienes notas registradas.</p>
       </div>
     );
   }
@@ -74,7 +74,7 @@ const NotasIndex = () => {
                       <div>
                         <div className="px-6 py-4 border-b border-gray-100">
                           <h2 className="text-base font-semibold text-gray-700">
-                            Módulos
+                            Modulos
                           </h2>
                         </div>
 
@@ -82,7 +82,7 @@ const NotasIndex = () => {
                           <thead className="bg-gray-50">
                             <tr>
                               <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
-                                Módulo
+                                Modulo
                               </th>
                               <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">
                                 Puntaje

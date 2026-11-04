@@ -61,7 +61,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
       await updateModuleMutation.mutateAsync({ id: moduleId, module: module! });
       onSuccess();
     } catch (err: unknown) {
-      toast.error(getUserFacingMessage(err) ?? "Error al actualizar el módulo");
+      toast.error(getUserFacingMessage(err) ?? "Error al actualizar el modulo");
     } finally {
       setIsSubmitting(false);
     }
@@ -84,7 +84,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
               htmlFor="name"
               className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
             >
-              Nombre del Módulo
+              Nombre del Modulo
             </label>
             <input
               id="name"
@@ -104,7 +104,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
           <div>
             <SidebarSelect
               id="evaluation_id"
-              label="Evaluación"
+              label="Evaluacion"
               value={
                 module.evaluation_id === 0
                   ? ""
@@ -116,7 +116,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
                   value: "",
                   label: evaluationsQuery.isError
                     ? "Error al cargar"
-                    : "Seleccionar Evaluación",
+                    : "Seleccionar Evaluacion",
                 },
                 ...evaluations.map((ev) => ({
                   value: ev.evaluation_id.toString(),
@@ -126,7 +126,7 @@ const EditModuleForm: React.FC<EditModuleFormProps> = ({
             />
             {touched && module.evaluation_id === 0 && (
               <p className="text-xs text-red-500 mt-1">
-                La evaluación es requerida
+                La evaluacion es requerida
               </p>
             )}
           </div>

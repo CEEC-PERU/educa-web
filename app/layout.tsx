@@ -26,12 +26,12 @@ export default function RootLayout({
         <title>MentorMind | Cursos de Liderazgo y Desarrollo Profesional</title>
         <meta
           name="description"
-          content="Programas de formación en soft skills, gestión del cambio y liderazgo transformacional para profesionales y empresas."
+          content="Programas de formacion en soft skills, gestion del cambio y liderazgo transformacional para profesionales y empresas."
         />
         <meta property="og:title" content="MentorMind | Cursos de Liderazgo" />
         <meta
           property="og:description"
-          content="Desarrolla habilidades clave con nuestros programas de formación profesional."
+          content="Desarrolla habilidades clave con nuestros programas de formacion profesional."
         />
         <meta
           property="og:image"

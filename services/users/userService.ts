@@ -7,6 +7,7 @@ import {
   API_USERCOUNT,
   API_USERS_COURSES,
   API_USERU,
+  API_USERS_CREATE_MANUAL,
 } from '../../utils/Endpoints';
 import { UserCount } from '../../interfaces/User/UserCount';
 interface ImportUsersResponse {
@@ -41,7 +42,7 @@ export const getUserCount = async (
 };
 
 export const createIndividualUser = async (userData: any) => {
-  const response = await axios.post(`${API_USER}/create`, userData);
+  const response = await axios.post(API_USERS_CREATE_MANUAL, userData);
   return response.data;
 };
 
@@ -78,14 +79,35 @@ export const getCompanies = async () => {
   return response.data;
 };
 
-export const getUsersByCompanyAndRole = async (
+export interface PaginatedUsersResponse {
+  users: import('../../interfaces/User/UserAdmin').User[];
+  totalCount: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+}
+
+export const getPaginatedUsersByCompanyAndRole = async (
   companyId: number,
-  roleId: number
-) => {
-  const response = await axios.get(
-    `${API_USER}/users/company/${companyId}/role/${roleId}`
+  roleId: number,
+  page = 1,
+  limit = 50,
+  search = '',
+): Promise<PaginatedUsersResponse> => {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (search) params.set('search', search);
+  const response = await axios.get<PaginatedUsersResponse>(
+    `${API_USER}/users/company/${companyId}/role/${roleId}?${params.toString()}`
   );
   return response.data;
+};
+
+export const getUsersByCompanyAndRole = async (
+  companyId: number,
+  roleId: number,
+): Promise<any[]> => {
+  const response = await getPaginatedUsersByCompanyAndRole(companyId, roleId, 1, 50);
+  return response.users as any[];
 };
 
 export const getUsersByClassroom = async (
@@ -103,12 +125,20 @@ export const getUserById = async (userId: number) => {
   return response.data;
 };
 
+export const getPrivateUserById = async (userId: number) => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('userToken') : null;
+  const response = await axios.get(`${API_USER}/users/${userId}/private`, {
+    headers: { Authorization: token ? `Bearer ${token}` : '' },
+  });
+  return response.data;
+};
+
 export const deleteUserById = async (userId: number) => {
   try {
     const response = await axios.delete(`${API_USERU}/users/${userId}`);
-    return response.data; // Se puede devolver una respuesta personalizada o un mensaje de éxito
+    return response.data; // Se puede devolver una respuesta personalizada o un mensaje de exito
   } catch (error) {
-    throw error; // Propagamos el error para que se pueda manejar más tarde
+    throw error; // Propagamos el error para que se pueda manejar mas tarde
   }
 };
 

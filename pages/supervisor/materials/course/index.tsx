@@ -167,11 +167,11 @@ const AddCourse: NextPageWithLayout = () => {
     try {
       setCurrentStep('processing');
 
-      // 1. Crear evaluación
+      // 1. Crear evaluacion
       const evaluationId = await wizard.completeForm();
       setCreatedEvaluationId(evaluationId);
 
-      // 2. Actualizar formData con el ID de evaluación
+      // 2. Actualizar formData con el ID de evaluacion
       const updatedFormData = {
         ...formData,
         evaluation_id: evaluationId,
@@ -181,7 +181,7 @@ const AddCourse: NextPageWithLayout = () => {
       // 3. Crear curso
       await addCourse2(updatedFormData, videoFile!, imageFile!);
 
-      // 4. Mostrar éxito
+      // 4. Mostrar exito
       setCurrentStep('success');
     } catch (error) {
       console.error('Error:', error);
@@ -245,7 +245,7 @@ const AddCourse: NextPageWithLayout = () => {
                 Procesando registro...
               </h3>
               <p className="mt-2 text-sm text-gray-600">
-                Guardando evaluación , curso y asignando usuarios , por favor
+                Guardando evaluacion , curso y asignando usuarios , por favor
                 espere.
               </p>
             </div>
@@ -263,7 +263,7 @@ const AddCourse: NextPageWithLayout = () => {
                 ¡Registro completado!
               </h3>
               <p className="mt-2 text-sm text-gray-600 text-center">
-                El curso y la evaluación han sido registrados exitosamente.
+                El curso y la evaluacion han sido registrados exitosamente.
               </p>
               <div className="mt-6">
                 <button
@@ -312,7 +312,7 @@ const AddCourse: NextPageWithLayout = () => {
                       />
                       <FormField
                         id="description_short"
-                        label="Descripción Corta"
+                        label="Descripcion Corta"
                         type="textarea"
                         value={formData.description_short}
                         onChange={handleChange}
@@ -327,7 +327,7 @@ const AddCourse: NextPageWithLayout = () => {
                       />
                       <FormField
                         id="description_large"
-                        label="Descripción Larga"
+                        label="Descripcion Larga"
                         type="textarea"
                         value={formData.description_large}
                         onChange={handleChange}
@@ -394,7 +394,7 @@ const AddCourse: NextPageWithLayout = () => {
                       </div>
                       <FormField
                         id="duration_video"
-                        label="Duración del Video"
+                        label="Duracion del Video"
                         type="text"
                         value={formData.duration_video}
                         onChange={handleChange}
@@ -411,7 +411,7 @@ const AddCourse: NextPageWithLayout = () => {
                           htmlFor="intro_video"
                           className="block text-sm font-medium mb-6 text-gray-700"
                         >
-                          Video de Introducción
+                          Video de Introduccion
                         </label>
                         <MediaUploadPreview
                           ref={videoUploadRef}
@@ -425,7 +425,7 @@ const AddCourse: NextPageWithLayout = () => {
                       </div>
                       <FormField
                         id="duration_course"
-                        label="Duración del Curso"
+                        label="Duracion del Curso"
                         type="text"
                         value={formData.duration_course}
                         onChange={handleChange}

@@ -45,7 +45,7 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer después de la navegación
+    setIsOpen(false); // Cerrar el drawer despues de la navegacion
   };
 
   const handleMouseEnter = () => {
@@ -84,7 +84,7 @@ const SidebarAdminCorporate: React.FC<SidebarCorporateProps> = ({
                 className="flex items-center p-4 text-white hover:bg-brand-200 w-full text-left"
               >
                 <LogoutIcon className="h-6 w-6" />
-                {isOpen && <span className="ml-2">Cerrar Sesión</span>}
+                {isOpen && <span className="ml-2">Cerrar Sesion</span>}
               </button>
             </li>
           </ul>

@@ -1,4 +1,4 @@
-﻿import dynamic from "next/dynamic";
+import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import ChartErrorBoundary from "./ChartErrorBoundary";
 
@@ -50,7 +50,7 @@ const ChartCard = ({
 }: ChartCardProps) => {
   const canRenderChart = hasRenderableSeries(series);
 
-  // Configuración base que se fusionará con las opciones personalizadas
+  // Configuracion base que se fusionara con las opciones personalizadas
   const baseOptions: ApexOptions = {
     chart: {
       type,

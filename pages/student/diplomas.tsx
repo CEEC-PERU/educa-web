@@ -45,7 +45,7 @@ const Diplomas = () => {
         const certificateRoot = diplomaRef.current;
         const templateImage = certificateRoot?.querySelector("img");
         if (!certificateRoot || !templateImage) {
-          throw new Error("No se encontró la plantilla del diploma.");
+          throw new Error("No se encontro la plantilla del diploma.");
         }
 
         await templateImage.decode();
@@ -108,7 +108,7 @@ const Diplomas = () => {
         ) : diplomaCourses.length === 0 ? (
           <div className="bg-white rounded-xl p-10 text-center shadow">
             <p className="text-gray-500 text-lg">
-              Aún no tienes diplomas disponibles. Aprueba un curso para obtener
+              Aun no tienes diplomas disponibles. Aprueba un curso para obtener
               tu diploma.
             </p>
           </div>

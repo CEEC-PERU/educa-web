@@ -21,7 +21,7 @@ export default function ConsentSection({
       <label htmlFor="consent-checkbox" className="text-gray-700">
         <span className="block font-medium">Confirmo mi consentimiento</span>
         <span className="block text-sm">
-          Acepto el tratamiento de mis datos personales según lo establecido en
+          Acepto el tratamiento de mis datos personales segun lo establecido en
           la{" "}
           <a
             href="https://www.canva.com/design/DAGnccU5tkw/x9QLqfr8057IgwHGv5sScA/view?utm_content=DAGnccU5tkw&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hb87bcf2817"
@@ -29,9 +29,9 @@ export default function ConsentSection({
             rel="noopener noreferrer"
             className="text-blue-600 hover:text-blue-800 underline"
           >
-            política de protección de datos
+            politica de proteccion de datos
           </a>{" "}
-          y confirmo que toda la información proporcionada es verídica.
+          y confirmo que toda la informacion proporcionada es veridica.
         </span>
       </label>
     </div>

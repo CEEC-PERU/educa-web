@@ -90,7 +90,7 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
     }
 
     if (selectedClassroom === 0) {
-      setError('Debe seleccionar una campaña');
+      setError('Debe seleccionar una campana');
       return;
     }
 
@@ -119,7 +119,7 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
         </div>
       )}
 
-      {/* Advertencias de validación */}
+      {/* Advertencias de validacion */}
       {validation && validation.hasWarnings && (
         <div className="bg-yellow-50 border border-yellow-200 p-4 rounded">
           <h4 className="font-semibold text-yellow-800 mb-2 flex items-center">
@@ -142,7 +142,7 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
             ))}
           </ul>
           <p className="text-yellow-600 text-xs mt-2">
-            Puedes continuar con la asignación, pero se recomienda agregar contenido a todos los días.
+            Puedes continuar con la asignacion, pero se recomienda agregar contenido a todos los dias.
           </p>
         </div>
       )}
@@ -150,7 +150,7 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
       {/* Selector de Programa */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Programa de Formación *
+          Programa de Formacion *
         </label>
         <select
           value={selectedProgram}
@@ -162,16 +162,16 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
           <option value={0}>Seleccione un programa</option>
           {programs.map((program) => (
             <option key={program.program_id} value={program.program_id}>
-              {program.title} ({program.total_days} días)
+              {program.title} ({program.total_days} dias)
             </option>
           ))}
         </select>
       </div>
 
-      {/* Selector de Campaña */}
+      {/* Selector de Campana */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Campaña / Aula *
+          Campana / Aula *
         </label>
         <select
           value={selectedClassroom}
@@ -179,7 +179,7 @@ const TrainingAssignmentForm: React.FC<TrainingAssignmentFormProps> = ({
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           required
         >
-          <option value={0}>Seleccione una campaña</option>
+          <option value={0}>Seleccione una campana</option>
           {classrooms.map((classroom) => (
             <option key={classroom.classroom_id} value={classroom.classroom_id}>
               {classroom.code}

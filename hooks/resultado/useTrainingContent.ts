@@ -25,7 +25,7 @@ export const useTrainingContent = (dayId: number | undefined) => {
         if (err.response?.status === 403) {
           setError('No tienes permisos para ver este contenido');
         } else {
-          setError('Error al cargar los contenidos de formación');
+          setError('Error al cargar los contenidos de formacion');
         }
       } finally {
         setLoading(false);
@@ -44,7 +44,7 @@ export const useTrainingContent = (dayId: number | undefined) => {
       setTrainingContents(data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los contenidos de formación');
+      setError('Error al cargar los contenidos de formacion');
     } finally {
       setLoading(false);
     }

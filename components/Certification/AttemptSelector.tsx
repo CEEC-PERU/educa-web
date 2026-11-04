@@ -84,11 +84,11 @@ const AttemptSelectorCertification: React.FC<AttemptSelectorProps> = ({
                   </div>
                 </div>
 
-                {/* Información específica por estado */}
+                {/* Informacion especifica por estado */}
                 {attempt.status === "completed" && (
                   <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="font-medium">Puntuación:</span>{" "}
+                      <span className="font-medium">Puntuacion:</span>{" "}
                       {attempt.score_obtained} /{" "}
                       {attempt.total_points_available} pts
                     </div>
@@ -114,7 +114,7 @@ const AttemptSelectorCertification: React.FC<AttemptSelectorProps> = ({
 
                 {attempt.status === "in_progress" && (
                   <div className="mt-2 text-sm text-blue-700">
-                    Este intento aún está en progreso
+                    Este intento aun esta en progreso
                   </div>
                 )}
               </div>

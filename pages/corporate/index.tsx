@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import type { NextPageWithLayout } from '../../types/next';
 import AppLayout from "@/components/layouts/AppLayout";
 import { useAuth } from '../../context/AuthContext';

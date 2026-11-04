@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/comercial/ComercialSidebar";
@@ -32,7 +32,7 @@ const FALLBACK_AVATAR =
   "https://res.cloudinary.com/dk2red18f/image/upload/v1713896612/CEEC/PERFIL/egwjjcrs2aon5hhtxabj.png";
 
 const formatDate = (dateStr: string | null) => {
-  if (!dateStr) return "Sin sesiones en el período";
+  if (!dateStr) return "Sin sesiones en el periodo";
   return new Date(dateStr).toLocaleDateString("es-PE", {
     day: "2-digit",
     month: "short",
@@ -103,7 +103,7 @@ const ComercialUsers: React.FC = () => {
               </div>
               <div className="flex flex-col gap-2">
                 <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">
-                  Filtrar período
+                  Filtrar periodo
                 </p>
                 <div className="flex items-center gap-3">
                   <div>
@@ -150,7 +150,7 @@ const ComercialUsers: React.FC = () => {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-gray-700">
-                    Top 3 usuarios más activos
+                    Top 3 usuarios mas activos
                   </p>
                   <button
                     onClick={handleDownloadChart}
@@ -178,7 +178,7 @@ const ComercialUsers: React.FC = () => {
               <div className="text-center py-16 text-gray-400">
                 <UserGroupIcon className="mx-auto h-10 w-10 mb-3 text-gray-300" />
                 <p className="text-sm">
-                  No hay actividad registrada en este período.
+                  No hay actividad registrada en este periodo.
                 </p>
                 <p className="text-xs mt-1 text-gray-300">
                   Prueba ajustando el rango de fechas.
@@ -218,7 +218,7 @@ const ComercialUsers: React.FC = () => {
                       </div>
                     </div>
                     <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-                      <p className="text-xs text-gray-400">Última sesión</p>
+                      <p className="text-xs text-gray-400">Ultima sesion</p>
                       <p className="text-xs font-medium text-gray-600">
                         {formatDate(student.lastSession)}
                       </p>

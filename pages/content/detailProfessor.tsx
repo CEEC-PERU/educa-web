@@ -138,7 +138,7 @@ const DetailProfessor: NextPageWithLayout = () => {
     return (
       <p className="text-gray-500 text-center mt-20">
         {getUserFacingMessage(professorQuery.error) ??
-          "No se encontró el profesor."}
+          "No se encontro el profesor."}
       </p>
     );
   }
@@ -205,24 +205,24 @@ const DetailProfessor: NextPageWithLayout = () => {
         </div>
 
         {/* Detail / Edit */}
-        <SectionCard title={isEditing ? "Editar Profesor" : "Información"}>
+        <SectionCard title={isEditing ? "Editar Profesor" : "Informacion"}>
           {!isEditing ? (
             <>
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Descripción
+                  Descripcion
                 </p>
                 <p className="text-gray-700">
                   {professor.description || (
                     <span className="text-gray-400 italic">
-                      Sin descripción
+                      Sin descripcion
                     </span>
                   )}
                 </p>
               </div>
               <div>
                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Especialización
+                  Especializacion
                 </p>
                 <p className="text-gray-700">{professor.especialitation}</p>
               </div>
@@ -257,14 +257,14 @@ const DetailProfessor: NextPageWithLayout = () => {
               </div>
               <FormField
                 id="especialitation"
-                label="Especialización"
+                label="Especializacion"
                 type="text"
                 value={editDraft!.especialitation}
                 onChange={handleDraftChange}
               />
               <FormField
                 id="description"
-                label="Descripción"
+                label="Descripcion"
                 type="textarea"
                 value={editDraft!.description}
                 onChange={handleDraftChange}

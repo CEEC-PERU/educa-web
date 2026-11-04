@@ -56,7 +56,7 @@ export default function ContentForm({
     setError('');
 
     if (!title.trim()) {
-      setError('El título es obligatorio');
+      setError('El titulo es obligatorio');
       return;
     }
 
@@ -79,20 +79,20 @@ export default function ContentForm({
 
       await onSubmit(formData);
     } catch (err) {
-      setError('Error al guardar el contenido. Inténtalo de nuevo.');
+      setError('Error al guardar el contenido. Intentalo de nuevo.');
       setIsSubmitting(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Título */}
+      {/* Titulo */}
       <div>
         <label
           htmlFor="title"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Título del contenido *
+          Titulo del contenido *
         </label>
         <input
           type="text"
@@ -100,7 +100,7 @@ export default function ContentForm({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Ej: Introducción al curso"
+          placeholder="Ej: Introduccion al curso"
           disabled={isSubmitting}
         />
       </div>
@@ -136,7 +136,7 @@ export default function ContentForm({
         </div>
         {mode === 'edit' && (
           <p className="mt-2 text-xs text-gray-500">
-            No puedes cambiar el tipo de contenido en modo edición
+            No puedes cambiar el tipo de contenido en modo edicion
           </p>
         )}
       </div>

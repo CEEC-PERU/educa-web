@@ -29,10 +29,10 @@ const AVATARS = [
 
 function getPasswordError(password: string, confirmPassword: string): string {
   if (!password || !confirmPassword) return '';
-  if (password !== confirmPassword) return 'Las contraseñas no coinciden';
-  if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres';
-  if (!/[A-Z]/.test(password)) return 'La contraseña debe contener al menos una mayúscula';
-  if (!/\d/.test(password)) return 'La contraseña debe contener al menos un número';
+  if (password !== confirmPassword) return 'Las contrasenas no coinciden';
+  if (password.length < 8) return 'La contrasena debe tener al menos 8 caracteres';
+  if (!/[A-Z]/.test(password)) return 'La contrasena debe contener al menos una mayuscula';
+  if (!/\d/.test(password)) return 'La contrasena debe contener al menos un numero';
   return '';
 }
 
@@ -84,7 +84,7 @@ const ProfilePage: React.FC = () => {
     }
 
     if (passwordError) {
-      setErrorMessage('Por favor, corrige los errores en la contraseña.');
+      setErrorMessage('Por favor, corrige los errores en la contrasena.');
       return;
     }
 
@@ -190,7 +190,7 @@ const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="password">
-                Nueva Contraseña *
+                Nueva Contrasena *
               </label>
               <input
                 id="password"
@@ -199,13 +199,13 @@ const ProfilePage: React.FC = () => {
                 value={form.password}
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border-b border-gray-400 text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-0 rounded-t"
-                placeholder="Mínimo 8 caracteres"
+                placeholder="Minimo 8 caracteres"
                 required
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="confirmPassword">
-                Confirmar Contraseña *
+                Confirmar Contrasena *
               </label>
               <input
                 id="confirmPassword"
@@ -214,7 +214,7 @@ const ProfilePage: React.FC = () => {
                 value={form.confirmPassword}
                 onChange={handleChange}
                 className="w-full px-3 py-2 bg-gray-700 bg-opacity-50 border-b border-gray-400 text-white placeholder-gray-400 focus:outline-none focus:border-white focus:ring-0 rounded-t"
-                placeholder="Repite tu contraseña"
+                placeholder="Repite tu contrasena"
                 required
               />
             </div>

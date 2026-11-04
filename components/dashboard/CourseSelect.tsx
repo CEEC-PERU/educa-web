@@ -109,7 +109,7 @@ const CourseSelect = ({
               clipRule="evenodd"
             />
           </svg>
-          No se pudieron cargar los cursos. Intenta recargar la página.
+          No se pudieron cargar los cursos. Intenta recargar la pagina.
         </div>
       )}
     </div>

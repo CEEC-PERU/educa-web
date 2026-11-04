@@ -42,7 +42,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
           onQuestionsLoaded(result.questions);
 
           // Mostrar resumen detallado
-          let message = `Se procesaron ${result.stats.valid} preguntas válidas.`;
+          let message = `Se procesaron ${result.stats.valid} preguntas validas.`;
           if (result.stats.skipped > 0) {
             message += `\nSe omitieron ${result.stats.skipped} preguntas por errores.`;
 
@@ -51,7 +51,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
               const errorPreview = result.stats.errors.slice(0, 3).join("\n• ");
               message += `\n\nErrores encontrados:\n• ${errorPreview}`;
               if (result.stats.errors.length > 3) {
-                message += `\n• ... y ${result.stats.errors.length - 3} más`;
+                message += `\n• ... y ${result.stats.errors.length - 3} mas`;
               }
             }
           }
@@ -59,13 +59,13 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
           alert(message);
         } else {
           alert(
-            "No se encontraron preguntas válidas en el archivo. Verifica el formato."
+            "No se encontraron preguntas validas en el archivo. Verifica el formato."
           );
         }
       } catch (error) {
         console.error("Error processing Excel file:", error);
         alert(
-          "Error al procesar el archivo. Verifica que sea un Excel válido."
+          "Error al procesar el archivo. Verifica que sea un Excel valido."
         );
       } finally {
         // Limpiar input
@@ -85,7 +85,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
     reader.readAsArrayBuffer(file);
   };
 
-  // Función mejorada con validaciones
+  // Funcion mejorada con validaciones
   const processExcelData = (
     excelData: any[]
   ): {
@@ -114,7 +114,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         row.length === 0 ||
         row.every((cell: any) => !cell || cell.toString().trim() === "")
       ) {
-        continue; // Fila vacía
+        continue; // Fila vacia
       }
 
       const questionText = row[0]?.toString().trim();
@@ -133,7 +133,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         continue;
       }
 
-      // Crear opciones válidas
+      // Crear opciones validas
       const options: Option[] = [];
       for (let j = 1; j <= 4; j++) {
         const optionText = row[j]?.toString().trim();
@@ -146,12 +146,12 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         }
       }
 
-      // Validar mínimo de opciones
+      // Validar minimo de opciones
       if (options.length < 2) {
         errors.push(
           `Fila ${i + 1}: "${questionText}" - Solo ${
             options.length
-          } opción(es) (mínimo 2 requeridas)`
+          } opcion(es) (minimo 2 requeridas)`
         );
         skippedQuestions++;
         continue;
@@ -177,7 +177,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         correctOptionNum > options.length
       ) {
         errors.push(
-          `Fila ${i + 1}: "${questionText}" - Respuesta correcta inválida: "${
+          `Fila ${i + 1}: "${questionText}" - Respuesta correcta invalida: "${
             row[5]
           }" (debe ser entre 1 y ${options.length})`
         );
@@ -185,14 +185,14 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         continue;
       }
 
-      // Marcar la opción correcta
+      // Marcar la opcion correcta
       const correctOptionIndex = correctOptionNum - 1;
       options[correctOptionIndex].is_correct = true;
 
-      // Crear la pregunta válida (SIN question_id)
+      // Crear la pregunta valida (SIN question_id)
       questions.push({
         question_text: questionText,
-        type_id: 1, // Opción simple
+        type_id: 1, // Opcion simple
         points_value: 1, // Valor por defecto
         options: options,
       });
@@ -215,27 +215,27 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
     const templateData = [
       [
         "PREGUNTA (OBLIGATORIO)",
-        "OPCIÓN 1 (OBLIGATORIO)",
-        "OPCIÓN 2 (OBLIGATORIO)",
-        "OPCIÓN 3 (OPCIONAL)",
-        "OPCIÓN 4 (OPCIONAL)",
-        "RESPUESTA CORRECTA (NÚMERO 1-4)",
+        "OPCION 1 (OBLIGATORIO)",
+        "OPCION 2 (OBLIGATORIO)",
+        "OPCION 3 (OPCIONAL)",
+        "OPCION 4 (OPCIONAL)",
+        "RESPUESTA CORRECTA (NUMERO 1-4)",
       ],
       [
-        "¿Cuál es la capital de Francia?",
-        "París",
+        "¿Cual es la capital de Francia?",
+        "Paris",
         "Londres",
-        "Berlín",
+        "Berlin",
         "Madrid",
         1,
       ],
       ["¿2 + 2 es igual a?", "3", "4", "5", "", 2],
-      ["¿Qué lenguaje se usa en React?", "Python", "JavaScript", "", "", 2],
+      ["¿Que lenguaje se usa en React?", "Python", "JavaScript", "", "", 2],
       ["", "", "", "", "", ""],
       ["INSTRUCCIONES:", "", "", "", "", ""],
-      ["• Mínimo 2 opciones por pregunta", "", "", "", "", ""],
+      ["• Minimo 2 opciones por pregunta", "", "", "", "", ""],
       [
-        "• La respuesta correcta debe ser un número entre 1-4",
+        "• La respuesta correcta debe ser un numero entre 1-4",
         "",
         "",
         "",
@@ -270,7 +270,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
         </div>
 
         <div className="p-6 space-y-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-          {/* Información del formato */}
+          {/* Informacion del formato */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="font-medium text-blue-800 mb-2">
               Formato Requerido:
@@ -286,7 +286,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
                 • <strong>Columna D-E:</strong> Opciones 3 y 4 (opcionales)
               </li>
               <li>
-                • <strong>Columna F:</strong> Número de la opción correcta (1-4)
+                • <strong>Columna F:</strong> Numero de la opcion correcta (1-4)
               </li>
               <li>
                 • <strong>Fila 1:</strong> Debe contener los encabezados
@@ -294,7 +294,7 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
             </ul>
           </div>
 
-          {/* Botón para descargar template */}
+          {/* Boton para descargar template */}
           <div className="text-center border-2 border-dashed border-green-200 rounded-lg p-4 bg-green-50">
             <Download className="h-8 w-8 text-green-600 mx-auto mb-2" />
             <p className="text-sm text-gray-700 mb-3">
@@ -309,11 +309,11 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
             </button>
           </div>
 
-          {/* Área de carga */}
+          {/* Area de carga */}
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
             <FileSpreadsheet className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <p className="text-lg font-medium text-gray-700 mb-2">
-              Arrastra tu archivo Excel aquí o haz clic para seleccionar
+              Arrastra tu archivo Excel aqui o haz clic para seleccionar
             </p>
             <p className="text-sm text-gray-500 mb-4">
               Formatos soportados: .xlsx, .xls
@@ -350,16 +350,16 @@ const ExcelUploader: React.FC<ExcelUploaderProps> = ({
               </div>
               <div className="grid grid-cols-6 gap-2 border-b py-1">
                 <div>Pregunta</div>
-                <div>Opción 1</div>
-                <div>Opción 2</div>
-                <div>Opción 3</div>
-                <div>Opción 4</div>
+                <div>Opcion 1</div>
+                <div>Opcion 2</div>
+                <div>Opcion 3</div>
+                <div>Opcion 4</div>
                 <div>Correcta</div>
               </div>
               <div className="grid grid-cols-6 gap-2 py-1">
-                <div>¿Capital de Perú?</div>
+                <div>¿Capital de Peru?</div>
                 <div>Lima</div>
-                <div>Bogotá</div>
+                <div>Bogota</div>
                 <div></div>
                 <div></div>
                 <div>1</div>

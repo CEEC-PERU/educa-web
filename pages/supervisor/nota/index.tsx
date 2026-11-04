@@ -130,14 +130,14 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div className="relative group">
                       <FiInfo className="h-5 w-5 text-gray-400 hover:text-blue-500 cursor-help" />
                       <div className="absolute left-0 top-full mt-2 w-72 rounded-lg bg-gray-800 text-white text-xs p-3 shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity z-10">
-                        <p className="font-semibold mb-1">¿Cómo se calcula la Nota Final?</p>
-                        <p>Si el curso tiene evaluaciones por módulo: 40% promedio de módulos + 60% examen final.</p>
+                        <p className="font-semibold mb-1">¿Como se calcula la Nota Final?</p>
+                        <p>Si el curso tiene evaluaciones por modulo: 40% promedio de modulos + 60% examen final.</p>
                         <p className="mt-1">Si el curso solo tiene examen final, esa nota se toma como Nota Final.</p>
                       </div>
                     </div>
                   </div>
                   <p className="text-gray-600">
-                    Visualización y análisis del rendimiento académico
+                    Visualizacion y analisis del rendimiento academico
                   </p>
                 </div>
               </div>
@@ -229,11 +229,11 @@ const NotaCourses: NextPageWithLayout = () => {
                 </div>
               </div>
 
-              {/* Segmentación */}
+              {/* Segmentacion */}
               <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
                 {([
                   { value: 'all', label: 'Todos' },
-                  { value: 'training', label: 'En formación' },
+                  { value: 'training', label: 'En formacion' },
                   { value: 'completed', label: 'Formados' },
                 ] as const).map(({ value, label }) => (
                   <button
@@ -250,7 +250,7 @@ const NotaCourses: NextPageWithLayout = () => {
                 ))}
               </div>
 
-              {/* Resumen estadístico */}
+              {/* Resumen estadistico */}
               {segment !== 'training' && <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-center">
@@ -331,9 +331,9 @@ const NotaCourses: NextPageWithLayout = () => {
                         const moduleLabel = progress === 100
                           ? 'Curso completado'
                           : lastEvaluatedModule
-                          ? `En o después de: ${lastEvaluatedModule.module_name}`
+                          ? `En o despues de: ${lastEvaluatedModule.module_name}`
                           : progress > 0
-                          ? 'Módulo inicial (sin evaluaciones)'
+                          ? 'Modulo inicial (sin evaluaciones)'
                           : 'No ha iniciado';
 
                         return (
@@ -354,7 +354,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                 </span>
                               </div>
 
-                              {/* Módulo estimado */}
+                              {/* Modulo estimado */}
                               <div className="flex items-center gap-1 mb-3 text-xs text-gray-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -384,7 +384,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                 </div>
                               </div>
 
-                              {/* Detalles de módulos */}
+                              {/* Detalles de modulos */}
                               <div className="space-y-3">
                                 {user.ModuleResults?.map(
                                   (module: any, moduleIndex: number) => {
@@ -505,7 +505,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                   scope="col"
                                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                                 >
-                                  {module?.module_name || 'Módulo'}
+                                  {module?.module_name || 'Modulo'}
                                 </th>
                               )
                             )}

@@ -34,7 +34,7 @@ export const useCertificationResult = (): UseCertificationResultReturn => {
         );
         setSelectedAttempt(latestAttempt);
       } else if (attempts.length > 0) {
-        // Si solo hay intentos en progreso, mostrar el más reciente
+        // Si solo hay intentos en progreso, mostrar el mas reciente
         const latestInProgress = attempts.reduce((latest, current) =>
           new Date(current.started_at) > new Date(latest.started_at)
             ? current
@@ -64,30 +64,14 @@ export const useCertificationResult = (): UseCertificationResultReturn => {
           toInteger(assignment_id)
         );
 
-        console.log("Data de intentos de certificación:", data);
-
         if (data.success && data.data) {
-          // CORRECCIÓN: data.data ya es el array de attempts
+          // CORRECCION: data.data ya es el array de attempts
           const formattedAttempts = Array.isArray(data.data) ? data.data : [];
-
-          console.log("Attempts formateados:", formattedAttempts);
-          console.log("Número de attempts:", formattedAttempts.length);
-
-          // Debug: mostrar estructura de cada attempt
-          formattedAttempts.forEach((attempt, index) => {
-            console.log(`Attempt ${index + 1}:`, {
-              id: attempt.attempt_id,
-              status: attempt.status,
-              score: attempt.score_obtained,
-              passed: attempt.passed,
-              certification: attempt.certification?.title,
-            });
-          });
 
           setAttempts(formattedAttempts);
           selectLatestAttempt(formattedAttempts);
         } else {
-          setError("No se encontraron intentos de certificación.");
+          setError("No se encontraron intentos de certificacion.");
         }
       } catch (err) {
         const errorMessage =

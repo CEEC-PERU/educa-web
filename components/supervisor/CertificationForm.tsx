@@ -69,14 +69,14 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
       <div className="bg-gray-50 p-6 rounded-lg border">
         <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
           <CheckCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
-          Información del Certificado
+          Informacion del Certificado
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {renderFormField(
             errors.title,
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Título del Certificado *
+                Titulo del Certificado *
               </label>
               <input
                 type="text"
@@ -88,7 +88,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                     ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
-                placeholder="Ingrese el título del certificado"
+                placeholder="Ingrese el titulo del certificado"
               />
             </div>
           )}
@@ -97,7 +97,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
             errors.duration_in_minutes,
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Duración (minutos) *
+                Duracion (minutos) *
               </label>
               <input
                 type="number"
@@ -115,7 +115,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                     ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
-                placeholder="Ingrese la duración en minutos"
+                placeholder="Ingrese la duracion en minutos"
               />
             </div>
           )}
@@ -124,7 +124,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
             errors.passing_percentage,
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Puntuación mínima (%) *
+                Puntuacion minima (%) *
               </label>
               <input
                 type="number"
@@ -143,7 +143,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                     ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                     : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 } focus:ring-2 transition-colors`}
-                placeholder="Ingrese la puntuación mínima para aprobar"
+                placeholder="Ingrese la puntuacion minima para aprobar"
               />
             </div>
           )}
@@ -162,7 +162,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Máximo de Intentos *
+              Maximo de Intentos *
             </label>
             <input
               type="number"
@@ -173,14 +173,14 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                 updateFormData("max_attempts", parseInt(e.target.value) || 1)
               }
               className="block w-full focus:outline-none rounded-md shadow-sm p-2 border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-              placeholder="Ingrese la cantidad máxima de intentos"
+              placeholder="Ingrese la cantidad maxima de intentos"
             />
           </div>
         </div>
         <div className="mt-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Descripción del Certificado
+              Descripcion del Certificado
             </label>
             <textarea
               value={formData.description}
@@ -188,7 +188,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
               required
               onChange={(e) => updateFormData("description", e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-              placeholder="Ingrese una descripción para el certificado"
+              placeholder="Ingrese una descripcion para el certificado"
             />
           </div>
 
@@ -257,9 +257,9 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
                 <p className="text-xs text-gray-500">
                   Tipo:{" "}
                   {question.type_id === 1
-                    ? "Opción simple"
+                    ? "Opcion simple"
                     : question.type_id === 2
-                    ? "Opción múltiple"
+                    ? "Opcion multiple"
                     : "Verdadero/Falso"}{" "}
                   | Puntos: {question.points_value} | Opciones:{" "}
                   {question.options.length}
@@ -290,7 +290,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
         />
       </div>
 
-      {/* Botones de acción */}
+      {/* Botones de accion */}
       <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
         <button
           type="button"
@@ -305,7 +305,7 @@ const CertificationForm: React.FC<CertificationFormProps> = ({
           disabled={isSubmitting || formData.questions.length === 0}
           className="px-6 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:opacity-50"
         >
-          {isSubmitting ? "Creando..." : "Crear Certificación"}
+          {isSubmitting ? "Creando..." : "Crear Certificacion"}
         </button>
       </div>
     </form>

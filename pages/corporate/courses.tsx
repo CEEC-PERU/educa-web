@@ -10,7 +10,7 @@ import './../../app/globals.css';
 const CorporateCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [courses, setCourses] = useState<any[]>([]);

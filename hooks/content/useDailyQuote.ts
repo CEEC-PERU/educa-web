@@ -20,7 +20,7 @@ export const useDailyQuote = () => {
         const data = await getDailyQuote(token);
         setQuote(data);
       } catch (err) {
-        console.error("Error al obtener la frase del día:", err);
+        console.error("Error al obtener la frase del dia:", err);
         setQuote(null);
       } finally {
         setIsLoading(false);

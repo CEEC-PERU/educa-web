@@ -53,7 +53,7 @@ export const useContentProgress = (
     fetchContent();
   }, [programId, dayId, contentId, token]);
 
-  // Función para sincronizar con backend (con debounce)
+  // Funcion para sincronizar con backend (con debounce)
   const syncProgress = useCallback(
     debounce(async (progressData) => {
       if (!token || !contentId) return;
@@ -83,7 +83,7 @@ export const useContentProgress = (
     // Redondear a 2 decimales para consistencia
     const roundedProgress = Math.round(progressPercentage * 100) / 100;
 
-    // Determinar status con tipo explícito
+    // Determinar status con tipo explicito
     const newStatus: 'completed' | 'in_progress' | 'not_started' =
       roundedProgress >= 100 ? 'completed' : 'in_progress';
 

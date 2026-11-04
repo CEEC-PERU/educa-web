@@ -31,7 +31,7 @@ const JuegosIndex = () => {
   return (
     <div className="min-h-screen bg-gradient-to-r from-student-bg-start via-student-bg-mid to-student-bg-end px-4 py-10 sm:px-8 sm:py-14">
       <div className="w-full max-w-screen-lg mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-8">Juegos Didácticos</h1>
+        <h1 className="text-2xl font-bold text-white mb-8">Juegos Didacticos</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {courseStudent.map((item) => (
             <CourseCard

@@ -88,11 +88,11 @@ const ModulesPage: NextPageWithLayout = () => {
         moduleId: moduleToDelete,
         courseId,
       });
-      toast.success("Módulo eliminado correctamente");
+      toast.success("Modulo eliminado correctamente");
       setModuleToDelete(null);
       hideModuleModal();
     } catch (err) {
-      toast.error(getUserFacingMessage(err) ?? "Error al eliminar el módulo");
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar el modulo");
     }
   };
 
@@ -105,12 +105,12 @@ const ModulesPage: NextPageWithLayout = () => {
           queryKey: coursesKeys.modules(courseId),
         });
       }
-      toast.success("Sesión eliminada correctamente");
+      toast.success("Sesion eliminada correctamente");
       setSessionToDelete(null);
       setSelectedSession(null);
       hideSessionModal();
     } catch (err) {
-      toast.error(getUserFacingMessage(err) ?? "Error al eliminar la sesión");
+      toast.error(getUserFacingMessage(err) ?? "Error al eliminar la sesion");
     }
   };
 
@@ -127,10 +127,10 @@ const ModulesPage: NextPageWithLayout = () => {
         isActive: !currentStatus,
         courseId,
       });
-      toast.info(`Módulo ${!currentStatus ? "activado" : "desactivado"}`);
+      toast.info(`Modulo ${!currentStatus ? "activado" : "desactivado"}`);
     } catch (err) {
       toast.error(
-        getUserFacingMessage(err) ?? "Error al cambiar el estado del módulo",
+        getUserFacingMessage(err) ?? "Error al cambiar el estado del modulo",
       );
     }
   };
@@ -159,7 +159,7 @@ const ModulesPage: NextPageWithLayout = () => {
     return (
       <p className="text-gray-500 text-center mt-20">
         {getUserFacingMessage(modulesQuery.error) ??
-          "Error al cargar los módulos."}
+          "Error al cargar los modulos."}
       </p>
     );
   }
@@ -167,19 +167,19 @@ const ModulesPage: NextPageWithLayout = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Módulos</h2>
+        <h2 className="text-xl font-semibold text-gray-800">Modulos</h2>
         <button
           onClick={showAddModuleModal}
           className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           <PlusIcon className="w-4 h-4" />
-          Añadir Módulo
+          Anadir Modulo
         </button>
       </div>
 
       {modules.length === 0 ? (
         <p className="text-gray-400 text-center mt-20">
-          No hay módulos disponibles.
+          No hay modulos disponibles.
         </p>
       ) : (
         <div className="flex gap-4">
@@ -216,10 +216,10 @@ const ModulesPage: NextPageWithLayout = () => {
                             className="inline-flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
                           >
                             <PlusIcon className="w-3.5 h-3.5" />
-                            Añadir Sesión
+                            Anadir Sesion
                           </Link>
                           <button
-                            title="Editar módulo"
+                            title="Editar modulo"
                             onClick={() => {
                               setModuleToEdit(module.module_id);
                               showEditModuleModal();
@@ -228,7 +228,7 @@ const ModulesPage: NextPageWithLayout = () => {
                             <PencilIcon className="w-5 h-5 text-blue-500 hover:text-blue-700 transition-colors cursor-pointer" />
                           </button>
                           <button
-                            title="Eliminar módulo"
+                            title="Eliminar modulo"
                             onClick={() => {
                               setModuleToDelete(module.module_id);
                               showModuleModal();
@@ -239,8 +239,8 @@ const ModulesPage: NextPageWithLayout = () => {
                           <button
                             title={
                               module.is_active
-                                ? "Desactivar módulo"
-                                : "Activar módulo"
+                                ? "Desactivar modulo"
+                                : "Activar modulo"
                             }
                             onClick={() =>
                               handleToggleModuleStatus(
@@ -317,12 +317,12 @@ const ModulesPage: NextPageWithLayout = () => {
                 <div className="flex items-center gap-2">
                   <Link
                     href={`/content/editSession?id=${selectedSession.session_id}`}
-                    title="Editar sesión"
+                    title="Editar sesion"
                   >
                     <PencilIcon className="w-5 h-5 text-blue-500 hover:text-blue-700 transition-colors cursor-pointer" />
                   </Link>
                   <button
-                    title="Eliminar sesión"
+                    title="Eliminar sesion"
                     onClick={() => {
                       setSessionToDelete(selectedSession.session_id);
                       showSessionModal();
@@ -347,7 +347,7 @@ const ModulesPage: NextPageWithLayout = () => {
                 />
               ) : (
                 <p className="text-sm text-gray-400 text-center py-8">
-                  Esta sesión no tiene video asociado.
+                  Esta sesion no tiene video asociado.
                 </p>
               )}
 
@@ -372,14 +372,14 @@ const ModulesPage: NextPageWithLayout = () => {
       <Modal
         show={isAddModuleModalVisible}
         onClose={hideAddModuleModal}
-        title="Añadir Módulo"
+        title="Anadir Modulo"
       >
         <AddModuleForm
           courseId={Number(id)}
           onClose={hideAddModuleModal}
           onSuccess={() => {
             hideAddModuleModal();
-            toast.success("Módulo creado exitosamente");
+            toast.success("Modulo creado exitosamente");
           }}
         />
       </Modal>
@@ -387,14 +387,14 @@ const ModulesPage: NextPageWithLayout = () => {
         <Modal
           show={isEditModuleModalVisible}
           onClose={hideEditModuleModal}
-          title="Editar Módulo"
+          title="Editar Modulo"
         >
           <EditModuleForm
             moduleId={moduleToEdit.toString()}
             onClose={hideEditModuleModal}
             onSuccess={() => {
               hideEditModuleModal();
-              toast.success("Módulo actualizado exitosamente");
+              toast.success("Modulo actualizado exitosamente");
             }}
           />
         </Modal>

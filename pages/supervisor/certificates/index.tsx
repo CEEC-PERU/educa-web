@@ -39,9 +39,9 @@ const getDate = (date: Date) => {
   return { now, nextWeek };
 };
 
-// Vista SUPERVISOR — gestión de certificaciones: crear/editar y asignar a classrooms.
-// Usa useCertifications (hooks/useCertification.ts), el mismo hook genérico que
-// pages/corporate/certificates.tsx, pero aquí con permisos de administración completos.
+// Vista SUPERVISOR — gestion de certificaciones: crear/editar y asignar a classrooms.
+// Usa useCertifications (hooks/useCertification.ts), el mismo hook generico que
+// pages/corporate/certificates.tsx, pero aqui con permisos de administracion completos.
 const CertificatesPage: NextPageWithLayout = () => {
   const router = useRouter();
   const [showAssignModal, setShowAssignModal] = useState(false);
@@ -149,7 +149,7 @@ const CertificatesPage: NextPageWithLayout = () => {
     setIsAssigningCertificate(true);
 
     try {
-      // Validaciones básicas del frontend
+      // Validaciones basicas del frontend
       if (!assignmentFormData.certification_id) {
         throw new Error("Debe seleccionar un certificado");
       }
@@ -159,7 +159,7 @@ const CertificatesPage: NextPageWithLayout = () => {
       }
 
       if (!userInfo?.id) {
-        throw new Error("Información de usuario no disponible");
+        throw new Error("Informacion de usuario no disponible");
       }
 
       const requestData = {
@@ -171,8 +171,6 @@ const CertificatesPage: NextPageWithLayout = () => {
         questions_count: assignmentFormData.questions_count || null,
         is_randomized: assignmentFormData.is_randomized,
       };
-
-      console.log("Enviando asignación:", requestData);
 
       //peticion con timeout
       const response = await fetchWithTimeout(
@@ -191,7 +189,6 @@ const CertificatesPage: NextPageWithLayout = () => {
       //MANEJO DE RESPUESTA
       const result = await handleApiResponse(response);
 
-      console.log("Certificado asignado exitosamente:", result);
       handleCloseAssignModal();
 
       showNotification(
@@ -203,9 +200,9 @@ const CertificatesPage: NextPageWithLayout = () => {
         "success"
       );
     } catch (error: any) {
-      console.error("Error en asignación:", error);
+      console.error("Error en asignacion:", error);
 
-      //MANEJO ESPECÍFICO DE ERRORES
+      //MANEJO ESPECIFICO DE ERRORES
       let errorMessage = error.message || "Error al asignar el certificado";
 
       if (error instanceof ApiError) {
@@ -215,16 +212,16 @@ const CertificatesPage: NextPageWithLayout = () => {
         error.message.includes("NetworkError")
       ) {
         errorMessage =
-          "Error de conexión. Verifique su internet e intente nuevamente.";
+          "Error de conexion. Verifique su internet e intente nuevamente.";
       } else if (
         error.message.includes("timeout") ||
-        error.message.includes("tardó demasiado")
+        error.message.includes("tardo demasiado")
       ) {
         errorMessage =
-          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.";
+          "La solicitud tardo demasiado tiempo. Por favor, intente nuevamente.";
       } else if (error.message.includes("500")) {
         errorMessage =
-          "Error interno del servidor. El equipo técnico ha sido notificado.";
+          "Error interno del servidor. El equipo tecnico ha sido notificado.";
       }
 
       setAssignmentErrors({ general: errorMessage });
@@ -246,7 +243,7 @@ const CertificatesPage: NextPageWithLayout = () => {
       }
 
       if (!userInfo || !userInfo.enterprise_id || !userInfo.id) {
-        throw new Error("Información de usuario no disponible");
+        throw new Error("Informacion de usuario no disponible");
       }
 
       const requestData = {
@@ -267,19 +264,18 @@ const CertificatesPage: NextPageWithLayout = () => {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Error al crear certificación");
+        throw new Error(result.message || "Error al crear certificacion");
       }
 
-      console.log("Certificación creada:", result.data);
       handleCloseModal();
       reload();
-      alert("Certificación creada exitosamente");
+      alert("Certificacion creada exitosamente");
     } catch (error: any) {
       console.error("Error:", error);
       if (error.message.includes("Title is required")) {
-        setErrors({ title: "El título es requerido" });
+        setErrors({ title: "El titulo es requerido" });
       } else if (error.message.includes("already exists")) {
-        setErrors({ title: "Ya existe una certificación con este título" });
+        setErrors({ title: "Ya existe una certificacion con este titulo" });
       } else if (error.message.includes("At least one question is required")) {
         setErrors({ questions: "Debe agregar al menos una pregunta" });
       } else {
@@ -302,14 +298,14 @@ const CertificatesPage: NextPageWithLayout = () => {
       currentQuestion.options.length < 2
     ) {
       newErrors.questions =
-        "Las preguntas de opción deben tener al menos 2 opciones";
+        "Las preguntas de opcion deben tener al menos 2 opciones";
     }
 
     if (
       [1, 2].includes(currentQuestion.type_id) &&
       !currentQuestion.options.some((opt) => opt.is_correct)
     ) {
-      newErrors.questions = "Debe haber al menos una opción correcta";
+      newErrors.questions = "Debe haber al menos una opcion correcta";
     }
 
     if (currentQuestion.options.some((opt) => !opt.option_text.trim())) {
@@ -353,7 +349,7 @@ const CertificatesPage: NextPageWithLayout = () => {
     cert: Certification,
     e: React.MouseEvent
   ) => {
-    // verificar si el clic fue en un botón de acción
+    // verificar si el clic fue en un boton de accion
     const target = e.target as HTMLElement;
     const isActionButton = target.closest("button");
 
@@ -368,7 +364,7 @@ const CertificatesPage: NextPageWithLayout = () => {
   };
 
   const handleDeleteCertificate = async (certificationId: number) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta evaluación?")) {
+    if (confirm("¿Estas seguro de que deseas eliminar esta evaluacion?")) {
       try {
         const response = await fetch(`${API_CERTIFICATES}/${certificationId}`, {
           method: "DELETE",
@@ -378,15 +374,15 @@ const CertificatesPage: NextPageWithLayout = () => {
         });
 
         if (response.ok) {
-          // Refrescar la lista de evaluaciones después de eliminar
+          // Refrescar la lista de evaluaciones despues de eliminar
           reload();
-          showNotification("Evaluación eliminada exitosamente", "success");
+          showNotification("Evaluacion eliminada exitosamente", "success");
         } else {
-          showNotification("Error al eliminar la evaluación", "error");
+          showNotification("Error al eliminar la evaluacion", "error");
         }
       } catch (error) {
         console.error("Error deleting evaluation:", error);
-        showNotification("Error al eliminar la evaluación", "error");
+        showNotification("Error al eliminar la evaluacion", "error");
       }
     }
   };
@@ -397,11 +393,11 @@ const CertificatesPage: NextPageWithLayout = () => {
             <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Gestión de Certificados
+                  Gestion de Certificados
                 </h1>
                 <p className="mt-1 text-sm text-gray-600">
                   Administra los certificados para tus estudiantes desde esta
-                  sección.
+                  seccion.
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
@@ -471,7 +467,7 @@ const CertificatesPage: NextPageWithLayout = () => {
                               handleDeleteCertificate(cert.certification_id);
                             }}
                             className="p-1 text-gray-400 hover:text-red-600 transition-colors z-10 relative"
-                            title="Eliminar evaluación"
+                            title="Eliminar evaluacion"
                           >
                             <TrashIcon className="h-5 w-5" />
                           </button>
@@ -488,14 +484,14 @@ const CertificatesPage: NextPageWithLayout = () => {
                         <div className="flex items-center text-sm text-gray-600">
                           <ClockIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                           <span>
-                            Duración: {cert.duration_in_minutes} minutos
+                            Duracion: {cert.duration_in_minutes} minutos
                           </span>
                         </div>
 
                         <div className="flex items-center text-sm text-gray-600">
                           <StarIcon className="h-4 w-4 mr-2 flex-shrink-0" />
                           <span>
-                            Puntuación para aprobar: {cert.passing_percentage}%
+                            Puntuacion para aprobar: {cert.passing_percentage}%
                           </span>
                         </div>
 

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./../app/globals.css";
 
@@ -36,11 +36,11 @@ const LoginPage: React.FC = () => {
     try {
       await login(dni, password);
       setLoading(false);
-      // Si login fue exitoso y hay que limpiar el error, se puede hacer aquí (opcional)
+      // Si login fue exitoso y hay que limpiar el error, se puede hacer aqui (opcional)
       // setLocalError(null);
     } catch (err: any) {
       // Muestra error local SIEMPRE, no lo limpies antes
-      setLocalError(err?.message || "Usuario o contraseña incorrectos");
+      setLocalError(err?.message || "Usuario o contrasena incorrectos");
       setLoading(false);
     }
   };
@@ -70,7 +70,7 @@ const LoginPage: React.FC = () => {
         <div className="w-full lg:w-2/5 flex justify-center">
           <div className="login-card-animate bg-brandrosado-800 bg-opacity-80 p-8 rounded-3xl shadow-md max-w-md w-full">
             <h1 className="text-2xl font-bold text-center text-white mb-3">
-              ¡Estás a un paso de seguir potenciando tus conocimientos!
+              ¡Estas a un paso de seguir potenciando tus conocimientos!
             </h1>
             <p className="text-lg text-center text-white mb-6">
               Ingresa e inicia tu experiencia
@@ -98,7 +98,7 @@ const LoginPage: React.FC = () => {
                   className="block text-sm font-medium text-white"
                   htmlFor="password"
                 >
-                  CONTRASEÑA
+                  CONTRASENA
                 </label>
                 <div className="relative mt-1">
                   <input
@@ -107,7 +107,7 @@ const LoginPage: React.FC = () => {
                     value={password}
                     onChange={handleChangePassword}
                     className="block w-full px-3 py-2 pr-10 bg-transparent border-b border-white text-white placeholder-white/70 focus:outline-none focus:ring-0 focus:border-white sm:text-sm"
-                    placeholder="Introduce tu contraseña"
+                    placeholder="Introduce tu contrasena"
                     disabled={loading}
                   />
                   <button
@@ -188,7 +188,7 @@ const LoginPage: React.FC = () => {
                   }`}
                   disabled={loading}
                 >
-                  INICIAR SESIÓN
+                  INICIAR SESION
                 </button>
               </div>
             </form>

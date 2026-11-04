@@ -31,7 +31,7 @@ const MyTrainingsPage = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando configuración...</p>
+          <p className="text-gray-600">Cargando configuracion...</p>
         </div>
       </div>
     );
@@ -57,7 +57,7 @@ const MyTrainingsPage = () => {
             </svg>
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            ID de programa inválido
+            ID de programa invalido
           </h2>
           <button
             onClick={() => router.push("/student/capacitaciones")}
@@ -165,7 +165,7 @@ const MyTrainingsPage = () => {
           </div>
         ) : !myTrainingDetails ? (
           <div className="text-center py-16">
-            <p className="text-gray-600">No se encontró el programa</p>
+            <p className="text-gray-600">No se encontro el programa</p>
           </div>
         ) : (
           <>
@@ -219,7 +219,7 @@ const MyTrainingsPage = () => {
               </div>
             </div>
 
-            {/* Lista de Días */}
+            {/* Lista de Dias */}
             <div className="space-y-6">
               {myTrainingDetails.days.map((day) => (
                 <div
@@ -230,7 +230,7 @@ const MyTrainingsPage = () => {
                       : "border-gray-300 opacity-60"
                   } overflow-hidden`}
                 >
-                  {/* Header del Día */}
+                  {/* Header del Dia */}
                   <div
                     className={`p-5 ${day.is_unlocked ? "bg-gradient-to-r from-blue-50 to-purple-50" : "bg-gray-50"}`}
                   >
@@ -250,7 +250,7 @@ const MyTrainingsPage = () => {
                             {day.title}
                           </h2>
                           <p className="text-sm text-gray-600">
-                            Día {day.day_number} • {day.contents.length}{" "}
+                            Dia {day.day_number} • {day.contents.length}{" "}
                             contenido(s)
                           </p>
                         </div>
@@ -348,9 +348,9 @@ const MyTrainingsPage = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <Lock className="w-12 h-12 mx-auto mb-3 text-gray-400" />
-                        <p className="font-medium">Día bloqueado</p>
+                        <p className="font-medium">Dia bloqueado</p>
                         <p className="text-sm">
-                          Completa el día {day.day_number - 1} para desbloquear
+                          Completa el dia {day.day_number - 1} para desbloquear
                         </p>
                       </div>
                     )}

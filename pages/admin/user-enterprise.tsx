@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
@@ -90,7 +90,7 @@ const EnterpriseList: React.FC = () => {
           <div className="flex justify-between items-center mb-4">
             <div onClick={handleAddEnterprise}>
               <ButtonContent
-                buttonLabel="Añadir Empresa"
+                buttonLabel="Anadir Empresa"
                 backgroundColor="bg-gradient-to-r from-blue-500 to-blue-400"
                 textColor="text-white"
                 fontSize="text-xs"

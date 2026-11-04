@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 
-Modal.setAppElement('#__next'); // Establece el elemento de aplicación para accesibilidad
+Modal.setAppElement('#__next'); // Establece el elemento de aplicacion para accesibilidad
 
 interface GradesModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modu
   };
 
   if (!course || !modules || !finalExam) {
-    return null; // O algún mensaje de error / carga
+    return null; // O algun mensaje de error / carga
   }
 
   return (
@@ -39,7 +39,7 @@ const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modu
       </div>
       <div className="flex flex-col space-y-6 p-6">
         <div>
-          <h3 className="text-lg md:text-xl font-bold border-b-2 border-gray-300 mb-4">Práctica de Módulos</h3>
+          <h3 className="text-lg md:text-xl font-bold border-b-2 border-gray-300 mb-4">Practica de Modulos</h3>
           <ul className="space-y-2">
             {modules.map((module, index) => (
               <li key={module.module_id} className="flex justify-between text-base md:text-lg">
@@ -50,7 +50,7 @@ const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modu
           </ul>
         </div>
         <div className="pt-6">
-          <h3 className="text-lg md:text-xl font-bold border-b-2 border-gray-300 mb-4">Evaluación Final del Curso</h3>
+          <h3 className="text-lg md:text-xl font-bold border-b-2 border-gray-300 mb-4">Evaluacion Final del Curso</h3>
           <p className="text-base md:text-lg">{finalExam.name}: {finalExam.CourseResults?.[0]?.puntaje || 0}</p>
         </div>
         <div className="text-center text-blue-500 mt-6">

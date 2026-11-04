@@ -20,13 +20,13 @@ const CourseEnrollCard: React.FC<CourseEnrollCardProps> = ({ onStart }) => (
         alt="Acceso"
       />
       <span className="text-white text-sm lg:text-base">
-        Gracias a nuestro cliente, accedes a todos los cursos y beneficios de nuestro catálogo.
+        Gracias a nuestro cliente, accedes a todos los cursos y beneficios de nuestro catalogo.
       </span>
       <button
         className="bg-brandmora-500 text-white px-2 lg:px-4 py-1 lg:py-2 rounded hover:bg-brandmorado-700 border-4 border-brandborder-400 flex items-center mt-4"
         onClick={onStart}
       >
-        Ver catálogo de cursos
+        Ver catalogo de cursos
       </button>
     </div>
 

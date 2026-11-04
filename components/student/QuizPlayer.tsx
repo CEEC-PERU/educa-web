@@ -309,7 +309,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
         {isFinalEvaluation ? (
           <>
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-yellow-400 mb-4 sm:mb-6 font-extrabold animate-pulse text-center leading-tight">
-              EVALUACIÓN FINAL
+              EVALUACION FINAL
             </h1>
             <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white mb-6 sm:mb-8 text-center px-2">
               Para finalizar el curso, inicia esto
@@ -321,7 +321,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
               ¡Ponte a Prueba!
             </h1>
             <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mb-8 text-center px-2">
-              Para finalizar el módulo, ¡Inicia la Evaluación!
+              Para finalizar el modulo, ¡Inicia la Evaluacion!
             </p>
             <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-6 sm:mb-8 text-center px-4">
               ¡Tienes 2 Intentos Disponibles! Si obtienes mayor a 16 en el primer
@@ -350,7 +350,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
                 onClick={handleStartEvaluation}
                 className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
               >
-                {attemptCountCourse === 1 ? 'Volver a Intentar' : 'Comenzar Evaluación Final'}
+                {attemptCountCourse === 1 ? 'Volver a Intentar' : 'Comenzar Evaluacion Final'}
               </button>
             )}
           </>
@@ -363,7 +363,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
                 onClick={handleStartEvaluation}
                 className="bg-yellow-400 text-purple-900 font-bold text-xl rounded-full px-8 py-4 shadow-lg hover:bg-yellow-500 transition-colors duration-300"
               >
-                {attemptCount === 1 ? 'Volver a Intentar' : 'Comenzar Evaluación'}
+                {attemptCount === 1 ? 'Volver a Intentar' : 'Comenzar Evaluacion'}
               </button>
             )}
           </>
@@ -439,7 +439,7 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
                   value={textAnswer}
                   onChange={handleTextAnswerChange}
                   className="w-full h-40 p-4 text-white bg-gray-700 rounded-lg border border-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:outline-none"
-                  placeholder="Escribe tu respuesta aquí..."
+                  placeholder="Escribe tu respuesta aqui..."
                 />
               )}
 
@@ -539,10 +539,10 @@ const QuizPlayer: React.FC<QuizPlayerProps> = ({
 
             <div className="grid grid-cols-3 gap-6 bg-brandmc-100 rounded-lg p-6 shadow-lg text-lg font-semibold text-yellow-300">
               <div className="col-span-1 flex flex-col items-center">
-                <span className="text-xl">Duración</span>
+                <span className="text-xl">Duracion</span>
                 <img
                   src="https://res.cloudinary.com/dk2red18f/image/upload/v1730908225/CEEC/PREQUIZZ/ect4ksc3nxzzu7jsu5jw.png"
-                  alt="Duración icon"
+                  alt="Duracion icon"
                   className="w-18 h-18 my-2"
                 />
                 <span className="text-xl">

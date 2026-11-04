@@ -26,7 +26,7 @@ export const useMyTrainings = () => {
           setMyTrainings([]);
           setError(null);
         } else {
-          setError('Error al cargar mis programas de formación');
+          setError('Error al cargar mis programas de formacion');
           console.error(err);
         }
       } finally {
@@ -45,7 +45,7 @@ export const useMyTrainings = () => {
       setMyTrainings(data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar mis programas de formación');
+      setError('Error al cargar mis programas de formacion');
     } finally {
       setLoading(false);
     }

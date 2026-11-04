@@ -18,7 +18,7 @@ const ProfileInfoItem: React.FC<{ label: string; value: string }> = ({
 );
 
 const StudentProfile = () => {
-  const { user, profileInfo } = useAuth();
+  const { profileInfo } = useAuth();
   const { enterprise, error, isLoading } = useEnterprise();
   const router = useRouter();
   const [avatarError, setAvatarError] = useState(false);
@@ -30,13 +30,10 @@ const StudentProfile = () => {
     fullName:
       `${(profileInfo as Profile)?.first_name || ""} ${(profileInfo as Profile)?.last_name || ""}`.trim() ||
       "Usuario",
-    email: (profileInfo as Profile)?.email || "-",
-    phone: (profileInfo as Profile)?.phone || "-",
     avatarUrl:
       (profileInfo as Profile)?.profile_picture || "/default-avatar.png",
     coverUrl: enterprise?.enterprise.image_fondo || "/default-cover.png",
     companyName: enterprise?.enterprise.name || "-",
-    dni: (user as { dni: string })?.dni || "-",
   };
 
   const handleEditClick = () => {
@@ -62,7 +59,7 @@ const StudentProfile = () => {
             Error al cargar el perfil
           </p>
           <p className="text-white text-sm mb-6 opacity-90">
-            {error || "Ocurrió un error inesperado"}
+            {error || "Ocurrio un error inesperado"}
           </p>
           <button
             onClick={() => window.location.reload()}
@@ -121,10 +118,7 @@ const StudentProfile = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
           <ProfileInfoItem label="Nombres" value={profileData.firstName} />
           <ProfileInfoItem label="Apellidos" value={profileData.lastName} />
-          <ProfileInfoItem label="Email" value={profileData.email} />
-          <ProfileInfoItem label="Teléfono" value={profileData.phone} />
           <ProfileInfoItem label="Empresa" value={profileData.companyName} />
-          <ProfileInfoItem label="Usuario" value={profileData.dni} />
         </div>
       </div>
     </div>

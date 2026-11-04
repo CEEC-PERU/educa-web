@@ -108,15 +108,15 @@ export function useStudentVerificationFlow() {
           error.name === "NotFoundError" ||
           error.name === "DevicesNotFoundError"
         ) {
-          alert("No se ha detectado ninguna cámara en tu dispositivo.");
+          alert("No se ha detectado ninguna camara en tu dispositivo.");
         } else if (
           error.name === "NotAllowedError" ||
           error.name === "PermissionDeniedError"
         ) {
-          alert("Por favor, permite el acceso a la cámara para continuar.");
+          alert("Por favor, permite el acceso a la camara para continuar.");
         } else {
           alert(
-            "Error al acceder a la cámara. Asegúrate de estar usando un dispositivo con cámara.",
+            "Error al acceder a la camara. Asegurate de estar usando un dispositivo con camara.",
           );
         }
       }
@@ -195,21 +195,19 @@ export function useStudentVerificationFlow() {
   }, []);
 
   const submit = useCallback(async () => {
-    if (!photo || !signature || !userId) {
-      alert("Debes tomar una foto y firmar antes de enviar.");
+    if (!signature || !consentGiven || !userId) {
+      alert("Debes firmar y confirmar tu consentimiento antes de enviar.");
       return;
     }
     const pdf = new jsPDF();
-    pdf.addImage(photo, "JPEG", 10, 10, 190, 190);
-    pdf.addImage(signature, "JPEG", 10, 210, 190, 50);
+    pdf.addImage(signature, "PNG", 10, 20, 190, 60);
     pdf.save(`${name}_${lastName}_${Date.now()}.pdf`);
 
     const userInfo: UserInfoData = {
       user_id: userId,
-      foto_image: dataURLToFile(photo, `${name}_${lastName}_photo.jpg`),
       firma_image: dataURLToFile(
         signature,
-        `${name}_${lastName}_signature.jpg`,
+        `${name}_${lastName}_signature.png`,
       ),
       documento_pdf: pdfToFile(pdf, `${name}_${lastName}.pdf`),
     };
@@ -221,7 +219,7 @@ export function useStudentVerificationFlow() {
     } catch {
       alert("Hubo un error al enviar los datos.");
     }
-  }, [photo, signature, userId, name, lastName, submitUserInfo, close]);
+  }, [signature, consentGiven, userId, name, lastName, submitUserInfo, close]);
 
   return {
     isOpen: isOpen === true,

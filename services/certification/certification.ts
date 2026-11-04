@@ -38,7 +38,7 @@ export const getCertificationAttemptsStudent = async (
         answers: attempt.answers || [],
         certification: attempt.certification ||
           attempt.assignment?.certification || {
-            title: "Certificación no disponible",
+            title: "Certificacion no disponible",
             description: "",
             duration_in_minutes: 0,
             passing_percentage: 0,

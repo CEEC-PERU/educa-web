@@ -1,10 +1,10 @@
-﻿import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import {
   getCompanies,
-  getUsersByCompanyAndRole,
+  getPaginatedUsersByCompanyAndRole,
   getUsersByRole,
 } from '../../services/users/userService';
 import FormField from '../../components/FormField';
@@ -25,11 +25,26 @@ const RoleDetail: React.FC = () => {
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [filter, setFilter] = useState('');
+  const [debouncedFilter, setDebouncedFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loadingUsers, setLoadingUsers] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
   const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
   const CONTENT_ROLE_ID = 3; // Reemplaza este valor con el ID real del rol de contenido
+  const PAGE_SIZE = 50;
+  const isCompanyScopedList = Boolean(
+    roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID
+  );
+  const showProductColumn = Number(selectedCompany) === 2;
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedFilter(filter.trim()), 350);
+    return () => clearTimeout(timer);
+  }, [filter]);
 
   const buttonColors = [
     'bg-gradient-purple text-white',
@@ -54,30 +69,48 @@ const RoleDetail: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    let active = true;
     const fetchUsers = async () => {
+      setLoadingUsers(true);
       try {
-        let usersData: User[] = [];
         if (
           roleId &&
           (Number(roleId) === ADMIN_ROLE_ID ||
             Number(roleId) === CONTENT_ROLE_ID)
         ) {
-          usersData = await getUsersByRole(roleId.toString());
+          const usersData: User[] = await getUsersByRole(roleId.toString());
+          if (!active) return;
+          setUsers(usersData);
+          setTotalCount(usersData.length);
+          setTotalPages(1);
         } else if (selectedCompany && roleId) {
-          usersData = await getUsersByCompanyAndRole(
+          const response = await getPaginatedUsersByCompanyAndRole(
             selectedCompany,
-            Number(roleId)
+            Number(roleId),
+            page,
+            PAGE_SIZE,
+            debouncedFilter,
           );
+          if (!active) return;
+          setUsers(response.users);
+          setTotalCount(response.totalCount);
+          setTotalPages(response.totalPages);
+        } else {
+          if (!active) return;
+          setUsers([]);
+          setTotalCount(0);
+          setTotalPages(0);
         }
-        console.log('Users data:', usersData);
-        setUsers(usersData);
       } catch (error) {
         console.error('Error fetching users:', error);
+      } finally {
+        if (active) setLoadingUsers(false);
       }
     };
 
     fetchUsers();
-  }, [selectedCompany, roleId]);
+    return () => { active = false; };
+  }, [selectedCompany, roleId, page, debouncedFilter]);
 
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -86,14 +119,14 @@ const RoleDetail: React.FC = () => {
   };
 
   const filteredUsers = users.filter(
-    (user) =>
+    (user) => isCompanyScopedList || (
       user.userProfile?.first_name
         ?.toLowerCase()
         .includes(filter.toLowerCase()) ||
       user.userProfile?.last_name
         ?.toLowerCase()
-        .includes(filter.toLowerCase()) ||
-      user.dni.includes(filter)
+        .includes(filter.toLowerCase())
+    )
   );
 
   const usersWithProfile = filteredUsers.filter((user) => user.userProfile);
@@ -103,16 +136,14 @@ const RoleDetail: React.FC = () => {
     { header: '', accessor: 'userProfile.profile_picture' },
     { header: 'Nombre', accessor: 'userProfile.first_name' },
     { header: 'Apellido', accessor: 'userProfile.last_name' },
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
   ];
 
   const columnsWithoutProfile = [
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
   ];
 
   if (roleId && Number(roleId) === STUDENT_ROLE_ID) {
+    columnsWithProfile.push({ header: 'Producto', accessor: 'product' });
+    columnsWithoutProfile.push({ header: 'Producto', accessor: 'product' });
     columnsWithProfile.push({ header: 'Sesiones', accessor: 'session_count' });
     columnsWithoutProfile.push({
       header: 'Sesiones',
@@ -147,22 +178,29 @@ const RoleDetail: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleUserCreateSuccess = () => {
+  const handleUserCreateSuccess = async () => {
     setIsModalOpen(false);
-    if (selectedCompany && roleId) {
-      const fetchUsers = async () => {
-        try {
-          const usersData = await getUsersByCompanyAndRole(
-            selectedCompany,
-            Number(roleId)
-          );
-          setUsers(usersData);
-        } catch (error) {
-          console.error('Error fetching users:', error);
-        }
-      };
-
-      fetchUsers();
+    if (!roleId) return;
+    try {
+      if (Number(roleId) === ADMIN_ROLE_ID || Number(roleId) === CONTENT_ROLE_ID) {
+        const usersData: User[] = await getUsersByRole(roleId.toString());
+        setUsers(usersData);
+        setTotalCount(usersData.length);
+        setTotalPages(1);
+      } else if (selectedCompany) {
+        const response = await getPaginatedUsersByCompanyAndRole(
+          selectedCompany,
+          Number(roleId),
+          page,
+          PAGE_SIZE,
+          debouncedFilter,
+        );
+        setUsers(response.users);
+        setTotalCount(response.totalCount);
+        setTotalPages(response.totalPages);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
@@ -213,7 +251,7 @@ const RoleDetail: React.FC = () => {
                         buttonColors[index % buttonColors.length]
                       }
                       buttonSize="py-2 px-4"
-                      onClick={() => setSelectedCompany(company.enterprise_id)}
+                      onClick={() => { setSelectedCompany(company.enterprise_id); setPage(1); }}
                     />
                   ))}
                 </div>
@@ -224,7 +262,7 @@ const RoleDetail: React.FC = () => {
                 label="Filtrar por nombre, apellido o DNI"
                 type="text"
                 value={filter}
-                onChange={handleFilterChange}
+                onChange={(event) => { handleFilterChange(event); setPage(1); }}
               />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-8xl">
@@ -235,6 +273,7 @@ const RoleDetail: React.FC = () => {
                 <TableUser
                   columns={columnsWithProfile}
                   data={usersWithProfile}
+                  showProductColumn={showProductColumn}
                   actionLabel="Editar"
                   onActionClick={handleActionClick}
                 />
@@ -246,9 +285,32 @@ const RoleDetail: React.FC = () => {
                 <TableUser
                   columns={columnsWithoutProfile}
                   data={usersWithoutProfile}
+                  showProductColumn={showProductColumn}
                 />
               </div>
             </div>
+            {isCompanyScopedList && selectedCompany && (
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3" aria-live="polite">
+                <span className="text-sm text-gray-600">
+                  {loadingUsers ? 'Cargando usuarios...' : `${totalCount.toLocaleString()} usuarios`}
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.max(1, current - 1))}
+                    disabled={loadingUsers || page <= 1}
+                    className="rounded border border-gray-300 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                  >Anterior</button>
+                  <span className="text-sm text-gray-700">Pagina {page} de {Math.max(totalPages, 1)}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+                    disabled={loadingUsers || page >= totalPages}
+                    className="rounded border border-gray-300 px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                  >Siguiente</button>
+                </div>
+              </div>
+            )}
           </main>
         </div>
 

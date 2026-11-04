@@ -38,8 +38,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<{
     id: number;
     role: number;
-    dni: string;
     enterprise_id: number;
+    must_change_password: boolean;
   } | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -96,6 +96,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, [token]);
 
+  useEffect(() => {
+    if (!router.isReady || !user?.must_change_password) return;
+    if (router.pathname !== "/change-password") {
+      router.replace("/change-password");
+    }
+  }, [router.isReady, router.pathname, user?.must_change_password]);
+
   const refreshProfile = async (token: string, userId: number) => {
     try {
       const profile = await getProfile(token, userId);
@@ -118,15 +125,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const decodedToken: {
           id: number;
           role: number;
-          dni: string;
           enterprise_id: number;
+          must_change_password?: boolean;
         } = jwtDecode(response.token);
+        const mustChangePassword = Boolean(
+          response.must_change_password ?? decodedToken.must_change_password,
+        );
         setToken(response.token);
         setUser({
           id: decodedToken.id,
           role: decodedToken.role,
-          dni: decodedToken.dni,
           enterprise_id: decodedToken.enterprise_id,
+          must_change_password: mustChangePassword,
         });
 
         localStorage.setItem("userToken", response.token);
@@ -135,12 +145,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           JSON.stringify({
             id: decodedToken.id,
             role: decodedToken.role,
-            dni: decodedToken.dni,
             enterprise_id: decodedToken.enterprise_id,
+            must_change_password: mustChangePassword,
           }),
         );
         if (decodedToken.role === 1) {
           socket?.emit("login", { userToken: response.token });
+        }
+        if (mustChangePassword) {
+          await router.replace("/change-password");
+          return;
         }
         const profile = await getProfile(response.token, decodedToken.id);
         if (profile) {
@@ -153,20 +167,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         setError(
           response.msg ??
-            "Hubo un problema al iniciar sesión. Por favor, inténtalo de nuevo.",
+            "Hubo un problema al iniciar sesion. Por favor, intentalo de nuevo.",
         );
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
-          setError("Error al iniciar sesión, datos ingresados incorrectos.");
+          setError("Error al iniciar sesion, datos ingresados incorrectos.");
         } else {
-          setError("Ocurrió un error al iniciar sesión. Inténtalo nuevamente.");
+          setError("Ocurrio un error al iniciar sesion. Intentalo nuevamente.");
         }
       } else if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError("Ocurrió un error inesperado.");
+        setError("Ocurrio un error inesperado.");
       }
     } finally {
       setIsLoading(false);
@@ -194,6 +208,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     router.push("/");
   };
 
+  const completePasswordChange = () => {
+    setUser((current) => {
+      if (!current) return current;
+      const updated = { ...current, must_change_password: false };
+      localStorage.setItem("userInfo", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   useEffect(() => {
     try {
       const storedUserToken = localStorage.getItem("userToken");
@@ -206,10 +229,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setProfileInfo(JSON.parse(storedProfileInfo));
         }
 
-        const { id, role, dni, enterprise_id } = JSON.parse(storedUserInfo);
+        const storedUser = JSON.parse(storedUserInfo);
+        const decodedToken: { must_change_password?: boolean } = jwtDecode(storedUserToken!);
+        const { id, role, enterprise_id } = storedUser;
+        const must_change_password = Boolean(
+          storedUser.must_change_password ?? decodedToken.must_change_password,
+        );
 
         setToken(storedUserToken);
-        setUser({ id, role, dni, enterprise_id });
+        const safeUser = { id, role, enterprise_id, must_change_password };
+        setUser(safeUser);
+        localStorage.setItem("userInfo", JSON.stringify(safeUser));
       } else {
         setToken(null);
         setUser(null);
@@ -280,6 +310,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       profileInfo,
       redirectToDashboard,
       refreshProfile,
+      completePasswordChange,
       resetInactivityTimer,
     }),
     [user, token, isLoading, error, profileInfo],

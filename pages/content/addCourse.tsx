@@ -149,7 +149,7 @@ const AddCourse: NextPageWithLayout = () => {
               />
               <FormField
                 id="description_short"
-                label="Descripción Corta"
+                label="Descripcion Corta"
                 type="textarea"
                 value={formData.description_short as string}
                 onChange={handleChange}
@@ -162,7 +162,7 @@ const AddCourse: NextPageWithLayout = () => {
               />
               <FormField
                 id="description_large"
-                label="Descripción Larga"
+                label="Descripcion Larga"
                 type="textarea"
                 value={formData.description_large as string}
                 onChange={handleChange}
@@ -176,7 +176,7 @@ const AddCourse: NextPageWithLayout = () => {
               <div>
                 <SidebarSelect
                   id="category_id"
-                  label="Categoría"
+                  label="Categoria"
                   value={
                     (formData.category_id as number) === 0
                       ? ""
@@ -189,7 +189,7 @@ const AddCourse: NextPageWithLayout = () => {
                       label: selectPlaceholder(
                         categoriesQuery.isLoading,
                         categoriesQuery.isError,
-                        "Seleccionar Categoría",
+                        "Seleccionar Categoria",
                       ),
                     },
                     ...categories.map((c) => ({
@@ -200,7 +200,7 @@ const AddCourse: NextPageWithLayout = () => {
                 />
                 {touched && (formData.category_id as number) === 0 && (
                   <p className="text-xs text-red-500 mt-1">
-                    La categoría es requerida
+                    La categoria es requerida
                   </p>
                 )}
               </div>
@@ -258,7 +258,7 @@ const AddCourse: NextPageWithLayout = () => {
               <div>
                 <SidebarSelect
                   id="evaluation_id"
-                  label="Evaluación"
+                  label="Evaluacion"
                   value={
                     (formData.evaluation_id as number) === 0
                       ? ""
@@ -271,7 +271,7 @@ const AddCourse: NextPageWithLayout = () => {
                       label: selectPlaceholder(
                         evaluationsQuery.isLoading,
                         evaluationsQuery.isError,
-                        "Seleccionar Evaluación",
+                        "Seleccionar Evaluacion",
                       ),
                     },
                     ...evaluations.map((ev) => ({
@@ -282,13 +282,13 @@ const AddCourse: NextPageWithLayout = () => {
                 />
                 {touched && (formData.evaluation_id as number) === 0 && (
                   <p className="text-xs text-red-500 mt-1">
-                    La evaluación es requerida
+                    La evaluacion es requerida
                   </p>
                 )}
               </div>
               <FormField
                 id="duration_video"
-                label="Duración del Video"
+                label="Duracion del Video"
                 type="text"
                 value={formData.duration_video as string}
                 onChange={handleChange}
@@ -298,7 +298,7 @@ const AddCourse: NextPageWithLayout = () => {
               />
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Video de Introducción
+                  Video de Introduccion
                 </label>
                 <MediaUploadPreview
                   ref={videoUploadRef}
@@ -315,7 +315,7 @@ const AddCourse: NextPageWithLayout = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Video de Presentación del Profesor
+                  Video de Presentacion del Profesor
                 </label>
                 <MediaUploadPreview
                   ref={presentationVideoUploadRef}
@@ -327,7 +327,7 @@ const AddCourse: NextPageWithLayout = () => {
               </div>
               <FormField
                 id="duration_course"
-                label="Duración del Curso"
+                label="Duracion del Curso"
                 type="text"
                 value={formData.duration_course as string}
                 onChange={handleChange}

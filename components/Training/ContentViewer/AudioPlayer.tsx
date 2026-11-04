@@ -54,7 +54,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Solo permitir seek si está habilitado
+    // Solo permitir seek si esta habilitado
     if (!allowSeekForward) return;
 
     const audio = audioRef.current;
@@ -106,7 +106,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({
 
         {/* Title */}
         <h3 className="text-white text-center text-xl font-semibold mb-6">
-          Audio de Capacitación
+          Audio de Capacitacion
         </h3>
 
         {/* Progress Bar */}

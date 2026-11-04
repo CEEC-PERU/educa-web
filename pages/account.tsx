@@ -103,7 +103,7 @@ const AccountPage: NextPageWithLayout = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="relative w-full max-w-4xl mx-auto">
-        {/* Banner detrás del avatar, oculto por ahora.
+        {/* Banner detras del avatar, oculto por ahora.
         <div className="relative w-full h-52 lg:h-64 overflow-hidden rounded-b-2xl">
           <img
             src={
@@ -177,7 +177,7 @@ const AccountPage: NextPageWithLayout = () => {
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all text-sm font-medium shadow-sm backdrop-blur-sm"
             >
               <LockClosedIcon className="h-4 w-4" />
-              Cambiar contraseña
+              Cambiar contrasena
             </button>
             <button
               onClick={() => router.push(dashboardHref)}
@@ -198,15 +198,9 @@ const AccountPage: NextPageWithLayout = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-5">
           <InfoItem label="Nombres" value={profile?.first_name ?? "-"} />
           <InfoItem label="Apellidos" value={profile?.last_name ?? "-"} />
-          <InfoItem label="Email" value={profile?.email ?? "-"} />
-          <InfoItem label="Teléfono" value={profile?.phone ?? "-"} />
           <InfoItem
             label="Empresa"
             value={enterprise?.enterprise.name ?? "-"}
-          />
-          <InfoItem
-            label="Usuario"
-            value={(user as { dni: string } | null)?.dni ?? "-"}
           />
         </div>
       </div>

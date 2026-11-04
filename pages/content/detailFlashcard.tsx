@@ -136,7 +136,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
     return (
       <p className="text-gray-500 text-center mt-20">
         {getUserFacingMessage(modulesQuery.error) ??
-          "Error al cargar los módulos"}
+          "Error al cargar los modulos"}
       </p>
     );
   }
@@ -159,7 +159,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
 
       {modules.length === 0 ? (
         <p className="text-gray-400 text-center mt-20">
-          No hay módulos para este curso.
+          No hay modulos para este curso.
         </p>
       ) : (
         <div className="flex gap-4">
@@ -195,7 +195,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
                             href={`/content/addFlashcard?moduleId=${module.module_id}`}
                             className="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
                           >
-                            Añadir Flashcard
+                            Anadir Flashcard
                           </Link>
                         </div>
                       </DisclosureButton>
@@ -218,7 +218,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
                             ))
                           ) : (
                             <p className="text-sm text-gray-400">
-                              No hay flashcards para este módulo
+                              No hay flashcards para este modulo
                             </p>
                           )}
                         </div>
@@ -320,7 +320,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
                       ))
                     ) : (
                       <p className="text-gray-400 text-sm col-span-3">
-                        No hay imágenes de respuestas correctas
+                        No hay imagenes de respuestas correctas
                       </p>
                     )}
                   </div>
@@ -347,7 +347,7 @@ const FlashcardsPage: NextPageWithLayout = () => {
                       ))
                     ) : (
                       <p className="text-gray-400 text-sm col-span-3">
-                        No hay imágenes de respuestas incorrectas
+                        No hay imagenes de respuestas incorrectas
                       </p>
                     )}
                   </div>

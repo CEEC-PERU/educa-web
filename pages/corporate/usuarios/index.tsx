@@ -4,7 +4,7 @@ import type { NextPageWithLayout } from '../../../types/next';
 import AppLayout from "@/components/layouts/AppLayout";
 import {
   getCompanies,
-  getUsersByCompanyAndRole,
+  getPaginatedUsersByCompanyAndRole,
   getUsersByRole,
 } from '../../../services/users/userService';
 import FormField from '../../../components/FormField';
@@ -26,13 +26,17 @@ const Usuarios: NextPageWithLayout = () => {
   const { logout, user, profileInfo, token } = useAuth();
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
   const [filter, setFilter] = useState('');
+  const [debouncedFilter, setDebouncedFilter] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [userCountResult, setUserCountResult] = useState<any>(null);
 
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const STUDENT_ROLE_ID = 1; // Replace this value with the real student role ID
@@ -49,6 +53,11 @@ const Usuarios: NextPageWithLayout = () => {
   ];
 
   useEffect(() => {
+    const timer = setTimeout(() => setDebouncedFilter(filter.trim()), 350);
+    return () => clearTimeout(timer);
+  }, [filter]);
+
+  useEffect(() => {
     const fetchUsers = async () => {
       try {
         let usersData: User[] = [];
@@ -59,10 +68,16 @@ const Usuarios: NextPageWithLayout = () => {
         ) {
           usersData = await getUsersByRole(roleId.toString());
         } else if (enterpriseId && roleId) {
-          usersData = await getUsersByCompanyAndRole(
+          const response = await getPaginatedUsersByCompanyAndRole(
             enterpriseId,
-            Number(roleId)
+            Number(roleId),
+            page,
+            50,
+            debouncedFilter,
           );
+          usersData = response.users;
+          setTotalCount(response.totalCount);
+          setTotalPages(response.totalPages);
         }
         console.log('Users data:', usersData);
         setUsers(usersData);
@@ -72,7 +87,7 @@ const Usuarios: NextPageWithLayout = () => {
     };
 
     fetchUsers();
-  }, [enterpriseId, roleId]);
+  }, [enterpriseId, roleId, page, debouncedFilter]);
 
   useEffect(() => {
     if (usercount.length > 0) {
@@ -84,6 +99,7 @@ const Usuarios: NextPageWithLayout = () => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     setFilter(e.target.value);
+    setPage(1);
   };
 
   const filteredUsers = users.filter(
@@ -93,8 +109,7 @@ const Usuarios: NextPageWithLayout = () => {
         .includes(filter.toLowerCase()) ||
       user.userProfile?.last_name
         ?.toLowerCase()
-        .includes(filter.toLowerCase()) ||
-      user.dni.includes(filter)
+        .includes(filter.toLowerCase())
   );
 
   const usersWithProfile = filteredUsers.filter((user) => user.userProfile);
@@ -104,13 +119,9 @@ const Usuarios: NextPageWithLayout = () => {
     { header: '', accessor: 'userProfile.profile_picture' },
     { header: 'Nombre', accessor: 'userProfile.first_name' },
     { header: 'Apellido', accessor: 'userProfile.last_name' },
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
   ];
 
   const columnsWithoutProfile = [
-    { header: 'DNI', accessor: 'dni' },
-    { header: 'Contraseña', accessor: 'password' },
   ];
 
   if (roleId && Number(roleId) === STUDENT_ROLE_ID) {
@@ -134,7 +145,7 @@ const Usuarios: NextPageWithLayout = () => {
 
   const handleDeleteClick = async (row: any) => {
     const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar al usuario ?`
+      `¿Estas seguro de que deseas eliminar al usuario ?`
     );
     if (confirmDelete) {
       try {
@@ -161,23 +172,16 @@ const Usuarios: NextPageWithLayout = () => {
     setIsModalOpen(false);
   };
 
-  const handleUserCreateSuccess = () => {
+  const handleUserCreateSuccess = async () => {
     setIsModalOpen(false);
-    if (enterpriseId && roleId) {
-      const fetchUsers = async () => {
-        try {
-          const usersData = await getUsersByCompanyAndRole(
-            enterpriseId,
-            Number(roleId)
-          );
-          setUsers(usersData);
-        } catch (error) {
-          console.error('Error fetching users:', error);
-        }
-      };
-
-      fetchUsers();
-      router.reload();
+    if (!enterpriseId || !roleId) return;
+    try {
+      const response = await getPaginatedUsersByCompanyAndRole(enterpriseId, Number(roleId), page, 50, debouncedFilter);
+      setUsers(response.users);
+      setTotalCount(response.totalCount);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error('Error fetching users:', error);
     }
   };
 
@@ -241,6 +245,16 @@ const Usuarios: NextPageWithLayout = () => {
           />
         </div>
       </div>
+      {enterpriseId && roleId && (
+        <div className="mt-5 flex items-center justify-between gap-3" aria-live="polite">
+          <span className="text-sm text-gray-600">{totalCount.toLocaleString()} usuarios</span>
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={() => setPage((current) => Math.max(1, current - 1))} disabled={page <= 1} className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50">Anterior</button>
+            <span className="text-sm text-gray-700">Pagina {page} de {Math.max(totalPages, 1)}</span>
+            <button type="button" onClick={() => setPage((current) => Math.min(totalPages, current + 1))} disabled={page >= totalPages} className="rounded border border-gray-300 px-3 py-2 text-sm disabled:opacity-50">Siguiente</button>
+          </div>
+        </div>
+      )}
       <Modal
         show={isModalOpen}
         onClose={handleModalClose}

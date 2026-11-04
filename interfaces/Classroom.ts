@@ -7,14 +7,14 @@ export interface Enterprise {
     created_at: string;
     updated_at: string;
   }
-  
+
   export interface Shift{
     shift_id: number;
     name: string;
     created_at: string;
     updated_at: string;
   }
- 
+
   export interface Profile{
     first_name: string;
     last_name: string;
@@ -32,8 +32,8 @@ export interface Enterprise {
     created_at: string;
     updated_at: string;
     Enterprise: Enterprise;
-    Shift : Shift
-    User : User;
+    Shift: Shift;
+    User: User;
   }
 
   export interface ClassroomRequest {
@@ -42,4 +42,4 @@ export interface Enterprise {
     shift_id: number;
     user_id : number;
   }
-  
+

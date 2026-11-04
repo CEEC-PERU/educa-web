@@ -16,7 +16,7 @@ export const useProfesor = () => {
       const storedUserInfo = localStorage.getItem('userInfo');
       if (!storedUserInfo) {
         throw new Error(
-          'No se encontró información del usuario en el localStorage.'
+          'No se encontro informacion del usuario en el localStorage.'
         );
       }
 

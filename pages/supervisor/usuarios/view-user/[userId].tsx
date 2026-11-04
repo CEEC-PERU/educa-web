@@ -5,10 +5,7 @@ import type { NextPageWithLayout } from "../../../../types/next";
 import { useUserByIdQuery } from "@/features/users/users.queries";
 import { useEnterpriseByIdQuery } from "@/features/enterprises/enterprises.queries";
 import {
-  EnvelopeIcon,
-  PhoneIcon,
   BuildingOfficeIcon,
-  IdentificationIcon,
   UserIcon,
   ArrowLeftIcon,
 } from "@heroicons/react/24/outline";
@@ -54,7 +51,7 @@ const UserProfile: NextPageWithLayout = () => {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
         <p className="text-red-500 font-medium">
-          No se pudo cargar la información del usuario
+          No se pudo cargar la informacion del usuario
         </p>
         <button
           onClick={() => router.back()}
@@ -118,21 +115,10 @@ const UserProfile: NextPageWithLayout = () => {
           value={user.userProfile?.last_name}
         />
         <InfoField
-          icon={EnvelopeIcon}
-          label="Email"
-          value={user.userProfile?.email}
-        />
-        <InfoField
-          icon={PhoneIcon}
-          label="Teléfono"
-          value={user.userProfile?.phone}
-        />
-        <InfoField
           icon={BuildingOfficeIcon}
           label="Empresa"
           value={enterprise.name}
         />
-        <InfoField icon={IdentificationIcon} label="DNI" value={user.dni} />
       </div>
     </div>
   );

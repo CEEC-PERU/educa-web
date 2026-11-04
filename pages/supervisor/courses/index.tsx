@@ -24,7 +24,7 @@ const SupervisorCourses: NextPageWithLayout = () => {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-2">
         <p className="text-red-500 font-medium">Error al cargar los cursos</p>
-        <p className="text-sm text-gray-400">Intenta recargar la página</p>
+        <p className="text-sm text-gray-400">Intenta recargar la pagina</p>
       </div>
     );
   }

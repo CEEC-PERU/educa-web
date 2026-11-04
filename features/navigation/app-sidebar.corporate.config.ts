@@ -38,7 +38,7 @@ export const corporateSidebarItems: AppSidebarItem[] = [
     icon: BookOpenIcon,
     matchMode: "prefix",
   },
-  // Ocultos del sidebar a pedido: no deben aparecer como navegación para corporate.
+  // Ocultos del sidebar a pedido: no deben aparecer como navegacion para corporate.
   // Las rutas siguen existiendo, solo se quita el link de acceso.
   // {
   //   id: "certificates",
@@ -70,7 +70,7 @@ export const corporateSidebarItems: AppSidebarItem[] = [
   },
   {
     id: "logout",
-    label: "Cerrar Sesión",
+    label: "Cerrar Sesion",
     icon: LogoutIcon,
     action: "logout",
   },

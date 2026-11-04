@@ -106,7 +106,7 @@ export default function Home() {
                   />
                 </span>
                 <span className="relative z-10">
-                  Aquí inicia tu ruta de aprendizaje
+                  Aqui inicia tu ruta de aprendizaje
                 </span>
                 <Brain
                   className="h-6 w-6 shrink-0 text-white"
@@ -132,7 +132,7 @@ export default function Home() {
               .getElementById("cursos-section")
               ?.scrollIntoView({ behavior: "smooth" })
           }
-          aria-label="Desplazarse hacia abajo para ver más contenido"
+          aria-label="Desplazarse hacia abajo para ver mas contenido"
           className="hero-scroll-hint absolute bottom-4 md:bottom-8 lg:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center w-14 h-14 rounded-full text-white/80 hover:text-white transition-colors"
         >
           <ChevronDown className="w-12 h-12" strokeWidth={1.5} />
@@ -171,13 +171,13 @@ export default function Home() {
 
         <div className="relative flex flex-col items-center justify-center w-full max-w-4xl mx-auto mt-8 mb-6 px-4 sm:px-6 text-center">
           <p className="text-white text-base sm:text-lg">
-            Sumérgete en una experiencia de aprendizaje de primer nivel con
+            Sumergete en una experiencia de aprendizaje de primer nivel con
             contenido actualizado y de valor para tu crecimiento profesional.
             Nuestra plataforma te ofrece recursos multimedia interactivos y
-            guías prácticas de aprendizaje efectivo y atractivo.
+            guias practicas de aprendizaje efectivo y atractivo.
           </p>
           <p className="text-white text-base sm:text-lg mt-4">
-            Avanza a tu propia velocidad y alcanza tu mejor versión.
+            Avanza a tu propia velocidad y alcanza tu mejor version.
           </p>
         </div>
 
@@ -214,15 +214,15 @@ export default function Home() {
         <div className="relative z-10 max-w-4xl px-4 text-center">
           <div className="font-space-grotesk text-4xl sm:text-5xl font-extrabold mb-6 leading-tight text-white">
             <span className="text-white">“</span> Confianza de nivel para la
-            educación de{" "}
+            educacion de{" "}
             <span className="text-white">tus equipos de trabajo"</span>{" "}
           </div>
           <p className="text-white text-base sm:text-lg font-medium">
-            En un mercado educativo lleno de opciones, tú puedes sobresalir con
-            una plataforma educativa única diseñada a la medida de tu marca.
-            Atrae miradas, genera emoción y diferencia tu oferta de manera
-            significativa. No solo atraerás a más usuarios, sino que los
-            mantendrás comprometidos con una experiencia que no olvidarán.
+            En un mercado educativo lleno de opciones, tu puedes sobresalir con
+            una plataforma educativa unica disenada a la medida de tu marca.
+            Atrae miradas, genera emocion y diferencia tu oferta de manera
+            significativa. No solo atraeras a mas usuarios, sino que los
+            mantendras comprometidos con una experiencia que no olvidaran.
           </p>
         </div>
       </section>
@@ -283,9 +283,9 @@ export default function Home() {
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-7xl mx-auto px-4">
           <div className="w-full md:w-1/2 flex items-center justify-center  mr-8  ">
             <h2 className="font-space-grotesk text-5xl md:text-5xl lg:text-7xl font-extrabold leading-tight text-center text-white">
-              Juntos creamos la mejor versión de
+              Juntos creamos la mejor version de
               <br className="hidden md:block" />
-              educación en línea
+              educacion en linea
             </h2>
           </div>
 

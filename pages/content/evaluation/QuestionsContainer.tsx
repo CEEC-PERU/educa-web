@@ -21,7 +21,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({
   const addOption = (questionIndex: number) => {
     const updatedQuestions = [...questions];
     const newOption: Omit<Option, 'option_id'> = {
-      question_id: 0, // Asignar 0 temporalmente, ya que será autoincremental en la base de datos
+      question_id: 0, // Asignar 0 temporalmente, ya que sera autoincremental en la base de datos
       option_text: '',
       is_correct: false,
     };
@@ -32,7 +32,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({
 
   const addQuestion = () => {
     const newQuestion: Omit<Question, 'question_id'> = {
-      evaluation_id: 0, // Debe asignarse el id de la evaluación correspondiente
+      evaluation_id: 0, // Debe asignarse el id de la evaluacion correspondiente
       question_text: '',
       // type_id: questionTypes[0]?.type_id || 1,
       type_id: 4,
@@ -239,7 +239,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({
                       className="py-2 px-4 bg-green-500 text-white rounded-md mt-4 flex items-center"
                     >
                       <PlusIcon className="w-5 h-5 mr-2" />
-                      Agregar Opción
+                      Agregar Opcion
                     </button>
                   </div>
                 )}
@@ -263,7 +263,7 @@ const QuestionsContainer: React.FC<QuestionsContainerProps> = ({
                 question.options.map((option, optionIndex) => (
                   <div key={optionIndex} className="flex items-center">
                     <p className="text-gray-700">
-                      <strong>Opción {optionIndex + 1}: </strong>{' '}
+                      <strong>Opcion {optionIndex + 1}: </strong>{' '}
                       {option.option_text}
                     </p>
                     <span

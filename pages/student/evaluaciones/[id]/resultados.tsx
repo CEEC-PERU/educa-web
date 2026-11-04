@@ -58,9 +58,9 @@ interface EvaluationResult {
   questions: QuestionResult[];
 }
 
-// Vista STUDENT — resultado inmediato tras enviar un intento de evaluación
+// Vista STUDENT — resultado inmediato tras enviar un intento de evaluacion
 // (attempt_id en la query). Distinta de historial/[evaluation_id].tsx, que muestra
-// todos los intentos pasados en vez de uno recién enviado.
+// todos los intentos pasados en vez de uno recien enviado.
 const EvaluationResults = () => {
   const router = useRouter();
   const { id, attempt_id } = router.query;
@@ -249,7 +249,7 @@ const EvaluationResults = () => {
           </Link>
 
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Resultados de la Evaluación
+            Resultados de la Evaluacion
           </h1>
           <p className="text-gray-600">{results.evaluation.title}</p>
         </div>
@@ -267,7 +267,7 @@ const EvaluationResults = () => {
                 <h2 className="text-2xl font-bold text-green-700">
                   ¡Felicitaciones!
                 </h2>
-                <p className="text-green-600">Has aprobado la evaluación</p>
+                <p className="text-green-600">Has aprobado la evaluacion</p>
               </div>
             ) : (
               <div className="mb-4">
@@ -275,7 +275,7 @@ const EvaluationResults = () => {
                 <h2 className="text-2xl font-bold text-red-700">
                   No aprobaste
                 </h2>
-                <p className="text-red-600">Necesitas mejorar tu puntuación</p>
+                <p className="text-red-600">Necesitas mejorar tu puntuacion</p>
               </div>
             )}
 
@@ -402,7 +402,7 @@ const EvaluationResults = () => {
             className="w-full flex items-center justify-between text-left"
           >
             <h3 className="text-lg font-semibold text-gray-900">
-              Revisión detallada de respuestas
+              Revision detallada de respuestas
             </h3>
             <div
               className={`transform transition-transform ${
@@ -464,7 +464,7 @@ const EvaluationResults = () => {
                       {question.explanation && (
                         <div>
                           <p className="text-sm font-medium text-gray-700 mb-1">
-                            Explicación:
+                            Explicacion:
                           </p>
                           <div className="bg-blue-50 p-3 rounded text-sm text-blue-800">
                             {question.explanation}
@@ -474,7 +474,7 @@ const EvaluationResults = () => {
                       {question.user_answer.is_correct === null && (
                         <div className="bg-yellow-50 p-3 rounded text-sm text-yellow-800">
                           <strong>Nota:</strong> Esta respuesta requiere
-                          evaluación manual.
+                          evaluacion manual.
                         </div>
                       )}
                     </div>
@@ -512,7 +512,7 @@ const EvaluationResults = () => {
                       ))}
                       {question.explanation && (
                         <div className="bg-blue-50 p-3 rounded text-sm text-blue-800 mt-2">
-                          <strong>Explicación:</strong> {question.explanation}
+                          <strong>Explicacion:</strong> {question.explanation}
                         </div>
                       )}
                     </div>

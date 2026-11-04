@@ -20,7 +20,7 @@ const CardEnterprise: React.FC<CardProps> = ({
     <div
       className={`relative flex flex-col w-full max-w-xs sm:max-w-sm md:max-w-md rounded-xl bg-white border border-gray-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}
     >
-      {/* Contenedor de imagen con relación de aspecto 16:9 */}
+      {/* Contenedor de imagen con relacion de aspecto 16:9 */}
       <div className="relative aspect-video w-full overflow-hidden">
         <img
           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"

@@ -27,7 +27,7 @@ export const useTrainingAssignment = (supervisorId: number | undefined) => {
           setError(null);
         } else {
           setError(
-            'Error al cargar las asignaciones de programas de formación',
+            'Error al cargar las asignaciones de programas de formacion',
           );
           console.error(err);
         }
@@ -48,7 +48,7 @@ export const useTrainingAssignment = (supervisorId: number | undefined) => {
       setAssignments(data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar las asignaciones de programas de formación');
+      setError('Error al cargar las asignaciones de programas de formacion');
     } finally {
       setLoading(false);
     }

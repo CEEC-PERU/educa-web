@@ -45,7 +45,7 @@ export default function UserMenu({ profileInfo, onLogout }: UserMenuProps) {
         className="flex items-center space-x-1 p-1 rounded-full hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/50"
         aria-haspopup="true"
         aria-expanded={open}
-        aria-label="Menú de usuario"
+        aria-label="Menu de usuario"
       >
         {avatarSrc ? (
           <img
@@ -96,7 +96,7 @@ export default function UserMenu({ profileInfo, onLogout }: UserMenuProps) {
             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
             role="menuitem"
           >
-            Cerrar sesión
+            Cerrar sesion
           </button>
         </div>
       )}

@@ -1,4 +1,4 @@
-//falta hacer migración total antes de eliminar
+//falta hacer migracion total antes de eliminar
 import React from "react";
 import Link from "next/link";
 import {

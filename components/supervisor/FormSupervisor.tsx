@@ -75,7 +75,7 @@ const FormSupervisor: React.FC<{ roleId: number; onClose: () => void; onSuccess:
           className="w-48 p-2 border rounded-lg shadow-sm focus:ring focus:outline-none focus:border-blue-500"
           value={userCount}
           onChange={handleUserCountChange}
-          placeholder={`Número de usuarios (máximo ${maxUsersAllowed})`}
+          placeholder={`Numero de usuarios (maximo ${maxUsersAllowed})`}
         />
         <button
           onClick={generateUsers}
@@ -93,7 +93,7 @@ const FormSupervisor: React.FC<{ roleId: number; onClose: () => void; onSuccess:
           <thead>
             <tr>
               <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Ususario</th>
-              <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Contraseña</th>
+              <th className="py-2 px-4 border-b bg-gray-100 text-left text-gray-600 font-semibold">Contrasena</th>
             </tr>
           </thead>
           <tbody>

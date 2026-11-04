@@ -57,7 +57,7 @@ export default function AppSidebarHeader({
       <button
         onClick={onCloseMobile}
         className="text-white/80 hover:text-white hover:bg-sidebar-hover p-1 rounded transition-colors flex-shrink-0 lg:hidden"
-        aria-label="Cerrar menú"
+        aria-label="Cerrar menu"
       >
         <XMarkIcon className="h-5 w-5" />
       </button>
@@ -66,7 +66,7 @@ export default function AppSidebarHeader({
         <button
           onClick={onToggleCollapse}
           className="text-white/80 hover:text-white hover:bg-sidebar-hover p-1 rounded transition-colors flex-shrink-0 hidden lg:block"
-          aria-label={isCollapsed ? "Expandir menú" : "Colapsar menú"}
+          aria-label={isCollapsed ? "Expandir menu" : "Colapsar menu"}
         >
           {isCollapsed ? (
             <ChevronDoubleRightIcon className="h-5 w-5" />

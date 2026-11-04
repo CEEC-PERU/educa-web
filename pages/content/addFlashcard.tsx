@@ -30,11 +30,11 @@ const AddFlashcard: NextPageWithLayout = () => {
       return;
     }
     if (correctImages.length !== 3) {
-      toast.error("Debes subir exactamente 3 imágenes correctas");
+      toast.error("Debes subir exactamente 3 imagenes correctas");
       return;
     }
     if (incorrectImages.length !== 3) {
-      toast.error("Debes subir exactamente 3 imágenes incorrectas");
+      toast.error("Debes subir exactamente 3 imagenes incorrectas");
       return;
     }
 
@@ -80,14 +80,14 @@ const AddFlashcard: NextPageWithLayout = () => {
       />
 
       <MultipleImageUpload
-        label="Respuestas Correctas (3 imágenes)"
+        label="Respuestas Correctas (3 imagenes)"
         onImagesUpload={setCorrectImages}
         maxImages={3}
         currentImages={correctImages}
       />
 
       <MultipleImageUpload
-        label="Respuestas Incorrectas (3 imágenes)"
+        label="Respuestas Incorrectas (3 imagenes)"
         onImagesUpload={setIncorrectImages}
         maxImages={3}
         currentImages={incorrectImages}

@@ -11,11 +11,11 @@ export const useDeleteUser = () => {
   const deleteUser = async (userId: number) => {
     setIsLoading(true);
     setError(null); // Limpiamos el error anterior
-    setSuccess(false); // Restablecemos el estado de éxito
+    setSuccess(false); // Restablecemos el estado de exito
 
     try {
       await deleteUserById(userId);
-      setSuccess(true); // Si la eliminación fue exitosa, actualizamos el estado de éxito
+      setSuccess(true); // Si la eliminacion fue exitosa, actualizamos el estado de exito
     } catch (err) {
       setError('Error al eliminar el usuario.'); // Manejamos cualquier error
     } finally {

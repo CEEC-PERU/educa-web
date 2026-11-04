@@ -63,7 +63,7 @@ export const useNotasClassroom = (course_id: number, classroom_id: number) => {
   const { user, token } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
 
-  // Definir fetchCourseDetail como una función reutilizable
+  // Definir fetchCourseDetail como una funcion reutilizable
   const fetchCourseDetail = useCallback(
     async (updatedClassroomId?: number) => {
       if (!token) {
@@ -103,7 +103,7 @@ export const useNotasClassroom = (course_id: number, classroom_id: number) => {
     courseNotaClassroom,
     error,
     isLoading,
-    fetchCourseDetail, // Exportar la función para su reutilización
+    fetchCourseDetail, // Exportar la funcion para su reutilizacion
   };
 };
 
@@ -164,7 +164,7 @@ export const useNotasSupervisorClassroom = (
   const { user, token } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
 
-  // Definir fetchCourseDetail como una función reutilizable
+  // Definir fetchCourseDetail como una funcion reutilizable
   const fetchCourseDetail = useCallback(
     async (updatedClassroomId?: number) => {
       if (!token || !course_id || isNaN(course_id) || !(updatedClassroomId ?? classroom_id)) {
@@ -204,6 +204,6 @@ export const useNotasSupervisorClassroom = (
     courseNotaClassroom,
     error,
     isLoading,
-    fetchCourseDetail, // Exportar la función para su reutilización
+    fetchCourseDetail, // Exportar la funcion para su reutilizacion
   };
 };

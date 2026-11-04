@@ -68,15 +68,15 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
 
   const validateForm = (): boolean => {
     if (!formData.title.trim()) {
-      setError('El título es requerido');
+      setError('El titulo es requerido');
       return false;
     }
     if (!formData.description.trim()) {
-      setError('La descripción es requerida');
+      setError('La descripcion es requerida');
       return false;
     }
     if (formData.total_days < 1) {
-      setError('El programa debe tener al menos 1 día');
+      setError('El programa debe tener al menos 1 dia');
       return false;
     }
     return true;
@@ -116,13 +116,13 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
         </div>
       )}
 
-      {/* Título */}
+      {/* Titulo */}
       <div>
         <label
           htmlFor="title"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Título del Programa *
+          Titulo del Programa *
         </label>
         <input
           type="text"
@@ -132,17 +132,17 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
           onChange={handleChange}
           required
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Ej: Introducción a la Programación"
+          placeholder="Ej: Introduccion a la Programacion"
         />
       </div>
 
-      {/* Descripción */}
+      {/* Descripcion */}
       <div>
         <label
           htmlFor="description"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Descripción *
+          Descripcion *
         </label>
         <textarea
           id="description"
@@ -156,15 +156,15 @@ const TrainingForm: React.FC<TrainingFormProps> = ({
         />
       </div>
 
-      {/* Grid para campos pequeños */}
+      {/* Grid para campos pequenos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Total de días */}
+        {/* Total de dias */}
         <div>
           <label
             htmlFor="total_days"
             className="block text-sm font-medium text-gray-700 mb-2"
           >
-            Total de Días *
+            Total de Dias *
           </label>
           <input
             type="number"
