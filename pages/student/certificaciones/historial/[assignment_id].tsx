@@ -11,7 +11,7 @@ import {
 } from "@/components/Certification/StateComponent";
 import AttemptSelectorCertification from "@/components/Certification/AttemptSelector";
 
-// Vista STUDENT — historial de intentos de una certificación asignada, con selector de
+// Vista STUDENT — historial de intentos de una certificacion asignada, con selector de
 // intento (AttemptSelectorCertification). Fuente: useCertificationResult.
 const CertificationResults = () => {
   const { attempts, selectedAttempt, loading, error, selectAttemptById } =
@@ -29,7 +29,7 @@ const CertificationResults = () => {
     return <NoResultsStateCertification />;
   }
 
-  // Calcular estadísticas
+  // Calcular estadisticas
   const completedAttempts = attempts.filter((a) => a.status === "completed");
   const abandonedAttempts = attempts.filter((a) => a.status === "abandoned");
   const passedAttempts = completedAttempts.filter((a) => a.passed);

@@ -68,7 +68,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({
         <input
           type="text"
           className="mb-4 w-full px-3 py-2 border border-gray-300 rounded-md"
-          placeholder="Nombre de la importación"
+          placeholder="Nombre de la importacion"
           value={importName}
           onChange={(e) => setImportName(e.target.value)}
         />
@@ -80,7 +80,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({
               onChange={(e) => setCreateUsers(e.target.checked)}
             />
             <span className="ml-2">
-              * Crea usuarios a partir de esta importación
+              * Crea usuarios a partir de esta importacion
             </span>
           </label>
         </div>
@@ -89,7 +89,7 @@ const DetailsStep: React.FC<DetailsStepProps> = ({
             className="bg-gray-500 text-white py-2 px-4 rounded"
             onClick={onBack}
           >
-            Atrás
+            Atras
           </button>
           <button
             className={`bg-purple-500 text-white py-2 px-8 rounded ${

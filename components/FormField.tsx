@@ -78,10 +78,10 @@ const FormField: React.FC<FormFieldProps> = ({
           value={value as string}
           onChange={onChange}
           onBlur={onBlur}
-          disabled={disabled} // Añade esta línea
+          disabled={disabled} // Anade esta linea
           className={`text-black block py-3 px-0 w-full text-lg bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 peer ${
             isError ? 'border-red-500' : 'border-gray-300'
-          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`} // Añade clases condicionales
+          } ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`} // Anade clases condicionales
           required={required}
         >
           {options.map((option) => (

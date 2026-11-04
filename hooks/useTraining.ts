@@ -26,7 +26,7 @@ export const useTrainings = (supervisorId: number | undefined) => {
           setTrainings([]);
           setError(null);
         } else {
-          setError('Error al cargar los programas de formación');
+          setError('Error al cargar los programas de formacion');
           console.error(err);
         }
       } finally {
@@ -46,7 +46,7 @@ export const useTrainings = (supervisorId: number | undefined) => {
       setTrainings(data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los programas de formación');
+      setError('Error al cargar los programas de formacion');
     } finally {
       setLoading(false);
     }

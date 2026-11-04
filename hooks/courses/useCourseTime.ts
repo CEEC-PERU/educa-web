@@ -137,7 +137,7 @@ export const useAverageCourse = (course_id?: number) => {
         setIsLoadingAverage(true);
         const fetchedAverageCourse = await getCourseTimeAverage(
           course_id,
-          2, // Asumiendo role_id 1 es válido
+          2, // Asumiendo role_id 1 es valido
           userInfo.enterprise_id,
         );
         setCourseTimeAverage(fetchedAverageCourse);
@@ -179,7 +179,7 @@ export const useLearningTimeSummary = () => {
         setTotalSeconds(data.totalSeconds);
       } catch (err) {
         console.error("Error fetching learning time summary:", err);
-        setError("Error al obtener el tiempo de formación.");
+        setError("Error al obtener el tiempo de formacion.");
       } finally {
         setIsLoading(false);
       }

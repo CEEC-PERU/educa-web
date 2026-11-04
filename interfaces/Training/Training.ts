@@ -11,7 +11,7 @@ export interface TrainingProgram {
   updated_at: string;
 }
 
-// Días
+// Dias
 export interface TrainingDay {
   day_id: number;
   program_id: number;
@@ -34,7 +34,7 @@ export interface TrainingContent {
   updated_at: string;
 }
 
-// Crear programa de formación
+// Crear programa de formacion
 export interface CreateProgramData {
   enterprise_id: number;
   title: string;
@@ -58,11 +58,10 @@ export interface ApiResponse<T> {
 export interface UserInfo {
   id: number;
   enterprise_id: number;
-  dni: string;
   role: number;
 }
 
-// Asignación de programa
+// Asignacion de programa
 export interface TrainingAssignment {
   assignmentId: number;
   programId: number;
@@ -87,12 +86,11 @@ export interface StudentProgress {
 
 export interface StudentAssignment {
   student_id: number;
-  dni: string;
   classroom: StudentClassroom;
   progress: StudentProgress;
 }
 
-// Campaña
+// Campana
 export interface Classroom {
   classroom_id: number;
   code: string;
@@ -161,7 +159,7 @@ export interface MyContentDetails {
   };
 }
 
-// ===================== VALIDACIÓN DE PROGRAMAS ============
+// ===================== VALIDACION DE PROGRAMAS ============
 
 export interface ProgramValidationWarning {
   type: string;

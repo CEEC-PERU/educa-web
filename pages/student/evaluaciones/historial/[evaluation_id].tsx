@@ -21,7 +21,7 @@ import { useEvaluationResults } from "../../../../hooks/resultado/useEvaluationR
 import { calculateEvaluationStats } from "../../../../utils/evaluation/questionAnalysis";
 
 // Vista STUDENT — historial de todos los intentos que el estudiante hizo sobre una
-// misma evaluación (selector de intento vía AttemptSelector). Fuente: useEvaluationResults.
+// misma evaluacion (selector de intento via AttemptSelector). Fuente: useEvaluationResults.
 const EvaluationResults = () => {
   const { attempts, selectedAttempt, loading, error, selectAttemptById } =
     useEvaluationResults();
@@ -39,7 +39,7 @@ const EvaluationResults = () => {
     return <NoResultsState />;
   }
 
-  // Calcular estadísticas
+  // Calcular estadisticas
   const stats = calculateEvaluationStats(selectedAttempt);
 
   return (
@@ -54,7 +54,7 @@ const EvaluationResults = () => {
             </button>
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Resultados de Evaluación
+            Resultados de Evaluacion
           </h1>
           <h2 className="text-xl text-gray-600">
             {selectedAttempt.evaluation.title}
@@ -68,7 +68,7 @@ const EvaluationResults = () => {
           onSelectAttempt={selectAttemptById}
         />
 
-        {/* Resumen de puntuación */}
+        {/* Resumen de puntuacion */}
         <EvaluationScoreOverview
           selectedAttempt={selectedAttempt}
           percentage={stats.percentage}
@@ -78,13 +78,13 @@ const EvaluationResults = () => {
           isPassed={stats.isPassed}
         />
 
-        {/* Estadísticas */}
+        {/* Estadisticas */}
         <EvaluationStatsCards selectedAttempt={selectedAttempt} />
 
-        {/* Revisión detallada de preguntas */}
+        {/* Revision detallada de preguntas */}
         <DetailedQuestionReview selectedAttempt={selectedAttempt} />
 
-        {/* Botones de acción */}
+        {/* Botones de accion */}
         <div className="mt-8 flex justify-center gap-4">
           <Link href="/student/evaluaciones">
             <button className="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">

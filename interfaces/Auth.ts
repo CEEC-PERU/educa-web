@@ -5,8 +5,8 @@ export interface AuthContextData {
     | {
         id: number;
         role: number;
-        dni: string;
         enterprise_id: number;
+        must_change_password: boolean;
       }
     | string
     | null;
@@ -16,8 +16,10 @@ export interface AuthContextData {
   isLoading?: boolean;
   error?: string | null;
   resetInactivityTimer: () => void;
+  redirectToDashboard: (role: number) => void;
   profileInfo?: Profile | null | UserInfo;
-  refreshProfile: (token: string, userId: number) => Promise<void>; // Añadido aquí
+  refreshProfile: (token: string, userId: number) => Promise<void>; // Anadido aqui
+  completePasswordChange: () => void;
 }
 
 export interface AuthProviderProps {

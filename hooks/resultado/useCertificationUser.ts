@@ -22,7 +22,7 @@ export const useCertificationUser = () => {
         );
 
         if (!response.ok) {
-          throw new Error("Error al cargar los detalles de la certificación");
+          throw new Error("Error al cargar los detalles de la certificacion");
         }
 
         return await response.json();

@@ -8,13 +8,13 @@ import Loader from '../../../components/Loader';
 import ProgressBar from '../../../components/Corporate/ProgressBar';
 import './../../../app/globals.css';
 
-// Vista CORPORATE — punto de entrada del módulo de "calificaciones" (equivalente corporate
+// Vista CORPORATE — punto de entrada del modulo de "calificaciones" (equivalente corporate
 // de "evaluaciones"): lista los usuarios de la empresa y, al hacer click, navega a
 // /corporate/qualification/[user_id] para ver las notas de ese estudiante puntual.
 const CorporateUsers: NextPageWithLayout = () => {
   const { user } = useAuth();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [students, setStudents] = useState<any[]>([]);

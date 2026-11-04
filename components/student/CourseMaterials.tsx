@@ -125,7 +125,7 @@ const CourseMaterials: React.FC<CourseMaterialsProps> = ({ materials }) => {
                       ) : (
                         <span className="flex items-center">
                           <FiFile className="mr-2" />
-                          Presentación
+                          Presentacion
                         </span>
                       )}
                     </button>
@@ -239,14 +239,14 @@ const CourseMaterials: React.FC<CourseMaterialsProps> = ({ materials }) => {
                 </h4>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>
-                    Para PDFs: Asegúrate de tener conexión a internet estable
+                    Para PDFs: Asegurate de tener conexion a internet estable
                   </li>
                   <li>
                     Para presentaciones: Descarga el archivo para mejor
-                    visualización
+                    visualizacion
                   </li>
                   <li>
-                    Si tienes problemas, intenta actualizar la página o usar
+                    Si tienes problemas, intenta actualizar la pagina o usar
                     otro navegador
                   </li>
                 </ul>

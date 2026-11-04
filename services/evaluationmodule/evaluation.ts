@@ -19,7 +19,7 @@ export const getCuestionarioByUser = async (
     if (response.data) {
       return response.data;
     } else {
-      return []; // Devolver array vacío en lugar de null
+      return []; // Devolver array vacio en lugar de null
     }
   } catch (error) {
     console.error('Error getting evaluation assignments:', error);
@@ -56,7 +56,7 @@ export const getStudentEvaluations = async (userId: number): Promise<ApiAssignme
   }
 };
 
-// Servicio para formatear fechas (Principio de Responsabilidad Única)
+// Servicio para formatear fechas (Principio de Responsabilidad Unica)
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   return date.toLocaleDateString('es-ES', {
@@ -68,7 +68,7 @@ export const formatDate = (dateString: string): string => {
   });
 };
 
-// Servicio para calcular colores de puntuación (Principio de Responsabilidad Única)
+// Servicio para calcular colores de puntuacion (Principio de Responsabilidad Unica)
 export const getScoreColors = (percentage: number) => {
   if (percentage >= 80) return { text: 'text-green-600', bg: 'bg-green-50 border-green-200' };
   if (percentage >= 70) return { text: 'text-yellow-600', bg: 'bg-yellow-50 border-yellow-200' };

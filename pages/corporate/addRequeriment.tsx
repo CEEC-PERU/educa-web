@@ -169,7 +169,7 @@ const RequirementForm: NextPageWithLayout = () => {
                 />
                 <FormField
                     id="courseDuration"
-                    label="Duración del Curso"
+                    label="Duracion del Curso"
                     type="text"
                     value={courseDuration}
                     onChange={handleInputChange}
@@ -191,7 +191,7 @@ const RequirementForm: NextPageWithLayout = () => {
                         />
                     </div>
                 ))}
-                <button type="button" onClick={addMaterialField} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">Agregar más materiales</button>
+                <button type="button" onClick={addMaterialField} className="bg-blue-500 text-white px-4 py-2 rounded mt-2">Agregar mas materiales</button>
                 <div className="mb-4 mt-4">
                     <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Enviar Requerimiento</button>
                 </div>

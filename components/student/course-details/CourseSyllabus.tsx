@@ -17,9 +17,9 @@ const CourseSyllabus: React.FC<CourseSyllabusProps> = ({ modules }) => (
           <img
             src="https://res.cloudinary.com/dk2red18f/image/upload/v1720197367/WEB_EDUCA/ICONOS/rp2dudec5uvmkpq2e9rw.png"
             className="w-5 h-10 lg:w-5 lg:h-10 mr-2"
-            alt="Módulo"
+            alt="Modulo"
           />
-          <p className="text-sm lg:text-base mr-2">Módulo: {module.name}</p>
+          <p className="text-sm lg:text-base mr-2">Modulo: {module.name}</p>
         </div>
         <div className="ml-8">
           {module.moduleSessions.map((session, idx) => (
@@ -30,9 +30,9 @@ const CourseSyllabus: React.FC<CourseSyllabusProps> = ({ modules }) => (
               <img
                 src="https://res.cloudinary.com/dk2red18f/image/upload/v1720200323/WEB_EDUCA/ICONOS/pxuankjrczkaks3sei4m.png"
                 className="w-4 h-4 lg:w-6 lg:h-6 mr-2"
-                alt="Sesión"
+                alt="Sesion"
               />
-              <p className="text-sm lg:text-base">Sesión: {session.name}</p>
+              <p className="text-sm lg:text-base">Sesion: {session.name}</p>
             </div>
           ))}
         </div>

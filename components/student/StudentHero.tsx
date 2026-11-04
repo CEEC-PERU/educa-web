@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { BookOpen, CheckCircle2, Award } from "lucide-react";
 
 interface CoursesCount {
@@ -68,7 +68,7 @@ export default function StudentHero({
             Hola, <span className="text-brandrosado-800">{name}</span>
           </h1>
           <p className="text-2xl lg:text-3xl font-semibold mb-3">
-            <strong>¡Qué bueno verte de nuevo!</strong>
+            <strong>¡Que bueno verte de nuevo!</strong>
           </p>
           <div className="w-full max-w-md h-1 rounded-full bg-brandrosado-800 mb-4" />
           <p className="text-lg lg:text-xl text-black/80 max-w-md mb-6">
@@ -120,7 +120,7 @@ export default function StudentHero({
 
           <div className="mt-6 flex w-full flex-col items-center gap-4 rounded-2xl bg-gradient-to-r from-brandmorado-700 to-brandrosa-800 p-5 shadow-xl ring-1 ring-white/10 sm:p-6">
             <p className="text-center text-sm font-bold uppercase tracking-wide text-white sm:text-base">
-              Tiempo dedicado a tu formación
+              Tiempo dedicado a tu formacion
             </p>
 
             <div className="flex justify-center">

@@ -20,7 +20,7 @@ const NPSChart = ({ data }: Props) => {
 
   return hasData ? (
     <ChartCard
-      title="Del 1 al 10 ¿Qué tanto recomendarías este curso?"
+      title="Del 1 al 10 ¿Que tanto recomendarias este curso?"
       subtitle="Net Promoter Score (NPS)"
       type="bar"
       series={[{ name: "Respuestas", data: safeData }]}
@@ -32,7 +32,7 @@ const NPSChart = ({ data }: Props) => {
         xaxis: {
           categories,
           title: {
-            text: "Puntuación",
+            text: "Puntuacion",
             style: { fontSize: "14px", fontWeight: 600, color: "#4B5563" },
           },
           axisBorder: { show: false },
@@ -40,7 +40,7 @@ const NPSChart = ({ data }: Props) => {
         },
         yaxis: {
           title: {
-            text: "Número de respuestas",
+            text: "Numero de respuestas",
             style: { fontSize: "14px", fontWeight: 600, color: "#4B5563" },
           },
           min: 0,
@@ -69,10 +69,10 @@ const NPSChart = ({ data }: Props) => {
   ) : (
     <div className="border border-gray-200 p-6 rounded-xl bg-white shadow-lg">
       <h2 className="text-xl font-bold text-gray-800">
-        Del 1 al 10 ¿Qué tanto recomendarías este curso?
+        Del 1 al 10 ¿Que tanto recomendarias este curso?
       </h2>
       <div className="relative flex items-center justify-center text-gray-400 text-sm" style={{ height: "350px" }}>
-        Aún no hay respuestas de NPS
+        Aun no hay respuestas de NPS
       </div>
     </div>
   );

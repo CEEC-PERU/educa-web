@@ -89,7 +89,7 @@ export const useEvaluationWizard = () => {
       }
       queryClient.invalidateQueries({ queryKey: evaluationsKeys.all });
       resetForm();
-      return evaluationId; // Retornamos el ID para usarlo en la página que lo llama
+      return evaluationId; // Retornamos el ID para usarlo en la pagina que lo llama
     } catch (error) {
       console.error("Error creating evaluation:", error);
       throw error;

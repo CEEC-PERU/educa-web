@@ -7,13 +7,13 @@ interface Props {
 
 const DailyParticipationChart = ({ data }: Props) => (
   <ChartCard
-    title="Participación Diaria (estudiantes activos)"
+    title="Participacion Diaria (estudiantes activos)"
     type="line"
     series={[{ name: "Cantidad", data: data.map((item) => item.active) }]}
     options={{
       xaxis: {
         categories: data.map((item) => item.day),
-        title: { text: "Día" },
+        title: { text: "Dia" },
       },
       yaxis: { title: { text: "Cantidad Estudiantes" } },
       colors: ["#33b2df"],

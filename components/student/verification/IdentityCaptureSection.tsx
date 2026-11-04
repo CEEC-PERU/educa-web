@@ -34,7 +34,7 @@ export default function IdentityCaptureSection({
           <span className="font-bold">2</span>
         </div>
         <h3 className="text-xl font-semibold text-gray-800">
-          Verificación de Identidad
+          Verificacion de Identidad
         </h3>
       </div>
 
@@ -50,7 +50,7 @@ export default function IdentityCaptureSection({
           {!cameraStream && (
             <div className="absolute inset-0 bg-gray-900/80 flex flex-col items-center justify-center text-white p-6 text-center">
               <CameraIcon className="w-10 h-10 mb-3 opacity-70" />
-              <p>Haga clic en "Activar Cámara" para comenzar</p>
+              <p>Haga clic en "Activar Camara" para comenzar</p>
             </div>
           )}
         </div>
@@ -83,7 +83,7 @@ export default function IdentityCaptureSection({
             {!cameraStream ? (
               <>
                 <VideoCameraIcon className="w-5 h-5 mr-2" />
-                Activar Cámara
+                Activar Camara
               </>
             ) : (
               <>

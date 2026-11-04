@@ -7,13 +7,13 @@ interface Props {
 
 const AverageTimeChart = ({ data }: Props) => (
   <ChartCard
-    title="Tiempo promedio por día en la plataforma"
+    title="Tiempo promedio por dia en la plataforma"
     type="line"
     series={[{ name: "Tiempo", data: data.map((item) => item.time) }]}
     options={{
       xaxis: {
         categories: data.map((item) => item.day),
-        title: { text: "Días" },
+        title: { text: "Dias" },
       },
       yaxis: { title: { text: "Tiempo (minutos)" } },
       colors: ["#1D4ED8"],

@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useAuth } from "../../context/AuthContext";
 import { Profile } from "../../interfaces/User/UserInterfaces";
 import UserMenu from "./UserMenu";
+import { useEnterpriseByIdQuery } from "@/features/enterprises/enterprises.queries";
 
 const DASHBOARD_BY_ROLE: Record<number, string> = {
   1: "/student",
@@ -32,27 +33,44 @@ export default function AppNavbar({
   const { user, profileInfo, logout } = useAuth();
 
   const role = typeof user === "object" && user !== null ? user.role : null;
+  const enterpriseId =
+    typeof user === "object" && user !== null
+      ? user.enterprise_id
+      : undefined;
+  const { data: enterprise } = useEnterpriseByIdQuery(
+    enterpriseId && enterpriseId > 0 ? enterpriseId : undefined,
+  );
+  const normalizedEnterpriseName = enterprise?.name
+    ?.normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+  const companyLogoSrc = normalizedEnterpriseName?.includes("rimac")
+    ? "/logos/rimac.png"
+    : enterprise?.image_log || null;
+  const [companyLogoError, setCompanyLogoError] = React.useState(false);
+  React.useEffect(() => setCompanyLogoError(false), [companyLogoSrc]);
   const dashboardHref = role !== null ? (DASHBOARD_BY_ROLE[role] ?? "/") : "/";
 
   return (
     <nav
       role="navigation"
-      aria-label="Navegación de la aplicación"
+      aria-label="Navegacion de la aplicacion"
       className={`${bgColor} h-16 fixed top-0 left-0 w-full z-50 border-b border-white/30`}
     >
-      <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">
+      <div className="flex justify-between items-center h-full px-2 sm:px-4 lg:px-6">
         <div className="flex items-center">
           {showMenuButton && onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
               className="text-white p-2 lg:hidden"
-              aria-label="Abrir menú lateral"
+              aria-label="Abrir menu lateral"
             >
               <ChevronRightIcon className="h-6 w-6" />
             </button>
           )}
 
-          <Link href={dashboardHref} className="flex items-center ml-2">
+          <Link href={dashboardHref} className="flex items-center">
             <img
               src="https://res.cloudinary.com/dk2red18f/image/upload/v1724273464/WEB_EDUCA/smxqc1j66tbr0dkrxbdt.png"
               alt="EducaWeb Logo"
@@ -70,10 +88,24 @@ export default function AppNavbar({
           )}
         </div>
 
-        <UserMenu
-          profileInfo={(profileInfo as Profile) ?? null}
-          onLogout={logout}
-        />
+        <div className="flex items-center gap-4">
+          {companyLogoSrc && !companyLogoError && (
+            <img
+              src={companyLogoSrc}
+              alt={
+                enterprise?.name
+                  ? `Logo de ${enterprise.name}`
+                  : "Logo de la empresa"
+              }
+              className="h-8 max-w-28 object-contain"
+              onError={() => setCompanyLogoError(true)}
+            />
+          )}
+          <UserMenu
+            profileInfo={(profileInfo as Profile) ?? null}
+            onLogout={logout}
+          />
+        </div>
       </div>
     </nav>
   );

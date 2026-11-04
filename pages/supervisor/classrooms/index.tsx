@@ -42,10 +42,10 @@ const Classroom: NextPageWithLayout = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  Gestión de Aulas
+                  Gestion de Aulas
                 </h1>
                 <p className="text-gray-600">
-                  Administra las aulas asignadas a tu supervisión
+                  Administra las aulas asignadas a tu supervision
                 </p>
               </div>
               <ButtonContent
@@ -91,12 +91,12 @@ const Classroom: NextPageWithLayout = () => {
                                 <div className="flex items-center text-sm text-gray-600">
                                   <BuildingOfficeIcon className="h-4 w-4 mr-2" />
                                   <span>
-                                    Empresa: {classroom.Enterprise.name}
+                                    Empresa: {classroom.Enterprise?.name ?? 'No disponible'}
                                   </span>
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
                                   <ClockIcon className="h-4 w-4 mr-2" />
-                                  <span>Turno: {classroom.Shift.name}</span>
+                                  <span>Turno: {classroom.Shift?.name ?? 'No disponible'}</span>
                                 </div>
                                 <div className="flex items-center text-sm text-gray-600">
                                   <CalendarIcon className="h-4 w-4 mr-2" />
@@ -139,15 +139,13 @@ const Classroom: NextPageWithLayout = () => {
                         className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
                       >
                         <img
-                          src={
-                            course.Course.image || '/default-course-image.jpg'
-                          }
-                          alt={course.Course.name}
+                          src={course.Course?.image || '/default-course-image.jpg'}
+                          alt={course.Course?.name ?? 'Curso'}
                           className="h-12 w-12 rounded-lg object-cover"
                         />
                         <div className="ml-3">
                           <p className="font-medium text-gray-800">
-                            {course.Course.name}
+                            {course.Course?.name ?? 'Curso sin nombre'}
                           </p>
                         </div>
                       </div>

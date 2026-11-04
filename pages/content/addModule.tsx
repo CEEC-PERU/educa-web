@@ -51,7 +51,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
       onSuccess();
       onClose();
     } catch (err: unknown) {
-      toast.error(getUserFacingMessage(err) ?? "Error al crear el módulo");
+      toast.error(getUserFacingMessage(err) ?? "Error al crear el modulo");
       setStep("form");
     }
   };
@@ -68,7 +68,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
         >
           <FormField
             id="moduleName"
-            label="Nombre del Módulo"
+            label="Nombre del Modulo"
             type="text"
             value={moduleName}
             onChange={(e) => setModuleName(e.target.value)}
@@ -90,7 +90,7 @@ const AddModuleForm: React.FC<AddModuleFormProps> = ({
               type="submit"
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2.5 rounded-lg transition-colors"
             >
-              Crear Evaluación
+              Crear Evaluacion
             </button>
           </div>
         </form>

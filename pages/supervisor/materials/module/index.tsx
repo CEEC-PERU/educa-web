@@ -87,7 +87,7 @@ const ModulesPage: NextPageWithLayout = () => {
 
     if (router.query.success) {
       setSuccessMessage(router.query.success as string);
-      setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+      setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta despues de 5 segundos
     }
   }, [id, router.query.success]);
 
@@ -99,7 +99,7 @@ const ModulesPage: NextPageWithLayout = () => {
           modules.filter((module) => module.module_id !== moduleToDelete)
         );
         setSuccessMessage('Registro eliminado correctamente');
-        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta despues de 5 segundos
         setModuleToDelete(null);
         hideModuleModal();
       } catch (error) {
@@ -123,7 +123,7 @@ const ModulesPage: NextPageWithLayout = () => {
           }))
         );
         setSuccessMessage('Registro eliminado correctamente');
-        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+        setTimeout(() => setSuccessMessage(null), 5000); // Ocultar la alerta despues de 5 segundos
         setSessionToDelete(null);
         hideSessionModal();
       } catch (error) {
@@ -146,7 +146,7 @@ const ModulesPage: NextPageWithLayout = () => {
 
   const handleAddModuleSuccess = async () => {
     hideAddModuleModal();
-    setSuccessMessage('Módulo creado exitosamente.');
+    setSuccessMessage('Modulo creado exitosamente.');
     setTimeout(() => setSuccessMessage(null), 5000);
     if (id) {
       try {
@@ -161,7 +161,7 @@ const ModulesPage: NextPageWithLayout = () => {
 
   const handleEditModuleSuccess = async () => {
     hideEditModuleModal();
-    setSuccessMessage('Módulo actualizado exitosamente.');
+    setSuccessMessage('Modulo actualizado exitosamente.');
     setTimeout(() => setSuccessMessage(null), 5000);
     if (id) {
       try {
@@ -187,8 +187,8 @@ const ModulesPage: NextPageWithLayout = () => {
             : module
         )
       );
-      setStatusMessage(`Módulo ${!currentStatus ? 'activado' : 'desactivado'}`);
-      setTimeout(() => setStatusMessage(null), 5000); // Ocultar la alerta después de 5 segundos
+      setStatusMessage(`Modulo ${!currentStatus ? 'activado' : 'desactivado'}`);
+      setTimeout(() => setStatusMessage(null), 5000); // Ocultar la alerta despues de 5 segundos
     } catch (error) {
       console.error('Error updating module status:', error);
       setError('Error updating module status');
@@ -206,16 +206,16 @@ const ModulesPage: NextPageWithLayout = () => {
             )}
             {statusMessage && (
               <AlertComponent
-                type="info" // Azul para información
+                type="info" // Azul para informacion
                 message={statusMessage}
                 onClose={() => setStatusMessage(null)}
               />
             )}
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Módulos</h2>
+              <h2 className="text-2xl font-bold">Modulos</h2>
               <FloatingButton
                 onClick={showAddModuleModal}
-                label="Añadir Módulo"
+                label="Anadir Modulo"
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}
@@ -245,7 +245,7 @@ const ModulesPage: NextPageWithLayout = () => {
                             <div className="flex items-center space-x-2">
                               <div className="flex justify-between items-center mr-2">
                                 <ButtonComponent
-                                  buttonLabel="Añadir Sesión"
+                                  buttonLabel="Anadir Sesion"
                                   buttonroute={`/supervisor/materials/module/addSession?moduleId=${module.module_id}`}
                                   backgroundColor="bg-gradient-blue"
                                   textColor="text-white"
@@ -384,7 +384,7 @@ const ModulesPage: NextPageWithLayout = () => {
         <Modal
           show={isAddModuleModalVisible}
           onClose={hideAddModuleModal}
-          title="Añadir Módulo"
+          title="Anadir Modulo"
         >
           <AddModuleForm
             courseId={Number(id)}
@@ -393,11 +393,11 @@ const ModulesPage: NextPageWithLayout = () => {
           />
         </Modal>
 
-        {moduleToEdit !== null && ( // Asegúrate de que moduleToEdit no sea null
+        {moduleToEdit !== null && ( // Asegurate de que moduleToEdit no sea null
           <Modal
             show={isEditModuleModalVisible}
             onClose={hideEditModuleModal}
-            title="Editar Módulo"
+            title="Editar Modulo"
           >
             <EditModuleForm
               moduleId={moduleToEdit.toString()}

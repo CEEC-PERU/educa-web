@@ -24,7 +24,7 @@ export const useEvaluationUsers = () => {
       const lastName = student.userProfile.last_name || '';
       return `${firstName} ${lastName}`.trim();
     }
-    return student?.dni || `Usuario ${student?.user_id || 'Desconocido'}`;
+    return `Usuario ${student?.user_id || 'Desconocido'}`;
   };
 
   const getProgressPercentage = (assignment: EvaluationAssignment) => {
@@ -40,7 +40,7 @@ export const useEvaluationUsers = () => {
     return latestAttempt.score;
   };
 
-  // Nueva función para navegar al detalle del usuario
+  // Nueva funcion para navegar al detalle del usuario
   const navigateToUserDetail = (userId: number, evaluationScheId: number) => {
     router.push(
       `/supervisor/evaluations/user-detail?user_id=${userId}&evaluation_sche_id=${evaluationScheId}`
@@ -56,7 +56,7 @@ export const useEvaluationUsers = () => {
           setEvaluationData(data);
           setError(null);
         } catch (err) {
-          setError('Error al cargar los datos de la evaluación');
+          setError('Error al cargar los datos de la evaluacion');
           console.error('Error fetching evaluation data:', err);
         } finally {
           setLoading(false);
@@ -71,14 +71,8 @@ export const useEvaluationUsers = () => {
     return evaluationData.filter((assignment) => {
       const matchesSearch =
         !searchTerm ||
-        assignment.student?.dni
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
         getUserDisplayName(assignment.student)
           .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        assignment.student?.userProfile?.email
-          ?.toLowerCase()
           .includes(searchTerm.toLowerCase());
 
       const matchesStatus =

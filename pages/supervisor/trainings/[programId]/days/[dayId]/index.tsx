@@ -52,9 +52,9 @@ const DayDetailPage: NextPageWithLayout = () => {
       await refetch();
       closeFormModal();
     } catch (error) {
-      console.error('Error al guardar el contenido de formación:', error);
+      console.error('Error al guardar el contenido de formacion:', error);
       alert(
-        'Error al guardar el contenido de formación. Por favor, inténtalo de nuevo.',
+        'Error al guardar el contenido de formacion. Por favor, intentalo de nuevo.',
       );
       throw error;
     }
@@ -84,9 +84,9 @@ const DayDetailPage: NextPageWithLayout = () => {
       closeDeleteModal();
       await refetch();
     } catch (error) {
-      console.error('Error al eliminar el contenido de formación:', error);
+      console.error('Error al eliminar el contenido de formacion:', error);
       alert(
-        'Error al eliminar el contenido de formación. Por favor, inténtalo de nuevo.',
+        'Error al eliminar el contenido de formacion. Por favor, intentalo de nuevo.',
       );
     } finally {
       setIsDeleting(false);
@@ -100,7 +100,7 @@ const DayDetailPage: NextPageWithLayout = () => {
                 onClick={() => router.back()}
                 className="mb-4 text-gray-600 hover:text-gray-800"
               >
-                ← Volver a Días
+                ← Volver a Dias
               </button>
             </div>
 
@@ -108,10 +108,10 @@ const DayDetailPage: NextPageWithLayout = () => {
               <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h1 className="text-2xl font-semibold text-gray-900">
-                    Contenidos del Día de Formación
+                    Contenidos del Dia de Formacion
                   </h1>
                   <p className="mt-1 text-sm text-gray-600">
-                    Gestiona los contenidos de formación para el día
+                    Gestiona los contenidos de formacion para el dia
                     seleccionado.
                   </p>
                 </div>
@@ -122,7 +122,7 @@ const DayDetailPage: NextPageWithLayout = () => {
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     <FaCirclePlus />
-                    <span className="ml-2">Añadir contenido</span>
+                    <span className="ml-2">Anadir contenido</span>
                   </button>
                 </div>
               </div>
@@ -138,7 +138,7 @@ const DayDetailPage: NextPageWithLayout = () => {
               ) : trainingContents.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500">
-                    No hay contenidos de formación para este día.
+                    No hay contenidos de formacion para este dia.
                   </p>
                 </div>
               ) : (
@@ -159,8 +159,8 @@ const DayDetailPage: NextPageWithLayout = () => {
           onClose={closeFormModal}
           title={
             formMode === 'create'
-              ? 'Añadir Contenido de Formación'
-              : 'Editar Contenido de Formación'
+              ? 'Anadir Contenido de Formacion'
+              : 'Editar Contenido de Formacion'
           }
           size="md"
         >
@@ -177,13 +177,13 @@ const DayDetailPage: NextPageWithLayout = () => {
         <Modal
           isOpen={isModalDeleteOpen}
           onClose={closeDeleteModal}
-          title="Confirmar eliminación"
+          title="Confirmar eliminacion"
           size="sm"
         >
           <div className="space-y-4">
             <p className="text-gray-700">
-              ¿Estás seguro de que deseas eliminar este contenido de formación?
-              Esta acción no se puede deshacer.
+              ¿Estas seguro de que deseas eliminar este contenido de formacion?
+              Esta accion no se puede deshacer.
             </p>
 
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

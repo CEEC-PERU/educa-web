@@ -31,7 +31,7 @@ export const useUpdateAvatar = () => {
     }
 
     if (!token || !userInfo?.id) {
-      const msg = "Sesión inválida, vuelve a iniciar sesión.";
+      const msg = "Sesion invalida, vuelve a iniciar sesion.";
       setError(msg);
       return msg;
     }

@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Nuestros Proyectos",
-  description: "Descubre los proyectos más destacados de nuestra empresa",
+  description: "Descubre los proyectos mas destacados de nuestra empresa",
 };
 
 // Datos de los proyectos 
@@ -28,11 +28,11 @@ export const proyectosData: Proyecto[] = [
     cliente: "CEEC",
   },
   {
-    titulo: "PRODUCTIVIDAD ÁGIL",
+    titulo: "PRODUCTIVIDAD AGIL",
     categoria: "HEALTH",
     imagen: "https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/14_apiwxt.png",
     descripcion:
-      "Descripción del proyecto con detalles sobre la implementación y resultados obtenidos.",
+      "Descripcion del proyecto con detalles sobre la implementacion y resultados obtenidos.",
     cliente: "CEEC",
   },
   {
@@ -48,7 +48,7 @@ export const proyectosData: Proyecto[] = [
     categoria: "HEALTH",
     imagen: "https://res.cloudinary.com/dk2red18f/image/upload/v1744820423/13_tmklth.png",
     descripcion:
-      "Descripción del proyecto con detalles sobre la implementación y resultados obtenidos.",
+      "Descripcion del proyecto con detalles sobre la implementacion y resultados obtenidos.",
     cliente: "CEEC",
   },
   {

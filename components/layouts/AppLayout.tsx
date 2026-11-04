@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 import ProtectedRoute from "../Auth/ProtectedRoute";
 import AppNavbar from "../navigation/AppNavbar";
 import AppSidebarContainer from "../../features/navigation/AppSidebarContainer";

@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/comercial/ComercialSidebar';
@@ -12,7 +12,7 @@ import './../../../app/globals.css';
 const CorporateUsers: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [students, setStudents] = useState<any[]>([]);

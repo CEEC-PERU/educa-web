@@ -104,7 +104,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userId, onSuccess }) => {
           </label>
           <input
             type="text"
-            placeholder="Ingresa tu número de celular"
+            placeholder="Ingresa tu numero de celular"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"

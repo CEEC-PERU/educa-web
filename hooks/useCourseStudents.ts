@@ -45,7 +45,7 @@ export const useCourseStudent = () => {
   };
 };
 
-// Hook actualizado para obtener los datos del curso según la categoría seleccionada
+// Hook actualizado para obtener los datos del curso segun la categoria seleccionada
 export const useCourseStudentCategory = (categoryId: number | null) => {
   const [courseStudentCategory, setCourseStudentCategory] = useState<
     CourseStudent[]
@@ -57,7 +57,7 @@ export const useCourseStudentCategory = (categoryId: number | null) => {
 
   useEffect(() => {
     const fetchCourseStudent = async () => {
-      if (categoryId === null) return; // No ejecuta la función si no hay categoría seleccionada
+      if (categoryId === null) return; // No ejecuta la funcion si no hay categoria seleccionada
       setIsLoading(true);
       try {
         if (!token) {
@@ -83,7 +83,7 @@ export const useCourseStudentCategory = (categoryId: number | null) => {
       }
     };
     fetchCourseStudent();
-  }, [token, categoryId]); // Añadimos categoryId como dependencia
+  }, [token, categoryId]); // Anadimos categoryId como dependencia
 
   return {
     courseStudentCategory,

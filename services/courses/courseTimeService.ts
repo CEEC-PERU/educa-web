@@ -76,7 +76,7 @@ export const getCourseTimeAverage = async (
 ) => {
   if (!course_id || !role_id || !enterprise_id) {
     throw new Error(
-      'Parámetros incompletos para obtener el tiempo promedio del curso.'
+      'Parametros incompletos para obtener el tiempo promedio del curso.'
     );
   }
 

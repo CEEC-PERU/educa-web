@@ -194,7 +194,7 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
                     Hasta:{' '}
                     {certification.assignment_details.due_date
                       ? formatDate(certification.assignment_details.due_date)
-                      : 'Sin fecha límite'}
+                      : 'Sin fecha limite'}
                   </span>
                 </div>
               </div>
@@ -214,7 +214,7 @@ const StudentCertificationsList: React.FC<StudentCertificationsListProps> = ({
 
                 {certification.student_progress.latest_attempt && (
                   <div className="text-sm text-gray-600 mb-3">
-                    Último intento:
+                    Ultimo intento:
                     {certification.student_progress.latest_attempt.score !==
                       null && (
                       <span

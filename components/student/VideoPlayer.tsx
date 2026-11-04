@@ -70,7 +70,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
 
     // seeking: intenta bloquear al inicio (webkit, Firefox)
-    // seeked:  corrige si el browser completó el seek igual (Firefox fallback)
+    // seeked:  corrige si el browser completo el seek igual (Firefox fallback)
     const handleSeekGuard = () => {
       if (sessionCompleted) return;
       if (video.currentTime > lastTimeRef.current) {

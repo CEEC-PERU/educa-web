@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useState } from "react";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useProgressDistribution } from "../../hooks/useProgressDistribution";
 import { useCourseTimeAverage } from "../../hooks/useCourseTimeAverage";

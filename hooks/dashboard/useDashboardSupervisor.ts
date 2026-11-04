@@ -86,7 +86,7 @@ export function useSupervisorSatisfaction(courseId?: number) {
   const metric = useCourseMetric<number[]>(
     courseId,
     fetchMetric,
-    "Error al obtener las respuestas de satisfacción.",
+    "Error al obtener las respuestas de satisfaccion.",
   );
   return {
     ...metric,
@@ -147,7 +147,7 @@ export function useSupervisorAverageTime() {
 export function useSupervisorActiveStudents() {
   const metric = useSupervisorAudienceMetric<ActiveUser[]>(
     fetchSupervisorActiveStudents,
-    "Error al obtener la participación diaria.",
+    "Error al obtener la participacion diaria.",
   );
   return {
     ...metric,

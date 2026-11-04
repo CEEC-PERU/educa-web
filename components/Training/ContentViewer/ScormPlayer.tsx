@@ -34,7 +34,7 @@ const ScormPlayer: React.FC<ScormPlayerProps> = ({
           <p className="text-gray-700 mb-4">{error}</p>
           <details className="text-left bg-white p-4 rounded border text-sm">
             <summary className="cursor-pointer font-semibold">
-              Detalles técnicos
+              Detalles tecnicos
             </summary>
             <p className="text-gray-500 mt-2 break-all">
               <strong>URL Original:</strong>
@@ -65,7 +65,7 @@ const ScormPlayer: React.FC<ScormPlayerProps> = ({
 
   return (
     <div className="relative w-full h-full bg-white">
-      {/* Indicador de inicialización */}
+      {/* Indicador de inicializacion */}
       {!isInitialized && (
         <div className="absolute top-0 left-0 right-0 bg-blue-500 text-white text-center py-1 text-sm z-10">
           <span className="inline-block animate-pulse">
@@ -74,7 +74,7 @@ const ScormPlayer: React.FC<ScormPlayerProps> = ({
         </div>
       )}
 
-      {/* Indicador cuando está inicializado */}
+      {/* Indicador cuando esta inicializado */}
       {isInitialized && (
         <div className="absolute top-0 left-0 right-0 bg-green-500 text-white text-center py-1 text-sm z-10 transition-opacity duration-500">
           <span>✓ SCORM conectado</span>

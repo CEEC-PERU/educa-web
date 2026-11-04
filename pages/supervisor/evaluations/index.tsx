@@ -100,9 +100,9 @@ interface AssignmentFormData {
   status: "assigned";
 }
 
-// Vista SUPERVISOR — gestión (crear/editar/programar) de evaluaciones para los classrooms
+// Vista SUPERVISOR — gestion (crear/editar/programar) de evaluaciones para los classrooms
 // a cargo del supervisor. No es la vista de un estudiante rindiendo: es el panel de
-// administración, análogo en propósito a /corporate/qualification pero con CRUD completo.
+// administracion, analogo en proposito a /corporate/qualification pero con CRUD completo.
 const Evaluations: NextPageWithLayout = () => {
   const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,7 +123,7 @@ const Evaluations: NextPageWithLayout = () => {
   const { user } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number };
 
-  // Estado del formulario de evaluación
+  // Estado del formulario de evaluacion
   const [formData, setFormData] = useState<Evaluation>({
     title: "",
     description: "",
@@ -137,7 +137,7 @@ const Evaluations: NextPageWithLayout = () => {
     questions: [],
   });
 
-  // Estado del formulario de asignación
+  // Estado del formulario de asignacion
   const [assignmentFormData, setAssignmentFormData] =
     useState<AssignmentFormData>({
       evaluation_sche_id: 0,
@@ -217,17 +217,17 @@ const Evaluations: NextPageWithLayout = () => {
     }
   };
 
-  // Función para navegar a la página de estudiantes asignados
+  // Funcion para navegar a la pagina de estudiantes asignados
   const handleViewStudents = (evaluationId: number) => {
     router.push(`/supervisor/evaluations/${evaluationId}/students`);
   };
 
-  // Función para manejar el clic en la tarjeta de evaluación
+  // Funcion para manejar el clic en la tarjeta de evaluacion
   const handleEvaluationClick = (
     evaluation: Evaluation,
     event: React.MouseEvent,
   ) => {
-    // Verificar si el clic fue en un botón de acción
+    // Verificar si el clic fue en un boton de accion
     const target = event.target as HTMLElement;
     const isActionButton = target.closest("button");
 
@@ -236,12 +236,12 @@ const Evaluations: NextPageWithLayout = () => {
     }
   };
 
-  // Validación del formulario de asignación
+  // Validacion del formulario de asignacion
   const validateAssignmentForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
 
     if (!assignmentFormData.evaluation_sche_id) {
-      newErrors.evaluation_sche_id = "Debe seleccionar una evaluación";
+      newErrors.evaluation_sche_id = "Debe seleccionar una evaluacion";
     }
 
     if (assignmentFormData.classroom_ids.length === 0) {
@@ -270,7 +270,7 @@ const Evaluations: NextPageWithLayout = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Actualizar la función handleAssignEvaluation en el frontend:
+  // Actualizar la funcion handleAssignEvaluation en el frontend:
 
   const handleAssignEvaluation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -290,8 +290,6 @@ const Evaluations: NextPageWithLayout = () => {
         due_date: assignmentFormData.due_date,
         status: assignmentFormData.status,
       };
-
-      console.log("Enviando datos de asignación:", assignmentData);
 
       const response = await fetch(
         `${API_EVALUATIONMODULE}/assignments/${userInfo.id}`,
@@ -317,18 +315,18 @@ const Evaluations: NextPageWithLayout = () => {
         );
       } else {
         showNotification(
-          result.message || "Error al asignar la evaluación",
+          result.message || "Error al asignar la evaluacion",
           "error",
         );
       }
     } catch (error) {
       console.error("Error assigning evaluation:", error);
-      showNotification("Error al asignar la evaluación", "error");
+      showNotification("Error al asignar la evaluacion", "error");
     } finally {
       setIsAssigning(false);
     }
   };
-  // Abrir modal de asignación con una evaluación específica
+  // Abrir modal de asignacion con una evaluacion especifica
   const handleOpenAssignModal = (evaluation: Evaluation) => {
     setAssignmentFormData((prev) => ({
       ...prev,
@@ -337,7 +335,7 @@ const Evaluations: NextPageWithLayout = () => {
     setShowAssignModal(true);
   };
 
-  // Cerrar modal de asignación
+  // Cerrar modal de asignacion
   const handleCloseAssignModal = () => {
     setShowAssignModal(false);
     setAssignmentFormData((prev) => ({
@@ -348,7 +346,7 @@ const Evaluations: NextPageWithLayout = () => {
     setAssignmentErrors({});
   };
 
-  // Manejar selección de aulas
+  // Manejar seleccion de aulas
   const handleClassroomSelection = (classroomId: number, checked: boolean) => {
     setAssignmentFormData((prev) => ({
       ...prev,
@@ -358,16 +356,16 @@ const Evaluations: NextPageWithLayout = () => {
     }));
   };
 
-  // Validación del formulario de evaluación
+  // Validacion del formulario de evaluacion
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = "El título es requerido";
+      newErrors.title = "El titulo es requerido";
     }
 
     if (formData.duration_minutes < 1) {
-      newErrors.duration_minutes = "La duración debe ser mayor a 0";
+      newErrors.duration_minutes = "La duracion debe ser mayor a 0";
     }
 
     if (
@@ -375,7 +373,7 @@ const Evaluations: NextPageWithLayout = () => {
       formData.passing_score > formData.total_points
     ) {
       newErrors.passing_score =
-        "La puntuación mínima debe estar entre 1 y el total de puntos";
+        "La puntuacion minima debe estar entre 1 y el total de puntos";
     }
 
     if (!formData.questions || formData.questions.length === 0) {
@@ -417,20 +415,20 @@ const Evaluations: NextPageWithLayout = () => {
         handleCloseModal();
         showNotification(
           editingEvaluation
-            ? "Evaluación actualizada exitosamente"
-            : "Evaluación creada exitosamente",
+            ? "Evaluacion actualizada exitosamente"
+            : "Evaluacion creada exitosamente",
           "success",
         );
       } else {
         const error = await response.json();
         showNotification(
-          `Error: ${error.message || "Error al guardar la evaluación"}`,
+          `Error: ${error.message || "Error al guardar la evaluacion"}`,
           "error",
         );
       }
     } catch (error) {
       console.error("Error saving evaluation:", error);
-      showNotification("Error al guardar la evaluación", "error");
+      showNotification("Error al guardar la evaluacion", "error");
     } finally {
       setIsSaving(false);
     }
@@ -441,7 +439,7 @@ const Evaluations: NextPageWithLayout = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta evaluación?")) {
+    if (confirm("¿Estas seguro de que deseas eliminar esta evaluacion?")) {
       try {
         const response = await fetch(`${API_EVALUATIONMODULE}/${id}`, {
           method: "DELETE",
@@ -452,13 +450,13 @@ const Evaluations: NextPageWithLayout = () => {
 
         if (response.ok) {
           await fetchEvaluations();
-          showNotification("Evaluación eliminada exitosamente", "success");
+          showNotification("Evaluacion eliminada exitosamente", "success");
         } else {
-          showNotification("Error al eliminar la evaluación", "error");
+          showNotification("Error al eliminar la evaluacion", "error");
         }
       } catch (error) {
         console.error("Error deleting evaluation:", error);
-        showNotification("Error al eliminar la evaluación", "error");
+        showNotification("Error al eliminar la evaluacion", "error");
       }
     }
   };
@@ -527,7 +525,7 @@ const Evaluations: NextPageWithLayout = () => {
       );
       if (!hasCorrectAnswer) {
         showNotification(
-          "Debe seleccionar al menos una opción correcta",
+          "Debe seleccionar al menos una opcion correcta",
           "error",
         );
         return false;
@@ -539,7 +537,7 @@ const Evaluations: NextPageWithLayout = () => {
             .length || 0;
         if (correctCount > 1) {
           showNotification(
-            "Para preguntas de selección única, solo puede haber una respuesta correcta",
+            "Para preguntas de seleccion unica, solo puede haber una respuesta correcta",
             "error",
           );
           return false;
@@ -688,9 +686,9 @@ const Evaluations: NextPageWithLayout = () => {
   const getQuestionTypeLabel = (type: Question["question_type"]) => {
     switch (type) {
       case "multiple_choice":
-        return "Opción Múltiple";
+        return "Opcion Multiple";
       case "single_choice":
-        return "Selección Única";
+        return "Seleccion Unica";
       case "true_false":
         return "Verdadero/Falso";
       case "open_ended":
@@ -732,7 +730,7 @@ const Evaluations: NextPageWithLayout = () => {
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">
                   Gestiona las evaluaciones para tus estudiantes. Haz clic en
-                  una evaluación para ver estudiantes asignados.
+                  una evaluacion para ver estudiantes asignados.
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
@@ -741,14 +739,14 @@ const Evaluations: NextPageWithLayout = () => {
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
                 >
                   <ClipboardDocumentListIcon className="h-4 w-4 mr-2" />
-                  Asignar Evaluación
+                  Asignar Evaluacion
                 </button>
                 <button
                   onClick={() => setShowCreateModal(true)}
                   className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
                 >
                   <PlusIcon className="h-4 w-4 mr-2" />
-                  Nueva Evaluación
+                  Nueva Evaluacion
                 </button>
               </div>
             </div>
@@ -783,7 +781,7 @@ const Evaluations: NextPageWithLayout = () => {
                               handleOpenAssignModal(evaluation);
                             }}
                             className="p-1 text-gray-400 hover:text-green-600 transition-colors z-10 relative"
-                            title="Asignar evaluación"
+                            title="Asignar evaluacion"
                           >
                             <UserGroupIcon className="h-4 w-4" />
                           </button>
@@ -794,7 +792,7 @@ const Evaluations: NextPageWithLayout = () => {
                               handleEdit(evaluation);
                             }}
                             className="p-1 text-gray-400 hover:text-blue-600 transition-colors z-10 relative"
-                            title="Editar evaluación"
+                            title="Editar evaluacion"
                           >
                             <PencilIcon className="h-4 w-4" />
                           </button>*/}
@@ -804,7 +802,7 @@ const Evaluations: NextPageWithLayout = () => {
                               handleDelete(evaluation.evaluation_sche_id!);
                             }}
                             className="p-1 text-gray-400 hover:text-red-600 transition-colors z-10 relative"
-                            title="Eliminar evaluación"
+                            title="Eliminar evaluacion"
                           >
                             <TrashIcon className="h-4 w-4" />
                           </button>
@@ -812,11 +810,11 @@ const Evaluations: NextPageWithLayout = () => {
                       </div>
 
                       <h3 className="font-bold text-lg text-gray-800 mb-2 line-clamp-2">
-                        {evaluation.title || "Sin título"}
+                        {evaluation.title || "Sin titulo"}
                       </h3>
 
                       <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                        {evaluation.description || "Sin descripción"}
+                        {evaluation.description || "Sin descripcion"}
                       </p>
 
                       <div className="space-y-2">
@@ -888,29 +886,29 @@ const Evaluations: NextPageWithLayout = () => {
                     className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
                   >
                     <PlusIcon className="h-4 w-4 mr-2" />
-                    Crear Primera Evaluación
+                    Crear Primera Evaluacion
                   </button>
                 </div>
               )}
             </div>
       </div>
 
-      {/* Modal para Asignar Evaluación */}
+      {/* Modal para Asignar Evaluacion */}
       {showAssignModal && (
         <Modal
           isOpen={showAssignModal}
           onClose={handleCloseAssignModal}
-          title="Asignar Evaluación"
+          title="Asignar Evaluacion"
           size="lg"
         >
           <form onSubmit={handleAssignEvaluation} className="space-y-6">
             <div className="space-y-4">
-              {/* Selección de Evaluación */}
+              {/* Seleccion de Evaluacion */}
               {renderFormField(
                 assignmentErrors.evaluation_sche_id,
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Seleccionar Evaluación *
+                    Seleccionar Evaluacion *
                   </label>
                   <select
                     value={assignmentFormData.evaluation_sche_id}
@@ -926,9 +924,9 @@ const Evaluations: NextPageWithLayout = () => {
                         : "border-gray-300 focus:border-green-500"
                     }`}
                   >
-                    <option value={0}>Seleccione una evaluación</option>
+                    <option value={0}>Seleccione una evaluacion</option>
                     {evaluations
-                      .filter((evaluation) => evaluation.is_active) // ← Aquí está el cambio
+                      .filter((evaluation) => evaluation.is_active) // ← Aqui esta el cambio
                       .map((evaluation) => (
                         <option
                           key={evaluation.evaluation_sche_id}
@@ -993,7 +991,7 @@ const Evaluations: NextPageWithLayout = () => {
                 )}
               </div>
 
-              {/* Selección de Aulas */}
+              {/* Seleccion de Aulas */}
               {renderFormField(
                 assignmentErrors.classroom_ids,
                 <div>
@@ -1086,7 +1084,7 @@ const Evaluations: NextPageWithLayout = () => {
                     Asignando...
                   </span>
                 ) : (
-                  "Asignar Evaluación"
+                  "Asignar Evaluacion"
                 )}
               </button>
             </div>
@@ -1094,28 +1092,28 @@ const Evaluations: NextPageWithLayout = () => {
         </Modal>
       )}
 
-      {/* Modal para Crear/Editar Evaluación */}
+      {/* Modal para Crear/Editar Evaluacion */}
       {showCreateModal && (
         <Modal
           isOpen={showCreateModal}
           onClose={handleCloseModal}
-          title={editingEvaluation ? "Editar Evaluación" : "Nueva Evaluación"}
+          title={editingEvaluation ? "Editar Evaluacion" : "Nueva Evaluacion"}
           size="xl"
           closeOnBackdropClick={false}
         >
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Información Básica */}
+            {/* Informacion Basica */}
             <div className="bg-gray-50 p-6 rounded-lg border">
               <h3 className="text-lg font-semibold mb-4 text-gray-800 flex items-center">
                 <CheckCircleIcon className="h-5 w-5 mr-2 text-blue-600" />
-                Información Básica
+                Informacion Basica
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {renderFormField(
                   errors.title,
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Título *
+                      Titulo *
                     </label>
                     <input
                       type="text"
@@ -1132,7 +1130,7 @@ const Evaluations: NextPageWithLayout = () => {
                           ? "border-red-300 focus:border-red-500"
                           : "border-gray-300 focus:border-blue-500"
                       }`}
-                      placeholder="Título de la evaluación"
+                      placeholder="Titulo de la evaluacion"
                     />
                   </div>,
                 )}
@@ -1141,7 +1139,7 @@ const Evaluations: NextPageWithLayout = () => {
                   errors.duration_minutes,
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Duración (minutos) *
+                      Duracion (minutos) *
                     </label>
                     <input
                       type="number"
@@ -1167,7 +1165,7 @@ const Evaluations: NextPageWithLayout = () => {
                   errors.passing_score,
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Puntuación Mínima *
+                      Puntuacion Minima *
                     </label>
                     <input
                       type="number"
@@ -1192,7 +1190,7 @@ const Evaluations: NextPageWithLayout = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Intentos Máximos
+                    Intentos Maximos
                   </label>
                   <input
                     type="number"
@@ -1212,7 +1210,7 @@ const Evaluations: NextPageWithLayout = () => {
               <div className="mt-4 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Descripción
+                    Descripcion
                   </label>
                   <textarea
                     rows={3}
@@ -1224,7 +1222,7 @@ const Evaluations: NextPageWithLayout = () => {
                       }))
                     }
                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-                    placeholder="Descripción de la evaluación"
+                    placeholder="Descripcion de la evaluacion"
                   />
                 </div>
 
@@ -1277,14 +1275,14 @@ const Evaluations: NextPageWithLayout = () => {
                       className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                     />
                     <label className="ml-2 block text-sm text-gray-900">
-                      Evaluación activa
+                      Evaluacion activa
                     </label>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Sección de Preguntas */}
+            {/* Seccion de Preguntas */}
             <div className="bg-gray-50 p-6 rounded-lg border">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-800 flex items-center">
@@ -1372,7 +1370,7 @@ const Evaluations: NextPageWithLayout = () => {
                         }))
                       }
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
-                      placeholder="Escribe aquí el texto de la pregunta"
+                      placeholder="Escribe aqui el texto de la pregunta"
                     />
                   </div>
 
@@ -1390,8 +1388,8 @@ const Evaluations: NextPageWithLayout = () => {
                         }
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                       >
-                        <option value="single_choice">Selección Única</option>
-                        {/*<option value="multiple_choice">Opción Múltiple</option> */}
+                        <option value="single_choice">Seleccion Unica</option>
+                        {/*<option value="multiple_choice">Opcion Multiple</option> */}
                         <option value="true_false">Verdadero/Falso</option>
                         {/*<option value="open_ended">Pregunta Abierta</option>*/}
                       </select>
@@ -1399,7 +1397,7 @@ const Evaluations: NextPageWithLayout = () => {
                         {currentQuestion.question_type === "single_choice" &&
                           "Solo una respuesta correcta"}
                         {currentQuestion.question_type === "multiple_choice" &&
-                          "Múltiples respuestas correctas"}
+                          "Multiples respuestas correctas"}
                         {currentQuestion.question_type === "true_false" &&
                           "Solo verdadero o falso"}
                         {currentQuestion.question_type === "open_ended" &&
@@ -1441,7 +1439,7 @@ const Evaluations: NextPageWithLayout = () => {
                             onClick={addOption}
                             className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                           >
-                            + Agregar opción
+                            + Agregar opcion
                           </button>
                         )}
                       </div>
@@ -1493,7 +1491,7 @@ const Evaluations: NextPageWithLayout = () => {
                                   e.target.value,
                                 )
                               }
-                              placeholder={`Opción ${index + 1}`}
+                              placeholder={`Opcion ${index + 1}`}
                               className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                               disabled={
                                 currentQuestion.question_type === "true_false"
@@ -1508,7 +1506,7 @@ const Evaluations: NextPageWithLayout = () => {
                                   type="button"
                                   onClick={() => removeOption(index)}
                                   className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                                  title="Eliminar opción"
+                                  title="Eliminar opcion"
                                 >
                                   <XCircleIcon className="h-4 w-4" />
                                 </button>
@@ -1521,7 +1519,7 @@ const Evaluations: NextPageWithLayout = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Explicación (opcional)
+                      Explicacion (opcional)
                     </label>
                     <textarea
                       rows={2}
@@ -1532,7 +1530,7 @@ const Evaluations: NextPageWithLayout = () => {
                           explanation: e.target.value,
                         }))
                       }
-                      placeholder="Explicación que se mostrará después de responder"
+                      placeholder="Explicacion que se mostrara despues de responder"
                       className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-colors"
                     />
                   </div>
@@ -1570,7 +1568,7 @@ const Evaluations: NextPageWithLayout = () => {
                     Guardando...
                   </span>
                 ) : (
-                  `${editingEvaluation ? "Actualizar" : "Crear"} Evaluación`
+                  `${editingEvaluation ? "Actualizar" : "Crear"} Evaluacion`
                 )}
               </button>
             </div>

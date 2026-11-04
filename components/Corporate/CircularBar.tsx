@@ -8,7 +8,7 @@ interface CircularBarProps {
 }
 
 const CircularBar: React.FC<CircularBarProps> = ({ percentage, label }) => {
-  const circumference = 2 * Math.PI * 45; // Radio de 45 para el círculo
+  const circumference = 2 * Math.PI * 45; // Radio de 45 para el circulo
   const offset = circumference - (percentage / 100) * circumference;
 
   let strokeColor;

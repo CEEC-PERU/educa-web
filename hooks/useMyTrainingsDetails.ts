@@ -15,7 +15,7 @@ export const useMyTrainingsDetails = (programId: number) => {
       if (!token || !programId || isNaN(programId)) {
         setLoading(false);
         if (programId && isNaN(programId)) {
-          setError('ID de programa inválido');
+          setError('ID de programa invalido');
         }
         return;
       }
@@ -30,7 +30,7 @@ export const useMyTrainingsDetails = (programId: number) => {
           setMyTrainingDetails(null);
           setError('Programa no encontrado');
         } else {
-          setError('Error al cargar los detalles de la capacitación');
+          setError('Error al cargar los detalles de la capacitacion');
           console.error(err);
         }
       } finally {
@@ -50,7 +50,7 @@ export const useMyTrainingsDetails = (programId: number) => {
       const data = await getMyProgramDetails(programId, token);
       setMyTrainingDetails(data);
     } catch (err) {
-      setError('Error al cargar los detalles de la capacitación');
+      setError('Error al cargar los detalles de la capacitacion');
       console.error(err);
     } finally {
       setLoading(false);

@@ -57,7 +57,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
       fetchRequirements();
     };
 
-    // Escucha un evento personalizado para la actualizaciÃƒÂ³n de los requerimientos
+    // Escucha un evento personalizado para la actualizacion de los requerimientos
     window.addEventListener('requirementUpdate', handleRequirementUpdate);
 
     return () => {
@@ -76,7 +76,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
 
   const handleNavigation = (path: string) => {
     router.push(path);
-    setIsOpen(false); // Cerrar el drawer despuÃƒÂ©s de la navegaciÃƒÂ³n
+    setIsOpen(false); // Cerrar el drawer despues de la navegacion
   };
 
   const handleMouseEnter = () => {
@@ -203,7 +203,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                   </svg>
                 )}
                 <UserPlusIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">AsignaciÃƒÂ³n de Cursos</span>}
+                {isOpen && <span className="ml-2 relative z-10">Asignacion de Cursos</span>}
               </button>
             </li>
             <li>
@@ -212,7 +212,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                 className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
               >
                 <LogoutIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cerrar SesiÃƒÂ³n</span>}
+                {isOpen && <span className="ml-2 relative z-10">Cerrar Sesion</span>}
               </button>
             </li>
           </ul>

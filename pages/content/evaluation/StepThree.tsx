@@ -148,7 +148,7 @@ const StepThree: React.FC<StepThreeProps> = ({
             (option, optionIndex) => (
               <div key={optionIndex} className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2 mt-4">
-                  Opción
+                  Opcion
                 </label>
                 <input
                   type="text"
@@ -183,7 +183,7 @@ const StepThree: React.FC<StepThreeProps> = ({
                   optionIndex ===
                     localOptionsData[questionIndex].length - 1 && (
                     <p className="text-red-500 text-xs italic">
-                      Debe marcar al menos una opción como correcta.
+                      Debe marcar al menos una opcion como correcta.
                     </p>
                   )}
               </div>

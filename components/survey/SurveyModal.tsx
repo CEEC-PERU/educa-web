@@ -50,7 +50,7 @@ const SurveyModal = () => {
       setSubmitSuccess(true);
       setTimeout(() => setSubmitSuccess(false), 3000);
     } catch {
-      setFormError("Ocurrió un error al enviar tu respuesta. Intenta de nuevo.");
+      setFormError("Ocurrio un error al enviar tu respuesta. Intenta de nuevo.");
     } finally {
       setIsSubmitting(false);
     }
@@ -110,7 +110,7 @@ const SurveyModal = () => {
                         className="block w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                       >
                         <option value="" disabled>
-                          Seleccione una opción
+                          Seleccione una opcion
                         </option>
                         {question.options?.map((option, index) => (
                           <option key={index} value={option}>

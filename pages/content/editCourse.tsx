@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
@@ -201,7 +201,7 @@ const EditCourse: NextPageWithLayout = () => {
       <form onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 flex flex-col gap-6">
-            <SectionCard title="Información del curso">
+            <SectionCard title="Informacion del curso">
               <FormField
                 id="name"
                 label="Nombre"
@@ -211,14 +211,14 @@ const EditCourse: NextPageWithLayout = () => {
               />
               <FormField
                 id="description_short"
-                label="Descripción corta"
+                label="Descripcion corta"
                 type="textarea"
                 value={formData.description_short}
                 onChange={handleChange}
               />
               <FormField
                 id="description_large"
-                label="Descripción larga"
+                label="Descripcion larga"
                 type="textarea"
                 rows={5}
                 value={formData.description_large}
@@ -239,7 +239,7 @@ const EditCourse: NextPageWithLayout = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-medium text-gray-700">
-                    Video de introducción
+                    Video de introduccion
                   </span>
                   <MediaUploadPreview
                     onMediaUpload={(file) => setVideoFile(file)}
@@ -251,7 +251,7 @@ const EditCourse: NextPageWithLayout = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-sm font-medium text-gray-700">
-                    Presentación del profesor
+                    Presentacion del profesor
                   </span>
                   <MediaUploadPreview
                     onMediaUpload={(file) => setPresentationVideoFile(file)}
@@ -266,7 +266,7 @@ const EditCourse: NextPageWithLayout = () => {
           </div>
 
           <div className="flex flex-col gap-6 lg:sticky lg:top-6">
-            <SectionCard title="Publicación">
+            <SectionCard title="Publicacion">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-700">
@@ -326,10 +326,10 @@ const EditCourse: NextPageWithLayout = () => {
               </div>
             </SectionCard>
 
-            <SectionCard title="Clasificación">
+            <SectionCard title="Clasificacion">
               <SidebarSelect
                 id="category_id"
-                label="Categoría"
+                label="Categoria"
                 value={formData.category_id.toString()}
                 onChange={handleChange}
                 options={categories.map((cat) => ({
@@ -352,11 +352,11 @@ const EditCourse: NextPageWithLayout = () => {
               />
               <SidebarSelect
                 id="evaluation_id"
-                label="Evaluación"
+                label="Evaluacion"
                 value={formData.evaluation_id.toString()}
                 onChange={handleChange}
                 options={[
-                  { value: "", label: "Sin evaluación" },
+                  { value: "", label: "Sin evaluacion" },
                   ...evaluations.map((ev) => ({
                     value: ev.evaluation_id.toString(),
                     label: ev.name,
@@ -365,10 +365,10 @@ const EditCourse: NextPageWithLayout = () => {
               />
             </SectionCard>
 
-            <SectionCard title="Duración">
+            <SectionCard title="Duracion">
               <SidebarInput
                 id="duration_video"
-                label="Vídeo principal"
+                label="Video principal"
                 value={formData.duration_video}
                 onChange={handleChange}
                 placeholder="ej. 12:30"

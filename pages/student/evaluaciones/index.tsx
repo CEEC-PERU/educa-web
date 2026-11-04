@@ -24,7 +24,7 @@ import { Profile } from "../../../interfaces/User/UserInterfaces";
 import { useAuth } from "../../../context/AuthContext";
 
 // Vista STUDENT — lista de evaluaciones asignadas al usuario logueado (self-scoped,
-// no recibe userId por prop/query). Módulo independiente del de supervisor/corporate:
+// no recibe userId por prop/query). Modulo independiente del de supervisor/corporate:
 // no comparte hooks ni componentes con /supervisor/evaluations ni /corporate/qualification.
 const EvaluationsList = () => {
   const { evaluations, loading, error, stats } = useEvaluationsList();
@@ -84,7 +84,7 @@ const EvaluationsList = () => {
             Mis Evaluaciones
           </h1>
           <p className="text-gray-600">
-            Aquí puedes ver todas tus evaluaciones asignadas y su estado actual.
+            Aqui puedes ver todas tus evaluaciones asignadas y su estado actual.
           </p>
         </div>
 
@@ -220,7 +220,7 @@ const EvaluationsList = () => {
                 {evaluation.status === "completed" && evaluation.best_score && (
                   <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-sm text-green-800">
-                      <strong>Mejor puntuación:</strong> {evaluation.best_score}
+                      <strong>Mejor puntuacion:</strong> {evaluation.best_score}
                       /{evaluation.total_points} puntos (
                       {Math.round(
                         (evaluation.best_score / evaluation.total_points) * 100,
@@ -236,7 +236,7 @@ const EvaluationsList = () => {
                       <Link href={`/student/evaluaciones/${evaluation.id}`}>
                         <button className="inline-flex items-center gap-2 px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200 font-medium">
                           <PlayIcon className="h-4 w-4" />
-                          Iniciar Evaluación
+                          Iniciar Evaluacion
                         </button>
                       </Link>
                     )}
@@ -255,7 +255,7 @@ const EvaluationsList = () => {
 
                   {evaluation.status === "overdue" && (
                     <div className="text-red-600 text-sm font-medium">
-                      Evaluación vencida
+                      Evaluacion vencida
                     </div>
                   )}
                 </div>
@@ -271,7 +271,7 @@ const EvaluationsList = () => {
               No hay evaluaciones disponibles
             </h3>
             <p className="text-gray-600">
-              Cuando tengas evaluaciones asignadas, aparecerán aquí.
+              Cuando tengas evaluaciones asignadas, apareceran aqui.
             </p>
           </div>
         )}

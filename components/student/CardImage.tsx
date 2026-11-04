@@ -24,7 +24,7 @@ const CardImage: React.FC<CardImageProps> = ({
   imageUrl = 'https://via.placeholder.com/150',
   title = 'Nombre del curso',
   rating = 0,
-  description = 'Descripción corta del curso',
+  description = 'Descripcion corta del curso',
   buttonLabel = 'Ver detalles',
   textColor = 'text-gray-900',
   background= ' bg-violet-200',
@@ -73,7 +73,7 @@ const CardImage: React.FC<CardImageProps> = ({
           />
         </div>
         <div className="flex items-center justify-center min-h-[2.5rem] lg:min-h-[3.5rem] mb-2 lg:mb-3 pt-2 lg:pt-4">
-            {/* Título */}
+            {/* Titulo */}
             <h5 className={`block font-sans text-sm lg:text-base text-center antialiased font-bold leading-snug tracking-normal ${textColor} line-clamp-2`}>
             {displayName}
           </h5>

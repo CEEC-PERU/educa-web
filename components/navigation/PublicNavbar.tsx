@@ -51,7 +51,7 @@ export default function PublicNavbar({
   return (
     <nav
       role="navigation"
-      aria-label="Navegación principal"
+      aria-label="Navegacion principal"
       className={`${bgClass} h-16 fixed top-0 left-0 w-full z-50 transition-colors duration-300 ${className}`}
     >
       <div className="container mx-auto flex justify-between items-center h-full px-4 sm:px-6 lg:px-8">

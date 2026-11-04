@@ -20,7 +20,7 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
   const [rows, setRows] = useState<any[]>([]);
   const [columns] = useState<{ label: string, key: string }[]>([
     { label: 'DNI', key: 'dni' },
-    { label: 'Contraseña', key: 'contraseña' }
+    { label: 'Contrasena', key: 'contrasena' }
   ]);
   const [loading, setLoading] = useState(true);
 
@@ -90,7 +90,7 @@ const AssignStep: React.FC<AssignStepProps> = ({ file, selectedCompany, onNext, 
             className="bg-gray-500 text-white py-2 px-4 rounded"
             onClick={onBack}
           >
-            Atrás
+            Atras
           </button>
           <button
             className="bg-blue-500 text-white py-2 px-8 rounded"

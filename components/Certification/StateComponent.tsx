@@ -45,10 +45,10 @@ export const NoResultsStateCertification: React.FC = () => (
     <div className="text-center py-12">
       <DocumentTextIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
       <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-        No hay resultados de certificación
+        No hay resultados de certificacion
       </h2>
       <p className="text-gray-600">
-        Parece que aún no has realizado ninguna certificación.
+        Parece que aun no has realizado ninguna certificacion.
       </p>
       <Link href="/student/certificaciones">
         <button className="mt-6 px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors duration-200">

@@ -1,6 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { getUserById, updateUser } from '../../../services/users/userService';
+import { getPrivateUserById, updateUser } from '../../../services/users/userService';
 import { getEnterprise } from '../../../services/enterpriseService';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
@@ -27,7 +27,7 @@ const EditUser: React.FC = () => {
     const fetchUserAndEnterprise = async () => {
       if (userId) {
         try {
-          const userData = await getUserById(Number(userId));
+          const userData = await getPrivateUserById(Number(userId));
           setUser(userData);
 
           const enterpriseData = await getEnterprise(userData.enterprise_id);
@@ -70,13 +70,20 @@ const EditUser: React.FC = () => {
     e.preventDefault();
     setFormLoading(true);
     try {
-      await updateUser(Number(userId), user);
+      await updateUser(Number(userId), {
+        userProfile: {
+          first_name: user.userProfile?.first_name,
+          last_name: user.userProfile?.last_name,
+          email: user.userProfile?.email,
+          phone: user.userProfile?.phone,
+        },
+      });
       setAlertMessage('Usuario editado correctamente');
       setShowAlert(true);
       setIsEditing(false);
 
       // Re-fetch user data to ensure it's updated
-      const userData = await getUserById(Number(userId));
+      const userData = await getPrivateUserById(Number(userId));
       setUser(userData);
 
       // Optionally, you can also re-fetch enterprise data if needed
@@ -181,7 +188,7 @@ const EditUser: React.FC = () => {
                   />
                 </div>
                 <div className="bg-purple-300 p-4 rounded-lg shadow-md">
-                  <p className="text-lg font-medium text-white">Teléfono</p>
+                  <p className="text-lg font-medium text-white">Telefono</p>
                   <input
                     id="userProfile.phone"
                     type="text"
@@ -259,7 +266,7 @@ const EditUser: React.FC = () => {
                   />
                 </div>
                 <div className="bg-purple-300 p-4 rounded-lg shadow-md">
-                  <p className="text-lg font-medium text-white">Teléfono</p>
+                  <p className="text-lg font-medium text-white">Telefono</p>
                   <input
                     id="phone"
                     type="text"

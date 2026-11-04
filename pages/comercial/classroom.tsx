@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
@@ -76,7 +76,7 @@ const Classroom: React.FC = () => {
             {/* Header Section */}
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-gray-800">
-                Gestión de Aulas
+                Gestion de Aulas
               </h1>
               <p className="text-gray-600">
                 Administra profesores, aulas y cursos
@@ -96,7 +96,7 @@ const Classroom: React.FC = () => {
                     onClick={handleAddUser}
                     className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                   >
-                    Añadir
+                    Anadir
                   </button>
                 </div>
                 <div className="space-y-3">
@@ -143,7 +143,7 @@ const Classroom: React.FC = () => {
                     onClick={handleAddClassroom}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-md text-sm font-medium transition-colors"
                   >
-                    Añadir
+                    Anadir
                   </button>
                 </div>
                 <div className="space-y-4">

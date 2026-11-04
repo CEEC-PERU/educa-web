@@ -6,9 +6,9 @@ import { UserDetails } from '../../../../components/Evaluation/UserDetail';
 import AppLayout from '../../../../components/layouts/AppLayout';
 import type { NextPageWithLayout } from '../../../../types/next';
 
-// Vista SUPERVISOR — listado de estudiantes asignados a una evaluación con su progreso
+// Vista SUPERVISOR — listado de estudiantes asignados a una evaluacion con su progreso
 // (useEvaluationUsers). Igual que en user-detail.tsx, el nombre "CorporateUsers" es
-// heredado de otro rol y no describe el contenido de esta página.
+// heredado de otro rol y no describe el contenido de esta pagina.
 const CorporateUsers: NextPageWithLayout = () => {
   const { logout, user, profileInfo } = useAuth();
   const {
@@ -50,10 +50,10 @@ const CorporateUsers: NextPageWithLayout = () => {
       {/* Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-black mb-2">
-                Usuarios Asignados a la Evaluación
+                Usuarios Asignados a la Evaluacion
               </h2>
               <p className="text-gray-600">
-                Evaluación ID: {evaluationId} | Total: {evaluationData.length}{' '}
+                Evaluacion ID: {evaluationId} | Total: {evaluationData.length}{' '}
                 usuarios | Mostrando: {filteredData.length}
               </p>
             </div>
@@ -83,7 +83,7 @@ const CorporateUsers: NextPageWithLayout = () => {
               </div>
             ) : (
               <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded">
-                No se encontraron asignaciones para esta evaluación.
+                No se encontraron asignaciones para esta evaluacion.
               </div>
             )}
     </>

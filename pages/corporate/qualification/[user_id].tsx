@@ -13,7 +13,7 @@ import StudentCourseCard from './StudentCourseCard';
 import GradesModal from './Modal';
 import './../../../app/globals.css';
 
-// Vista CORPORATE — calificaciones/cursos de un estudiante específico de la empresa
+// Vista CORPORATE — calificaciones/cursos de un estudiante especifico de la empresa
 // (user_id en la ruta, llega desde qualification/progress.tsx). Usa StudentCourseCard
 // y GradesModal (archivos hermanos en esta misma carpeta, no componentes compartidos).
 const StudentGrades: NextPageWithLayout = () => {

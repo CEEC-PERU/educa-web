@@ -1,158 +1,89 @@
-import React, { useState, useEffect } from 'react';
-import { User } from '../../interfaces/User/UserAdmin';
-import { Enterprise } from '../../interfaces/Enterprise';
-import {
-  createIndividualUser,
-  getCompanies,
-} from '../../services/users/userService';
-import FormField from '../../components/FormField';
-import Loader from '../../components/Loader';
-import AlertComponent from '../../components/AlertComponent';
+import React, { FormEvent, useState } from "react";
+import { createIndividualUser } from "../../services/users/userService";
+import { userCreationSchema, UserCreationInput } from "../../features/users/user-creation.schema";
+import { useDocumentAvailability } from "../../features/users/useDocumentAvailability";
 
-interface UserFormProps {
+interface SupervisorFormProps {
   roleId: number;
   initialEnterpriseId: number;
   onClose: () => void;
   onSuccess: (userId: number) => void;
 }
 
-const SupervisorForm: React.FC<UserFormProps> = ({
-  roleId,
-  initialEnterpriseId,
-  onClose,
-  onSuccess,
-}) => {
-  const [formData, setFormData] = useState<User>({
-    dni: '',
-    password: '',
-    role_id: roleId,
-    enterprise_id: initialEnterpriseId,
-    user_name: '',
-    expired_at: undefined,
-    failed_login_attempts: 0,
-    last_failed_login: undefined,
-    created_at: undefined,
-    updated_at: undefined,
+const SupervisorForm: React.FC<SupervisorFormProps> = ({ roleId, initialEnterpriseId, onClose, onSuccess }) => {
+  const [form, setForm] = useState<UserCreationInput>({
+    document_type: "DNI",
+    dni: "",
+    first_name: "",
+    last_name: "",
+    email: "",
   });
-  const [companies, setCompanies] = useState<Enterprise[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const { isCheckingDocument, documentExists, verificationFailed } = useDocumentAvailability(
+    form.document_type,
+    form.dni,
+  );
 
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const companiesData = await getCompanies();
-        setCompanies(companiesData);
-      } catch (error) {
-        console.error('Error fetching companies:', error);
-      }
-    };
-    fetchCompanies();
-  }, []);
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setError("");
+    const parsed = userCreationSchema.safeParse(form);
+    if (!parsed.success) {
+      setError(parsed.error.issues[0]?.message ?? "Revisa los datos ingresados.");
+      return;
+    }
+    if (documentExists === true) {
+      setError("Este documento ya esta registrado.");
+      return;
+    }
+    if (isCheckingDocument) return;
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { id, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [id]: value,
-      ...(id === 'dni' && { password: value }), // Set password to match DNI
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     setLoading(true);
-    setIsSubmitted(true); // Prevents modal closure after submission
-
     try {
-      const createdUser = await createIndividualUser(formData);
-      setSuccess('Usuario creado exitosamente');
-
-      setTimeout(() => {
-        setSuccess(null);
-        if (createdUser && createdUser.user_id) {
-          onSuccess(createdUser.user_id);
-        }
-      }, 700);
-    } catch (error) {
-      console.error('Error creating user:', error);
-      setError('Error creando usuario');
-      setIsSubmitted(false); // Allows closing the modal if there is an error
+      const response = await createIndividualUser({
+        ...parsed.data,
+        role_id: roleId,
+        enterprise_id: initialEnterpriseId,
+      });
+      const userId = Number(response?.user?.user_id);
+      if (!userId) throw new Error("La respuesta no incluyo el usuario creado.");
+      onSuccess(userId);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : "No se pudo crear el supervisor.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white p-6 rounded shadow-md w-full max-w-md mx-auto">
-      {loading && <Loader />}
-      <form onSubmit={handleSubmit}>
-        {success && (
-          <AlertComponent
-            type="success"
-            message={success}
-            onClose={() => setSuccess(null)}
-          />
-        )}
-        {error && (
-          <AlertComponent
-            type="danger"
-            message={error}
-            onClose={() => setError(null)}
-          />
-        )}
-
-        <FormField
-          id="dni"
-          label="DNI"
-          type="text"
-          value={formData.dni}
-          onChange={handleChange}
-        />
-
-        {/* Password field is non-editable and displays a message */}
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Contraseña
-          </label>
-          <input
-            type="text"
-            id="password"
-            value={formData.password}
-            readOnly
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            La contraseña será igual al DNI.
-          </p>
-        </div>
-
-        <div className="flex justify-end space-x-4 mt-8">
-          {/* Disable the close button if the form is submitted */}
-          <button
-            type="button"
-            onClick={!isSubmitted ? onClose : undefined}
-            className={`bg-gray-500 text-white py-2 px-4 rounded ${
-              isSubmitted ? 'cursor-not-allowed opacity-50' : ''
-            }`}
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded"
-          >
-            Guardar
-          </button>
-        </div>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4 rounded bg-white p-6 shadow-md">
+      <label className="block text-sm font-medium text-gray-700">Tipo de Documento
+        <select name="document_type" value={form.document_type} onChange={(event) => setForm((previous) => ({ ...previous, document_type: event.target.value as "DNI" | "CE" }))} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2">
+          <option value="DNI">DNI</option><option value="CE">CE</option>
+        </select>
+      </label>
+      <label className="block text-sm font-medium text-gray-700">Numero de Documento
+        <input value={form.dni} onChange={(event) => setForm((previous) => ({ ...previous, dni: event.target.value }))} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" autoComplete="off" />
+        {isCheckingDocument && <span className="mt-1 flex items-center gap-2 text-xs text-gray-500"><span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600" />Verificando documento...</span>}
+        {documentExists && <span role="alert" className="mt-1 block text-xs text-red-600">Este documento ya esta registrado.</span>}
+        {verificationFailed && !documentExists && <span className="mt-1 block text-xs text-amber-700">No se pudo verificar ahora; se comprobara al guardar.</span>}
+      </label>
+      <label className="block text-sm font-medium text-gray-700">Nombre
+        <input value={form.first_name} onChange={(event) => setForm((previous) => ({ ...previous, first_name: event.target.value }))} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" />
+      </label>
+      <label className="block text-sm font-medium text-gray-700">Apellido
+        <input value={form.last_name} onChange={(event) => setForm((previous) => ({ ...previous, last_name: event.target.value }))} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" />
+      </label>
+      <label className="block text-sm font-medium text-gray-700">Correo (opcional)
+        <input type="email" value={form.email ?? ""} onChange={(event) => setForm((previous) => ({ ...previous, email: event.target.value }))} className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2" />
+      </label>
+      {error && <p role="alert" className="rounded bg-red-50 p-3 text-sm text-red-700">{error}</p>}
+      <div className="flex justify-end gap-3 pt-2">
+        <button type="button" disabled={loading} onClick={onClose} className="rounded bg-gray-500 px-4 py-2 text-white disabled:opacity-50">Cancelar</button>
+        <button type="submit" disabled={loading || isCheckingDocument || documentExists === true} className="rounded bg-blue-600 px-4 py-2 text-white disabled:opacity-50">{loading ? "Guardando..." : isCheckingDocument ? "Verificando..." : "Guardar"}</button>
+      </div>
+    </form>
   );
 };
 

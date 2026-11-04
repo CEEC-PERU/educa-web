@@ -19,7 +19,7 @@ const ButtonComponent: React.FC<ButtonProps> = ({
   onClick,
   className = '', // Clase adicional opcional
 }) => {
-  // Clases responsivas para ajustar el tamaño del botón
+  // Clases responsivas para ajustar el tamano del boton
   const responsiveButtonSize = "py-2 px-4 sm:py-2.5 sm:px-6 md:py-3 md:px-8 lg:py-3.5 lg:px-10";
   const buttonClasses = `block w-full select-none rounded-xl ${backgroundColor} ${textColor} ${fontSize} ${buttonSize} ${responsiveButtonSize} ${className} font-bold uppercase shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-85 focus:shadow-none active:opacity-85 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none`;
   

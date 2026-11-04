@@ -59,7 +59,7 @@ interface StudentAnswer {
   answer_text?: string;
 }
 
-// Vista STUDENT — pantalla de rendición de una certificación (responde preguntas del
+// Vista STUDENT — pantalla de rendicion de una certificacion (responde preguntas del
 // intento). Equivalente de certificaciones a evaluaciones/[id].tsx, pero contra
 // API_STUDENT_CERTIFICATIONS en vez del endpoint de evaluaciones.
 const TakeCertificationExam = () => {
@@ -67,12 +67,12 @@ const TakeCertificationExam = () => {
   const { id } = router.query;
   const { user, profileInfo } = useAuth();
 
-  // Estados de UI y Lógica
+  // Estados de UI y Logica
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
 
-  // Estados de Gestión del Examen
+  // Estados de Gestion del Examen
   const [isStarted, setIsStarted] = useState(false);
   const [isStartingEvaluation, setIsStartingEvaluation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,7 +123,7 @@ const TakeCertificationExam = () => {
     timeRemainingRef.current = timeRemaining;
   }, [timeRemaining]);
 
-  // tiempos y navegación entre preguntas
+  // tiempos y navegacion entre preguntas
 
   const changeQuestion = (newIndex: number) => {
     const currentTime = Date.now();
@@ -149,7 +149,7 @@ const TakeCertificationExam = () => {
     try {
       setIsStartingEvaluation(true);
       if (!certification?.certification_sche_id) {
-        alert("No se ha cargado la certificación correctamente.");
+        alert("No se ha cargado la certificacion correctamente.");
         setIsStartingEvaluation(false);
         return;
       }
@@ -179,11 +179,11 @@ const TakeCertificationExam = () => {
         setIsStarted(true);
         setQuestionStarterTime(Date.now());
       } else {
-        alert(data.message || "Error al iniciar la evaluación.");
+        alert(data.message || "Error al iniciar la evaluacion.");
       }
     } catch (error) {
       console.error("Error starting evaluation:", error);
-      alert("Error de conexión al iniciar.");
+      alert("Error de conexion al iniciar.");
     } finally {
       setIsStartingEvaluation(false);
     }
@@ -240,7 +240,7 @@ const TakeCertificationExam = () => {
     }
   }, [attemptId, userId]);
 
-  // enviar datos de la evaluación
+  // enviar datos de la evaluacion
   const submitEvaluation = useCallback(
     async (timeExpired = false) => {
       if (isSubmitting) return;
@@ -292,13 +292,13 @@ const TakeCertificationExam = () => {
             `/student/certificaciones/exam/${id}/resultados?attempt_id=${attemptId}`,
           );
         } else {
-          alert(data.message || "Error al enviar la evaluación.");
+          alert(data.message || "Error al enviar la evaluacion.");
           setIsSubmitting(false);
           setIsNavigating(false);
         }
       } catch (error) {
         console.error("Error submitting evaluation:", error);
-        alert("Ocurrió un error de red al enviar. Intenta nuevamente.");
+        alert("Ocurrio un error de red al enviar. Intenta nuevamente.");
         setIsSubmitting(false);
         setIsNavigating(false);
       } finally {
@@ -338,7 +338,7 @@ const TakeCertificationExam = () => {
         const data: CertificationData = await response.json();
 
         if (!data.is_active) {
-          setError("La certificación no está activa.");
+          setError("La certificacion no esta activa.");
           return;
         }
 
@@ -347,11 +347,11 @@ const TakeCertificationExam = () => {
         const dueDate = new Date(data.due_date);
 
         if (now < startDate) {
-          setError("La certificación aún no ha comenzado.");
+          setError("La certificacion aun no ha comenzado.");
           return;
         }
         if (now > dueDate) {
-          setError("La certificación ha expirado.");
+          setError("La certificacion ha expirado.");
           return;
         }
 
@@ -368,7 +368,7 @@ const TakeCertificationExam = () => {
   }, [id]);
 
   const handleTimeExpired = useCallback(() => {
-    alert("El tiempo ha expirado. Enviando evaluación automáticamente.");
+    alert("El tiempo ha expirado. Enviando evaluacion automaticamente.");
     submitEvaluation(true);
   }, [submitEvaluation]);
 
@@ -389,14 +389,14 @@ const TakeCertificationExam = () => {
     return () => clearInterval(interval);
   }, [isStarted, timeRemaining, isSubmitting, handleTimeExpired]);
 
-  // navegación y abandono
+  // navegacion y abandono
   useEffect(() => {
     if (!isStarted || isSubmitting) return;
 
-    // 1. Protección contra cierre/refresh
+    // 1. Proteccion contra cierre/refresh
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       if (!isNavigating && !isSubmitting) {
-        // Usar fetch con keepalive para garantizar el envío
+        // Usar fetch con keepalive para garantizar el envio
         fetch(`${API_STUDENT_CERTIFICATIONS}/attempt/abandon`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -413,14 +413,14 @@ const TakeCertificationExam = () => {
       }
     };
 
-    // protección contra navegación interna
+    // proteccion contra navegacion interna
     const handleRouteChangeStart = async (url: string) => {
       if (isNavigating || isSubmitting) return;
 
       if (url.includes("/resultados")) return;
 
       const confirmExit = window.confirm(
-        "¿Estás seguro que deseas salir? Tu progreso se perderá.",
+        "¿Estas seguro que deseas salir? Tu progreso se perdera.",
       );
 
       if (!confirmExit) {
@@ -439,14 +439,14 @@ const TakeCertificationExam = () => {
       }
     };
 
-    // manejo de botón atrás del navegador
+    // manejo de boton atras del navegador
     const handlePopState = async (event: PopStateEvent) => {
       if (isNavigating || isSubmitting) return;
 
       window.history.pushState(null, "", window.location.href);
 
       const confirmExit = window.confirm(
-        "¿Estás seguro que deseas salir? Tu progreso se perderá.",
+        "¿Estas seguro que deseas salir? Tu progreso se perdera.",
       );
 
       if (confirmExit) {
@@ -462,7 +462,7 @@ const TakeCertificationExam = () => {
       }
     };
 
-    // event listeners para evitar navegación no deseada
+    // event listeners para evitar navegacion no deseada
     window.addEventListener("beforeunload", handleBeforeUnload);
     window.addEventListener("popstate", handlePopState);
     router.events.on("routeChangeStart", handleRouteChangeStart);
@@ -497,15 +497,15 @@ const TakeCertificationExam = () => {
   const getQuestionTypeLabel = (type: string) => {
     switch (type) {
       case "1":
-        return "Selección simple";
+        return "Seleccion simple";
       case "2":
-        return "Selección múltiple";
+        return "Seleccion multiple";
       case "3":
         return "Verdadero/Falso";
       case "4":
         return "Respuesta abierta";
       default:
-        return "Selección única";
+        return "Seleccion unica";
     }
   };
 
@@ -514,7 +514,7 @@ const TakeCertificationExam = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-200 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando evaluación...</p>
+          <p className="text-gray-600">Cargando evaluacion...</p>
         </div>
       </div>
     );
@@ -578,7 +578,7 @@ const TakeCertificationExam = () => {
               <div className="text-2xl font-bold text-purple-600">
                 {certification.passing_score}%
               </div>
-              <div className="text-sm text-gray-600">Aprobación</div>
+              <div className="text-sm text-gray-600">Aprobacion</div>
             </div>
           </div>
 
@@ -587,20 +587,20 @@ const TakeCertificationExam = () => {
               <AlertTriangle className="h-6 w-6 text-yellow-600 mt-1 mr-3" />
               <div>
                 <h3 className="font-semibold text-yellow-800 mb-2">
-                  Asegúrate de leer todas las instrucciones antes de comenzar el
+                  Asegurate de leer todas las instrucciones antes de comenzar el
                   examen.
                 </h3>
                 <p className="text-yellow-700 mb-4">
                   {certification ? certification.instructions : ""}
                 </p>
                 <ul className="text-yellow-700 text-sm space-y-1">
-                  <li>• Una vez iniciada, no podrás pausar la evaluación</li>
+                  <li>• Una vez iniciada, no podras pausar la evaluacion</li>
                   <li>• Guarda tus respuestas frecuentemente</li>
-                  <li>• Asegúrate de tener conexión estable a internet</li>
+                  <li>• Asegurate de tener conexion estable a internet</li>
                   <li>• Revisa todas tus respuestas antes de enviar</li>
                   <li>
-                    • Para preguntas de selección múltiple, puedes elegir más de
-                    una opción
+                    • Para preguntas de seleccion multiple, puedes elegir mas de
+                    una opcion
                   </li>
                 </ul>
               </div>
@@ -684,7 +684,7 @@ const TakeCertificationExam = () => {
 
           {/* Renderizado de Opciones */}
           <div className="space-y-3 mb-8">
-            {/* TIPO 1: Selección Simple */}
+            {/* TIPO 1: Seleccion Simple */}
             {currentQuestion.type_id === 1 &&
               currentQuestion.options.map((option) => {
                 const studentAnswer = getStudentAnswer(
@@ -736,7 +736,7 @@ const TakeCertificationExam = () => {
             )}
           </div>
 
-          {/* Botones de Navegación */}
+          {/* Botones de Navegacion */}
           <div className="flex justify-between items-center pt-6 border-t border-gray-100">
             <button
               onClick={() =>
@@ -773,23 +773,23 @@ const TakeCertificationExam = () => {
           </div>
         </div>
       </div>
-      {/* Modal Confirmación */}
+      {/* Modal Confirmacion */}
       {showConfirmSubmit && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
             <h3 className="text-xl font-bold text-gray-900 mb-2">
-              ¿Finalizar evaluación?
+              ¿Finalizar evaluacion?
             </h3>
             <p className="text-gray-600 mb-6">
-              Asegúrate de haber respondido todas las preguntas. No podrás
-              modificar tus respuestas después.
+              Asegurate de haber respondido todas las preguntas. No podras
+              modificar tus respuestas despues.
             </p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowConfirmSubmit(false)}
                 className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
               >
-                Revisar más
+                Revisar mas
               </button>
               <button
                 onClick={() => submitEvaluation(false)}

@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="flex flex-wrap justify-between">
           {/* Redes sociales */}
           <div className="w-full md:w-auto mb-12 md:mb-0">
-            <h3 className="text-sm font-bold mb-6 text-white">Síguenos</h3>
+            <h3 className="text-sm font-bold mb-6 text-white">Siguenos</h3>
             <div className="flex space-x-4 mb-8">
               <Link
                 href="#"
@@ -69,7 +69,7 @@ export default function Footer() {
                   onClick={() => setShowPrivacyPolicy(true)}
                   className="hover:text-white transition-colors"
                 >
-                  POLÍTICA DE PRIVACIDAD
+                  POLITICA DE PRIVACIDAD
                 </button>
               </li>
             </ul>
@@ -86,14 +86,14 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Línea divisoria */}
+        {/* Linea divisoria */}
         <div className="border-t border-gray-800 my-12"></div>
       </div>
 
       <Modal
         isOpen={showPrivacyPolicy}
         onClose={() => setShowPrivacyPolicy(false)}
-        title="Política de Privacidad"
+        title="Politica de Privacidad"
         size="lg"
       >
         <PrivacyPolicyContent />

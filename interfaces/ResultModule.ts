@@ -18,5 +18,5 @@ export interface RequestResultModule {
         isCorrect: boolean |string | null;
         isCorrect2: boolean[] | boolean |string  | null;
         score: number  | null
-    }[];  // Añadimos el campo 'answers' que es un array de respuestas
+    }[];  // Anadimos el campo 'answers' que es un array de respuestas
 }

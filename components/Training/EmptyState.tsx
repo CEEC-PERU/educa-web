@@ -10,8 +10,8 @@ interface EmptyStateProps {
 }
 
 const EmptyState: React.FC<EmptyStateProps> = ({
-  title = 'No hay programas de formación',
-  description = 'Comienza creando tu primer programa de formación para tus estudiantes.',
+  title = 'No hay programas de formacion',
+  description = 'Comienza creando tu primer programa de formacion para tus estudiantes.',
   actionLabel = 'Crear Programa',
   onAction,
   icon,

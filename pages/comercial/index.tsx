@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import dynamic from 'next/dynamic'; // Import dynamic from next/dynamic
 import Navbar from '../../components/Navbar';
 import ChartCard from '../../components/dashboard/ChartCard';
@@ -24,7 +24,7 @@ const CorporateDashboard: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   // const [selectedCourse, setSelectedCourse] = useState('CP Pospago');
@@ -44,49 +44,49 @@ const CorporateDashboard: React.FC = () => {
   // Datos de ejemplo
   // const courseProgressData = [
   //   { course: 'CP Pospago', Estudiantes: 4, Progreso: 80 },
-  //  { course: 'Formación Continua', Estudiantes: 2, Progreso: 40 },
+  //  { course: 'Formacion Continua', Estudiantes: 2, Progreso: 40 },
   //];
 
-  const courseTimeData = [{ course: 'Productividad Ágil', Tiempo: 40 }];
+  const courseTimeData = [{ course: 'Productividad Agil', Tiempo: 40 }];
   const npsData = [0, 0, 0, 0, 0, 0, 6, 5, 6, 10]; // Valores en porcentaje para cada estrella
   //averageTimeData
   const averageTimePerDayData = [
     { day: 'Lunes', time: 46 },
     { day: 'Martes', time: 20 },
-    { day: 'Miércoles', time: 35 },
+    { day: 'Miercoles', time: 35 },
     { day: 'Jueves', time: 30 },
     { day: 'Viernes', time: 25 },
-    { day: 'Sábado', time: 27 },
+    { day: 'Sabado', time: 27 },
     { day: 'Domingo', time: 36 },
   ];
 
   const courseProgressData = [
     {
-      course: 'Productividad Ágil',
+      course: 'Productividad Agil',
       Estudiantes: 20,
       Progreso: 50,
     },
   ];
 
   const topAdvisorsData = [
-    { name: 'Valeria Flores', Calificación: 20 },
-    { name: 'Carla Mendoza', Calificación: 20 },
-    { name: 'Ariana Rojas', Calificación: 20 },
-    { name: 'Alvaro Guzman', Calificación: 15 },
-    { name: 'Maria Lopez', Calificación: 15 },
+    { name: 'Valeria Flores', Calificacion: 20 },
+    { name: 'Carla Mendoza', Calificacion: 20 },
+    { name: 'Ariana Rojas', Calificacion: 20 },
+    { name: 'Alvaro Guzman', Calificacion: 15 },
+    { name: 'Maria Lopez', Calificacion: 15 },
   ];
 
   //Curso completados al 100%
   const courseCompletionData = [
-    { course: 'Productividad Ágil', completion: 2 },
-    { course: 'Gestión de Talento Milenial', completion: 24 },
+    { course: 'Productividad Agil', completion: 2 },
+    { course: 'Gestion de Talento Milenial', completion: 24 },
   ];
 
   //Participantes en la semana
   const dailyParticipationData = [
     { day: 'Lunes', active: 2 },
     { day: 'Martes', active: 4 },
-    { day: 'Miércoles', active: 2 },
+    { day: 'Miercoles', active: 2 },
     { day: 'Jueves', active: 3 },
     { day: 'Viernes', active: 2 },
     { day: 'Sabado', active: 1 },
@@ -98,7 +98,7 @@ const CorporateDashboard: React.FC = () => {
     if (course === 'CP Pospago') {
       return [
         {
-          module: 'Fidelización del Talento',
+          module: 'Fidelizacion del Talento',
           completion: 70,
         },
         {
@@ -106,11 +106,11 @@ const CorporateDashboard: React.FC = () => {
           completion: 40,
         },
         {
-          module: 'Comunicación Activa ',
+          module: 'Comunicacion Activa ',
           completion: 35,
         },
       ];
-    } else if (course === 'Formación Continua') {
+    } else if (course === 'Formacion Continua') {
       return [{ module: 'Retenciones 1', completion: 85 }];
     }
     return [];
@@ -119,7 +119,7 @@ const CorporateDashboard: React.FC = () => {
   const satisfactionSurveyData = (course: string) => {
     if (course === 'CP Pospago') {
       return [0, 0, 0, 1, 0, 33]; // Valores en porcentaje para cada estrella
-    } else if (course === 'Formación Continua') {
+    } else if (course === 'Formacion Continua') {
       return [0, 0, 0, 1, 0, 33];
     }
     return [];
@@ -175,10 +175,10 @@ const CorporateDashboard: React.FC = () => {
             </select>
           </div>
 
-          {/* Gráfico de Barras de Progreso */}
+          {/* Grafico de Barras de Progreso */}
           <ChartCard
             title="Progreso del Curso"
-            subtitle="Comparación entre estudiantes inscritos y progreso completado"
+            subtitle="Comparacion entre estudiantes inscritos y progreso completado"
             type="bar"
             series={[
               {
@@ -269,7 +269,7 @@ const CorporateDashboard: React.FC = () => {
                 },
                 itemMargin: {
                   horizontal: 16,
-                  vertical: 8, // Añadido espacio vertical
+                  vertical: 8, // Anadido espacio vertical
                 },
                 onItemClick: {
                   toggleDataSeries: true,
@@ -297,10 +297,10 @@ const CorporateDashboard: React.FC = () => {
             className="mt-6"
           />
 
-          {/* Gráfico de Tiempo promedio por curso (minutos) */}
+          {/* Grafico de Tiempo promedio por curso (minutos) */}
           <ChartCard
             title="Tiempo Promedio por Curso"
-            subtitle="Duración media de interacción por curso (minutos)"
+            subtitle="Duracion media de interaccion por curso (minutos)"
             type="bar"
             series={[
               {
@@ -441,20 +441,20 @@ const CorporateDashboard: React.FC = () => {
               ],
             }}
             height={400}
-            badgeText="Última semana"
+            badgeText="Ultima semana"
             showUpdateDate={true}
             className="mt-6"
           />
           {/* Calificaciones de Asesores */}
-          {/* Top 5 de Asesores - Versión Mejorada */}
+          {/* Top 5 de Asesores - Version Mejorada */}
           <ChartCard
             title="Top 5 de Asesores"
-            subtitle="Mejores evaluaciones según satisfacción de estudiantes"
+            subtitle="Mejores evaluaciones segun satisfaccion de estudiantes"
             type="bar"
             series={[
               {
-                name: 'Puntaje de Satisfacción',
-                data: topAdvisorsData.map((item) => item.Calificación),
+                name: 'Puntaje de Satisfaccion',
+                data: topAdvisorsData.map((item) => item.Calificacion),
               },
             ]}
             options={{
@@ -540,7 +540,7 @@ const CorporateDashboard: React.FC = () => {
               },
               tooltip: {
                 y: {
-                  formatter: (val) => `${val} puntos de satisfacción`,
+                  formatter: (val) => `${val} puntos de satisfaccion`,
                 },
               },
               responsive: [
@@ -562,15 +562,15 @@ const CorporateDashboard: React.FC = () => {
               ],
             }}
             height={350}
-            badgeText="Evaluación 2025"
+            badgeText="Evaluacion 2025"
             showUpdateDate={true}
             className="mt-6"
           />
 
-          {/* Gráfico de Tiempo promedio por día */}
+          {/* Grafico de Tiempo promedio por dia */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">
-              Tiempo promedio por día en la plataforma
+              Tiempo promedio por dia en la plataforma
             </h2>
             <Chart
               type="line"
@@ -584,7 +584,7 @@ const CorporateDashboard: React.FC = () => {
                 chart: { type: 'line' },
                 xaxis: {
                   categories: averageTimePerDayData.map((item) => item.day),
-                  title: { text: 'Días' },
+                  title: { text: 'Dias' },
                 },
                 yaxis: { title: { text: 'Tiempo (minutos)' } },
                 colors: ['#1D4ED8'], // Set a line color
@@ -596,10 +596,10 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Gráfico de Participación Diaria */}
+          {/* Grafico de Participacion Diaria */}
           <div className="chart-container border border-gray-300 p-4 rounded-lg bg-white shadow-md">
             <h2 className="text-lg font-semibold mb-2">
-              Participación Diaria (estudiantes activos)
+              Participacion Diaria (estudiantes activos)
             </h2>
             <Chart
               type="line"
@@ -613,7 +613,7 @@ const CorporateDashboard: React.FC = () => {
                 chart: { type: 'line' },
                 xaxis: {
                   categories: dailyParticipationData.map((item) => item.day),
-                  title: { text: 'Día' },
+                  title: { text: 'Dia' },
                 },
                 yaxis: { title: { text: 'Cantidad Estudiantes' } },
                 colors: ['#33b2df'],
@@ -624,14 +624,14 @@ const CorporateDashboard: React.FC = () => {
             />
           </div>
 
-          {/* Tasa de Finalización de Cursos */}
+          {/* Tasa de Finalizacion de Cursos */}
           <ChartCard
-            title="Tasa de Finalización de Cursos"
+            title="Tasa de Finalizacion de Cursos"
             subtitle="Porcentaje de estudiantes que completaron cada curso"
             type="bar"
             series={[
               {
-                name: 'Tasa de Finalización',
+                name: 'Tasa de Finalizacion',
                 data: courseCompletionData.map((item) => item.completion),
               },
             ]}
@@ -674,7 +674,7 @@ const CorporateDashboard: React.FC = () => {
                 min: 0,
                 max: 100,
                 title: {
-                  text: 'Porcentaje de Finalización',
+                  text: 'Porcentaje de Finalizacion',
                   style: {
                     fontSize: '13px',
                     fontWeight: 600,
@@ -701,19 +701,19 @@ const CorporateDashboard: React.FC = () => {
               },
             }}
             height={350}
-            badgeText="Último semestre"
+            badgeText="Ultimo semestre"
             showUpdateDate={true}
             className="mt-4"
           />
 
-          {/* Gráfico de Compleción de Módulos */}
+          {/* Grafico de Complecion de Modulos */}
 
           <ChartCard
-            title="Compleción de Módulos"
+            title="Complecion de Modulos"
             type="bar"
             series={[
               {
-                name: 'Porcentaje de Compleción',
+                name: 'Porcentaje de Complecion',
                 data: moduleCompletionData('CP Pospago').map(
                   (item) => item.completion
                 ),
@@ -733,7 +733,7 @@ const CorporateDashboard: React.FC = () => {
               },
               yaxis: {
                 title: {
-                  text: 'Porcentaje de Finalización',
+                  text: 'Porcentaje de Finalizacion',
                   style: {
                     fontSize: '12px',
                     fontWeight: 600,
@@ -762,14 +762,14 @@ const CorporateDashboard: React.FC = () => {
               },
             }}
             height={300}
-            badgeText="Últimos 30 días"
+            badgeText="Ultimos 30 dias"
             className="mb-6"
           />
 
-          {/* Gráfico de Dona Encuesta de Satisfacción */}
+          {/* Grafico de Dona Encuesta de Satisfaccion */}
           <ChartCard
-            title="Encuesta de Satisfacción"
-            subtitle="Distribución de votos por calificación"
+            title="Encuesta de Satisfaccion"
+            subtitle="Distribucion de votos por calificacion"
             type="bar"
             series={[
               {
@@ -835,9 +835,9 @@ const CorporateDashboard: React.FC = () => {
             className="mb-7"
           />
           {/* CORREGIR 2 , TOTAL DE VOTOS*/}
-          {/* Gráfico de NPS */}
+          {/* Grafico de NPS */}
           <ChartCard
-            title="Del 1 al 10 ¿Qué tanto recomendarías este curso?"
+            title="Del 1 al 10 ¿Que tanto recomendarias este curso?"
             subtitle="Net Promoter Score (NPS)"
             type="bar"
             series={[{ name: 'Respuestas', data: npsData }]}
@@ -864,7 +864,7 @@ const CorporateDashboard: React.FC = () => {
               xaxis: {
                 categories: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
                 title: {
-                  text: 'Puntuación',
+                  text: 'Puntuacion',
                   style: {
                     fontSize: '14px',
                     fontWeight: 600,
@@ -880,7 +880,7 @@ const CorporateDashboard: React.FC = () => {
               },
               yaxis: {
                 title: {
-                  text: 'Número de respuestas',
+                  text: 'Numero de respuestas',
                   style: {
                     fontSize: '14px',
                     fontWeight: 600,

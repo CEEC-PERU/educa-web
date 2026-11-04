@@ -13,7 +13,7 @@ import {
 import { API_TRAININGS } from '@/utils/Endpoints';
 import { Classroom } from '@/interfaces/Classroom';
 
-// gestion de programas de formación
+// gestion de programas de formacion
 export const createProgram = async (
   data: CreateProgramData,
   token: string,
@@ -105,7 +105,7 @@ export const deleteProgram = async (
   }
 };
 
-// ======================= GESTIÓN DE DÍAS DE FORMACIÓN =========================
+// ======================= GESTION DE DIAS DE FORMACION =========================
 
 export const getTrainingDaysByProgram = async (
   programId: number,
@@ -201,7 +201,7 @@ export const deleteTrainingDay = async (
   }
 };
 
-// ======================= GESTIÓN DE CONTENIDOS DE FORMACIÓN ========================
+// ======================= GESTION DE CONTENIDOS DE FORMACION ========================
 
 export const getTrainingContentsByDay = async (
   dayId: number,
@@ -264,7 +264,7 @@ export const uploadTrainingContent = async (
   }
 };
 
-// ======================= GESTIÓN DE ASIGNACIONES DE FORMACIÓN ========================
+// ======================= GESTION DE ASIGNACIONES DE FORMACION ========================
 
 export const getAllAssignmentsBySupervisor = async (
   supervisorId: number,

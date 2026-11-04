@@ -8,7 +8,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/router";
 
 // Vista STUDENT — certificaciones pendientes/asignadas al usuario logueado (self-scoped
-// vía useStudentCertifications(userId propio)). Módulo hermano de "evaluaciones" pero con
+// via useStudentCertifications(userId propio)). Modulo hermano de "evaluaciones" pero con
 // sus propios hooks/interfaces (StudentCertification) — no reutiliza useEvaluationsList.
 const CertificationsList = () => {
   const { user } = useAuth();
@@ -31,7 +31,7 @@ const CertificationsList = () => {
     }
   }, [userInfo?.id, fetchPendingCertifications]);
 
-  // CALCULAR ESTADÍSTICAS
+  // CALCULAR ESTADISTICAS
   useEffect(() => {
     if (pendingCertifications.length > 0) {
       const now = new Date();
@@ -69,7 +69,7 @@ const CertificationsList = () => {
     router.push(`/student/certificaciones/exam/${assignmentId}`);
   };
 
-  //  MANEJAR VISUALIZACIÓN DE RESULTADOS
+  //  MANEJAR VISUALIZACION DE RESULTADOS
   const handleViewResults = (assignmentId: number) => {
     router.push(`/student/certificaciones/historial/${assignmentId}`);
   };
@@ -90,7 +90,7 @@ const CertificationsList = () => {
     const { student_progress, assignment_details } = certification;
     const now = new Date();
 
-    // Verificar si está expirada
+    // Verificar si esta expirada
     if (
       assignment_details.due_date &&
       new Date(assignment_details.due_date) <= now
@@ -139,7 +139,7 @@ const CertificationsList = () => {
     );
   };
 
-  //  RENDERIZAR TARJETA DE CERTIFICACIÓN
+  //  RENDERIZAR TARJETA DE CERTIFICACION
   const renderCertificationCard = (certification: PendingCertification) => {
     const isExpired =
       certification.assignment_details.due_date &&
@@ -168,7 +168,7 @@ const CertificationsList = () => {
           {getStatusBadge(certification)}
         </div>
 
-        {/* Información de la certificación */}
+        {/* Informacion de la certificacion */}
         <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
           {certification.certification.title}
         </h3>
@@ -183,12 +183,12 @@ const CertificationsList = () => {
           <span className="ml-1">{certification.classroom.code}</span>
         </div>
 
-        {/* Información detallada */}
+        {/* Informacion detallada */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-gray-600">
             <ClockIcon className="h-4 w-4 mr-2" />
             <span>
-              Duración: {certification.certification.duration_minutes} minutos
+              Duracion: {certification.certification.duration_minutes} minutos
             </span>
           </div>
 
@@ -236,7 +236,7 @@ const CertificationsList = () => {
 
           {certification.student_progress.latest_attempt && (
             <div className="text-sm text-gray-600 mb-3">
-              Último intento:
+              Ultimo intento:
               {certification.student_progress.latest_attempt.score !== null && (
                 <span
                   className={`ml-1 font-medium ${
@@ -290,7 +290,7 @@ const CertificationsList = () => {
           </p>
         </div>
 
-        {/* Tarjetas de estadísticas */}
+        {/* Tarjetas de estadisticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           {/* Certificaciones Pendientes */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">

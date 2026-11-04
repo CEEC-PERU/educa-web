@@ -63,13 +63,13 @@ const EnterpriseForm: React.FC<EnterpriseFormProps> = ({ enterprise, onClose, on
       image_fondo: true
     });
 
-    // Validar campos para la creación
+    // Validar campos para la creacion
     if (!enterprise && (!formData.name || !imageLogFile || !imageFondoFile)) {
       setError('Todos los campos son obligatorios');
       return;
     }
 
-    // Validar campos para la edición
+    // Validar campos para la edicion
     if (enterprise && !formData.name && !imageLogFile && !imageFondoFile) {
       setError('Debe proporcionar al menos un campo para actualizar.');
       return;

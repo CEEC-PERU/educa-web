@@ -32,7 +32,7 @@ export const StudentCardsView: React.FC<NotasViewProps> = ({
                 <h3 className="text-lg font-semibold text-gray-800">
                   {user?.userProfile
                     ? `${user.userProfile.first_name} ${user.userProfile.last_name}`
-                    : user?.dni}
+                    : 'Usuario'}
                 </h3>
                 <span
                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
@@ -79,7 +79,7 @@ export const StudentTableView: React.FC<NotasViewProps> = ({
           <TableHeader>Estudiantes</TableHeader>
           {students?.[0]?.ModuleResults?.map((module: any, index: number) => (
             <TableHeader key={`module-${index}`}>
-              {module?.module_name || 'Módulo'}
+              {module?.module_name || 'Modulo'}
             </TableHeader>
           ))}
           <TableHeader>Nota Final</TableHeader>
@@ -273,10 +273,9 @@ const TableRow = ({
             <div className="text-sm font-medium text-gray-900">
               {user?.userProfile
                 ? `${user.userProfile.first_name} ${user.userProfile.last_name}`
-                : user?.dni || '-'}
+                : 'Usuario'}
             </div>
 
-            <div className="text-sm text-gray-500">{user.email}</div>
           </div>
         </div>
       </td>

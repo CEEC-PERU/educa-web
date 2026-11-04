@@ -46,7 +46,7 @@ const CorporateCourses: NextPageWithLayout = () => {
           const storedUserInfo = localStorage.getItem('userInfo');
           if (!storedUserInfo)
             throw new Error(
-              'No se encontró información del usuario en el localStorage.'
+              'No se encontro informacion del usuario en el localStorage.'
             );
           const { id } = JSON.parse(storedUserInfo);
           const response = await getCoursesBySupervisor(id);
@@ -62,7 +62,7 @@ const CorporateCourses: NextPageWithLayout = () => {
       };
       fetchCourses();
     }
-  }, [userId, showSuccess]); // Actualizar cursos cuando se muestra éxito
+  }, [userId, showSuccess]); // Actualizar cursos cuando se muestra exito
 
   const openModal = (course: Course) => {
     setSelectedCourse(course);
@@ -101,9 +101,9 @@ const CorporateCourses: NextPageWithLayout = () => {
 
       if (!response.ok) throw new Error('Error al subir archivos');
 
-      // Mostrar notificación de éxito
+      // Mostrar notificacion de exito
       setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000); // Ocultar después de 3 segundos
+      setTimeout(() => setShowSuccess(false), 3000); // Ocultar despues de 3 segundos
 
       closeModal();
     } catch (error) {
@@ -119,7 +119,7 @@ const CorporateCourses: NextPageWithLayout = () => {
 
   return (
     <>
-      {/* Notificación de éxito */}
+      {/* Notificacion de exito */}
       {showSuccess && (
         <div className="fixed top-20 right-4 z-50">
           <div className="bg-green-500  text-white px-6 py-3 rounded-lg shadow-lg flex items-center animate-fade-in-up">
@@ -137,7 +137,7 @@ const CorporateCourses: NextPageWithLayout = () => {
               />
             </svg>
             <div>
-              <p className="font-semibold">¡Éxito!</p>
+              <p className="font-semibold">¡Exito!</p>
               <p className="text-sm">
                 Los archivos se han subido correctamente.
               </p>
@@ -167,7 +167,7 @@ const CorporateCourses: NextPageWithLayout = () => {
       <div className="flex justify-between items-center mb-8 w-full">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">
-                Gestión de Cursos
+                Gestion de Cursos
               </h1>
               <p className="text-gray-600 mt-2">
                 Administra los materiales de tus cursos
@@ -223,7 +223,7 @@ const CorporateCourses: NextPageWithLayout = () => {
 
                   <div className="p-5">
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {course.description_short || 'Sin descripción disponible'}
+                      {course.description_short || 'Sin descripcion disponible'}
                     </p>
 
                     <div className="flex justify-between items-center mb-4">
@@ -246,20 +246,6 @@ const CorporateCourses: NextPageWithLayout = () => {
                         </span>
                       </div>
                     </div>
-                    {/* Notificación de éxito 
-                    <div className="space-y-2 mb-4">
-                      <div className="flex justify-between text-xs text-gray-600">
-                        <span>Progreso</span>
-                        <span>{course.progressPercentage || 0}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="bg-blue-500 h-2 rounded-full" 
-                          style={{ width: `${course.progressPercentage || 0}%` }}
-                        ></div>
-                      </div>
-                    </div>*/}
-
                     <button
                       onClick={() => openModal(course)}
                       className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
@@ -283,7 +269,7 @@ const CorporateCourses: NextPageWithLayout = () => {
                       onClick={() => handleViewModules(course.course_id)}
                       className="w-full mt-4 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
                     >
-                      Ver módulos
+                      Ver modulos
                     </button>
                   </div>
                 </div>
@@ -370,7 +356,7 @@ const CorporateCourses: NextPageWithLayout = () => {
                   </ul>
                 </div>
               )}
-              {/* Botón para agregar más archivos */}
+              {/* Boton para agregar mas archivos */}
               <div className="flex justify-start pt-4">
                 <label className="inline-flex items-center px-4 py-2 bg-indigo-100 text-indigo-700 text-sm font-medium rounded-lg shadow hover:bg-indigo-200 cursor-pointer transition-colors">
                   <svg

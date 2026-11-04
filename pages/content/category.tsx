@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../types/next";
 import { useCategoriesQuery } from "@/features/categories/categories.queries";
@@ -99,14 +99,14 @@ const CategoryPage: NextPageWithLayout = () => {
           categoryId: category.category_id,
           category,
         });
-        toast.success("Categoría actualizada exitosamente");
+        toast.success("Categoria actualizada exitosamente");
       } else {
         await createCategoryMutation.mutateAsync(category.name);
-        toast.success("Categoría agregada exitosamente");
+        toast.success("Categoria agregada exitosamente");
       }
       closeFormModal();
     } catch (err) {
-      toast.error(getUserFacingMessage(err) ?? "Error al guardar la categoría");
+      toast.error(getUserFacingMessage(err) ?? "Error al guardar la categoria");
     }
   };
 
@@ -114,10 +114,10 @@ const CategoryPage: NextPageWithLayout = () => {
     if (categoryToDelete === null) return;
     try {
       await deleteCategoryMutation.mutateAsync(categoryToDelete);
-      toast.success("Categoría eliminada exitosamente");
+      toast.success("Categoria eliminada exitosamente");
     } catch (err) {
       toast.error(
-        getUserFacingMessage(err) ?? "Error al eliminar la categoría",
+        getUserFacingMessage(err) ?? "Error al eliminar la categoria",
       );
     } finally {
       deleteModal.hideModal();
@@ -159,7 +159,7 @@ const CategoryPage: NextPageWithLayout = () => {
   if (queryError) {
     return (
       <p className="text-gray-500 text-center mt-20">
-        Error al cargar las categorías. Intenta de nuevo.
+        Error al cargar las categorias. Intenta de nuevo.
       </p>
     );
   }
@@ -167,14 +167,14 @@ const CategoryPage: NextPageWithLayout = () => {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Categorías</h1>
+        <h1 className="text-xl font-semibold text-gray-900">Categorias</h1>
         <button
           type="button"
           onClick={openAddModal}
           className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition-colors"
         >
           <PlusIcon className="h-4 w-4" />
-          Agregar categoría
+          Agregar categoria
         </button>
       </div>
 
@@ -192,7 +192,7 @@ const CategoryPage: NextPageWithLayout = () => {
           <div className="w-full max-w-md mx-4 bg-white rounded-2xl shadow-xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h2 className="text-base font-semibold text-gray-900">
-                {isEditing ? "Editar categoría" : "Nueva categoría"}
+                {isEditing ? "Editar categoria" : "Nueva categoria"}
               </h2>
               <button
                 type="button"
@@ -207,7 +207,7 @@ const CategoryPage: NextPageWithLayout = () => {
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
               <FormField
                 id="name"
-                label="Nombre de la categoría"
+                label="Nombre de la categoria"
                 type="text"
                 name="name"
                 value={category?.name ?? ""}

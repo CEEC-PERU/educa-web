@@ -125,7 +125,7 @@ const EvaluationDetail: NextPageWithLayout = () => {
         setIsEditing(false);
       } catch (err) {
         console.error(
-          "Error al guardar la evaluación:",
+          "Error al guardar la evaluacion:",
           getUserFacingMessage(err),
         );
       }

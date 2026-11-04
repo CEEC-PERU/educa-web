@@ -28,7 +28,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const player = useRef<MediaPlayerInstance>(null);
   const lastSavedProgress = useRef<number>(0);
 
-  // --- LÓGICA DE VELOCIDAD ---
+  // --- LOGICA DE VELOCIDAD ---
   const handleRateChange = (detail: number, event: MediaRateChangeEvent) => {
     const MAX_SPEED = 1.5;
 
@@ -65,7 +65,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     <div className="w-full h-full bg-black flex items-center justify-center overflow-hidden">
       <MediaPlayer
         ref={player}
-        title="Capacitación MentorMind"
+        title="Capacitacion MentorMind"
         src={url}
         onTimeUpdate={handleTimeUpdate}
         onRateChange={handleRateChange} // <-- Escuchamos el cambio de velocidad
@@ -78,7 +78,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       >
         <MediaProvider>
           <video
-            controlsList="nodownload noplaybackrate" // Intenta ocultar el menú nativo en algunos navegadores
+            controlsList="nodownload noplaybackrate" // Intenta ocultar el menu nativo en algunos navegadores
             onContextMenu={(e) => e.preventDefault()}
             className="w-full h-full"
           />

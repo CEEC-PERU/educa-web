@@ -41,7 +41,7 @@ export const formatRelativeTime = (date: string | Date): string => {
 
   const diffDays = Math.floor(diffHours / 24);
   if (diffDays < 30) {
-    return `hace ${diffDays} ${diffDays === 1 ? "día" : "días"}`;
+    return `hace ${diffDays} ${diffDays === 1 ? "dia" : "dias"}`;
   }
 
   return target.toLocaleDateString("es-PE", {

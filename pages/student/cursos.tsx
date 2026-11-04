@@ -111,8 +111,8 @@ const StudentCursosPage = () => {
                 className="flex items-center justify-center px-3 py-2 rounded-lg flex-shrink-0 text-white hover:bg-white/10 transition-colors lg:hidden"
                 aria-label={
                   showAllCategories
-                    ? "Ver menos categorías"
-                    : "Ver todas las categorías"
+                    ? "Ver menos categorias"
+                    : "Ver todas las categorias"
                 }
               >
                 {showAllCategories ? (

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 
 interface ActionButtonsProps {
   onEdit?: () => void;
@@ -7,7 +7,7 @@ interface ActionButtonsProps {
   onDelete?: () => void;
   onSave?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   isEditing?: boolean;
-  customSize?: boolean; // Añadir esta prop para controlar el tamaño personalizado
+  customSize?: boolean; // Anadir esta prop para controlar el tamano personalizado
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({ onEdit, onCancel, onDelete, onSave, isEditing, onAbort, customSize }) => {

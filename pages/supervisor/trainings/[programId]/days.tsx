@@ -73,7 +73,7 @@ const TrainingDaysPage: NextPageWithLayout = () => {
       closeFormModal();
     } catch (error) {
       console.error(
-        `Error al ${formMode === 'create' ? 'crear' : 'actualizar'} el día:`,
+        `Error al ${formMode === 'create' ? 'crear' : 'actualizar'} el dia:`,
         error,
       );
       throw error;
@@ -103,8 +103,8 @@ const TrainingDaysPage: NextPageWithLayout = () => {
       await refetch();
       closeDeleteModal();
     } catch (error) {
-      console.error('Error al eliminar el día de formación:', error);
-      alert('Error al eliminar el día de formación');
+      console.error('Error al eliminar el dia de formacion:', error);
+      alert('Error al eliminar el dia de formacion');
     } finally {
       setIsDeleting(false);
     }
@@ -117,7 +117,7 @@ const TrainingDaysPage: NextPageWithLayout = () => {
                 onClick={() => router.back()}
                 className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
               >
-                ← Volver a Programas de Formación
+                ← Volver a Programas de Formacion
               </button>
             </div>
 
@@ -125,10 +125,10 @@ const TrainingDaysPage: NextPageWithLayout = () => {
               <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h1 className="text-2xl font-bold text-gray-900">
-                    Días de Formación
+                    Dias de Formacion
                   </h1>
                   <p className="mt-1 text-sm text-gray-600">
-                    Gestiona los días de formación para el programa
+                    Gestiona los dias de formacion para el programa
                     seleccionado.
                   </p>
                 </div>
@@ -137,7 +137,7 @@ const TrainingDaysPage: NextPageWithLayout = () => {
                     onClick={openCreateModal}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
-                    Añadir Nuevo Día
+                    Anadir Nuevo Dia
                   </button>
                 </div>
               </div>
@@ -155,7 +155,7 @@ const TrainingDaysPage: NextPageWithLayout = () => {
               ) : trainingDays.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-500">
-                    No hay días de formación disponibles.
+                    No hay dias de formacion disponibles.
                   </p>
                 </div>
               ) : (
@@ -177,7 +177,7 @@ const TrainingDaysPage: NextPageWithLayout = () => {
         <Modal
           isOpen={isModalFormOpen}
           onClose={closeFormModal}
-          title={formMode === 'create' ? 'Crear Nuevo Día' : 'Editar Día'}
+          title={formMode === 'create' ? 'Crear Nuevo Dia' : 'Editar Dia'}
           size="md"
         >
           <DayForm
@@ -189,21 +189,21 @@ const TrainingDaysPage: NextPageWithLayout = () => {
         </Modal>
       )}
 
-      {/* Modal de Confirmación de Eliminación */}
+      {/* Modal de Confirmacion de Eliminacion */}
       {isModalDeleteOpen && (
         <Modal
           isOpen={isModalDeleteOpen}
           onClose={closeDeleteModal}
-          title="Confirmar Eliminación"
+          title="Confirmar Eliminacion"
           size="sm"
         >
           <div className="space-y-4">
             <p className="text-gray-700">
-              ¿Estás seguro de que deseas eliminar el día{' '}
+              ¿Estas seguro de que deseas eliminar el dia{' '}
               <span className="font-semibold">"{selectedDay?.title}"</span>?
             </p>
             <p className="text-sm text-gray-500">
-              Esta acción no se puede deshacer y se eliminarán todos los
+              Esta accion no se puede deshacer y se eliminaran todos los
               contenidos asociados.
             </p>
 

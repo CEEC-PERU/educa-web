@@ -120,7 +120,7 @@ const EvaluationDetail: NextPageWithLayout = () => {
         setQuestions(updatedQuestions);
         setIsEditing(false);
       } catch (error) {
-        console.error("Error al guardar la evaluación:", error);
+        console.error("Error al guardar la evaluacion:", error);
       }
     }
   };

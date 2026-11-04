@@ -4,6 +4,7 @@ import {
   API_USERU,
   API_USERCOUNT,
   API_RESET_PASSWORD,
+  API_USERS_CREATE_MANUAL,
 } from "@/utils/Endpoints";
 import type { StudentData } from "@/interfaces/User/UsuariosSupervisor";
 import type { UserCount } from "@/interfaces/User/UserCount";
@@ -28,7 +29,7 @@ export async function fetchUserCount(
 }
 
 export async function createUser(userData: Record<string, unknown>): Promise<void> {
-  await http.post(`${API_USER}/create`, userData);
+  await http.post(API_USERS_CREATE_MANUAL, userData);
 }
 
 export async function deleteUser(userId: number): Promise<void> {

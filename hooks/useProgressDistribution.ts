@@ -28,7 +28,7 @@ export const useProgressDistribution = (selectedCourseId?: number) => {
         }
       } catch (err) {
         if (isCurrent) {
-          setError('Error al obtener la distribución de progreso.');
+          setError('Error al obtener la distribucion de progreso.');
         }
       } finally {
         if (isCurrent) {

@@ -10,7 +10,7 @@ interface ButtonProps {
   fontSize?: string;
   buttonSize?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  navigateTo?: string; // Nueva prop para manejar la navegación
+  navigateTo?: string; // Nueva prop para manejar la navegacion
 }
 
 const ButtonComponent: React.FC<ButtonProps> = ({ 

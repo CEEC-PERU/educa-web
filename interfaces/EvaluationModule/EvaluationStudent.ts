@@ -14,7 +14,7 @@ export interface Student {
   userProfile: UserProfile;
 }
 
-// Interface para un intento de evaluación
+// Interface para un intento de evaluacion
 export interface EvaluationAttempt {
   attempt_id: number;
   score: number;
@@ -22,14 +22,14 @@ export interface EvaluationAttempt {
   status: 'completed' | 'in_progress' | 'failed' | 'cancelled';
 }
 
-// Interface para la información de la evaluación
+// Interface para la informacion de la evaluacion
 export interface EvaluationInfo {
   evaluation_sche_id: number;
   max_attempts: number;
   attempts: EvaluationAttempt[];
 }
 
-// Interface principal para la asignación de evaluación
+// Interface principal para la asignacion de evaluacion
 export interface EvaluationAssignment {
   assignment_id: number;
   evaluation_sche_id: number;

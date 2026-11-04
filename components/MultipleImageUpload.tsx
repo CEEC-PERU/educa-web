@@ -4,9 +4,9 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 interface MultipleImageUploadProps {
   label: string;
   onImagesUpload: (files: File[]) => void;
-  // prop para limitar el número de imágenes que se pueden subir
+  // prop para limitar el numero de imagenes que se pueden subir
   maxImages?: number;
-  // prop para mostrar previsualización de las imágenes actuales
+  // prop para mostrar previsualizacion de las imagenes actuales
   currentImages: File[];
 }
 
@@ -18,7 +18,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
 }) => {
   const [previews, setPreviews] = useState<string[]>([]);
 
-  // handler para eliminar una imagen de la previsualización
+  // handler para eliminar una imagen de la previsualizacion
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // constante que almacena los archivos seleccionados
     const files = Array.from(event.target.files || []);
@@ -29,7 +29,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       const newImages = [...currentImages, ...filesToUpload];
       onImagesUpload(newImages);
 
-      // generar previsualizaciones para las nuevas imágenes
+      // generar previsualizaciones para las nuevas imagenes
       filesToUpload.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -88,7 +88,7 @@ const MultipleImageUpload: React.FC<MultipleImageUploadProps> = ({
       )}
 
       <p className="text-sm text-gray-500">
-        {currentImages.length} de {maxImages} imágenes seleccionadas
+        {currentImages.length} de {maxImages} imagenes seleccionadas
       </p>
     </div>
   );

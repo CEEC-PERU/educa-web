@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
 import { useAuth } from '../../context/AuthContext';
@@ -11,7 +11,7 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 const CorporateCourses: React.FC = () => {
   const { user } = useAuth();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [courses, setCourses] = useState<any[]>([]);

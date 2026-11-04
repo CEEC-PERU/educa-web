@@ -17,7 +17,7 @@ const CompanyForm: React.FC = () => {
 
         <div>
           <label className="block text-gray-700 font-semibold text-sm mb-1.5">
-            Correo electrónico
+            Correo electronico
           </label>
           <input
             type="email"
@@ -28,12 +28,12 @@ const CompanyForm: React.FC = () => {
 
         <div>
           <label className="block text-gray-700 font-semibold text-sm mb-1.5">
-            Teléfono
+            Telefono
           </label>
           <input
             type="text"
             className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
-            placeholder="Número de contacto"
+            placeholder="Numero de contacto"
           />
         </div>
 
@@ -43,7 +43,7 @@ const CompanyForm: React.FC = () => {
           </label>
           <textarea
             className="w-full h-28 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 resize-none transition-colors focus:outline-none focus:ring-2 focus:ring-brandrosa-800 focus:border-transparent"
-            placeholder="Cuéntanos en qué podemos ayudarte"
+            placeholder="Cuentanos en que podemos ayudarte"
           ></textarea>
         </div>
 

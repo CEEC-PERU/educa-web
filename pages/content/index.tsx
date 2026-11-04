@@ -24,7 +24,7 @@ const Home: NextPageWithLayout = () => {
           href="/content/addCourse"
           className="inline-flex items-center gap-1 bg-gradient-to-r from-blue-600 to-blue-500 text-white text-xs font-bold uppercase rounded-full px-7 py-2 shadow-md hover:shadow-lg transition-all"
         >
-          Añadir Curso
+          Anadir Curso
         </Link>
       </div>
 
@@ -38,7 +38,7 @@ const Home: NextPageWithLayout = () => {
         <div className="flex flex-col items-center justify-center py-20 text-gray-400">
           <p className="text-lg font-medium">No hay cursos disponibles</p>
           <p className="text-sm mt-1">
-            Crea el primer curso usando el botón de arriba.
+            Crea el primer curso usando el boton de arriba.
           </p>
         </div>
       )}

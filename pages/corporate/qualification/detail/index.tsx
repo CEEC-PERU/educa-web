@@ -32,9 +32,9 @@ ChartJS.register(
   ArcElement
 );
 
-// Vista CORPORATE — detalle gráfico (Chart.js) del progreso de un estudiante específico
-// dentro del módulo de calificaciones. Duplica buena parte de la lógica de fetch de
-// qualification/[user_id].tsx (mismo user_id por ruta) pero enfocado en visualización.
+// Vista CORPORATE — detalle grafico (Chart.js) del progreso de un estudiante especifico
+// dentro del modulo de calificaciones. Duplica buena parte de la logica de fetch de
+// qualification/[user_id].tsx (mismo user_id por ruta) pero enfocado en visualizacion.
 const Detail: NextPageWithLayout = () => {
   const router = useRouter();
   const { user_id } = router.query as { user_id: string };

@@ -42,8 +42,8 @@ interface CertificationResult {
   questions: QuestionResult[];
 }
 
-// Vista STUDENT — resultado inmediato de un intento de certificación recién enviado
-// (attempt_id en la query). Ver historial/[assignment_id].tsx para el histórico completo.
+// Vista STUDENT — resultado inmediato de un intento de certificacion recien enviado
+// (attempt_id en la query). Ver historial/[assignment_id].tsx para el historico completo.
 const ResultadosPage = () => {
   const router = useRouter();
   const { attempt_id } = router.query;
@@ -87,7 +87,7 @@ const ResultadosPage = () => {
       } catch (error) {
         console.error("Error fetching results:", error);
         setError(
-          "No se pudieron cargar los resultados. Por favor, inténtalo de nuevo más tarde.",
+          "No se pudieron cargar los resultados. Por favor, intentalo de nuevo mas tarde.",
         );
       } finally {
         setLoading(false);
@@ -165,11 +165,11 @@ const ResultadosPage = () => {
               </div>
               <div className="text-gray-600">
                 <div>
-                  Puntuación: {certificationResult?.score_obtained}/
+                  Puntuacion: {certificationResult?.score_obtained}/
                   {certificationResult?.total_points_available}
                 </div>
                 <div>
-                  Mínimo requerido:{" "}
+                  Minimo requerido:{" "}
                   {certificationResult?.certification.passing_percentage}%
                 </div>
               </div>
@@ -216,7 +216,7 @@ const ResultadosPage = () => {
           </h2>
           <div className="bg-white rounded-lg border p-6">
             <h2 className="text-2xl font-semibold mb-6">
-              Revisión de Respuestas
+              Revision de Respuestas
             </h2>
             <div className="space-y-4">
               {certificationResult?.questions.map((question, index) => {

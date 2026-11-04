@@ -79,7 +79,7 @@ const StepOne: React.FC<StepOneProps> = ({
       <WizardStepContainer>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Nombre de la Evaluación
+            Nombre de la Evaluacion
           </label>
           <input
             type="text"
@@ -93,7 +93,7 @@ const StepOne: React.FC<StepOneProps> = ({
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            Descripción
+            Descripcion
           </label>
           <textarea
             value={evaluationDescription}

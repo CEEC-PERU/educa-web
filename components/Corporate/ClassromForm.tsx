@@ -112,7 +112,7 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({
 
         <FormField
           id="code"
-          label="Código"
+          label="Codigo"
           type="text"
           value={formData.code}
           onChange={handleChange}
@@ -137,12 +137,12 @@ const ClassroomForm: React.FC<ClassroomFormProps> = ({
           id="user_id"
           label="Profesor"
           type="select"
-          value={formData.user_id?.toString() || ''} // Garantiza que sea un string o cadena vacía
+          value={formData.user_id?.toString() || ''} // Garantiza que sea un string o cadena vacia
           onChange={handleChange}
           options={[
             { value: '', label: 'Seleccione un profesor' },
             ...users.map((user) => ({
-              value: user.user_id?.toString() || '', // Verifica si user_id es undefined y usa cadena vacía
+              value: user.user_id?.toString() || '', // Verifica si user_id es undefined y usa cadena vacia
               label: `${user.userProfile?.first_name || 'Sin nombre'} ${
                 user.userProfile?.last_name || ''
               }`.trim(),

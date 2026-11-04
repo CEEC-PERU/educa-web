@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Corporate/CorporateSideBar';
 import { useAuth } from '../../context/AuthContext';
@@ -37,7 +37,7 @@ const AdminCorporative: React.FC = () => {
   const { logout, user, profileInfo } = useAuth();
   const { donutChartData, isLoading } = useMetricaCorporate();
   const enterpriseId = user
-    ? (user as { id: number; role: number; dni: string; enterprise_id: number })
+    ? (user as { id: number; role: number; enterprise_id: number })
         .enterprise_id
     : null;
   const [students, setStudents] = useState<any[]>([]);
@@ -79,7 +79,7 @@ const AdminCorporative: React.FC = () => {
   const barChartData = {
     labels: [
       'Soft Skills',
-      'Ciencias de la Comunicaciòn',
+      'Ciencias de la Comunicacion',
       'Programacion2',
       'Lideres Transformacionales',
       'Gestion del Cambio',
@@ -137,7 +137,7 @@ const AdminCorporative: React.FC = () => {
       {
         label: 'Progreso por Curso',
         data: [
-          { x: 1, y: 75, r: 12, curso: 'Matemáticas' },
+          { x: 1, y: 75, r: 12, curso: 'Matematicas' },
           { x: 2, y: 85, r: 18, curso: 'Ciencias' },
           { x: 3, y: 65, r: 10, curso: 'Historia' },
           { x: 4, y: 90, r: 20, curso: 'Lenguaje' },
@@ -161,7 +161,7 @@ const AdminCorporative: React.FC = () => {
     ],
     datasets: [
       {
-        label: 'Tiempo de Conexión (min)',
+        label: 'Tiempo de Conexion (min)',
         data: [26, 25, 15, 30, 20, 5, 8],
         borderColor: 'rgba(54, 162, 235, 1)',
         fill: false,
@@ -172,7 +172,7 @@ const AdminCorporative: React.FC = () => {
   const npsChartData = {
     labels: [
       'Soft Skills',
-      'Comunicaciòn',
+      'Comunicacion',
       'Programacion2',
       'Lideres',
       'Gestion del Cambio',
@@ -196,7 +196,7 @@ const AdminCorporative: React.FC = () => {
     ],
     datasets: [
       {
-        label: 'Encuesta de Satisfacción',
+        label: 'Encuesta de Satisfaccion',
         data: [6, 3, 1, 0, 0],
         backgroundColor: 'rgba(255, 205, 86, 1)',
       },

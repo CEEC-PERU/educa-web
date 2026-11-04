@@ -153,7 +153,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
                 )}
               </div>
               <h2 className="font-bold text-lg flex-1 leading-tight">
-                Módulo {moduleIndex + 1}: {module.name}
+                Modulo {moduleIndex + 1}: {module.name}
               </h2>
             </div>
 
@@ -176,7 +176,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
                   <span
                     className={`flex-1 text-sm ${sessionProgress === 100 ? "text-green-300" : "text-white"}`}
                   >
-                    Sesión {sessionIndex + 1}: {session.name}
+                    Sesion {sessionIndex + 1}: {session.name}
                   </span>
                 </div>
               );
@@ -217,7 +217,7 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
                       </svg>
                     </span>
                   )}
-                  <span>Evaluación: {module.moduleEvaluation.name}</span>
+                  <span>Evaluacion: {module.moduleEvaluation.name}</span>
                 </div>
 
                 {isModuleLocked && (
@@ -229,8 +229,8 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
 
                 {lockedClickedId === evalLockId && (
                   <p className="text-xs text-yellow-400 mt-1 px-2 animate-pulse">
-                    Completa todas las sesiones del módulo para habilitar la
-                    evaluación
+                    Completa todas las sesiones del modulo para habilitar la
+                    evaluacion
                   </p>
                 )}
               </div>
@@ -267,19 +267,19 @@ const CourseSidebar: React.FC<CourseSidebarProps> = ({
               <LockIcon />
             </span>
           )}
-          <span>Evaluación Final: {courseEvaluation.name}</span>
+          <span>Evaluacion Final: {courseEvaluation.name}</span>
         </div>
 
         {!allModulesCompleted && (
           <p className="text-xs text-gray-400 mt-1 px-2">
-            {completedModulesCount}/{courseModules.length} módulos completados
+            {completedModulesCount}/{courseModules.length} modulos completados
             para desbloquear
           </p>
         )}
 
         {lockedClickedId === "final-eval" && (
           <p className="text-xs text-yellow-400 mt-1 px-2 animate-pulse">
-            Completa todos los módulos del curso para habilitar la evaluación
+            Completa todos los modulos del curso para habilitar la evaluacion
             final
           </p>
         )}

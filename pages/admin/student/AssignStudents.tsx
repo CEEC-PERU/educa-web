@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from '../../../components/Navbar';
 import { Enterprise } from '../../../interfaces/Enterprise';
@@ -144,7 +144,7 @@ const AssignStudents: React.FC = () => {
     try {
       const result = await assignStudentsToCourse(selectedCompany, courseId);
 
-      // Estudiantes recién asignados (no estaban antes)
+      // Estudiantes recien asignados (no estaban antes)
       const newlyAssignedStudents = students.filter((student) =>
         result.newlyAssigned.includes(student.user_id)
       );
@@ -189,30 +189,22 @@ const AssignStudents: React.FC = () => {
     }
   };
 
-  // Configuración de columnas para las tablas
+  // Configuracion de columnas para las tablas
   const studentColumns = [
     { label: 'Nombre', key: 'name', align: 'left' },
-    { label: 'DNI', key: 'dni' },
-    { label: 'Email', key: 'email', align: 'left' },
   ];
 
   // Preparar datos para las tablas
   const unassignedRows = unassignedStudents.map((student) => ({
     name: `${student.userProfile?.first_name} ${student.userProfile?.last_name}`,
-    dni: student.dni,
-    email: student.userProfile?.email,
   }));
 
   const newlyAssignedRows = newlyAssigned.map((student) => ({
     name: `${student.userProfile?.first_name} ${student.userProfile?.last_name}`,
-    dni: student.dni,
-    email: student.userProfile?.email,
   }));
 
   const alreadyAssignedRows = alreadyAssigned.map((student) => ({
     name: `${student.userProfile?.first_name} ${student.userProfile?.last_name}`,
-    dni: student.dni,
-    email: student.userProfile?.email,
   }));
 
   return (
@@ -226,7 +218,7 @@ const AssignStudents: React.FC = () => {
           }`}
         >
           <h1 className="text-2xl font-bold text-gray-800 mb-6">
-            Asignación de Usuarios a Cursos
+            Asignacion de Usuarios a Cursos
           </h1>
 
           {showAlert && (
@@ -249,10 +241,10 @@ const AssignStudents: React.FC = () => {
           )}
 
           <div className="flex flex-col lg:flex-row gap-6">
-            {/* Panel de selección */}
+            {/* Panel de seleccion */}
             <div className="w-full lg:w-1/3 bg-white p-6 rounded-lg shadow-md">
               <h2 className="text-xl font-semibold mb-4 text-gray-700">
-                Selección
+                Seleccion
               </h2>
 
               <div className="mb-6">
@@ -332,7 +324,7 @@ const AssignStudents: React.FC = () => {
                 </div>
               )}
 
-              {/* Usuarios recién asignados */}
+              {/* Usuarios recien asignados */}
               {newlyAssigned.length > 0 && (
                 <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
                   <h2 className="text-xl font-semibold text-gray-700 mb-4">
@@ -359,7 +351,7 @@ const AssignStudents: React.FC = () => {
                 unassignedStudents.length === 0 && (
                   <div className="bg-white p-6 rounded-lg shadow-md text-center">
                     <p className="text-gray-600">
-                      Todos los usuarios de {companyName} ya están asignados al
+                      Todos los usuarios de {companyName} ya estan asignados al
                       curso {courseName}
                     </p>
                   </div>

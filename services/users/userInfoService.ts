@@ -7,7 +7,7 @@ export const createUserInfo = async (data: UserInfoData) => {
 
   formData.append('user_id', String(data.user_id));
   // Adjuntar los archivos al FormData
-  formData.append('foto_image', data.foto_image);
+  if (data.foto_image) formData.append('foto_image', data.foto_image);
   formData.append('firma_image', data.firma_image);
   formData.append('documento_pdf', data.documento_pdf);
 
@@ -19,7 +19,7 @@ export const createUserInfo = async (data: UserInfoData) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error creando la información del usuario:', error);
+    console.error('Error creando la informacion del usuario:', error);
     throw error;
   }
 };

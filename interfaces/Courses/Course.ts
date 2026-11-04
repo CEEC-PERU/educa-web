@@ -4,7 +4,7 @@ export interface Course {
   description_short: string;
   description_large: string;
   duration_course: string;
-  duration_video: string; // Añadido basado en el modelo
+  duration_video: string; // Anadido basado en el modelo
   intro_video: string;
   presentation_professor?: string;
   image: string;

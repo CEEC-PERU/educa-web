@@ -20,12 +20,12 @@ const DayForm: React.FC<DayFormProps> = ({ day, onSubmit, onCancel, mode }) => {
     setError(null);
 
     if (!title.trim()) {
-      setError('El título es requerido');
+      setError('El titulo es requerido');
       return;
     }
 
     if (isEditMode && title === day?.title) {
-      setError('No has realizado ningún cambio');
+      setError('No has realizado ningun cambio');
       return;
     }
 
@@ -35,7 +35,7 @@ const DayForm: React.FC<DayFormProps> = ({ day, onSubmit, onCancel, mode }) => {
     } catch (err: any) {
       setError(
         err.response?.data?.message ||
-          `Error al ${isEditMode ? 'actualizar' : 'crear'} el día`,
+          `Error al ${isEditMode ? 'actualizar' : 'crear'} el dia`,
       );
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ const DayForm: React.FC<DayFormProps> = ({ day, onSubmit, onCancel, mode }) => {
           htmlFor="title"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Título del Día *
+          Titulo del Dia *
         </label>
         <input
           type="text"
@@ -66,7 +66,7 @@ const DayForm: React.FC<DayFormProps> = ({ day, onSubmit, onCancel, mode }) => {
           maxLength={100}
           autoFocus
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          placeholder="Ej: Introducción al tema"
+          placeholder="Ej: Introduccion al tema"
         />
         <p className="mt-1 text-xs text-gray-500">
           {title.length}/100 caracteres
@@ -115,7 +115,7 @@ const DayForm: React.FC<DayFormProps> = ({ day, onSubmit, onCancel, mode }) => {
               : 'Creando...'
             : isEditMode
               ? 'Guardar Cambios'
-              : 'Crear Día'}
+              : 'Crear Dia'}
         </button>
       </div>
     </form>

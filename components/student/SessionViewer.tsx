@@ -75,7 +75,7 @@ const SessionViewer: React.FC<SessionViewerProps> = ({
   return (
     <div className="h-full w-full p-4">
       <div className="flex justify-center items-center h-full w-full text-white">
-        Selecciona una sesión para iniciar el curso
+        Selecciona una sesion para iniciar el curso
       </div>
     </div>
   );

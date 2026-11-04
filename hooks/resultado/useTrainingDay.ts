@@ -25,7 +25,7 @@ export const useTrainingDay = (programId: number | undefined) => {
         if (err.response?.status === 403) {
           setError('No tienes permisos para ver este programa');
         } else {
-          setError('Error al cargar los días de formación');
+          setError('Error al cargar los dias de formacion');
         }
         console.error(err);
       } finally {
@@ -45,7 +45,7 @@ export const useTrainingDay = (programId: number | undefined) => {
       setTrainingDays(data);
       setError(null);
     } catch (err) {
-      setError('Error al cargar los días de formación');
+      setError('Error al cargar los dias de formacion');
     } finally {
       setLoading(false);
     }

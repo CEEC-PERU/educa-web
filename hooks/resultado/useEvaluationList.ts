@@ -31,7 +31,7 @@ export const useEvaluationsList = (): UseEvaluationsListReturn => {
     return apiData.map((assignment) => {
       const { evaluation } = assignment;
 
-      // Determinar estado basado en el estado de la asignación y fechas
+      // Determinar estado basado en el estado de la asignacion y fechas
       let status: 'pending' | 'completed' | 'overdue' = 'pending';
       const currentDate = new Date();
       const dueDate = new Date(assignment.due_date_override || evaluation.due_date);
@@ -51,7 +51,7 @@ export const useEvaluationsList = (): UseEvaluationsListReturn => {
         duration_minutes: evaluation.duration_minutes,
         total_points: evaluation.total_points,
         due_date: assignment.due_date_override || evaluation.due_date,
-        course_name: evaluation.title, // Usando título como nombre del curso
+        course_name: evaluation.title, // Usando titulo como nombre del curso
         status,
         max_attempts: evaluation.max_attempts,
         passing_score: evaluation.passing_score,
@@ -63,7 +63,7 @@ export const useEvaluationsList = (): UseEvaluationsListReturn => {
     });
   };
 
-  // Calcular estadísticas
+  // Calcular estadisticas
   const calculateStats = (evaluations: Evaluation[]) => {
     return {
       pending: evaluations.filter(e => e.status === 'pending').length,

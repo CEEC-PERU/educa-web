@@ -1,5 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic'; // Para la carga dinámica de react-apexcharts
+import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic'; // Para la carga dinamica de react-apexcharts
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/calidad/SibebarCalidad';
 import { useShifts } from '../../../hooks/useShifts';
@@ -15,7 +15,7 @@ import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
 
-// Importar react-apexcharts dinámicamente para evitar SSR
+// Importar react-apexcharts dinamicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 //datos enviados para la sgueinte envio
 const NotaCourses: React.FC = () => {
@@ -48,12 +48,12 @@ const NotaCourses: React.FC = () => {
     aprobado: 0,
     refuerzo: 0,
     desaprobado: 0,
-  }); // Para el gráfico 1
+  }); // Para el grafico 1
 
   const [selectedShift, setSelectedShift] = useState('');
 
   const handleRowClick = (userId: number) => {
-    // Redirigir a la página de detalles del estudiante (puedes cambiar la ruta como desees)
+    // Redirigir a la pagina de detalles del estudiante (puedes cambiar la ruta como desees)
 
     router.push({
       pathname: '/calidad/notasmodule',
@@ -76,7 +76,7 @@ const NotaCourses: React.FC = () => {
     await fetchCourseDetail(updatedClassroomId); // Pasar el valor actualizado
   };
 
-  // Nueva lógica para obtener el estado según la nota del examen final
+  // Nueva logica para obtener el estado segun la nota del examen final
   const getStatus = (finalExamGrade: number) => {
     if (finalExamGrade >= 18) {
       return 'Notable';
@@ -118,7 +118,7 @@ const NotaCourses: React.FC = () => {
     );
   };
 
-  //ejecutar de acuerdo a la selección courseNotaClassroom y CourseNota
+  //ejecutar de acuerdo a la seleccion courseNotaClassroom y CourseNota
   const currentCourseData = selectedClassroom
     ? courseNotaClassroom
     : courseNota;
@@ -139,7 +139,7 @@ const NotaCourses: React.FC = () => {
       });
       setRandomDates(dates);
 
-      // Contar el estado de cada estudiante para el gráfico de estado
+      // Contar el estado de cada estudiante para el grafico de estado
       let notable = 0,
         aprobado = 0,
         refuerzo = 0,
@@ -198,7 +198,7 @@ const NotaCourses: React.FC = () => {
               className="text-white bg-blue-600 px-8 rounded-lg p-2"
               onClick={handleDownload}
             >
-              Descargar Información
+              Descargar Informacion
             </button>
           </div>
 
@@ -224,7 +224,7 @@ const NotaCourses: React.FC = () => {
                               rowSpan={2}
                               className="py-2 px-4 border-b border-l-4 border-blue-300"
                             >
-                              Módulo: {module?.module_name || '-'}
+                              Modulo: {module?.module_name || '-'}
                             </th>
                           )
                         )}
@@ -284,7 +284,7 @@ const NotaCourses: React.FC = () => {
                             {user?.userProfile?.first_name || '-'}{' '}
                             {user?.userProfile?.last_name || '-'}
                           </td>
-                          {/* Notas de los módulos */}
+                          {/* Notas de los modulos */}
                           {currentCourseData[0]?.ModuleResults?.map(
                             (module: any, moduleIndex: number) => {
                               const moduleResult = user.ModuleResults?.find(
@@ -383,7 +383,7 @@ const NotaCourses: React.FC = () => {
                     </tbody>
                   </table>
 
-                  {/* Gráfico 1: Reporte de aprobados y desaprobados */}
+                  {/* Grafico 1: Reporte de aprobados y desaprobados */}
                   <div className="mt-10">
                     <h3 className="text-2xl font-bold mb-4">
                       Reporte de Aprobados y Desaprobados
@@ -418,10 +418,10 @@ const NotaCourses: React.FC = () => {
                     />
                   </div>
 
-                  {/* Gráfico 2: Número de sesiones por alumno */}
+                  {/* Grafico 2: Numero de sesiones por alumno */}
                   <div className="mt-10">
                     <h3 className="text-2xl font-bold mb-4">
-                      Número de Sesiones por Alumno
+                      Numero de Sesiones por Alumno
                     </h3>
                     <Chart
                       type="bar"
@@ -446,10 +446,10 @@ const NotaCourses: React.FC = () => {
                     />
                   </div>
 
-                  {/* Gráfico 3: Participación diaria por estudiante */}
+                  {/* Grafico 3: Participacion diaria por estudiante */}
                   <div className="mt-10">
                     <h3 className="text-2xl font-bold mb-4">
-                      Participación Diaria por Estudiante
+                      Participacion Diaria por Estudiante
                     </h3>
                     <Chart
                       type="line"

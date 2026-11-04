@@ -17,7 +17,6 @@ interface CertificationResultados {
   result_id: number;
   user_id: number;
   user_name?: string;
-  dni?: string;
   score: string;
   passed: boolean;
   certification_id: number;
@@ -25,8 +24,8 @@ interface CertificationResultados {
   created_at?: string;
 }
 
-// Vista CORPORATE — resultados de certificaciones de la empresa: filtra por certificación
-// y exporta CSV. A diferencia de /supervisor/certificates, aquí NO hay CRUD ni asignación,
+// Vista CORPORATE — resultados de certificaciones de la empresa: filtra por certificacion
+// y exporta CSV. A diferencia de /supervisor/certificates, aqui NO hay CRUD ni asignacion,
 // solo lectura de resultados (API_CERTIFICATES) acotada al enterprise_id del usuario logueado.
 const Certification: NextPageWithLayout = () => {
   const { user } = useAuth();
@@ -56,10 +55,9 @@ const Certification: NextPageWithLayout = () => {
     if (filteredResults.length === 0) return;
 
     const headers = [
-      "Certificación",
+      "Certificacion",
       "Estudiante",
-      "DNI",
-      "Puntuación",
+      "Puntuacion",
       "Estado",
       "Fecha",
       "Hora",
@@ -69,7 +67,6 @@ const Certification: NextPageWithLayout = () => {
       return [
         `"${res.certification_title}"`,
         `"${res.user_name}"`,
-        res.dni,
         res.score,
         res.passed ? "APROBADO" : "REPROBADO",
         res.created_at,
@@ -103,7 +100,7 @@ const Certification: NextPageWithLayout = () => {
         const data = await response.json();
         setCertificados(data.data || data);
       } catch (err) {
-        setError("Error al cargar las campañas.");
+        setError("Error al cargar las campanas.");
       } finally {
         setLoadingCerts(false);
       }
@@ -132,7 +129,7 @@ const Certification: NextPageWithLayout = () => {
 
         const data = await response.json();
 
-        // Insertamos el titulo de la certificación en cada resultado
+        // Insertamos el titulo de la certificacion en cada resultado
         const certTitle = data.data.title;
 
         const normalizedResults = (data.data.results || []).map((r: any) => ({
@@ -141,11 +138,10 @@ const Certification: NextPageWithLayout = () => {
           score: r.score,
           passed: r.passed,
           certification_id: data.data.certification_id,
-          certification_title: certTitle, // Título de la certificación
+          certification_title: certTitle, // Titulo de la certificacion
           user_name: r.user?.userProfile
             ? `${r.user.userProfile.first_name} ${r.user.userProfile.last_name}`
             : r.user?.user_name ?? `ID: ${r.user_id}`,
-          dni: r.user?.dni ?? "N/A",
           created_at: formatDate(r.created_at),
         }));
 
@@ -177,10 +173,10 @@ const Certification: NextPageWithLayout = () => {
           <header className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-800 tracking-tight">
-                Gestión de Certificaciones
+                Gestion de Certificaciones
               </h1>
               <p className="text-gray-500 mt-2">
-                Analiza el desempeño de tus colaboradores.
+                Analiza el desempeno de tus colaboradores.
               </p>
             </div>
 
@@ -210,7 +206,7 @@ const Certification: NextPageWithLayout = () => {
                 <option value="">
                   {loadingCerts
                     ? "Cargando..."
-                    : "Selecciona una certificación..."}
+                    : "Selecciona una certificacion..."}
                 </option>
                 {certificados.map((cert) => (
                   <option
@@ -252,16 +248,15 @@ const Certification: NextPageWithLayout = () => {
                   <thead className="bg-gray-50/50 border-b border-gray-100">
                     <tr>
                       <th className="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        Certificación
+                        Certificacion
                       </th>
                       <th className="p-5 text-xs font-bold text-gray-400 uppercase tracking-wider">
                         Estudiante
                       </th>
                       <th className="p-5 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        DNI
                       </th>
                       <th className="p-5 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
-                        Puntuación
+                        Puntuacion
                       </th>
                       <th className="p-5 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">
                         Estado
@@ -286,7 +281,6 @@ const Certification: NextPageWithLayout = () => {
                           </div>
                         </td>
                         <td className="p-5 text-center text-sm text-gray-600">
-                          {res.dni}
                         </td>
                         <td className="p-5 text-center text-sm text-gray-600">
                           {res.score}

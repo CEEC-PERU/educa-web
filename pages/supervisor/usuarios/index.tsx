@@ -7,6 +7,7 @@ import ModalConfirmation from "@/components/ModalConfirmation";
 import { Student } from "@/interfaces/User/UsuariosSupervisor";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { getUserFacingMessage } from "@/lib/http/error";
 import {
   UserGroupIcon,
@@ -25,16 +26,18 @@ import {
   useReactivateUserMutation,
   useResetPasswordMutation,
 } from "@/features/users/users.mutations";
+import { usersKeys } from "@/features/users/users.query-keys";
 import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
 
 const STUDENT_ROLE_ID = 1;
 const PASSWORD_REQUIREMENTS = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).{8,}$/;
 const PASSWORD_REQUIREMENTS_MESSAGE =
-  "Usa al menos 8 caracteres, una mayúscula, un número y un carácter especial.";
+  "Usa al menos 8 caracteres, una mayuscula, un numero y un caracter especial.";
 
 const Usuarios: NextPageWithLayout = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number } | null;
 
@@ -72,8 +75,7 @@ const Usuarios: NextPageWithLayout = () => {
           .includes(filter.toLowerCase()) ||
           student.User.userProfile?.last_name
             ?.toLowerCase()
-            .includes(filter.toLowerCase()) ||
-          student.User.dni.includes(filter)),
+            .includes(filter.toLowerCase())),
     ) ?? [];
 
   const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE);
@@ -92,7 +94,10 @@ const Usuarios: NextPageWithLayout = () => {
 
   const handleUserCreateSuccess = async () => {
     setIsModalOpen(false);
-    toast.success("Usuario registrado correctamente.");
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: usersKeys.classroom(userId ?? 0, enterpriseId ?? 0) }),
+      queryClient.invalidateQueries({ queryKey: usersKeys.count(enterpriseId ?? 0) }),
+    ]);
   };
 
   const handleDeleteConfirm = async () => {
@@ -125,7 +130,7 @@ const Usuarios: NextPageWithLayout = () => {
         userId: userToReset.User.user_id,
         newPassword,
       });
-      toast.success("Contraseña actualizada correctamente.");
+      toast.success("Contrasena actualizada correctamente.");
       setUserToReset(null);
       setNewPassword("");
     } catch (error) {
@@ -163,13 +168,12 @@ const Usuarios: NextPageWithLayout = () => {
   const escapeCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
 
   const handleExportCSV = () => {
-    const headers = ["Nombre", "Apellido", "DNI", "Perfil", "Estado"];
+    const headers = ["Nombre", "Apellido", "Perfil", "Estado"];
     const rows = filteredStudents.map((student) => {
       const profile = student.User.userProfile;
       return [
         profile?.first_name?.toUpperCase() ?? "",
         profile?.last_name?.toUpperCase() ?? "",
-        student.User.dni,
         profile ? "Completo" : "Pendiente",
         student.User.is_active ? "Activo" : "Inactivo",
       ].map(escapeCsvValue);
@@ -263,7 +267,7 @@ const Usuarios: NextPageWithLayout = () => {
       <div className="mb-6 max-w-sm">
         <FormField
           id="filter"
-          label="Buscar por nombre, apellido o DNI"
+          label="Buscar por nombre o apellido"
           type="text"
           value={filter}
           className="text-black"
@@ -298,9 +302,6 @@ const Usuarios: NextPageWithLayout = () => {
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Apellido
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    DNI
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Perfil
@@ -345,9 +346,6 @@ const Usuarios: NextPageWithLayout = () => {
                           <span className="text-gray-300 normal-case">—</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-700 font-mono">
-                        {student.User.dni}
-                      </td>
                       <td className="px-4 py-3">
                         {profile ? (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -379,10 +377,10 @@ const Usuarios: NextPageWithLayout = () => {
                           {student.User.is_active && profile && (
                             <button
                               type="button"
-                              aria-label="Restablecer contraseña"
+                              aria-label="Restablecer contrasena"
                               onClick={() => setUserToReset(student)}
                               className="text-amber-500 hover:text-amber-700 transition-colors"
-                              title="Restablecer contraseña"
+                              title="Restablecer contrasena"
                             >
                               <KeyIcon className="h-4 w-4" />
                             </button>
@@ -485,7 +483,7 @@ const Usuarios: NextPageWithLayout = () => {
         }}
         onConfirm={handleDeleteConfirm}
         message={`¿Seguro que deseas desactivar a ${userToDelete?.User.userProfile?.first_name ?? "este usuario"}?`}
-        confirmLabel="Sí, desactivar"
+        confirmLabel="Si, desactivar"
         isLoading={deleteUserMutation.isPending}
         errorMessage={deleteError}
       />
@@ -494,8 +492,8 @@ const Usuarios: NextPageWithLayout = () => {
         show={!!userToReactivate}
         onClose={() => setUserToReactivate(null)}
         onConfirm={handleReactivateConfirm}
-        message="¿Estás seguro que deseas reactivar este usuario?"
-        confirmLabel="Sí, reactivar"
+        message="¿Estas seguro que deseas reactivar este usuario?"
+        confirmLabel="Si, reactivar"
         confirmClassName="text-white bg-green-600 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 focus:outline-none"
         isLoading={reactivateUserMutation.isPending}
       />
@@ -503,13 +501,13 @@ const Usuarios: NextPageWithLayout = () => {
       <Modal
         show={!!userToReset}
         onClose={closePasswordModal}
-        title={`Cambiar contraseña${userToReset?.User.userProfile?.first_name ? ` de ${userToReset.User.userProfile.first_name}` : ""}`}
+        title={`Cambiar contrasena${userToReset?.User.userProfile?.first_name ? ` de ${userToReset.User.userProfile.first_name}` : ""}`}
         closeOnBackdropClick={!resetPasswordMutation.isPending}
       >
         <form onSubmit={handleResetPasswordConfirm} className="space-y-5">
           <div>
             <label htmlFor="new-user-password" className="mb-2 block text-sm font-medium text-gray-700">
-              Nueva contraseña
+              Nueva contrasena
             </label>
             <input
               id="new-user-password"
@@ -555,7 +553,7 @@ const Usuarios: NextPageWithLayout = () => {
               {resetPasswordMutation.isPending && (
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />
               )}
-              {resetPasswordMutation.isPending ? "Guardando…" : "Guardar contraseña"}
+              {resetPasswordMutation.isPending ? "Guardando…" : "Guardar contrasena"}
             </button>
           </div>
         </form>

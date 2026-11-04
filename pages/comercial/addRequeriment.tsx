@@ -1,4 +1,4 @@
-﻿import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/comercial/ComercialSidebar';
 import { createRequirement } from '../../services/requirementService';
@@ -207,7 +207,7 @@ const RequirementForm: React.FC = () => {
                 />
                 <FormField
                   id="courseDuration"
-                  label="Duración del Curso"
+                  label="Duracion del Curso"
                   type="text"
                   value={courseDuration}
                   onChange={handleInputChange}
@@ -234,7 +234,7 @@ const RequirementForm: React.FC = () => {
                   onClick={addMaterialField}
                   className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
                 >
-                  Agregar más materiales
+                  Agregar mas materiales
                 </button>
                 <div className="mb-4 mt-4">
                   <button

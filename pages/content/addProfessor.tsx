@@ -115,7 +115,7 @@ const AddProfessors: NextPageWithLayout = () => {
 
           <FormField
             id="especialitation"
-            label="Especialización"
+            label="Especializacion"
             type="text"
             value={profesor.especialitation}
             onChange={handleChange}
@@ -126,7 +126,7 @@ const AddProfessors: NextPageWithLayout = () => {
 
           <FormField
             id="description"
-            label="Descripción"
+            label="Descripcion"
             type="textarea"
             value={profesor.description}
             onChange={handleChange}

@@ -82,13 +82,13 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
           </div>
 
           <div className="ml-4 flex items-center gap-2">
-            {/* Botón Desactivar */}
+            {/* Boton Desactivar */}
             {onDelete && (
               <button
                 type="button"
                 onClick={handleDelete}
                 className="w-9 h-9 rounded-lg bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors group/btn z-10"
-                title="Desactivar asignación"
+                title="Desactivar asignacion"
               >
                 <PowerOff className="w-4 h-4 text-amber-600 group-hover/btn:scale-110 transition-transform" />
               </button>
@@ -97,14 +97,14 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
         </div>
 
         <div className="space-y-3 mb-4">
-          {/* NOMBRE DE LA CAMPAÑA */}
+          {/* NOMBRE DE LA CAMPANA */}
           <div className="flex items-center gap-3 text-sm">
             <div className="w-9 h-9 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
               <Users className="w-4 h-4 text-purple-600" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-gray-500 font-medium mb-0.5">
-                Campaña
+                Campana
               </p>
               <p className="text-sm font-semibold text-gray-900 truncate">
                 {assignment.classroomCode}
@@ -112,7 +112,7 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
             </div>
           </div>
 
-          {/* Fecha de Asignación */}
+          {/* Fecha de Asignacion */}
           <div className="flex items-center gap-3 text-sm">
             <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
               <CalendarDays className="w-4 h-4 text-blue-600" />
@@ -131,7 +131,7 @@ const TrainingAssignmentCard: React.FC<TrainingAssignmentCardProps> = ({
         {/* linea separadora */}
         <div className="border-t border-gray-100 my-4" />
 
-        {/* Acción */}
+        {/* Accion */}
         <button
           className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-300 group-hover:shadow-lg"
           type="button"

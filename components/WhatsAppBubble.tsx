@@ -55,7 +55,7 @@ export default function WhatsAppBubble() {
           <span className="text-sm font-bold text-white">¿Tienes dudas?</span>
         </div>
         <p className="mb-4 text-sm text-white/80">
-          Nuestro equipo de soporte está listo para ayudarte a resolver
+          Nuestro equipo de soporte esta listo para ayudarte a resolver
           cualquier consulta sobre tu ruta de aprendizaje.
         </p>
 
@@ -78,7 +78,7 @@ export default function WhatsAppBubble() {
           className="flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-brandfucsia-900 transition hover:bg-white/90"
         >
           <FaWhatsapp className="h-4 w-4" />
-          Escríbenos por WhatsApp
+          Escribenos por WhatsApp
           <ArrowRight className="h-4 w-4" />
         </a>
       </div>

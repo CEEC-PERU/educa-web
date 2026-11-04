@@ -9,6 +9,7 @@ interface Column {
 interface TableProps {
   columns: Column[];
   data: any[];
+  showProductColumn?: boolean;
   actionLabel?: string;
   onActionClick?: (row: any) => void;
   onDeleteClick?: (row: any) => void;
@@ -16,13 +17,16 @@ interface TableProps {
 
 
 
-const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionClick , onDeleteClick }) => {
+const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = false, actionLabel, onActionClick , onDeleteClick }) => {
+  const visibleColumns = columns.filter(
+    (column) => column.accessor !== 'product' || showProductColumn,
+  );
   return (
     <div className="relative z-10 isolate overflow-x-auto mt-4">
       <table className="min-w-full bg-white text-black">
         <thead>
           <tr>
-            {columns.map((column) => (
+            {visibleColumns.map((column) => (
               <th key={column.accessor} className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">
                 {column.header}
               </th>
@@ -31,9 +35,10 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
           </tr>
         </thead>
         <tbody className='text-black'>
-          {data.map((row, rowIndex) => (
+          {data.map((row, rowIndex) => {
+            return (
             <tr key={rowIndex}>
-              {columns.map((column) => {
+              {visibleColumns.map((column) => {
                 const value = column.accessor.split('.').reduce((acc, part) => acc && acc[part], row);
                 return (
                   <td key={column.accessor} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
@@ -43,6 +48,8 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
                       <img src={value} alt="Profile" className="w-10 h-10 rounded-full" />
                     )  : column.accessor === 'password' ? (
                       '**** ****'
+                    ) : column.accessor === 'product' ? (
+                      row.product ? row.product.name : 'No asignado'
                     ) : (
                       value
                     )}
@@ -68,7 +75,8 @@ const TableUser: React.FC<TableProps> = ({ columns, data, actionLabel, onActionC
               
               
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>

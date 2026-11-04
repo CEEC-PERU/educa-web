@@ -56,7 +56,7 @@ const TrainingCard: React.FC<TrainingCardProps> = ({
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="flex items-center text-sm text-gray-600">
           <BookOpenIcon className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0" />
-          <span>{training.total_days || 0} días</span>
+          <span>{training.total_days || 0} dias</span>
         </div>
         <div className="flex items-center text-sm text-gray-600">
           <CalendarIcon className="h-4 w-4 mr-2 text-purple-500 flex-shrink-0" />

@@ -1,4 +1,4 @@
-﻿// src/pages/admin/requirements.tsx
+// src/pages/admin/requirements.tsx
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';

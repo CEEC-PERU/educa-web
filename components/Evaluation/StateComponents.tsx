@@ -46,7 +46,7 @@ export const NoResultsState = () => (
         No se encontraron resultados
       </h3>
       <p className="text-gray-600 mb-4">
-        No hay intentos registrados para esta evaluación.
+        No hay intentos registrados para esta evaluacion.
       </p>
       <Link href="/student/evaluaciones">
         <button className="px-4 py-2 bg-brand-200 text-white rounded-lg hover:bg-brand-300 transition-colors">

@@ -24,7 +24,7 @@ const TrainingDayCard: React.FC<TrainingDayCardProps> = ({
     e: React.MouseEvent,
     action: (day: TrainingDay) => void,
   ) => {
-    e.stopPropagation(); // Prevenir propagación
+    e.stopPropagation(); // Prevenir propagacion
     action(day);
   };
 
@@ -56,7 +56,7 @@ const TrainingDayCard: React.FC<TrainingDayCardProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <CalendarDays className="h-4 w-4 text-blue-500" />
-            <span className="font-medium">Día {day.day_number}</span>
+            <span className="font-medium">Dia {day.day_number}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Target className="h-4 w-4 text-green-500" />

@@ -15,14 +15,14 @@ export const useClassroom = () => {
       // Obtener datos del localStorage
       const storedUserInfo = localStorage.getItem('userInfo');
       if (!storedUserInfo) {
-        throw new Error('No se encontró información del usuario en el localStorage.');
+        throw new Error('No se encontro informacion del usuario en el localStorage.');
       }
 
       const { enterprise_id } = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };
       const token = localStorage.getItem('userToken');
 
       if (!token) {
-        throw new Error('No se encontró el token del usuario en el localStorage.');
+        throw new Error('No se encontro el token del usuario en el localStorage.');
       }
 
       // Llamada al servicio para obtener los classrooms
@@ -75,7 +75,7 @@ export const useClassroomUserSupervisor = () => {
 
         const storedUserInfo = localStorage.getItem('userInfo');
         if (!storedUserInfo) {
-          throw new Error('No se encontró información del usuario en el localStorage.');
+          throw new Error('No se encontro informacion del usuario en el localStorage.');
         }
   
        const { id , enterprise_id} = JSON.parse(storedUserInfo) as { id: number; enterprise_id: number };

@@ -52,7 +52,7 @@ const ContentHeader: React.FC<ContentHeaderProps> = ({
               <nav className="flex items-center gap-2 text-xs text-gray-500 mb-1">
                 <span className="truncate max-w-[150px]">{programTitle}</span>
                 <span>/</span>
-                <span>Día {dayNumber}</span>
+                <span>Dia {dayNumber}</span>
               </nav>
               <div className="flex items-center gap-3">
                 <div className="p-1.5 bg-blue-50 text-blue-600 rounded-md">
