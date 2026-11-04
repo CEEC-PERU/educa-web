@@ -24,6 +24,45 @@ import { FaChalkboardTeacher } from 'react-icons/fa';
 import AppLayout from '../../../components/layouts/AppLayout';
 import type { NextPageWithLayout } from '../../../types/next';
 
+const parseGrade = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === '') return null;
+  const grade = Number(value);
+  return Number.isFinite(grade) ? grade : null;
+};
+
+const getExamGrade = (student: any): number | null => {
+  const reportedGrade = parseGrade(student.examGrade);
+  if (reportedGrade !== null) return reportedGrade;
+
+  const grades = (student.CourseResults ?? [])
+    .map((result: any) => parseGrade(result.puntaje))
+    .filter((grade: number | null): grade is number => grade !== null);
+  return grades.length > 0 ? Math.max(...grades) : null;
+};
+
+const getFinalGrade = (student: any): number | null => {
+  const reportedGrade = parseGrade(student.finalGrade);
+  if (reportedGrade !== null) return reportedGrade;
+
+  const examGrade = getExamGrade(student);
+  if (examGrade === null) return null;
+
+  const moduleGrades = (student.ModuleResults ?? [])
+    .map((module: any) => {
+      const reportedModuleGrade = parseGrade(module.highest_score);
+      if (reportedModuleGrade !== null) return reportedModuleGrade;
+      const attempts = (module.results ?? [])
+        .map((result: any) => parseGrade(result.puntaje))
+        .filter((grade: number | null): grade is number => grade !== null);
+      return attempts.length > 0 ? Math.max(...attempts) : null;
+    })
+    .filter((grade: number | null): grade is number => grade !== null);
+
+  if (moduleGrades.length === 0) return examGrade;
+  const moduleAverage = moduleGrades.reduce((sum: number, grade: number) => sum + grade, 0) / moduleGrades.length;
+  return Number((moduleAverage * 0.4 + examGrade * 0.6).toFixed(2));
+};
+
 const NotaCourses: NextPageWithLayout = () => {
   const { user } = useAuth();
   const router = useRouter();
@@ -90,24 +129,34 @@ const NotaCourses: NextPageWithLayout = () => {
     ? courseNotaClassroom
     : courseNota;
 
+  const getCourseProgress = (student: any) => {
+    const courseStudent = student.CourseStudents?.[0];
+    if (courseStudent?.finished_date) return 100;
+
+    const progress = Number(courseStudent?.progress);
+    if (!Number.isFinite(progress)) return 0;
+    return Math.max(0, Math.min(100, progress));
+  };
+
   const filteredStudents = currentCourseData?.filter((user: any) => {
-    const fullName = `${user?.userProfile?.first_name || ''} ${
-      user?.userProfile?.last_name || ''
+    const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
+      user?.userProfile?.last_name || user?.dni || ''
     }`.toLowerCase();
     if (!fullName.includes(searchTerm.toLowerCase())) return false;
     if (segment === 'all') return true;
     const cs = user.CourseStudents?.[0];
     if (!cs) return false;
-    if (segment === 'completed') return cs.finished_date != null || cs.progress >= 100;
-    return cs.finished_date == null && cs.progress < 100;
+    const progress = getCourseProgress(user);
+    if (segment === 'completed') return progress >= 100;
+    return progress < 100;
   });
 
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
       let notable = 0, aprobado = 0, desaprobado = 0;
       currentCourseData.forEach((user: any) => {
-        const finalGrade = user.finalGrade;
-        if (finalGrade === null || finalGrade === undefined) return;
+        const finalGrade = getFinalGrade(user);
+        if (finalGrade === null) return;
         const status = getStatus(finalGrade);
         if (status === 'Notable') notable++;
         else if (status === 'Aprobado') aprobado++;
@@ -115,6 +164,8 @@ const NotaCourses: NextPageWithLayout = () => {
       });
 
       setStatusCount({ notable, aprobado, desaprobado });
+    } else {
+      setStatusCount({ notable: 0, aprobado: 0, desaprobado: 0 });
     }
   }, [currentCourseData]);
 
@@ -319,12 +370,12 @@ const NotaCourses: NextPageWithLayout = () => {
                   {viewMode === 'cards' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                       {filteredStudents?.map((user: any, userIndex: number) => {
-                        const examGrade = user.examGrade ?? 0;
-                        const finalGrade = user.finalGrade ?? 0;
-                        const status = user.finalGrade !== null && user.finalGrade !== undefined
+                        const examGrade = getExamGrade(user);
+                        const finalGrade = getFinalGrade(user);
+                        const status = finalGrade !== null
                           ? getStatus(finalGrade)
                           : 'En Proceso';
-                        const progress = user.CourseStudents?.[0]?.progress ?? 0;
+                        const progress = getCourseProgress(user);
                         const lastEvaluatedModule = user.ModuleResults?.length > 0
                           ? user.ModuleResults[user.ModuleResults.length - 1]
                           : null;
@@ -344,8 +395,8 @@ const NotaCourses: NextPageWithLayout = () => {
                             <div className="p-5">
                               <div className="mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800">
-                                  {user?.userProfile?.first_name}{' '}
-                                  {user?.userProfile?.last_name}
+                                  {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                  {user?.userProfile?.last_name || ''}
                                 </h3>
                                 <span
                                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
@@ -420,7 +471,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                     Examen final:
                                   </span>
                                   <span className="text-base font-medium text-gray-700">
-                                    {user.examGrade !== null && user.examGrade !== undefined
+                                    {examGrade !== null
                                       ? examGrade
                                       : '-'}
                                   </span>
@@ -430,7 +481,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                     NOTA FINAL:
                                   </span>
                                   <span className="text-2xl font-bold text-gray-700">
-                                    {user.finalGrade !== null && user.finalGrade !== undefined
+                                    {finalGrade !== null
                                       ? finalGrade
                                       : '-'}
                                   </span>
@@ -549,8 +600,8 @@ const NotaCourses: NextPageWithLayout = () => {
                                     </div>
                                     <div className="ml-4">
                                       <div className="text-sm font-medium text-gray-900">
-                                        {user?.userProfile?.first_name || '-'}{' '}
-                                        {user?.userProfile?.last_name || '-'}
+                                        {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                        {user?.userProfile?.last_name || ''}
                                       </div>
                                     </div>
                                   </div>
@@ -580,12 +631,12 @@ const NotaCourses: NextPageWithLayout = () => {
                                   }
                                 )}
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  {user.finalGrade ?? '-'}
+                                  {getFinalGrade(user) ?? '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {(() => {
-                                    const grade = user.finalGrade ?? 0;
-                                    const rowStatus = user.finalGrade !== null && user.finalGrade !== undefined
+                                    const grade = getFinalGrade(user);
+                                    const rowStatus = grade !== null
                                       ? getStatus(grade)
                                       : 'En Proceso';
                                     return (
