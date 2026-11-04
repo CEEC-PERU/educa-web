@@ -4,12 +4,10 @@ import { getPrivateUserById, updateUser } from '../../../services/users/userServ
 import { getEnterprise } from '../../../services/enterpriseService';
 import Navbar from '../../../components/Navbar';
 import Sidebar from '../../../components/Admin/SideBarAdmin';
-import FormField from '../../../components/FormField';
-import ButtonComponent from '../../../components/ButtonComponent';
 import Alert from '../../../components/AlertComponent';
 
 import './../../../app/globals.css';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 const EditUser: React.FC = () => {
   const router = useRouter();
@@ -113,6 +111,17 @@ const EditUser: React.FC = () => {
             true ? 'ml-20' : ''
           }`}
         >
+          <button
+            type="button"
+            onClick={() => {
+              if (window.history.length > 1) router.back();
+              else router.push('/admin/users');
+            }}
+            className="mb-5 inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 hover:text-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500"
+          >
+            <ArrowLeftIcon className="h-4 w-4" />
+            Volver a usuarios
+          </button>
           {showAlert && (
             <Alert
               type="info"

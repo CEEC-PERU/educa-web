@@ -40,7 +40,6 @@ const AccountPage: NextPageWithLayout = () => {
   const { user, profileInfo } = useAuth();
   const { enterprise, isLoading, error } = useEnterprise();
   const [avatarError, setAvatarError] = useState(false);
-  const [coverError, setCoverError] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const { isLoading: isUploadingAvatar, submitAvatarUpdate } =
     useUpdateAvatar();
@@ -103,21 +102,6 @@ const AccountPage: NextPageWithLayout = () => {
   return (
     <div className="min-h-screen w-full bg-gradient-to-r from-brand-100 via-brand-200 to-brand-300">
       <div className="relative w-full max-w-4xl mx-auto">
-        {/* Banner detras del avatar, oculto por ahora.
-        <div className="relative w-full h-52 lg:h-64 overflow-hidden rounded-b-2xl">
-          <img
-            src={
-              coverError
-                ? "/default-cover.png"
-                : (enterprise?.enterprise.image_fondo ?? "/default-cover.png")
-            }
-            alt=""
-            className="w-full h-full object-cover"
-            onError={() => setCoverError(true)}
-          />
-          <div className="absolute inset-0 bg-black/20" />
-        </div>
-        */}
         <DailyQuoteBanner />
 
         <div className="absolute left-1/2 -translate-x-1/2 lg:left-8 lg:translate-x-0 -bottom-14 h-28 w-28 lg:h-32 lg:w-32">
@@ -165,7 +149,7 @@ const AccountPage: NextPageWithLayout = () => {
             <h1 className="text-2xl lg:text-3xl font-bold text-white">
               {fullName}
             </h1>
-            {enterprise?.enterprise.name && (
+            {enterprise?.enterprise?.name && (
               <p className="text-sm text-white/70 mt-1">
                 {enterprise.enterprise.name}
               </p>
@@ -200,7 +184,7 @@ const AccountPage: NextPageWithLayout = () => {
           <InfoItem label="Apellidos" value={profile?.last_name ?? "-"} />
           <InfoItem
             label="Empresa"
-            value={enterprise?.enterprise.name ?? "-"}
+            value={enterprise?.enterprise?.name ?? "-"}
           />
         </div>
       </div>
