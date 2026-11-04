@@ -6,7 +6,9 @@ import {
   getCompanies,
   getPaginatedUsersByCompanyAndRole,
   getUsersByRole,
+  resetUserPassword,
 } from '../../services/users/userService';
+import { KeyIcon } from '@heroicons/react/24/outline';
 import FormField from '../../components/FormField';
 import TableUser from '../../components/TableUser';
 import ButtonContent from '../../components/Content/ButtonContent';
@@ -31,6 +33,9 @@ const RoleDetail: React.FC = () => {
   const [totalCount, setTotalCount] = useState(0);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [temporaryPassword, setTemporaryPassword] = useState<string | null>(null);
+  const [resettingUser, setResettingUser] = useState(false);
+  const [userToReset, setUserToReset] = useState<User | null>(null);
 
   const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
   const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
@@ -166,6 +171,30 @@ const RoleDetail: React.FC = () => {
     router.push(`/admin/editUser/${row.user_id}`);
   };
 
+  const handleResetPassword = (row: User) => {
+    setUserToReset(row);
+  };
+
+  const confirmResetPassword = async () => {
+    if (!userToReset) return;
+    if (userToReset.user_id == null) {
+      setUserToReset(null);
+      window.alert('No se encontró el identificador del usuario.');
+      return;
+    }
+    setResettingUser(true);
+    try {
+      const result = await resetUserPassword(userToReset.user_id);
+      setTemporaryPassword(result.temporaryPassword);
+      setUserToReset(null);
+    } catch (error) {
+      console.error('Error generando clave temporal:', error);
+      window.alert('No se pudo generar la clave temporal. Inténtalo nuevamente.');
+    } finally {
+      setResettingUser(false);
+    }
+  };
+
   const handleExportCSV = () => {
     router.push('/admin/student/exportCsv');
   };
@@ -276,6 +305,7 @@ const RoleDetail: React.FC = () => {
                   showProductColumn={showProductColumn}
                   actionLabel="Editar"
                   onActionClick={handleActionClick}
+                  onResetPassword={handleResetPassword}
                 />
               </div>
               <div>
@@ -286,6 +316,7 @@ const RoleDetail: React.FC = () => {
                   columns={columnsWithoutProfile}
                   data={usersWithoutProfile}
                   showProductColumn={showProductColumn}
+                  onResetPassword={handleResetPassword}
                 />
               </div>
             </div>
@@ -325,6 +356,14 @@ const RoleDetail: React.FC = () => {
             onSuccess={handleUserCreateSuccess}
           />
         </Modal>
+        {userToReset && <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget && !resettingUser) setUserToReset(null); }}>
+          <section role="dialog" aria-modal="true" aria-labelledby="reset-password-title" className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div className="bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-5 text-white"><div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/15"><KeyIcon className="h-6 w-6" /></div><h2 id="reset-password-title" className="text-xl font-semibold">Generar clave temporal</h2><p className="mt-1 text-sm text-white/80">Confirma el restablecimiento de acceso</p></div>
+            <div className="px-6 py-5"><p className="text-sm leading-6 text-gray-700">Se generará una clave temporal para <strong className="text-gray-900">{userToReset.userProfile?.first_name || userToReset.user_name || 'este usuario'}</strong>.</p><div className="mt-4 flex gap-3 rounded-xl border border-amber-200 bg-amber-50 p-3.5"><span className="text-amber-600" aria-hidden="true">●</span><p className="text-sm leading-5 text-amber-900">La clave actual dejará de funcionar. El usuario deberá crear una nueva al iniciar sesión.</p></div></div>
+            <div className="flex justify-end gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4"><button type="button" disabled={resettingUser} onClick={() => setUserToReset(null)} className="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50">Cancelar</button><button type="button" disabled={resettingUser} onClick={confirmResetPassword} className="inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:cursor-wait disabled:opacity-70">{resettingUser ? 'Generando…' : <><KeyIcon className="h-4 w-4" /> Generar clave</>}</button></div>
+          </section>
+        </div>}
+        {temporaryPassword && <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"><section role="dialog" aria-modal="true" aria-labelledby="temporary-password-title" className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"><div className="bg-gradient-to-r from-emerald-500 to-teal-500 px-6 py-5 text-white"><div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/15"><KeyIcon className="h-6 w-6" /></div><h2 id="temporary-password-title" className="text-xl font-semibold">Clave temporal lista</h2><p className="mt-1 text-sm text-white/85">Compártela con el usuario de forma segura</p></div><div className="px-6 py-5"><p className="mb-3 text-sm leading-5 text-gray-600">Esta clave solo se mostrará ahora. Al iniciar sesión, deberá elegir una nueva.</p><div className="flex items-center gap-2 rounded-xl border border-gray-200 bg-gray-50 p-3"><code className="min-w-0 flex-1 break-all font-mono text-base font-semibold tracking-wide text-gray-900">{temporaryPassword}</code><button type="button" onClick={async () => { try { await navigator.clipboard?.writeText(temporaryPassword); } catch { /* La selección manual sigue disponible. */ } }} className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100">Copiar</button></div><p className="mt-3 text-xs text-gray-500">Guárdala antes de cerrar esta ventana.</p></div><div className="flex justify-end border-t border-gray-100 bg-gray-50 px-6 py-4"><button type="button" onClick={() => setTemporaryPassword(null)} className="rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700">Listo</button></div></section></div>}
       </div>
     </ProtectedRoute>
   );

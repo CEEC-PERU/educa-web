@@ -8,6 +8,7 @@ import {
   API_USERS_COURSES,
   API_USERU,
   API_USERS_CREATE_MANUAL,
+  API_RESET_PASSWORD,
 } from '../../utils/Endpoints';
 import { UserCount } from '../../interfaces/User/UserCount';
 interface ImportUsersResponse {
@@ -149,5 +150,13 @@ export const getCoursesByUser = async (userId: number) => {
 
 export const updateUser = async (userId: number, userData: any) => {
   const response = await axios.put(`${API_USER}/update/${userId}`, userData);
+  return response.data;
+};
+
+export const resetUserPassword = async (userId: number): Promise<{ temporaryPassword: string }> => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('userToken') : null;
+  const response = await axios.put(`${API_RESET_PASSWORD}/${userId}`, {}, {
+    headers: { Authorization: token ? `Bearer ${token}` : '' },
+  });
   return response.data;
 };

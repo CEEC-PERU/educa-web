@@ -1,5 +1,5 @@
 import React from 'react';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { KeyIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface Column {
   header: string;
@@ -13,11 +13,12 @@ interface TableProps {
   actionLabel?: string;
   onActionClick?: (row: any) => void;
   onDeleteClick?: (row: any) => void;
+  onResetPassword?: (row: any) => void;
 }
 
 
 
-const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = false, actionLabel, onActionClick , onDeleteClick }) => {
+const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = false, actionLabel, onActionClick , onDeleteClick, onResetPassword }) => {
   const visibleColumns = columns.filter(
     (column) => column.accessor !== 'product' || showProductColumn,
   );
@@ -31,7 +32,7 @@ const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = fa
                 {column.header}
               </th>
             ))}
-            {onActionClick && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">Acciones</th>}
+            {(onActionClick || onDeleteClick || onResetPassword) && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">Acciones</th>}
           </tr>
         </thead>
         <tbody className='text-black'>
@@ -57,13 +58,14 @@ const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = fa
                 );
               })}
               
-              {(onActionClick || onDeleteClick) && (
+              {(onActionClick || onDeleteClick || onResetPassword) && (
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                   {onActionClick && (
                     <button type="button" aria-label={actionLabel ?? 'Editar usuario'} className="relative z-10 text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
                       <PencilIcon className="h-5 w-5" />
                     </button>
                   )}
+                  {onResetPassword && <button type="button" aria-label="Generar clave temporal" title="Generar clave temporal" className="relative z-10 ml-2 text-amber-600 hover:text-amber-800" onClick={() => onResetPassword(row)}><KeyIcon className="h-5 w-5" /></button>}
                   {onDeleteClick && (
                     <button type="button" aria-label="Eliminar usuario" className="relative z-10 ml-2 text-red-500 hover:text-red-700" onClick={() => onDeleteClick(row)}>
                       <TrashIcon className="h-5 w-5" />
