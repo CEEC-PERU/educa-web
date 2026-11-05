@@ -78,16 +78,17 @@ const NotaCourses: NextPageWithLayout = () => {
   const router = useRouter();
   const { course_id } = router.query;
   const { classrooms } = useClassroomBySupervisor();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const courseIdNumber = Array.isArray(course_id)
     ? parseInt(course_id[0])
     : parseInt(course_id || '');
-  const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
+  const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber, debouncedSearchTerm);
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const classroomId = Number(selectedClassroom);
   const { courseNotaClassroom, fetchCourseDetail } =
-    useNotasSupervisorClassroom(courseIdNumber, classroomId);
+    useNotasSupervisorClassroom(courseIdNumber, classroomId, debouncedSearchTerm);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-  const [searchTerm, setSearchTerm] = useState('');
   const [segment, setSegment] = useState<'all' | 'approved' | 'failed' | 'not_started' | 'in_progress'>('all');
   const [startDate, setStartDate] = useState('2026-05-01');
   const [endDate, setEndDate] = useState('');
@@ -95,6 +96,11 @@ const NotaCourses: NextPageWithLayout = () => {
   useEffect(() => {
     setEndDate(getLimaDate(new Date()));
   }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedSearchTerm(searchTerm.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [searchTerm]);
 
   // Estilos modernos para los estados
   const statusStyles = {
@@ -115,6 +121,7 @@ const NotaCourses: NextPageWithLayout = () => {
     try {
       const headers = [
         'Nombre del alumno',
+        'Supervisor de campo',
         'Estado de cuenta',
         'Curso',
         'Progreso (%)',
@@ -133,6 +140,7 @@ const NotaCourses: NextPageWithLayout = () => {
         ].filter(Boolean).join(' ');
         return [
           studentName,
+          student.userProfile?.external_supervisor || '',
           student.is_active === false ? 'Inactivo' : 'Activo',
           courseStudent?.Course?.name || `Curso ${courseIdNumber}`,
           getCourseProgress(student),
@@ -237,14 +245,10 @@ const NotaCourses: NextPageWithLayout = () => {
 
   const filteredStudents = useMemo(
     () => dateFilteredStudents.filter((user: any) => {
-      const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
-        user?.userProfile?.last_name || user?.dni || ''
-      }`.toLowerCase();
-      if (!fullName.includes(searchTerm.toLowerCase())) return false;
       if (segment === 'all') return true;
       return getStudentReportStatus(user) === segment;
     }),
-    [dateFilteredStudents, searchTerm, segment],
+    [dateFilteredStudents, segment],
   );
 
   return (
@@ -278,7 +282,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div className="relative flex-1 md:w-64">
                       <input
                         type="text"
-                        placeholder="Buscar estudiante..."
+                        placeholder="Buscar estudiante o DNI..."
                         className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -500,7 +504,7 @@ const NotaCourses: NextPageWithLayout = () => {
                               <div className="mb-4">
                                 <div className="mb-1 flex flex-wrap items-center gap-2">
                                   <h3 className="text-lg font-semibold text-gray-800">
-                                    {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                    {user?.userProfile?.first_name || user?.user_name || 'Usuario'}{' '}
                                     {user?.userProfile?.last_name || ''}
                                   </h3>
                                   {user.is_active === false && (
@@ -509,6 +513,10 @@ const NotaCourses: NextPageWithLayout = () => {
                                     </span>
                                   )}
                                 </div>
+                                <p className="mt-1 text-sm text-gray-500">
+                                  <span className="font-medium text-gray-600">Supervisor de campo:</span>{' '}
+                                  {user?.userProfile?.external_supervisor || 'No registrado'}
+                                </p>
                                 <span
                                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
                                 >
@@ -660,6 +668,12 @@ const NotaCourses: NextPageWithLayout = () => {
                             >
                               Estudiante
                             </th>
+                            <th
+                              scope="col"
+                              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                              Supervisor de campo
+                            </th>
                             {availableModules.map(
                               (module: any, index: number) => (
                                 <th
@@ -711,7 +725,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                     </div>
                                     <div className="ml-4">
                                       <div className="text-sm font-medium text-gray-900">
-                                        {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                        {user?.userProfile?.first_name || user?.user_name || 'Usuario'}{' '}
                                         {user?.userProfile?.last_name || ''}
                                       </div>
                                       {user.is_active === false && (
@@ -721,6 +735,9 @@ const NotaCourses: NextPageWithLayout = () => {
                                       )}
                                     </div>
                                   </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                  {user?.userProfile?.external_supervisor || 'No registrado'}
                                 </td>
                                 {availableModules.map(
                                   (module: any, moduleIndex: number) => {

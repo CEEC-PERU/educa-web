@@ -1,6 +1,7 @@
 export interface UserProfile {
   first_name: string;
   last_name: string;
+  external_supervisor?: string | null;
 }
 
 export interface Course {
@@ -37,7 +38,7 @@ export interface CourseStudents {
 
 export interface UserNota {
   user_id: number;
-  dni: string;
+  user_name?: string | null;
   enterprise_id: number;
   role_id: number;
   userProfile: UserProfile;
