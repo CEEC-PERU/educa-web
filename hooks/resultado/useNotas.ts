@@ -107,7 +107,7 @@ export const useNotasClassroom = (course_id: number, classroom_id: number) => {
   };
 };
 
-export const useNotasSupervisor = (course_id: number) => {
+export const useNotasSupervisor = (course_id: number, searchTerm = '') => {
   const [courseNota, setCourseNota] = useState<UserNota[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -124,7 +124,8 @@ export const useNotasSupervisor = (course_id: number) => {
         const response = await getCourseNotaSupervisor(
           token,
           userInfo.id,
-          course_id
+          course_id,
+          searchTerm,
         );
         if (response === null) {
           setCourseNota([]);
@@ -143,7 +144,7 @@ export const useNotasSupervisor = (course_id: number) => {
     };
 
     fetchCourseDetail();
-  }, [token, course_id]);
+  }, [token, course_id, searchTerm]);
 
   return {
     courseNota,
@@ -154,7 +155,8 @@ export const useNotasSupervisor = (course_id: number) => {
 
 export const useNotasSupervisorClassroom = (
   course_id: number,
-  classroom_id: number
+  classroom_id: number,
+  searchTerm = '',
 ) => {
   const [courseNotaClassroom, setCourseNotaClassroom] = useState<UserNota[]>(
     []
@@ -176,7 +178,8 @@ export const useNotasSupervisorClassroom = (
           token,
           userInfo.id,
           course_id,
-          updatedClassroomId || classroom_id // Usar classroom_id actual si no se pasa un valor
+          updatedClassroomId || classroom_id, // Usar classroom_id actual si no se pasa un valor
+          searchTerm,
         );
         if (response === null) {
           setCourseNotaClassroom([]);
@@ -192,7 +195,7 @@ export const useNotasSupervisorClassroom = (
         setIsLoading(false);
       }
     },
-    [token, course_id, classroom_id]
+    [token, course_id, classroom_id, searchTerm]
   );
 
   // useEffect para inicializar la carga

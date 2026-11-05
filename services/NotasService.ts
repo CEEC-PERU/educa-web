@@ -44,14 +44,15 @@ export const getCourseNotabyClassroom = async (userToken: string , enterprise_id
 };
 
 //Lista de usuarios de todos los salones que pertenece al profesor con sus notas 
-export const getCourseNotaSupervisor = async (userToken: string ,  user_id : number ,  course_id : number ): Promise<UserNota| null> => {
+export const getCourseNotaSupervisor = async (userToken: string ,  user_id : number ,  course_id : number, search = '' ): Promise<UserNota| null> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
     };
-    const response = await axios.get<UserNota>(`${API_GET_NOTAS_SUPERVISOR}/${user_id}/${course_id}`, config);
+    const query = search ? `?search=${encodeURIComponent(search)}` : '';
+    const response = await axios.get<UserNota>(`${API_GET_NOTAS_SUPERVISOR}/${user_id}/${course_id}${query}`, config);
     if (response.data) {
       return response.data; 
     } else {
@@ -64,14 +65,15 @@ export const getCourseNotaSupervisor = async (userToken: string ,  user_id : num
   }
 };
 //Supervisor lista de classroom que se visualiza
-export const getCourseNotaSupervisorClassroom = async (userToken: string ,  user_id : number ,  course_id : number  , classroom_id : number): Promise<UserNota| null> => {
+export const getCourseNotaSupervisorClassroom = async (userToken: string ,  user_id : number ,  course_id : number  , classroom_id : number, search = ''): Promise<UserNota| null> => {
   try {
     const config = {
       headers: {
         Authorization: `Bearer ${userToken}`,
       },
     };
-    const response = await axios.get<UserNota>(`${API_GET_NOTAS_SUPERVISOR_CLASSROOM}/${user_id}/${course_id}/${classroom_id}`, config);
+    const query = search ? `?search=${encodeURIComponent(search)}` : '';
+    const response = await axios.get<UserNota>(`${API_GET_NOTAS_SUPERVISOR_CLASSROOM}/${user_id}/${course_id}/${classroom_id}${query}`, config);
     if (response.data) {
       return response.data; 
     } else {

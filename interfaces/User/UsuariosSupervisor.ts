@@ -10,7 +10,6 @@ export interface UserProfile {
   
 export interface User {
     user_id: number;
-    dni: string;
     role_id: number;
     enterprise_id: number;
     user_name: string | null;

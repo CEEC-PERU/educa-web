@@ -12,9 +12,11 @@ import type { UserCount } from "@/interfaces/User/UserCount";
 export async function fetchClassroomStudents(
   userId: number,
   enterpriseId: number,
+  search = "",
 ): Promise<StudentData> {
+  const query = search ? `?search=${encodeURIComponent(search)}` : "";
   const { data } = await http.get<StudentData>(
-    `${API_USER}/classrooms/users/${userId}/company/${enterpriseId}`,
+    `${API_USER}/classrooms/users/${userId}/company/${enterpriseId}${query}`,
   );
   return data;
 }

@@ -46,13 +46,14 @@ const Usuarios: NextPageWithLayout = () => {
   const userId = userInfo?.id;
   const enterpriseId = userInfo?.enterprise_id;
 
-  const studentsQuery = useClassroomStudentsQuery(userId, enterpriseId);
+  const [filter, setFilter] = useState("");
+  const [debouncedFilter, setDebouncedFilter] = useState("");
+  const studentsQuery = useClassroomStudentsQuery(userId, enterpriseId, debouncedFilter);
   const userCountQuery = useUserCountQuery(enterpriseId);
   const deleteUserMutation = useDeleteUserMutation(userId, enterpriseId);
   const reactivateUserMutation = useReactivateUserMutation(userId, enterpriseId);
   const resetPasswordMutation = useResetPasswordMutation(userId, enterpriseId);
 
-  const [filter, setFilter] = useState("");
   const [page, setPage] = useState(0);
   const [showActive, setShowActive] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,14 +74,7 @@ const Usuarios: NextPageWithLayout = () => {
 
   const filteredStudents =
     studentsQuery.data?.students?.filter(
-      (student) =>
-        student.User.is_active === showActive &&
-        (student.User.userProfile?.first_name
-          ?.toLowerCase()
-          .includes(filter.toLowerCase()) ||
-          student.User.userProfile?.last_name
-            ?.toLowerCase()
-            .includes(filter.toLowerCase())),
+      (student) => student.User.is_active === showActive,
     ) ?? [];
 
   const totalPages = Math.ceil(filteredStudents.length / PAGE_SIZE);
@@ -92,6 +86,11 @@ const Usuarios: NextPageWithLayout = () => {
   useEffect(() => {
     setPage(0);
   }, [filter, showActive]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDebouncedFilter(filter.trim()), 250);
+    return () => window.clearTimeout(timer);
+  }, [filter]);
 
   useEffect(() => {
     const now = new Date();
@@ -348,7 +347,7 @@ const Usuarios: NextPageWithLayout = () => {
       <div className="mb-6 max-w-sm">
         <FormField
           id="filter"
-          label="Buscar por nombre o apellido"
+          label="Buscar por nombre, apellido o DNI"
           type="text"
           value={filter}
           className="text-black"

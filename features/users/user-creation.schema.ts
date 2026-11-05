@@ -5,6 +5,7 @@ export const userCreationSchema = z.object({
   dni: z.string().trim().min(1, "El numero de documento es obligatorio."),
   first_name: z.string().trim().min(1, "El nombre es obligatorio."),
   last_name: z.string().trim().min(1, "El apellido es obligatorio."),
+  external_supervisor: z.string().trim().max(150, "El supervisor de campo no debe superar 150 caracteres.").optional(),
   email: z.preprocess(
     (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
     z.string().trim().email("Ingresa un correo valido.").optional(),

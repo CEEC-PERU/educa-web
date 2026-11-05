@@ -5,11 +5,12 @@ import { usersKeys } from "./users.query-keys";
 export function useClassroomStudentsQuery(
   userId: number | undefined,
   enterpriseId: number | undefined,
+  search = "",
 ) {
   return useQuery({
-    queryKey: usersKeys.classroom(userId ?? 0, enterpriseId ?? 0),
+    queryKey: usersKeys.classroom(userId ?? 0, enterpriseId ?? 0, search),
     queryFn: () =>
-      fetchClassroomStudents(userId as number, enterpriseId as number),
+      fetchClassroomStudents(userId as number, enterpriseId as number, search),
     enabled: typeof userId === "number" && typeof enterpriseId === "number",
   });
 }
