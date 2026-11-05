@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   useNotasSupervisor,
   useNotasSupervisorClassroom,
 } from '../../../hooks/resultado/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import {
   FiDownload,
@@ -30,11 +27,25 @@ const parseGrade = (value: unknown): number | null => {
   return Number.isFinite(grade) ? grade : null;
 };
 
+const getLimaDate = (value: string | Date): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Lima',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
+
+const escapeCsv = (value: unknown): string =>
+  `"${String(value ?? '').replace(/"/g, '""')}"`;
+
 const getExamGrade = (student: any): number | null => {
   const reportedGrade = parseGrade(student.examGrade);
   if (reportedGrade !== null) return reportedGrade;
 
-  const grades = (student.CourseResults ?? [])
+  const grades = (student.CourseResults ?? student.EvaluationCourses ?? [])
     .map((result: any) => parseGrade(result.puntaje))
     .filter((grade: number | null): grade is number => grade !== null);
   return grades.length > 0 ? Math.max(...grades) : null;
@@ -64,7 +75,6 @@ const getFinalGrade = (student: any): number | null => {
 };
 
 const NotaCourses: NextPageWithLayout = () => {
-  const { user } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
   const { classrooms } = useClassroomBySupervisor();
@@ -72,11 +82,11 @@ const NotaCourses: NextPageWithLayout = () => {
     ? parseInt(course_id[0])
     : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
-  const userInfo = user as { id: number; enterprise_id: number } | null;
   const [statusCount, setStatusCount] = useState({
     notable: 0,
     aprobado: 0,
     desaprobado: 0,
+    noIniciados: 0,
   });
 
   const [selectedClassroom, setSelectedClassroom] = useState('');
@@ -85,7 +95,13 @@ const NotaCourses: NextPageWithLayout = () => {
     useNotasSupervisorClassroom(courseIdNumber, classroomId);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState('');
-  const [segment, setSegment] = useState<'all' | 'training' | 'completed'>('all');
+  const [segment, setSegment] = useState<'all' | 'approved' | 'failed' | 'not_started'>('all');
+  const [startDate, setStartDate] = useState('2026-05-01');
+  const [endDate, setEndDate] = useState('');
+
+  useEffect(() => {
+    setEndDate(getLimaDate(new Date()));
+  }, []);
 
   // Estilos modernos para los estados
   const statusStyles = {
@@ -107,21 +123,46 @@ const NotaCourses: NextPageWithLayout = () => {
     return 'Desaprobado';
   };
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     try {
-      const response = await axios.get(
-        `${API_GET_NOTAS_EXCEL}/${userInfo?.enterprise_id}/${courseIdNumber}`,
-        { responseType: 'blob' }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const headers = [
+        'Nombre del alumno',
+        'DNI',
+        'Curso',
+        'Progreso (%)',
+        'Examen final',
+        'Nota final',
+        'Fecha de inicio',
+        'Fecha de finalización',
+      ];
+      const rows = dateFilteredStudents.map((student: any) => {
+        const courseStudent = student.CourseStudents?.[0];
+        const studentName = [
+          student.userProfile?.first_name || student.user_name || '',
+          student.userProfile?.last_name || '',
+        ].filter(Boolean).join(' ');
+        return [
+          studentName,
+          student.dni,
+          courseStudent?.Course?.name || `Curso ${courseIdNumber}`,
+          getCourseProgress(student),
+          getExamGrade(student) ?? '',
+          getFinalGrade(student) ?? '',
+          courseStudent?.created_at ? getLimaDate(courseStudent.created_at) : '',
+          courseStudent?.finished_date ? getLimaDate(courseStudent.finished_date) : '',
+        ];
+      });
+      const csv = `\uFEFF${[headers, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\r\n')}`;
+      const url = window.URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'course_grades.xlsx');
+      link.setAttribute('download', `reporte_notas_curso_${courseIdNumber}_${startDate}_${endDate}.csv`);
       document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error descargando el archivo Excel:', error);
+      console.error('Error descargando el reporte de notas:', error);
     }
   };
 
@@ -131,31 +172,51 @@ const NotaCourses: NextPageWithLayout = () => {
 
   const getCourseProgress = (student: any) => {
     const courseStudent = student.CourseStudents?.[0];
-    if (courseStudent?.finished_date) return 100;
+    if (courseStudent?.finished_date || courseStudent?.is_approved) return 100;
 
     const progress = Number(courseStudent?.progress);
     if (!Number.isFinite(progress)) return 0;
     return Math.max(0, Math.min(100, progress));
   };
 
-  const filteredStudents = currentCourseData?.filter((user: any) => {
-    const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
-      user?.userProfile?.last_name || user?.dni || ''
-    }`.toLowerCase();
-    if (!fullName.includes(searchTerm.toLowerCase())) return false;
-    if (segment === 'all') return true;
-    const cs = user.CourseStudents?.[0];
-    if (!cs) return false;
-    const progress = getCourseProgress(user);
-    if (segment === 'completed') return progress >= 100;
-    return progress < 100;
-  });
+  const dateFilteredStudents = useMemo(
+    () => (currentCourseData ?? []).filter((student: any) => {
+      const enrollmentDate = student.CourseStudents?.[0]?.created_at;
+      if (!enrollmentDate || !startDate || !endDate) return false;
+      const enrollmentDay = getLimaDate(enrollmentDate);
+      return enrollmentDay >= startDate && enrollmentDay <= endDate;
+    }),
+    [currentCourseData, startDate, endDate],
+  );
+
+  const filteredStudents = useMemo(
+    () => dateFilteredStudents.filter((user: any) => {
+      const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
+        user?.userProfile?.last_name || user?.dni || ''
+      }`.toLowerCase();
+      if (!fullName.includes(searchTerm.toLowerCase())) return false;
+      if (segment === 'all') return true;
+      const finalGrade = getFinalGrade(user);
+      if (segment === 'approved') {
+        return Boolean(user.CourseStudents?.[0]?.is_approved) || (finalGrade !== null && finalGrade >= 13);
+      }
+      if (segment === 'failed') return finalGrade !== null && finalGrade < 13;
+      return getCourseProgress(user) === 0 && getExamGrade(user) === null;
+    }),
+    [dateFilteredStudents, searchTerm, segment],
+  );
 
   useEffect(() => {
     if (currentCourseData && currentCourseData.length > 0) {
-      let notable = 0, aprobado = 0, desaprobado = 0;
-      currentCourseData.forEach((user: any) => {
+      let notable = 0, aprobado = 0, desaprobado = 0, noIniciados = 0;
+      dateFilteredStudents.forEach((user: any) => {
+        if (getCourseProgress(user) === 0 && getExamGrade(user) === null) noIniciados++;
         const finalGrade = getFinalGrade(user);
+        if (user.CourseStudents?.[0]?.is_approved) {
+          if (finalGrade !== null && finalGrade >= 18) notable++;
+          else aprobado++;
+          return;
+        }
         if (finalGrade === null) return;
         const status = getStatus(finalGrade);
         if (status === 'Notable') notable++;
@@ -163,11 +224,11 @@ const NotaCourses: NextPageWithLayout = () => {
         else if (status === 'Desaprobado') desaprobado++;
       });
 
-      setStatusCount({ notable, aprobado, desaprobado });
+      setStatusCount({ notable, aprobado, desaprobado, noIniciados });
     } else {
-      setStatusCount({ notable: 0, aprobado: 0, desaprobado: 0 });
+      setStatusCount({ notable: 0, aprobado: 0, desaprobado: 0, noIniciados: 0 });
     }
-  }, [currentCourseData]);
+  }, [dateFilteredStudents]);
 
   return (
     <>
@@ -224,7 +285,29 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                  <div className="flex flex-wrap items-end gap-2">
+                    <div>
+                      <label htmlFor="grades-start-date" className="mb-1 block text-xs text-gray-600">Fecha Inicio</label>
+                      <input
+                        id="grades-start-date"
+                        type="date"
+                        value={startDate}
+                        max={endDate || undefined}
+                        onChange={(event) => setStartDate(event.target.value)}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="grades-end-date" className="mb-1 block text-xs text-gray-600">Fecha Fin</label>
+                      <input
+                        id="grades-end-date"
+                        type="date"
+                        value={endDate}
+                        min={startDate}
+                        onChange={(event) => setEndDate(event.target.value)}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
                     <select
                       id="classroom_id"
                       value={selectedClassroom || ''}
@@ -270,12 +353,16 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
 
                     <button
-                      className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                      className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={handleDownload}
+                      disabled={!endDate || startDate > endDate || dateFilteredStudents.length === 0}
                     >
                       <FiDownload className="h-4 w-4" />
                       <span>Exportar</span>
                     </button>
+                    <p className="basis-full text-xs text-gray-500">
+                      El rango de fechas se aplica al inicio de la matrícula del curso.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -283,10 +370,11 @@ const NotaCourses: NextPageWithLayout = () => {
               {/* Segmentacion */}
               <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
                 {([
-                  { value: 'all', label: 'Todos' },
-                  { value: 'training', label: 'En formacion' },
-                  { value: 'completed', label: 'Formados' },
-                ] as const).map(({ value, label }) => (
+                  { value: 'all', label: 'Todos', count: dateFilteredStudents.length },
+                  { value: 'approved', label: 'Aprobados', count: statusCount.notable + statusCount.aprobado },
+                  { value: 'failed', label: 'Desaprobados', count: statusCount.desaprobado },
+                  { value: 'not_started', label: 'No Iniciados', count: statusCount.noIniciados },
+                ] as const).map(({ value, label, count }) => (
                   <button
                     key={value}
                     onClick={() => setSegment(value)}
@@ -296,19 +384,19 @@ const NotaCourses: NextPageWithLayout = () => {
                         : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
-                    {label}
+                    {label} ({count})
                   </button>
                 ))}
               </div>
 
               {/* Resumen estadistico */}
-              {segment !== 'training' && <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-gray-500 text-sm">Total Estudiantes</p>
                       <h3 className="text-2xl font-bold text-gray-800">
-                        {filteredStudents?.length || 0}
+                        {dateFilteredStudents.length}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -358,7 +446,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
                   </div>
                 </div>
-              </div>}
+              </div>
 
               {/* Contenido principal */}
               {isLoading ? (
