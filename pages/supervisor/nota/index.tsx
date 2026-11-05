@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   useNotasSupervisor,
   useNotasSupervisorClassroom,
 } from '../../../hooks/resultado/useNotas';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
-import axios from 'axios';
-import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import { useClassroomBySupervisor } from '../../../hooks/useClassroom';
 import {
   FiDownload,
@@ -24,8 +21,60 @@ import { FaChalkboardTeacher } from 'react-icons/fa';
 import AppLayout from '../../../components/layouts/AppLayout';
 import type { NextPageWithLayout } from '../../../types/next';
 
+const parseGrade = (value: unknown): number | null => {
+  if (value === null || value === undefined || value === '') return null;
+  const grade = Number(value);
+  return Number.isFinite(grade) ? grade : null;
+};
+
+const getLimaDate = (value: string | Date): string => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Lima',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date);
+};
+
+const escapeCsv = (value: unknown): string =>
+  `"${String(value ?? '').replace(/"/g, '""')}"`;
+
+const getExamGrade = (student: any): number | null => {
+  const reportedGrade = parseGrade(student.examGrade);
+  if (reportedGrade !== null) return reportedGrade;
+
+  const grades = (student.CourseResults ?? student.EvaluationCourses ?? [])
+    .map((result: any) => parseGrade(result.puntaje))
+    .filter((grade: number | null): grade is number => grade !== null);
+  return grades.length > 0 ? Math.max(...grades) : null;
+};
+
+const getFinalGrade = (student: any): number | null => {
+  const reportedGrade = parseGrade(student.finalGrade);
+  if (reportedGrade !== null) return reportedGrade;
+
+  const examGrade = getExamGrade(student);
+  if (examGrade === null) return null;
+
+  const moduleGrades = (student.ModuleResults ?? [])
+    .map((module: any) => {
+      const reportedModuleGrade = parseGrade(module.highest_score);
+      if (reportedModuleGrade !== null) return reportedModuleGrade;
+      const attempts = (module.results ?? [])
+        .map((result: any) => parseGrade(result.puntaje))
+        .filter((grade: number | null): grade is number => grade !== null);
+      return attempts.length > 0 ? Math.max(...attempts) : null;
+    })
+    .filter((grade: number | null): grade is number => grade !== null);
+
+  if (moduleGrades.length === 0) return examGrade;
+  const moduleAverage = moduleGrades.reduce((sum: number, grade: number) => sum + grade, 0) / moduleGrades.length;
+  return Number((moduleAverage * 0.4 + examGrade * 0.6).toFixed(2));
+};
+
 const NotaCourses: NextPageWithLayout = () => {
-  const { user } = useAuth();
   const router = useRouter();
   const { course_id } = router.query;
   const { classrooms } = useClassroomBySupervisor();
@@ -33,20 +82,19 @@ const NotaCourses: NextPageWithLayout = () => {
     ? parseInt(course_id[0])
     : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
-  const userInfo = user as { id: number; enterprise_id: number } | null;
-  const [statusCount, setStatusCount] = useState({
-    notable: 0,
-    aprobado: 0,
-    desaprobado: 0,
-  });
-
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const classroomId = Number(selectedClassroom);
   const { courseNotaClassroom, fetchCourseDetail } =
     useNotasSupervisorClassroom(courseIdNumber, classroomId);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState('');
-  const [segment, setSegment] = useState<'all' | 'training' | 'completed'>('all');
+  const [segment, setSegment] = useState<'all' | 'approved' | 'failed' | 'not_started' | 'in_progress'>('all');
+  const [startDate, setStartDate] = useState('2026-05-01');
+  const [endDate, setEndDate] = useState('');
+
+  useEffect(() => {
+    setEndDate(getLimaDate(new Date()));
+  }, []);
 
   // Estilos modernos para los estados
   const statusStyles = {
@@ -54,6 +102,7 @@ const NotaCourses: NextPageWithLayout = () => {
     Aprobado: 'bg-blue-100 text-blue-800 border-blue-200',
     Desaprobado: 'bg-rose-100 text-rose-800 border-rose-200',
     'En Proceso': 'bg-gray-100 text-gray-800 border-gray-200',
+    'No iniciado': 'bg-gray-100 text-gray-700 border-gray-200',
   };
 
   const handleClassroomChange = async (value: string) => {
@@ -62,27 +111,55 @@ const NotaCourses: NextPageWithLayout = () => {
     await fetchCourseDetail(updatedClassroomId);
   };
 
-  const getStatus = (finalExamGrade: number) => {
-    if (finalExamGrade >= 18) return 'Notable';
-    if (finalExamGrade >= 13) return 'Aprobado';
-    return 'Desaprobado';
-  };
-
-  const handleDownload = async () => {
+  const handleDownload = () => {
     try {
-      const response = await axios.get(
-        `${API_GET_NOTAS_EXCEL}/${userInfo?.enterprise_id}/${courseIdNumber}`,
-        { responseType: 'blob' }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const headers = [
+        'Nombre del alumno',
+        'Estado de cuenta',
+        'Curso',
+        'Progreso (%)',
+        ...availableModules.map((module: any) => module.module_name),
+        'Examen final',
+        'Nota final',
+        'Estado del curso',
+        'Fecha de inicio',
+        'Fecha de finalización',
+      ];
+      const rows = dateFilteredStudents.map((student: any) => {
+        const courseStudent = student.CourseStudents?.[0];
+        const studentName = [
+          student.userProfile?.first_name || student.user_name || '',
+          student.userProfile?.last_name || '',
+        ].filter(Boolean).join(' ');
+        return [
+          studentName,
+          student.is_active === false ? 'Inactivo' : 'Activo',
+          courseStudent?.Course?.name || `Curso ${courseIdNumber}`,
+          getCourseProgress(student),
+          ...availableModules.map((module: any) => {
+            const moduleResult = student.ModuleResults?.find(
+              (result: any) => result.module_id === module.module_id,
+            );
+            return moduleResult?.highest_score ?? '';
+          }),
+          getExamGrade(student) ?? '',
+          getFinalGrade(student) ?? '',
+          getStudentStatusLabel(student),
+          courseStudent?.created_at ? getLimaDate(courseStudent.created_at) : '',
+          courseStudent?.finished_date ? getLimaDate(courseStudent.finished_date) : '',
+        ];
+      });
+      const csv = `\uFEFF${[headers, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\r\n')}`;
+      const url = window.URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'course_grades.xlsx');
+      link.setAttribute('download', `reporte_notas_curso_${courseIdNumber}_${startDate}_${endDate}.csv`);
       document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error descargando el archivo Excel:', error);
+      console.error('Error descargando el reporte de notas:', error);
     }
   };
 
@@ -90,33 +167,85 @@ const NotaCourses: NextPageWithLayout = () => {
     ? courseNotaClassroom
     : courseNota;
 
-  const filteredStudents = currentCourseData?.filter((user: any) => {
-    const fullName = `${user?.userProfile?.first_name || ''} ${
-      user?.userProfile?.last_name || ''
-    }`.toLowerCase();
-    if (!fullName.includes(searchTerm.toLowerCase())) return false;
-    if (segment === 'all') return true;
-    const cs = user.CourseStudents?.[0];
-    if (!cs) return false;
-    if (segment === 'completed') return cs.finished_date != null || cs.progress >= 100;
-    return cs.finished_date == null && cs.progress < 100;
-  });
+  const getCourseProgress = (student: any) => {
+    const courseStudent = student.CourseStudents?.[0];
+    if (courseStudent?.finished_date || courseStudent?.is_approved) return 100;
 
-  useEffect(() => {
-    if (currentCourseData && currentCourseData.length > 0) {
-      let notable = 0, aprobado = 0, desaprobado = 0;
-      currentCourseData.forEach((user: any) => {
-        const finalGrade = user.finalGrade;
-        if (finalGrade === null || finalGrade === undefined) return;
-        const status = getStatus(finalGrade);
-        if (status === 'Notable') notable++;
-        else if (status === 'Aprobado') aprobado++;
-        else if (status === 'Desaprobado') desaprobado++;
-      });
+    const progress = Number(courseStudent?.progress);
+    if (!Number.isFinite(progress)) return 0;
+    return Math.max(0, Math.min(100, progress));
+  };
 
-      setStatusCount({ notable, aprobado, desaprobado });
+  const getStudentReportStatus = (student: any): 'approved' | 'failed' | 'not_started' | 'in_progress' => {
+    const finalGrade = getFinalGrade(student);
+    if (student.CourseStudents?.[0]?.is_approved || (finalGrade !== null && finalGrade >= 13)) {
+      return 'approved';
     }
-  }, [currentCourseData]);
+    if (finalGrade !== null) return 'failed';
+
+    const hasModuleResults = (student.ModuleResults ?? []).some(
+      (module: any) => (module.results ?? []).length > 0,
+    );
+    if (getCourseProgress(student) === 0 && getExamGrade(student) === null && !hasModuleResults) {
+      return 'not_started';
+    }
+    return 'in_progress';
+  };
+
+  const getStudentStatusLabel = (student: any): 'Notable' | 'Aprobado' | 'Desaprobado' | 'No iniciado' | 'En Proceso' => {
+    const reportStatus = getStudentReportStatus(student);
+    if (reportStatus === 'approved') {
+      const grade = getFinalGrade(student);
+      return grade !== null && grade >= 18 ? 'Notable' : 'Aprobado';
+    }
+    if (reportStatus === 'failed') return 'Desaprobado';
+    if (reportStatus === 'not_started') return 'No iniciado';
+    return 'En Proceso';
+  };
+
+  const dateFilteredStudents = useMemo(
+    () => (currentCourseData ?? []).filter((student: any) => {
+      const enrollmentDate = student.CourseStudents?.[0]?.created_at;
+      if (!enrollmentDate || !startDate || !endDate) return false;
+      const enrollmentDay = getLimaDate(enrollmentDate);
+      return enrollmentDay >= startDate && enrollmentDay <= endDate;
+    }),
+    [currentCourseData, startDate, endDate],
+  );
+
+  const availableModules = useMemo(() => {
+    const modules = new Map<string | number, any>();
+    dateFilteredStudents.forEach((student: any) => {
+      (student.ModuleResults ?? []).forEach((module: any) => {
+        const key = module.module_id ?? module.module_name;
+        if (!modules.has(key)) modules.set(key, module);
+      });
+    });
+    return Array.from(modules.values());
+  }, [dateFilteredStudents]);
+
+  const statusCount = useMemo(() => {
+    const counts = { approved: 0, failed: 0, not_started: 0, in_progress: 0, notable: 0 };
+    dateFilteredStudents.forEach((student: any) => {
+      const status = getStudentReportStatus(student);
+      counts[status]++;
+      const finalGrade = getFinalGrade(student);
+      if (status === 'approved' && finalGrade !== null && finalGrade >= 18) counts.notable++;
+    });
+    return counts;
+  }, [dateFilteredStudents]);
+
+  const filteredStudents = useMemo(
+    () => dateFilteredStudents.filter((user: any) => {
+      const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
+        user?.userProfile?.last_name || user?.dni || ''
+      }`.toLowerCase();
+      if (!fullName.includes(searchTerm.toLowerCase())) return false;
+      if (segment === 'all') return true;
+      return getStudentReportStatus(user) === segment;
+    }),
+    [dateFilteredStudents, searchTerm, segment],
+  );
 
   return (
     <>
@@ -173,7 +302,29 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
                   </div>
 
-                  <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                  <div className="flex flex-wrap items-end gap-2">
+                    <div>
+                      <label htmlFor="grades-start-date" className="mb-1 block text-xs text-gray-600">Fecha Inicio</label>
+                      <input
+                        id="grades-start-date"
+                        type="date"
+                        value={startDate}
+                        max={endDate || undefined}
+                        onChange={(event) => setStartDate(event.target.value)}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="grades-end-date" className="mb-1 block text-xs text-gray-600">Fecha Fin</label>
+                      <input
+                        id="grades-end-date"
+                        type="date"
+                        value={endDate}
+                        min={startDate}
+                        onChange={(event) => setEndDate(event.target.value)}
+                        className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
                     <select
                       id="classroom_id"
                       value={selectedClassroom || ''}
@@ -219,23 +370,29 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
 
                     <button
-                      className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                      className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                       onClick={handleDownload}
+                      disabled={!endDate || startDate > endDate || dateFilteredStudents.length === 0}
                     >
                       <FiDownload className="h-4 w-4" />
                       <span>Exportar</span>
                     </button>
+                    <p className="basis-full text-xs text-gray-500">
+                      El rango de fechas se aplica al inicio de la matrícula del curso.
+                    </p>
                   </div>
                 </div>
               </div>
 
               {/* Segmentacion */}
-              <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+              <div className="flex flex-wrap gap-1 p-1 bg-gray-100 rounded-lg w-fit">
                 {([
-                  { value: 'all', label: 'Todos' },
-                  { value: 'training', label: 'En formacion' },
-                  { value: 'completed', label: 'Formados' },
-                ] as const).map(({ value, label }) => (
+                  { value: 'all', label: 'Todos', count: dateFilteredStudents.length },
+                  { value: 'approved', label: 'Aprobados', count: statusCount.approved },
+                  { value: 'failed', label: 'Desaprobados', count: statusCount.failed },
+                  { value: 'not_started', label: 'No Iniciados', count: statusCount.not_started },
+                  { value: 'in_progress', label: 'En Proceso', count: statusCount.in_progress },
+                ] as const).map(({ value, label, count }) => (
                   <button
                     key={value}
                     onClick={() => setSegment(value)}
@@ -245,19 +402,19 @@ const NotaCourses: NextPageWithLayout = () => {
                         : 'text-gray-500 hover:text-gray-700'
                     }`}
                   >
-                    {label}
+                    {label} ({count})
                   </button>
                 ))}
               </div>
 
               {/* Resumen estadistico */}
-              {segment !== 'training' && <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-gray-500 text-sm">Total Estudiantes</p>
                       <h3 className="text-2xl font-bold text-gray-800">
-                        {filteredStudents?.length || 0}
+                        {dateFilteredStudents.length}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -285,7 +442,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Aprobados</p>
                       <h3 className="text-2xl font-bold text-blue-600">
-                        {statusCount.notable + statusCount.aprobado}
+                        {statusCount.approved}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -299,7 +456,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Desaprobados</p>
                       <h3 className="text-2xl font-bold text-rose-600">
-                        {statusCount.desaprobado}
+                        {statusCount.failed}
                       </h3>
                     </div>
                     <div className="bg-rose-100 p-3 rounded-full text-rose-600">
@@ -307,7 +464,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     </div>
                   </div>
                 </div>
-              </div>}
+              </div>
 
               {/* Contenido principal */}
               {isLoading ? (
@@ -319,12 +476,10 @@ const NotaCourses: NextPageWithLayout = () => {
                   {viewMode === 'cards' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
                       {filteredStudents?.map((user: any, userIndex: number) => {
-                        const examGrade = user.examGrade ?? 0;
-                        const finalGrade = user.finalGrade ?? 0;
-                        const status = user.finalGrade !== null && user.finalGrade !== undefined
-                          ? getStatus(finalGrade)
-                          : 'En Proceso';
-                        const progress = user.CourseStudents?.[0]?.progress ?? 0;
+                        const examGrade = getExamGrade(user);
+                        const finalGrade = getFinalGrade(user);
+                        const status = getStudentStatusLabel(user);
+                        const progress = getCourseProgress(user);
                         const lastEvaluatedModule = user.ModuleResults?.length > 0
                           ? user.ModuleResults[user.ModuleResults.length - 1]
                           : null;
@@ -343,10 +498,17 @@ const NotaCourses: NextPageWithLayout = () => {
                           >
                             <div className="p-5">
                               <div className="mb-4">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                  {user?.userProfile?.first_name}{' '}
-                                  {user?.userProfile?.last_name}
-                                </h3>
+                                <div className="mb-1 flex flex-wrap items-center gap-2">
+                                  <h3 className="text-lg font-semibold text-gray-800">
+                                    {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                    {user?.userProfile?.last_name || ''}
+                                  </h3>
+                                  {user.is_active === false && (
+                                    <span className="rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                                      Inactivo
+                                    </span>
+                                  )}
+                                </div>
                                 <span
                                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
                                 >
@@ -420,7 +582,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                     Examen final:
                                   </span>
                                   <span className="text-base font-medium text-gray-700">
-                                    {user.examGrade !== null && user.examGrade !== undefined
+                                    {examGrade !== null
                                       ? examGrade
                                       : '-'}
                                   </span>
@@ -430,7 +592,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                     NOTA FINAL:
                                   </span>
                                   <span className="text-2xl font-bold text-gray-700">
-                                    {user.finalGrade !== null && user.finalGrade !== undefined
+                                    {finalGrade !== null
                                       ? finalGrade
                                       : '-'}
                                   </span>
@@ -498,7 +660,7 @@ const NotaCourses: NextPageWithLayout = () => {
                             >
                               Estudiante
                             </th>
-                            {currentCourseData?.[0]?.ModuleResults?.map(
+                            {availableModules.map(
                               (module: any, index: number) => (
                                 <th
                                   key={`module-${index}`}
@@ -549,13 +711,18 @@ const NotaCourses: NextPageWithLayout = () => {
                                     </div>
                                     <div className="ml-4">
                                       <div className="text-sm font-medium text-gray-900">
-                                        {user?.userProfile?.first_name || '-'}{' '}
-                                        {user?.userProfile?.last_name || '-'}
+                                        {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                        {user?.userProfile?.last_name || ''}
                                       </div>
+                                      {user.is_active === false && (
+                                        <span className="mt-1 inline-flex rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                                          Inactivo
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 </td>
-                                {currentCourseData?.[0]?.ModuleResults?.map(
+                                {availableModules.map(
                                   (module: any, moduleIndex: number) => {
                                     const moduleResult =
                                       user.ModuleResults?.find(
@@ -580,14 +747,11 @@ const NotaCourses: NextPageWithLayout = () => {
                                   }
                                 )}
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                  {user.finalGrade ?? '-'}
+                                  {getFinalGrade(user) ?? '-'}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {(() => {
-                                    const grade = user.finalGrade ?? 0;
-                                    const rowStatus = user.finalGrade !== null && user.finalGrade !== undefined
-                                      ? getStatus(grade)
-                                      : 'En Proceso';
+                                    const rowStatus = getStudentStatusLabel(user);
                                     return (
                                       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusStyles[rowStatus]}`}>
                                         {rowStatus}

@@ -1,4 +1,5 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
+import axios from "axios";
 import { useRouter } from "next/router";
 import FormField from "@/components/FormField";
 import UserForm from "@/components/supervisor/UserForm";
@@ -29,6 +30,7 @@ import {
 import { usersKeys } from "@/features/users/users.query-keys";
 import AppLayout from "../../../components/layouts/AppLayout";
 import type { NextPageWithLayout } from "../../../types/next";
+import { API_SUPERVISOR_EXPORT_PROGRESS } from "../../../utils/Endpoints";
 
 const STUDENT_ROLE_ID = 1;
 const PASSWORD_REQUIREMENTS = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]).{8,}$/;
@@ -38,7 +40,7 @@ const PASSWORD_REQUIREMENTS_MESSAGE =
 const Usuarios: NextPageWithLayout = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const userInfo = user as { id: number; enterprise_id: number } | null;
 
   const userId = userInfo?.id;
@@ -60,6 +62,9 @@ const Usuarios: NextPageWithLayout = () => {
   const [newPassword, setNewPassword] = useState("");
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [progressStartDate, setProgressStartDate] = useState("2026-05-01");
+  const [progressEndDate, setProgressEndDate] = useState("");
+  const [isExportingProgress, setIsExportingProgress] = useState(false);
 
   const PAGE_SIZE = 20;
 
@@ -87,6 +92,12 @@ const Usuarios: NextPageWithLayout = () => {
   useEffect(() => {
     setPage(0);
   }, [filter, showActive]);
+
+  useEffect(() => {
+    const now = new Date();
+    const localToday = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
+    setProgressEndDate(localToday);
+  }, []);
 
   const slotsAvailable = userCountResult
     ? Number(userCountResult.maxUserCount) - userCountResult.UserCount
@@ -197,6 +208,35 @@ const Usuarios: NextPageWithLayout = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportProgress = async () => {
+    if (!token || !progressStartDate || !progressEndDate || progressStartDate > progressEndDate) {
+      toast.error("Selecciona un rango de fechas válido.");
+      return;
+    }
+
+    setIsExportingProgress(true);
+    try {
+      const response = await axios.get(API_SUPERVISOR_EXPORT_PROGRESS, {
+        params: { start_date: progressStartDate, end_date: progressEndDate },
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: "blob",
+      });
+      const blobUrl = URL.createObjectURL(response.data);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `progreso_supervisora_${progressStartDate}_${progressEndDate}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+      toast.success("Reporte de progreso descargado.");
+    } catch {
+      toast.error("No se pudo descargar el reporte de progreso.");
+    } finally {
+      setIsExportingProgress(false);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
@@ -240,6 +280,47 @@ const Usuarios: NextPageWithLayout = () => {
           </div>
         )}
       </div>
+
+      <section className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div>
+          <label htmlFor="progress-start-date" className="mb-1 block text-xs font-medium text-gray-600">
+            Fecha de inicio
+          </label>
+          <input
+            id="progress-start-date"
+            type="date"
+            value={progressStartDate}
+            max={progressEndDate || undefined}
+            onChange={(event) => setProgressStartDate(event.target.value)}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+        <div>
+          <label htmlFor="progress-end-date" className="mb-1 block text-xs font-medium text-gray-600">
+            Fecha de fin
+          </label>
+          <input
+            id="progress-end-date"
+            type="date"
+            value={progressEndDate}
+            min={progressStartDate}
+            onChange={(event) => setProgressEndDate(event.target.value)}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={handleExportProgress}
+          disabled={isExportingProgress || !progressEndDate || !token || progressStartDate > progressEndDate}
+          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-wait disabled:opacity-50"
+        >
+          <ArrowDownTrayIcon className="h-4 w-4" />
+          {isExportingProgress ? "Generando..." : "Exportar progreso CSV"}
+        </button>
+        <p className="basis-full text-xs text-gray-500">
+          Incluye los cursos asignados entre las fechas seleccionadas. Por defecto, desde el 1 de mayo de 2026 hasta hoy.
+        </p>
+      </section>
 
       <div className="mb-4 flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
         <button
