@@ -82,20 +82,13 @@ const NotaCourses: NextPageWithLayout = () => {
     ? parseInt(course_id[0])
     : parseInt(course_id || '');
   const { courseNota, isLoading, error } = useNotasSupervisor(courseIdNumber);
-  const [statusCount, setStatusCount] = useState({
-    notable: 0,
-    aprobado: 0,
-    desaprobado: 0,
-    noIniciados: 0,
-  });
-
   const [selectedClassroom, setSelectedClassroom] = useState('');
   const classroomId = Number(selectedClassroom);
   const { courseNotaClassroom, fetchCourseDetail } =
     useNotasSupervisorClassroom(courseIdNumber, classroomId);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState('');
-  const [segment, setSegment] = useState<'all' | 'approved' | 'failed' | 'not_started'>('all');
+  const [segment, setSegment] = useState<'all' | 'approved' | 'failed' | 'not_started' | 'in_progress'>('all');
   const [startDate, setStartDate] = useState('2026-05-01');
   const [endDate, setEndDate] = useState('');
 
@@ -109,6 +102,7 @@ const NotaCourses: NextPageWithLayout = () => {
     Aprobado: 'bg-blue-100 text-blue-800 border-blue-200',
     Desaprobado: 'bg-rose-100 text-rose-800 border-rose-200',
     'En Proceso': 'bg-gray-100 text-gray-800 border-gray-200',
+    'No iniciado': 'bg-gray-100 text-gray-700 border-gray-200',
   };
 
   const handleClassroomChange = async (value: string) => {
@@ -117,21 +111,17 @@ const NotaCourses: NextPageWithLayout = () => {
     await fetchCourseDetail(updatedClassroomId);
   };
 
-  const getStatus = (finalExamGrade: number) => {
-    if (finalExamGrade >= 18) return 'Notable';
-    if (finalExamGrade >= 13) return 'Aprobado';
-    return 'Desaprobado';
-  };
-
   const handleDownload = () => {
     try {
       const headers = [
         'Nombre del alumno',
-        'DNI',
+        'Estado de cuenta',
         'Curso',
         'Progreso (%)',
+        ...availableModules.map((module: any) => module.module_name),
         'Examen final',
         'Nota final',
+        'Estado del curso',
         'Fecha de inicio',
         'Fecha de finalización',
       ];
@@ -143,11 +133,18 @@ const NotaCourses: NextPageWithLayout = () => {
         ].filter(Boolean).join(' ');
         return [
           studentName,
-          student.dni,
+          student.is_active === false ? 'Inactivo' : 'Activo',
           courseStudent?.Course?.name || `Curso ${courseIdNumber}`,
           getCourseProgress(student),
+          ...availableModules.map((module: any) => {
+            const moduleResult = student.ModuleResults?.find(
+              (result: any) => result.module_id === module.module_id,
+            );
+            return moduleResult?.highest_score ?? '';
+          }),
           getExamGrade(student) ?? '',
           getFinalGrade(student) ?? '',
+          getStudentStatusLabel(student),
           courseStudent?.created_at ? getLimaDate(courseStudent.created_at) : '',
           courseStudent?.finished_date ? getLimaDate(courseStudent.finished_date) : '',
         ];
@@ -179,6 +176,33 @@ const NotaCourses: NextPageWithLayout = () => {
     return Math.max(0, Math.min(100, progress));
   };
 
+  const getStudentReportStatus = (student: any): 'approved' | 'failed' | 'not_started' | 'in_progress' => {
+    const finalGrade = getFinalGrade(student);
+    if (student.CourseStudents?.[0]?.is_approved || (finalGrade !== null && finalGrade >= 13)) {
+      return 'approved';
+    }
+    if (finalGrade !== null) return 'failed';
+
+    const hasModuleResults = (student.ModuleResults ?? []).some(
+      (module: any) => (module.results ?? []).length > 0,
+    );
+    if (getCourseProgress(student) === 0 && getExamGrade(student) === null && !hasModuleResults) {
+      return 'not_started';
+    }
+    return 'in_progress';
+  };
+
+  const getStudentStatusLabel = (student: any): 'Notable' | 'Aprobado' | 'Desaprobado' | 'No iniciado' | 'En Proceso' => {
+    const reportStatus = getStudentReportStatus(student);
+    if (reportStatus === 'approved') {
+      const grade = getFinalGrade(student);
+      return grade !== null && grade >= 18 ? 'Notable' : 'Aprobado';
+    }
+    if (reportStatus === 'failed') return 'Desaprobado';
+    if (reportStatus === 'not_started') return 'No iniciado';
+    return 'En Proceso';
+  };
+
   const dateFilteredStudents = useMemo(
     () => (currentCourseData ?? []).filter((student: any) => {
       const enrollmentDate = student.CourseStudents?.[0]?.created_at;
@@ -189,6 +213,28 @@ const NotaCourses: NextPageWithLayout = () => {
     [currentCourseData, startDate, endDate],
   );
 
+  const availableModules = useMemo(() => {
+    const modules = new Map<string | number, any>();
+    dateFilteredStudents.forEach((student: any) => {
+      (student.ModuleResults ?? []).forEach((module: any) => {
+        const key = module.module_id ?? module.module_name;
+        if (!modules.has(key)) modules.set(key, module);
+      });
+    });
+    return Array.from(modules.values());
+  }, [dateFilteredStudents]);
+
+  const statusCount = useMemo(() => {
+    const counts = { approved: 0, failed: 0, not_started: 0, in_progress: 0, notable: 0 };
+    dateFilteredStudents.forEach((student: any) => {
+      const status = getStudentReportStatus(student);
+      counts[status]++;
+      const finalGrade = getFinalGrade(student);
+      if (status === 'approved' && finalGrade !== null && finalGrade >= 18) counts.notable++;
+    });
+    return counts;
+  }, [dateFilteredStudents]);
+
   const filteredStudents = useMemo(
     () => dateFilteredStudents.filter((user: any) => {
       const fullName = `${user?.userProfile?.first_name || user?.user_name || ''} ${
@@ -196,39 +242,10 @@ const NotaCourses: NextPageWithLayout = () => {
       }`.toLowerCase();
       if (!fullName.includes(searchTerm.toLowerCase())) return false;
       if (segment === 'all') return true;
-      const finalGrade = getFinalGrade(user);
-      if (segment === 'approved') {
-        return Boolean(user.CourseStudents?.[0]?.is_approved) || (finalGrade !== null && finalGrade >= 13);
-      }
-      if (segment === 'failed') return finalGrade !== null && finalGrade < 13;
-      return getCourseProgress(user) === 0 && getExamGrade(user) === null;
+      return getStudentReportStatus(user) === segment;
     }),
     [dateFilteredStudents, searchTerm, segment],
   );
-
-  useEffect(() => {
-    if (currentCourseData && currentCourseData.length > 0) {
-      let notable = 0, aprobado = 0, desaprobado = 0, noIniciados = 0;
-      dateFilteredStudents.forEach((user: any) => {
-        if (getCourseProgress(user) === 0 && getExamGrade(user) === null) noIniciados++;
-        const finalGrade = getFinalGrade(user);
-        if (user.CourseStudents?.[0]?.is_approved) {
-          if (finalGrade !== null && finalGrade >= 18) notable++;
-          else aprobado++;
-          return;
-        }
-        if (finalGrade === null) return;
-        const status = getStatus(finalGrade);
-        if (status === 'Notable') notable++;
-        else if (status === 'Aprobado') aprobado++;
-        else if (status === 'Desaprobado') desaprobado++;
-      });
-
-      setStatusCount({ notable, aprobado, desaprobado, noIniciados });
-    } else {
-      setStatusCount({ notable: 0, aprobado: 0, desaprobado: 0, noIniciados: 0 });
-    }
-  }, [dateFilteredStudents]);
 
   return (
     <>
@@ -368,12 +385,13 @@ const NotaCourses: NextPageWithLayout = () => {
               </div>
 
               {/* Segmentacion */}
-              <div className="flex gap-1 p-1 bg-gray-100 rounded-lg w-fit">
+              <div className="flex flex-wrap gap-1 p-1 bg-gray-100 rounded-lg w-fit">
                 {([
                   { value: 'all', label: 'Todos', count: dateFilteredStudents.length },
-                  { value: 'approved', label: 'Aprobados', count: statusCount.notable + statusCount.aprobado },
-                  { value: 'failed', label: 'Desaprobados', count: statusCount.desaprobado },
-                  { value: 'not_started', label: 'No Iniciados', count: statusCount.noIniciados },
+                  { value: 'approved', label: 'Aprobados', count: statusCount.approved },
+                  { value: 'failed', label: 'Desaprobados', count: statusCount.failed },
+                  { value: 'not_started', label: 'No Iniciados', count: statusCount.not_started },
+                  { value: 'in_progress', label: 'En Proceso', count: statusCount.in_progress },
                 ] as const).map(({ value, label, count }) => (
                   <button
                     key={value}
@@ -424,7 +442,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Aprobados</p>
                       <h3 className="text-2xl font-bold text-blue-600">
-                        {statusCount.notable + statusCount.aprobado}
+                        {statusCount.approved}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -438,7 +456,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Desaprobados</p>
                       <h3 className="text-2xl font-bold text-rose-600">
-                        {statusCount.desaprobado}
+                        {statusCount.failed}
                       </h3>
                     </div>
                     <div className="bg-rose-100 p-3 rounded-full text-rose-600">
@@ -460,9 +478,7 @@ const NotaCourses: NextPageWithLayout = () => {
                       {filteredStudents?.map((user: any, userIndex: number) => {
                         const examGrade = getExamGrade(user);
                         const finalGrade = getFinalGrade(user);
-                        const status = finalGrade !== null
-                          ? getStatus(finalGrade)
-                          : 'En Proceso';
+                        const status = getStudentStatusLabel(user);
                         const progress = getCourseProgress(user);
                         const lastEvaluatedModule = user.ModuleResults?.length > 0
                           ? user.ModuleResults[user.ModuleResults.length - 1]
@@ -482,10 +498,17 @@ const NotaCourses: NextPageWithLayout = () => {
                           >
                             <div className="p-5">
                               <div className="mb-4">
-                                <h3 className="text-lg font-semibold text-gray-800">
-                                  {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
-                                  {user?.userProfile?.last_name || ''}
-                                </h3>
+                                <div className="mb-1 flex flex-wrap items-center gap-2">
+                                  <h3 className="text-lg font-semibold text-gray-800">
+                                    {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
+                                    {user?.userProfile?.last_name || ''}
+                                  </h3>
+                                  {user.is_active === false && (
+                                    <span className="rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                                      Inactivo
+                                    </span>
+                                  )}
+                                </div>
                                 <span
                                   className={`text-xs px-2 py-1 rounded-full border ${statusStyles[status]}`}
                                 >
@@ -637,7 +660,7 @@ const NotaCourses: NextPageWithLayout = () => {
                             >
                               Estudiante
                             </th>
-                            {currentCourseData?.[0]?.ModuleResults?.map(
+                            {availableModules.map(
                               (module: any, index: number) => (
                                 <th
                                   key={`module-${index}`}
@@ -691,10 +714,15 @@ const NotaCourses: NextPageWithLayout = () => {
                                         {user?.userProfile?.first_name || user?.user_name || user?.dni || 'Usuario'}{' '}
                                         {user?.userProfile?.last_name || ''}
                                       </div>
+                                      {user.is_active === false && (
+                                        <span className="mt-1 inline-flex rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                                          Inactivo
+                                        </span>
+                                      )}
                                     </div>
                                   </div>
                                 </td>
-                                {currentCourseData?.[0]?.ModuleResults?.map(
+                                {availableModules.map(
                                   (module: any, moduleIndex: number) => {
                                     const moduleResult =
                                       user.ModuleResults?.find(
@@ -723,10 +751,7 @@ const NotaCourses: NextPageWithLayout = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {(() => {
-                                    const grade = getFinalGrade(user);
-                                    const rowStatus = grade !== null
-                                      ? getStatus(grade)
-                                      : 'En Proceso';
+                                    const rowStatus = getStudentStatusLabel(user);
                                     return (
                                       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusStyles[rowStatus]}`}>
                                         {rowStatus}
