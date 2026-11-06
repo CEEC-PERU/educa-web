@@ -175,38 +175,28 @@ const Usuarios: NextPageWithLayout = () => {
     setFilter(e.target.value);
   };
 
-  const escapeCsvValue = (value: string) => `"${value.replace(/"/g, '""')}"`;
-
-  const handleExportCSV = () => {
-    const headers = ["Nombre", "Apellido", "Perfil", "Estado"];
+  const handleExportExcel = async () => {
+    const headers = ["Nombre", "Apellido", "Supervisor de campo", "Perfil", "Estado"];
     const rows = filteredStudents.map((student) => {
       const profile = student.User.userProfile;
       return [
         profile?.first_name?.toUpperCase() ?? "",
         profile?.last_name?.toUpperCase() ?? "",
+        profile?.external_supervisor ?? "",
         profile ? "Completo" : "Pendiente",
         student.User.is_active ? "Activo" : "Inactivo",
-      ].map(escapeCsvValue);
+      ];
     });
 
-    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join(
-      "\n",
-    );
-    const BOM = "﻿";
-    const blob = new Blob([BOM + csvContent], {
-      type: "text/csv;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
     const today = new Date().toISOString().slice(0, 10);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `usuarios_${showActive ? "activos" : "inactivos"}_${today}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const { exportStyledExcel } = await import("../../../utils/exportStyledExcel");
+    await exportStyledExcel(
+      `usuarios_${showActive ? "activos" : "inactivos"}_${today}.xlsx`,
+      "Usuarios",
+      headers,
+      rows,
+    );
   };
-
   const handleExportProgress = async () => {
     if (!token || !progressStartDate || !progressEndDate || progressStartDate > progressEndDate) {
       toast.error("Selecciona un rango de fechas válido.");
@@ -223,7 +213,7 @@ const Usuarios: NextPageWithLayout = () => {
       const blobUrl = URL.createObjectURL(response.data);
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.download = `progreso_supervisora_${progressStartDate}_${progressEndDate}.csv`;
+      link.download = `progreso_supervisora_${progressStartDate}_${progressEndDate}.xlsx`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -261,12 +251,12 @@ const Usuarios: NextPageWithLayout = () => {
         {userCountResult && (
           <div className="flex items-center gap-4">
             <button
-              onClick={handleExportCSV}
+              onClick={handleExportExcel}
               disabled={filteredStudents.length === 0}
               className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ArrowDownTrayIcon className="h-4 w-4" />
-              Descargar CSV
+              Descargar Excel
             </button>
 
             <button
@@ -314,7 +304,7 @@ const Usuarios: NextPageWithLayout = () => {
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-wait disabled:opacity-50"
         >
           <ArrowDownTrayIcon className="h-4 w-4" />
-          {isExportingProgress ? "Generando..." : "Exportar progreso CSV"}
+          {isExportingProgress ? "Generando..." : "Exportar progreso Excel"}
         </button>
         <p className="basis-full text-xs text-gray-500">
           Incluye los cursos asignados entre las fechas seleccionadas. Por defecto, desde el 1 de mayo de 2026 hasta hoy.

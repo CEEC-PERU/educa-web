@@ -13,6 +13,7 @@ import {
 import { UserNota } from '../../../interfaces/Nota';
 import Loader from '../../../components/Loader';
 import { useRouter } from 'next/router';
+import { getHighestAttemptGrade } from '../../../utils/gradeAttempts';
 import {
   FiDownload,
   FiUsers,
@@ -50,37 +51,6 @@ const getStatus = (finalExamGrade: number) => {
   if (finalExamGrade >= STATUS_THRESHOLDS.Aprobado) return 'Aprobado';
   if (finalExamGrade >= STATUS_THRESHOLDS.Refuerzo) return 'Refuerzo';
   return 'Desaprobado';
-};
-
-// MEJORADA: Funcion unificada para obtener el puntaje (ultimo intento con fallback al primero)
-const getLastAttemptGrade = (courseResults: any[]) => {
-  if (!courseResults || courseResults.length === 0) return null;
-
-  // Funcion helper para validar si un puntaje es valido
-  const isValidScore = (score: any) => {
-    return score !== null && score !== undefined && !isNaN(Number(score));
-  };
-
-  // Si solo hay un resultado, devolverlo si es valido
-  if (courseResults.length === 1) {
-    const score = courseResults[0]?.puntaje;
-    return isValidScore(score) ? score : null;
-  }
-
-  // Si hay multiples resultados, intentar obtener el ultimo (mas reciente)
-  const lastResult = courseResults[courseResults.length - 1];
-  const lastScore = lastResult?.puntaje;
-
-  // Si el ultimo intento tiene puntaje valido, usarlo
-  if (isValidScore(lastScore)) {
-    return lastScore;
-  }
-
-  // FALLBACK: Si el ultimo intento no tiene puntaje valido, usar el primero
-  const firstResult = courseResults[0];
-  const firstScore = firstResult?.puntaje;
-
-  return isValidScore(firstScore) ? firstScore : null;
 };
 
 const formatDate = (dateString: string) => {
@@ -153,7 +123,7 @@ const NotaCourses: NextPageWithLayout = () => {
 
       currentCourseData.forEach((user) => {
         // UNIFICADA: Usar la misma logica para ambas vistas (general y aula especifica)
-        const examGrade = getLastAttemptGrade(user.CourseResults);
+        const examGrade = getHighestAttemptGrade(user.CourseResults);
 
         if (examGrade !== null && examGrade !== undefined) {
           const status = getStatus(examGrade);

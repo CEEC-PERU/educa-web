@@ -1,5 +1,6 @@
 import React from 'react';
 import { FiCalendar, FiClock, FiUsers } from 'react-icons/fi';
+import { getHighestAttemptGrade } from '../../utils/gradeAttempts';
 
 interface NotasViewProps {
   students: any[];
@@ -14,10 +15,7 @@ export const StudentCardsView: React.FC<NotasViewProps> = ({
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
     {students?.map((user: any, userIndex: number) => {
-      const finalGrade = Math.max(
-        user.CourseResults?.[0]?.puntaje || 0,
-        user.CourseResults?.[1]?.puntaje || 0
-      );
+      const finalGrade = getHighestAttemptGrade(user.CourseResults) ?? 0;
       const status =
         user.CourseResults?.length > 0 ? getStatus(finalGrade) : 'En Proceso';
 
@@ -255,10 +253,7 @@ const TableRow = ({
   formatDate: (date: string) => string;
   moduleResults: any[];
 }) => {
-  const finalGrade = Math.max(
-    user.CourseResults?.[0]?.puntaje || 0,
-    user.CourseResults?.[1]?.puntaje || 0
-  );
+  const finalGrade = getHighestAttemptGrade(user.CourseResults) ?? 0;
   const status =
     user.CourseResults?.length > 0 ? getStatus(finalGrade) : 'En Proceso';
 
@@ -285,9 +280,7 @@ const TableRow = ({
           (mod: any) => mod.module_name === module.module_name
         );
         const highestScore = moduleResult
-          ? Math.max(
-              ...moduleResult.results.map((result: any) => result.puntaje)
-            )
+          ? getHighestAttemptGrade(moduleResult.results) ?? '-'
           : '-';
         return (
           <td
