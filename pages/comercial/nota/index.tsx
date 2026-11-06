@@ -14,6 +14,7 @@ import ProgressBar from '../../../components/Corporate/ProgressBar';
 import { API_GET_NOTAS_EXCEL } from '../../../utils/Endpoints';
 import './../../../app/globals.css';
 import ProtectedRoute from '@/components/Auth/ProtectedRoute';
+import { getHighestAttemptGrade } from '../../../utils/gradeAttempts';
 
 // Importar react-apexcharts dinamicamente para evitar SSR
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -134,7 +135,7 @@ const NotaCourses: React.FC = () => {
         refuerzo = 0,
         desaprobado = 0;
       currentCourseData.forEach((user) => {
-        const examGrade = user.CourseResults?.[0]?.puntaje || 0;
+        const examGrade = getHighestAttemptGrade(user.CourseResults) ?? 0;
         const status = getStatus(examGrade);
         if (status === 'Notable') notable++;
         else if (status === 'Aprobado') aprobado++;
@@ -323,19 +324,13 @@ const NotaCourses: React.FC = () => {
                               })}
                               {/* Nota Final */}
                               <td className="py-2 px-4 border-b border-l-4 border-blue-300">
-                                {Math.max(
-                                  user.CourseResults?.[0]?.puntaje || 0,
-                                  user.CourseResults?.[1]?.puntaje || 0
-                                ) || '-'}
+                                {getHighestAttemptGrade(user.CourseResults) ?? '-'}
                               </td>
                               {/* Columna de estado */}
                               <td className="py-2 px-4 border-b border-l-4 border-blue-300">
                                 {user.CourseResults?.length > 0
                                   ? getStatus(
-                                      Math.max(
-                                        user.CourseResults?.[0]?.puntaje || 0,
-                                        user.CourseResults?.[1]?.puntaje || 0
-                                      )
+                                      getHighestAttemptGrade(user.CourseResults) ?? 0
                                     )
                                   : 'En Proceso'}
                               </td>

@@ -6,6 +6,7 @@ export interface UserProfile {
     user_id: number;
     phone: number;
     profile_picture: string;
+    external_supervisor?: string | null;
   }
   
 export interface User {

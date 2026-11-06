@@ -50,28 +50,23 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
     };
   };
 
-  const exportToCSV = () => {
-    const headers = ['Estudiante', 'Campana', 'Contenidos Completados', 'Total Contenidos', 'Progreso (%)'];
-    const rows = studentAssignments.map((s) => [
-      `Usuario ${s.student_id}`,
-      `"${(s.classroom.name || '').replace(/"/g, '""')}"`,
-      s.progress.completed_contents,
-      s.progress.total_contents,
-      s.progress.progress_percentage,
+  const exportToExcel = async () => {
+    const headers = ['Estudiante', 'Campaña', 'Contenidos Completados', 'Total Contenidos', 'Progreso (%)'];
+    const rows = studentAssignments.map((student) => [
+      `Usuario ${student.student_id}`,
+      student.classroom.name || '',
+      student.progress.completed_contents,
+      student.progress.total_contents,
+      student.progress.progress_percentage,
     ]);
-
-    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const BOM = '\uFEFF';
-    const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
     const today = new Date().toISOString().slice(0, 10);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `estudiantes_programa_${programId}_${today}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    const { exportStyledExcel } = await import('@/utils/exportStyledExcel');
+    await exportStyledExcel(
+      `estudiantes_programa_${programId}_${today}.xlsx`,
+      'Progreso',
+      headers,
+      rows,
+    );
   };
 
   return (
@@ -102,11 +97,11 @@ const TrainingAssignmentStudentsPage: NextPageWithLayout = () => {
                 <div className="flex items-center gap-3 mt-4 sm:mt-0">
                   {!loading && studentAssignments.length > 0 && (
                     <button
-                      onClick={exportToCSV}
+                      onClick={exportToExcel}
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl text-sm font-medium text-white hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm hover:shadow-md"
                     >
                       <Download className="w-4 h-4" />
-                      Exportar CSV
+                      Exportar Excel
                     </button>
                   )}
                   <button

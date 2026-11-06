@@ -3,6 +3,7 @@ import AppLayout from "@/components/layouts/AppLayout";
 import { useCourseStudent } from "../../hooks/useCourseStudents";
 import { useAllNotas } from "../../hooks/resultado/useAllNotas";
 import CourseCard from "../../components/student/CourseCard";
+import { getHighestAttemptGrade } from "../../utils/gradeAttempts";
 import type {
   ModuleResult,
   ModuleResultDetails,
@@ -144,17 +145,25 @@ const NotasIndex = () => {
 
                     {userNota.CourseResults?.length > 0 && (
                       <div className="border-t-2 border-indigo-100 bg-indigo-50">
+                        <div className="px-6 py-4 flex justify-between items-center">
+                          <span className="font-semibold text-indigo-800">
+                            Nota Final (mejor intento)
+                          </span>
+                          <span className="text-2xl font-bold text-indigo-700">
+                            {getHighestAttemptGrade(userNota.CourseResults) ?? "-"}
+                          </span>
+                        </div>
                         {userNota.CourseResults.map(
-                          (courseResult: CourseResult) => (
+                          (courseResult: CourseResult, index: number) => (
                             <div
                               key={courseResult.course_result_id}
-                              className="px-6 py-4 flex justify-between items-center"
+                              className="px-6 py-3 flex justify-between items-center border-t border-indigo-100"
                             >
-                              <span className="font-semibold text-indigo-800">
-                                Nota Final
+                              <span className="text-sm text-indigo-700">
+                                Intento {index + 1}
                               </span>
                               <div className="text-right">
-                                <span className="text-2xl font-bold text-indigo-700">
+                                <span className="font-semibold text-indigo-700">
                                   {courseResult.puntaje}
                                 </span>
                                 <span className="block text-xs text-indigo-400 mt-0.5">

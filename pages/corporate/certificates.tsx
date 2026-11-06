@@ -51,38 +51,29 @@ const Certification: NextPageWithLayout = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const descargarCSV = () => {
+  const descargarExcel = async () => {
     if (filteredResults.length === 0) return;
 
-    const headers = [
-      "Certificacion",
-      "Estudiante",
-      "Puntuacion",
-      "Estado",
-      "Fecha",
-      "Hora",
-    ];
-
-    const rows = filteredResults.map((res) => {
+    const headers = ['Certificación', 'Estudiante', 'Puntuación', 'Estado', 'Fecha', 'Hora'];
+    const rows = filteredResults.map((result) => {
+      const date = result.created_at ? new Date(result.created_at) : null;
       return [
-        `"${res.certification_title}"`,
-        `"${res.user_name}"`,
-        res.score,
-        res.passed ? "APROBADO" : "REPROBADO",
-        res.created_at,
-      ].join(",");
+        result.certification_title || '',
+        result.user_name || '',
+        Number(result.score),
+        result.passed ? 'APROBADO' : 'REPROBADO',
+        date && !Number.isNaN(date.getTime()) ? date.toLocaleDateString() : '',
+        date && !Number.isNaN(date.getTime()) ? date.toLocaleTimeString() : '',
+      ];
     });
 
-    const csvContent = "﻿" + [headers.join(","), ...rows].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `Reporte_${new Date().toLocaleDateString()}.csv`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const { exportStyledExcel } = await import("../../utils/exportStyledExcel");
+    await exportStyledExcel(
+      `Reporte_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      'Certificaciones',
+      headers,
+      rows,
+    );
   };
 
   useEffect(() => {
@@ -182,10 +173,10 @@ const Certification: NextPageWithLayout = () => {
 
             {filteredResults.length > 0 && (
               <button
-                onClick={descargarCSV}
+                onClick={descargarExcel}
                 className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-xl font-medium shadow-md transition-all active:scale-95"
               >
-                Descargar Reporte (CSV)
+                Descargar Reporte Excel
               </button>
             )}
           </header>

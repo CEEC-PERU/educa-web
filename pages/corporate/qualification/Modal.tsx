@@ -1,4 +1,5 @@
 import React from 'react';
+import { getHighestAttemptGrade } from '../../../utils/gradeAttempts';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#__next'); // Establece el elemento de aplicacion para accesibilidad
@@ -13,8 +14,8 @@ interface GradesModalProps {
 
 const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modules, finalExam }) => {
   const calculateAverage = () => {
-    const moduleScores = modules.map(module => parseFloat(module.ModuleResults?.[0]?.puntaje || '0'));
-    const finalScore = parseFloat(finalExam.CourseResults?.[0]?.puntaje || '0');
+    const moduleScores = modules.map(module => getHighestAttemptGrade(module.ModuleResults) ?? 0);
+    const finalScore = getHighestAttemptGrade(finalExam.CourseResults) ?? 0;
     const totalScores = [...moduleScores, finalScore];
     const average = totalScores.reduce((sum, score) => sum + score, 0) / totalScores.length;
     return average.toFixed(2);
@@ -44,14 +45,14 @@ const GradesModal: React.FC<GradesModalProps> = ({ isOpen, onClose, course, modu
             {modules.map((module, index) => (
               <li key={module.module_id} className="flex justify-between text-base md:text-lg">
                 <span>{module.name}</span>
-                <span>{module.ModuleResults?.[0]?.puntaje || 0}</span>
+                <span>{getHighestAttemptGrade(module.ModuleResults) ?? 0}</span>
               </li>
             ))}
           </ul>
         </div>
         <div className="pt-6">
           <h3 className="text-lg md:text-xl font-bold border-b-2 border-gray-300 mb-4">Evaluacion Final del Curso</h3>
-          <p className="text-base md:text-lg">{finalExam.name}: {finalExam.CourseResults?.[0]?.puntaje || 0}</p>
+          <p className="text-base md:text-lg">{finalExam.name}: {getHighestAttemptGrade(finalExam.CourseResults) ?? 0}</p>
         </div>
         <div className="text-center text-blue-500 mt-6">
           <h3 className="text-2xl md:text-3xl font-bold">Promedio Final: {calculateAverage()}</h3>

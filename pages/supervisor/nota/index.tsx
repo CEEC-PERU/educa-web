@@ -38,9 +38,6 @@ const getLimaDate = (value: string | Date): string => {
   }).format(date);
 };
 
-const escapeCsv = (value: unknown): string =>
-  `"${String(value ?? '').replace(/"/g, '""')}"`;
-
 const getExamGrade = (student: any): number | null => {
   const reportedGrade = parseGrade(student.examGrade);
   if (reportedGrade !== null) return reportedGrade;
@@ -117,12 +114,11 @@ const NotaCourses: NextPageWithLayout = () => {
     await fetchCourseDetail(updatedClassroomId);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     try {
       const headers = [
         'Nombre del alumno',
         'Supervisor de campo',
-        'Estado de cuenta',
         'Curso',
         'Progreso (%)',
         ...availableModules.map((module: any) => module.module_name),
@@ -141,7 +137,6 @@ const NotaCourses: NextPageWithLayout = () => {
         return [
           studentName,
           student.userProfile?.external_supervisor || '',
-          student.is_active === false ? 'Inactivo' : 'Activo',
           courseStudent?.Course?.name || `Curso ${courseIdNumber}`,
           getCourseProgress(student),
           ...availableModules.map((module: any) => {
@@ -157,15 +152,13 @@ const NotaCourses: NextPageWithLayout = () => {
           courseStudent?.finished_date ? getLimaDate(courseStudent.finished_date) : '',
         ];
       });
-      const csv = `\uFEFF${[headers, ...rows].map((row) => row.map(escapeCsv).join(',')).join('\r\n')}`;
-      const url = window.URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `reporte_notas_curso_${courseIdNumber}_${startDate}_${endDate}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      const { exportStyledExcel } = await import('../../../utils/exportStyledExcel');
+      await exportStyledExcel(
+        `reporte_notas_curso_${courseIdNumber}_${startDate}_${endDate}.xlsx`,
+        'Reporte de notas',
+        headers,
+        rows,
+      );
     } catch (error) {
       console.error('Error descargando el reporte de notas:', error);
     }
@@ -242,6 +235,11 @@ const NotaCourses: NextPageWithLayout = () => {
     });
     return counts;
   }, [dateFilteredStudents]);
+
+  const totalByStatus = statusCount.approved
+    + statusCount.failed
+    + statusCount.not_started
+    + statusCount.in_progress;
 
   const filteredStudents = useMemo(
     () => dateFilteredStudents.filter((user: any) => {
@@ -391,7 +389,7 @@ const NotaCourses: NextPageWithLayout = () => {
               {/* Segmentacion */}
               <div className="flex flex-wrap gap-1 p-1 bg-gray-100 rounded-lg w-fit">
                 {([
-                  { value: 'all', label: 'Todos', count: dateFilteredStudents.length },
+                  { value: 'all', label: 'Todos', count: totalByStatus },
                   { value: 'approved', label: 'Aprobados', count: statusCount.approved },
                   { value: 'failed', label: 'Desaprobados', count: statusCount.failed },
                   { value: 'not_started', label: 'No Iniciados', count: statusCount.not_started },
@@ -418,7 +416,7 @@ const NotaCourses: NextPageWithLayout = () => {
                     <div>
                       <p className="text-gray-500 text-sm">Total Estudiantes</p>
                       <h3 className="text-2xl font-bold text-gray-800">
-                        {dateFilteredStudents.length}
+                        {totalByStatus}
                       </h3>
                     </div>
                     <div className="bg-blue-100 p-3 rounded-full text-blue-600">
@@ -507,11 +505,6 @@ const NotaCourses: NextPageWithLayout = () => {
                                     {user?.userProfile?.first_name || user?.user_name || 'Usuario'}{' '}
                                     {user?.userProfile?.last_name || ''}
                                   </h3>
-                                  {user.is_active === false && (
-                                    <span className="rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                                      Inactivo
-                                    </span>
-                                  )}
                                 </div>
                                 <p className="mt-1 text-sm text-gray-500">
                                   <span className="font-medium text-gray-600">Supervisor de campo:</span>{' '}
@@ -728,11 +721,6 @@ const NotaCourses: NextPageWithLayout = () => {
                                         {user?.userProfile?.first_name || user?.user_name || 'Usuario'}{' '}
                                         {user?.userProfile?.last_name || ''}
                                       </div>
-                                      {user.is_active === false && (
-                                        <span className="mt-1 inline-flex rounded-full border border-gray-300 bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-                                          Inactivo
-                                        </span>
-                                      )}
                                     </div>
                                   </div>
                                 </td>
