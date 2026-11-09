@@ -69,7 +69,7 @@ const SidebarComercial: React.FC<SidebarComercialProps> = ({
   return (
     <div className="fixed h-96 z-50">
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-blue-600 text-white transition-all transform ${
+        className={`bg-[#130325] h-dvh rounded-r-lg text-white transition-all transform ${
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}
@@ -79,155 +79,69 @@ const SidebarComercial: React.FC<SidebarComercialProps> = ({
         <nav className="flex-1">
           <ul>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/", true) ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/", true) && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <BookOpenIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Dashboard</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/", true)} onClick={() => handleNavigation('/comercial/')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/", true) ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/", true) && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/", true) ? "bg-white/15" : "bg-[#2D0B4A]")}><BookOpenIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/", true) ? "text-white" : "text-gray-400 group-hover:text-white")}>Dashboard</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/", true) ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/usuarios')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/usuarios") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/usuarios") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <UserGroupIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Usuarios</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/usuarios")} onClick={() => handleNavigation('/comercial/usuarios')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/usuarios") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/usuarios") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/usuarios") ? "bg-white/15" : "bg-[#2D0B4A]")}><UserGroupIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/usuarios") ? "text-white" : "text-gray-400 group-hover:text-white")}>Usuarios</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/usuarios") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/classroom')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/classroom") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/classroom") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <UserGroupIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Classroom</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/classroom")} onClick={() => handleNavigation('/comercial/classroom')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/classroom") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/classroom") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/classroom") ? "bg-white/15" : "bg-[#2D0B4A]")}><UserGroupIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/classroom") ? "text-white" : "text-gray-400 group-hover:text-white")}>Classroom</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/classroom") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/courses')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/courses") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/courses") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <BookOpenIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cursos</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/courses")} onClick={() => handleNavigation('/comercial/courses')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/courses") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/courses") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/courses") ? "bg-white/15" : "bg-[#2D0B4A]")}><BookOpenIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/courses") ? "text-white" : "text-gray-400 group-hover:text-white")}>Cursos</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/courses") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() =>
+              <button data-active={isActivePath("/comercial/qualification/progress")} onClick={() =>
                   handleNavigation('/comercial/qualification/progress')
                 }
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/qualification/progress") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/qualification/progress") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <AcademicCapIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Detalle Estudiante</span>}
-              </button>
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/qualification/progress") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/qualification/progress") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/qualification/progress") ? "bg-white/15" : "bg-[#2D0B4A]")}><AcademicCapIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/qualification/progress") ? "text-white" : "text-gray-400 group-hover:text-white")}>Detalle Estudiante</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/qualification/progress") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/sesion')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/sesion") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/sesion") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <ClockIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Sesiones</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/sesion")} onClick={() => handleNavigation('/comercial/sesion')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/sesion") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/sesion") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/sesion") ? "bg-white/15" : "bg-[#2D0B4A]")}><ClockIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/sesion") ? "text-white" : "text-gray-400 group-hover:text-white")}>Sesiones</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/sesion") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/comercial/addRequeriment')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/comercial/addRequeriment") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/comercial/addRequeriment") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <ClipboardDocumentCheckIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Nuevo Requerimiento</span>}
-              </button>
+              <button data-active={isActivePath("/comercial/addRequeriment")} onClick={() => handleNavigation('/comercial/addRequeriment')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/comercial/addRequeriment") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/comercial/addRequeriment") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/comercial/addRequeriment") ? "bg-white/15" : "bg-[#2D0B4A]")}><ClipboardDocumentCheckIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/comercial/addRequeriment") ? "text-white" : "text-gray-400 group-hover:text-white")}>Nuevo Requerimiento</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/comercial/addRequeriment") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
               <button
                 onClick={logout}
-                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
-              >
-                <LogoutIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cerrar Sesion</span>}
-              </button>
+                className="relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
+              ><div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + "bg-[#2D0B4A]"}><LogoutIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + "text-gray-400 group-hover:text-white"}>Cerrar Sesion</span>} {isOpen && <svg className="ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 text-gray-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
           </ul>
         </nav>
