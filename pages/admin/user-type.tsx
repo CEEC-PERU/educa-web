@@ -1,5 +1,8 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent, useRef } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
+import { toast } from 'sonner';
+import { useAuth } from '../../context/AuthContext';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Admin/SideBarAdmin';
 import {
@@ -18,10 +21,12 @@ import ProtectedRoute from '../../components/Auth/ProtectedRoute';
 import { User } from '../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
+import { API_ADMIN_RIMAC_SYNC } from '../../utils/Endpoints';
 
 const RoleDetail: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
   const router = useRouter();
+  const { user, token } = useAuth();
   const { roleId } = router.query;
   const [companies, setCompanies] = useState<Enterprise[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
@@ -36,6 +41,8 @@ const RoleDetail: React.FC = () => {
   const [temporaryPassword, setTemporaryPassword] = useState<string | null>(null);
   const [resettingUser, setResettingUser] = useState(false);
   const [userToReset, setUserToReset] = useState<User | null>(null);
+  const [rimacSyncing, setRimacSyncing] = useState(false);
+  const rimacFileInput = useRef<HTMLInputElement>(null);
 
   const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
   const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
@@ -45,6 +52,8 @@ const RoleDetail: React.FC = () => {
     roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID
   );
   const showProductColumn = Number(selectedCompany) === 2;
+  const isSystemAdmin = typeof user === 'object' && user !== null && Number(user.role) === 4;
+  const canSyncRimac = isSystemAdmin && Number(roleId) === STUDENT_ROLE_ID && Number(selectedCompany) === 2;
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedFilter(filter.trim()), 350);
@@ -199,6 +208,54 @@ const RoleDetail: React.FC = () => {
     router.push('/admin/student/exportCsv');
   };
 
+  const handleRimacFileSelected = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    // Permite seleccionar de nuevo el mismo archivo tras corregir un error.
+    event.target.value = '';
+    if (!file) return;
+    if (!/\.(xlsx|csv)$/i.test(file.name)) {
+      toast.error('Selecciona un archivo .xlsx o .csv.');
+      return;
+    }
+    if (!token) {
+      toast.error('Tu sesión expiró. Inicia sesión nuevamente.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('enterprise_id', '2');
+    setRimacSyncing(true);
+    const toastId = toast.loading('Procesando archivo Rimac. Puede tardar varios minutos; no cierres esta página.');
+    try {
+      const response = await axios.post(API_ADMIN_RIMAC_SYNC, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+        // Sin timeout del cliente; el servidor o proxy de despliegue aún puede imponer uno.
+        timeout: 0,
+      });
+      const summary = response.data;
+      toast.success(
+        `Sincronización completada: ${summary.creados ?? 0} creados, ${summary.mantenidos ?? 0} mantenidos, ${summary.reactivados ?? 0} reactivados y ${summary.desactivados ?? 0} desactivados.`,
+        { id: toastId, duration: 12000, description: summary.advertenciaSeguridad },
+      );
+      if (roleId) {
+        try {
+          const refreshed = await getPaginatedUsersByCompanyAndRole(2, Number(roleId), page, PAGE_SIZE, debouncedFilter);
+          setUsers(refreshed.users);
+          setTotalCount(refreshed.totalCount);
+          setTotalPages(refreshed.totalPages);
+        } catch (refreshError) {
+          console.error('Sincronización completada, pero no se pudo actualizar la tabla:', refreshError);
+        }
+      }
+    } catch (error: any) {
+      const message = error?.response?.data?.message || error?.message || 'No se pudo completar la sincronización.';
+      toast.error(message, { id: toastId, duration: 12000 });
+    } finally {
+      setRimacSyncing(false);
+    }
+  };
+
   const handleAddUser = () => {
     setIsModalOpen(true);
   };
@@ -245,6 +302,27 @@ const RoleDetail: React.FC = () => {
             }`}
           >
             <div className="flex space-x-4 mb-4">
+              {canSyncRimac && (
+                <>
+                  <input
+                    ref={rimacFileInput}
+                    type="file"
+                    accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
+                    className="hidden"
+                    onChange={handleRimacFileSelected}
+                    disabled={rimacSyncing}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => rimacFileInput.current?.click()}
+                    disabled={rimacSyncing}
+                    className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md transition hover:from-blue-700 hover:to-violet-700 disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {rimacSyncing && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
+                    {rimacSyncing ? 'Procesando archivo...' : 'Sincronizar Excel Rimac'}
+                  </button>
+                </>
+              )}
               {roleId && Number(roleId) === STUDENT_ROLE_ID && (
                 <div>
                   <ButtonContent

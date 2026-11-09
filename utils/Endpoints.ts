@@ -126,6 +126,7 @@ export const API_GET_NOTAS_SUPERVISOR = `${baseURL}/api/notas/supervisor/notas`;
 
 export const API_GET_NOTAS_SUPERVISOR_CLASSROOM = `${baseURL}/api/notas/supervisor/classrooms`;
 export const API_SUPERVISOR_EXPORT_PROGRESS = `${baseURL}/api/supervisor/export-progress`;
+export const API_ADMIN_RIMAC_SYNC = `${baseURL}/api/admin/sync-rimac`;
 
 export const API_USERCOUNT = `${baseURL}/api/enterprises/count`;
 
