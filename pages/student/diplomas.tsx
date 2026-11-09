@@ -10,6 +10,124 @@ import { jsPDF } from "jspdf";
 const CERTIFICATE_WIDTH = 3600;
 const CERTIFICATE_HEIGHT = 2025;
 
+type DiplomaArtworkProps = {
+  fullName: string;
+  courseName: string;
+  obtainedDate: string;
+  capture?: boolean;
+};
+
+const DiplomaArtwork = React.forwardRef<HTMLDivElement, DiplomaArtworkProps>(
+  ({ fullName, courseName, obtainedDate, capture = false }, ref) => (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      style={{
+        position: capture ? "fixed" : "relative",
+        left: capture ? "-10000px" : undefined,
+        top: 0,
+        width: capture ? `${CERTIFICATE_WIDTH}px` : "100%",
+        height: capture ? `${CERTIFICATE_HEIGHT}px` : undefined,
+        aspectRatio: capture ? undefined : `${CERTIFICATE_WIDTH} / ${CERTIFICATE_HEIGHT}`,
+        overflow: "hidden",
+        backgroundColor: "#ffffff",
+        containerType: "inline-size",
+        pointerEvents: capture ? "none" : undefined,
+      }}
+    >
+      <img
+        src="/templates/qtech_certificado.png"
+        crossOrigin="anonymous"
+        decoding="async"
+        alt=""
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+
+      <p
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "90%",
+          margin: 0,
+          textAlign: "center",
+          fontFamily: "'Times New Roman', serif",
+          fontSize: "1.53cqw",
+          lineHeight: 1.15,
+          color: "#4a0e78",
+          overflowWrap: "anywhere",
+          zIndex: 20,
+        }}
+      >
+        {fullName}
+      </p>
+
+      <p
+        style={{
+          position: "absolute",
+          top: "58%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "fit-content",
+          maxWidth: "50%",
+          boxSizing: "border-box",
+          padding: "0.56cqw 1.11cqw",
+          margin: 0,
+          backgroundColor: "#ffffff",
+          textAlign: "center",
+          fontFamily: "'Times New Roman', Times, serif",
+          fontSize: "1.11cqw",
+          lineHeight: 1.15,
+          color: "#4a0e78",
+          textTransform: "uppercase",
+          zIndex: 20,
+        }}
+      >
+        <span>Por haber completado satisfactoriamente el curso de</span>
+        <span
+          style={{
+            display: "block",
+            marginTop: "0.22cqw",
+            fontSize: "1.67cqw",
+            lineHeight: 1.1,
+            fontWeight: "bold",
+            overflowWrap: "anywhere",
+          }}
+        >
+          {courseName}
+        </span>
+      </p>
+
+      <p
+        style={{
+          position: "absolute",
+          top: "70%",
+          left: 0,
+          width: "100%",
+          margin: 0,
+          textAlign: "center",
+          fontFamily: "'Times New Roman', Times, serif",
+          fontSize: "1.11cqw",
+          lineHeight: 1.15,
+          color: "#3b0764",
+          zIndex: 20,
+        }}
+      >
+        Obtenido el: {obtainedDate}
+      </p>
+    </div>
+  ),
+);
+
+DiplomaArtwork.displayName = "DiplomaArtwork";
+
 const Diplomas = () => {
   const { profileInfo } = useAuth();
   const { courseStudent, isLoading } = useCourseStudent();
@@ -60,6 +178,7 @@ const Diplomas = () => {
           scale: 2,
           backgroundColor: "#ffffff",
           useCORS: true,
+          allowTaint: false,
           width: imageWidth,
           height: imageHeight,
           windowWidth: imageWidth,
@@ -75,14 +194,8 @@ const Diplomas = () => {
           compress: true,
           hotfixes: ["px_scaling"],
         });
-        pdf.addImage(
-          canvas.toDataURL("image/png"),
-          "PNG",
-          0,
-          0,
-          imageWidth,
-          imageHeight,
-        );
+        const jpegData = canvas.toDataURL("image/jpeg", 0.96);
+        pdf.addImage(jpegData, "JPEG", 0, 0, imageWidth, imageHeight);
         pdf.save(`Diploma_${pendingDiploma.Course.name}.pdf`);
       } catch (error) {
         console.error("Error generando el diploma:", error);
@@ -119,10 +232,10 @@ const Diplomas = () => {
                 key={cs.Course.course_id}
                 className="bg-white rounded-xl shadow overflow-hidden"
               >
-                <img
-                  src="https://res.cloudinary.com/dk2red18f/image/upload/v1770871986/WEB_EDUCA/DIPLOMA/Certificado_Reconocimiento_rrn1dp.jpg"
-                  className="w-full h-auto object-contain border-b border-gray-100"
-                  alt={`Diploma - ${cs.Course.name}`}
+                <DiplomaArtwork
+                  fullName={fullName}
+                  courseName={cs.Course.name}
+                  obtainedDate={obtainedDate}
                 />
                 <div className="p-5">
                   <h2 className="text-base font-semibold text-gray-800 mb-1">
@@ -147,101 +260,7 @@ const Diplomas = () => {
         )}
       </div>
 
-      {pendingDiploma && (
-        <div
-          ref={diplomaRef}
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            left: "-10000px",
-            top: 0,
-            width: `${CERTIFICATE_WIDTH}px`,
-            height: `${CERTIFICATE_HEIGHT}px`,
-            overflow: "hidden",
-            backgroundColor: "#ffffff",
-            pointerEvents: "none",
-          }}
-        >
-          <img
-            src="/templates/qtech_certificado.png"
-            alt=""
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-
-          <p
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "90%",
-              margin: 0,
-              textAlign: "center",
-              fontFamily: "'Times New Roman', serif",
-              fontSize: "55px",
-              lineHeight: 1.15,
-              color: "#4a0e78",
-              overflowWrap: "anywhere",
-              zIndex: 20,
-            }}
-          >
-            {fullName}
-          </p>
-
-          <p
-            className="absolute z-20 flex flex-col items-center justify-center bg-white text-center"
-            style={{
-              position: "absolute",
-              top: "58%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "fit-content",
-              maxWidth: "50%",
-              boxSizing: "border-box",
-              padding: "20px 40px",
-              margin: 0,
-              fontFamily: "'Times New Roman', Times, serif",
-              fontSize: "40px",
-              lineHeight: 1.15,
-              color: "#4a0e78",
-              textTransform: "uppercase",
-              zIndex: 20,
-            }}
-          >
-            <span>Por haber completado satisfactoriamente el curso de</span>
-            <span
-              style={{
-                display: "block",
-                marginTop: "8px",
-                fontSize: "60px",
-                lineHeight: 1.1,
-                fontWeight: "bold",
-                overflowWrap: "anywhere",
-              }}
-            >
-              {pendingDiploma.Course.name}
-            </span>
-          </p>
-
-          <p
-            style={{
-              position: "absolute",
-              top: "70%",
-              left: 0,
-              width: "100%",
-              margin: 0,
-              textAlign: "center",
-              fontFamily: "'Times New Roman', Times, serif",
-              fontSize: "40px",
-              lineHeight: 1.15,
-              color: "#3b0764",
-              zIndex: 20,
-            }}
-          >
-            Obtenido el: {obtainedDate}
-          </p>
-        </div>
-      )}
+      {pendingDiploma && (<DiplomaArtwork ref={diplomaRef} fullName={fullName} courseName={pendingDiploma.Course.name} obtainedDate={obtainedDate} capture />)}
     </div>
   );
 };

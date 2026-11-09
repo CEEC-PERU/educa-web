@@ -69,7 +69,7 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
   return (
     <div className="fixed h-96 z-50">
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-blue-600 text-white transition-all transform ${
+        className={`bg-[#130325] h-dvh rounded-r-lg text-white transition-all transform ${
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}
@@ -79,34 +79,20 @@ const SidebarSupervisor: React.FC<SidebarSupervisorProps> = ({
         <nav className="flex-1">
           <ul>
             <li>
-              <button
-                onClick={() => handleNavigation('/calidad')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/calidad") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/calidad") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <BookOpenIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cursos</span>}
-              </button>
+              <button data-active={isActivePath("/calidad")} onClick={() => handleNavigation('/calidad')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/calidad") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/calidad") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/calidad") ? "bg-white/15" : "bg-[#2D0B4A]")}><BookOpenIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/calidad") ? "text-white" : "text-gray-400 group-hover:text-white")}>Cursos</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/calidad") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
 
             <li>
               <button
                 onClick={logout}
-                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
-              >
-                <LogoutIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cerrar Sesion</span>}
-              </button>
+                className="relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
+              ><div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + "bg-[#2D0B4A]"}><LogoutIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + "text-gray-400 group-hover:text-white"}>Cerrar Sesion</span>} {isOpen && <svg className="ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 text-gray-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
           </ul>
         </nav>

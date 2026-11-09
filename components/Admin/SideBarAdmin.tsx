@@ -91,7 +91,7 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
   return (
     <div className="fixed h-96 z-50">
       <div
-        className={`bg-gradient-to-r h-dvh rounded-r-lg bg-blue-600 text-white transition-all transform ${
+        className={`bg-[#130325] h-dvh rounded-r-lg text-white transition-all transform ${
           isOpen ? 'w-64' : 'w-16'
         }`}
         style={{ transition: 'width 0.3s' }}
@@ -101,129 +101,64 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
         <nav className="flex-1">
           <ul>
             <li>
-              <button
-                onClick={() => handleNavigation('/admin')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin", true) ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/admin", true) && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <AcademicCapIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Estudiantes</span>}
-              </button>
+              <button data-active={isActivePath("/admin", true)} onClick={() => handleNavigation('/admin')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin", true) ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/admin", true) && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin", true) ? "bg-white/15" : "bg-[#2D0B4A]")}><AcademicCapIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin", true) ? "text-white" : "text-gray-400 group-hover:text-white")}>Estudiantes</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin", true) ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/admin/user-enterprise')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/user-enterprise") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/admin/user-enterprise") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <BuildingOfficeIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Empresas</span>}
-              </button>
+              <button data-active={isActivePath("/admin/user-enterprise")} onClick={() => handleNavigation('/admin/user-enterprise')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/user-enterprise") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/admin/user-enterprise") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/user-enterprise") ? "bg-white/15" : "bg-[#2D0B4A]")}><BuildingOfficeIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/user-enterprise") ? "text-white" : "text-gray-400 group-hover:text-white")}>Empresas</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/user-enterprise") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/admin/users')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/users") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/admin/users") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <UserGroupIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Usuarios</span>}
-              </button>
+              <button data-active={isActivePath("/admin/users")} onClick={() => handleNavigation('/admin/users')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/users") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/admin/users") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/users") ? "bg-white/15" : "bg-[#2D0B4A]")}><UserGroupIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/users") ? "text-white" : "text-gray-400 group-hover:text-white")}>Usuarios</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/users") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/admin/requirements')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/requirements") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/admin/requirements") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <ClipboardDocumentCheckIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Requerimientos</span>}
+              <button data-active={isActivePath("/admin/requirements")} onClick={() => handleNavigation('/admin/requirements')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/requirements") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/admin/requirements") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/requirements") ? "bg-white/15" : "bg-[#2D0B4A]")}><ClipboardDocumentCheckIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/requirements") ? "text-white" : "text-gray-400 group-hover:text-white")}>Requerimientos</span>}
                 {requirements.length > 0 && (
                   <span className="absolute right-4 top-2 z-10 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                     {requirements.length}
                   </span>
-                )}
-              </button>
+                )} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/requirements") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() =>
+              <button data-active={isActivePath("/admin/student/AssignStudents")} onClick={() =>
                   handleNavigation('/admin/student/AssignStudents')
                 }
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/student/AssignStudents") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >                {isActivePath("/admin/student/AssignStudents") && (
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100">
-                    <defs>
-                      <linearGradient id="waveGradient" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="rgba(255,255,255,0)" />
-                        <stop offset="60%" stopColor="rgba(255,255,255,0.15)" />
-                        <stop offset="100%" stopColor="rgba(255,255,255,0.05)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M 65,0 C 30,40 90,60 100,100 L 100,0 Z" fill="url(#waveGradient)" />
-                  </svg>
-                )}
-                <UserPlusIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Asignacion de Cursos</span>}
-              </button>
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/student/AssignStudents") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >{isActivePath("/admin/student/AssignStudents") && (
+                  <svg className="absolute inset-0 h-full w-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 100 100"><path d="M 80,0 C 70,5 66,70 58,100 L 100,100 L 100,0 Z" fill="#5b27ad" /></svg>
+                )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/student/AssignStudents") ? "bg-white/15" : "bg-[#2D0B4A]")}><UserPlusIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/student/AssignStudents") ? "text-white" : "text-gray-400 group-hover:text-white")}>Asignacion de Cursos</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/student/AssignStudents") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
-              <button
-                onClick={() => handleNavigation('/admin/analytics')}
-                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/analytics") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
-              >
-                <ChartBarIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Analítica</span>}
-              </button>
+              <button data-active={isActivePath("/admin/analytics")} onClick={() => handleNavigation('/admin/analytics')}
+                className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/analytics") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              ><div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/analytics") ? "bg-white/15" : "bg-[#2D0B4A]")}><ChartBarIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/analytics") ? "text-white" : "text-gray-400 group-hover:text-white")}>Analítica</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/analytics") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
             <li>
               <button
                 onClick={logout}
-                className="relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
-              >
-                <LogoutIcon className="h-6 w-6 relative z-10" />
-                {isOpen && <span className="ml-2 relative z-10">Cerrar Sesion</span>}
-              </button>
+                className="relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10"
+              ><div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + "bg-[#2D0B4A]"}><LogoutIcon className="h-[20px] w-[20px]" /></div>
+                {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + "text-gray-400 group-hover:text-white"}>Cerrar Sesion</span>} {isOpen && <svg className="ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 text-gray-600 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
           </ul>
         </nav>
