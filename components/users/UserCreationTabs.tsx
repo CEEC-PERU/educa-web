@@ -11,7 +11,15 @@ import { toast } from "sonner";
 type Option = { id: number; label: string };
 type CourseOption = { id: number; name: string; image?: string | null };
 type Tab = "manual" | "bulk";
-type SyncCounts = { creados: number; actualizados: number; reactivados: number; desactivados: number };
+type SyncCounts = {
+  creados: number;
+  actualizados: number;
+  reactivados: number;
+  desactivados: number;
+  desactivacionesOmitidas?: boolean;
+  usuariosAusentesSinDesactivar?: number;
+  advertenciaSeguridad?: string | null;
+};
 type SyncUser = { document_type: "DNI" | "CE"; document_number: string; first_name: string; last_name: string; email: string; external_supervisor: string; product_name: string };
 type ProductOption = { id: number; name: string };
 
@@ -185,17 +193,25 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
       const externalSupervisorIndex = headers.indexOf("external_supervisor");
       const parsedUsers = rows.slice(1)
         .filter((row) => requiredHeaders.some((header) => String(row[columnIndex[header]] ?? "").trim() !== ""))
-        .map((row): SyncUser => ({
-          document_type: String(row[columnIndex.document_type] ?? "").trim().toUpperCase() as SyncUser["document_type"],
-          document_number: String(row[columnIndex.document_number] ?? "").trim().replace(/\.0$/, "").toUpperCase(),
-          first_name: String(row[columnIndex.first_name] ?? "").trim(),
-          last_name: String(row[columnIndex.last_name] ?? "").trim(),
-          email: String(row[columnIndex.email] ?? "").trim(),
-          external_supervisor: externalSupervisorIndex >= 0 ? String(row[externalSupervisorIndex] ?? "").trim() : "",
-          product_name: canAssignProduct && productHeaderIndex >= 0
-            ? String(row[productHeaderIndex] ?? "").trim()
-            : "",
-        }));
+        .map((row): SyncUser => {
+          const document_type = String(row[columnIndex.document_type] ?? "").trim().toUpperCase() as SyncUser["document_type"];
+          let document_number = String(row[columnIndex.document_number] ?? "").trim().replace(/\.0$/, "").toUpperCase();
+          if (canAssignProduct && document_type === "DNI") {
+            document_number = document_number.replace(/[\s'-]/g, "");
+            if (/^\d{1,8}$/.test(document_number)) document_number = document_number.padStart(8, "0");
+          }
+          return {
+            document_type,
+            document_number,
+            first_name: String(row[columnIndex.first_name] ?? "").trim(),
+            last_name: String(row[columnIndex.last_name] ?? "").trim(),
+            email: String(row[columnIndex.email] ?? "").trim(),
+            external_supervisor: externalSupervisorIndex >= 0 ? String(row[externalSupervisorIndex] ?? "").trim() : "",
+            product_name: canAssignProduct && productHeaderIndex >= 0
+              ? String(row[productHeaderIndex] ?? "").trim()
+              : "",
+          };
+        });
 
       if (parsedUsers.length === 0) throw new Error("El archivo no contiene filas de usuarios.");
       const invalidIndex = parsedUsers.findIndex((user) => {
@@ -223,6 +239,28 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
     course_ids: JSON.stringify(selectedCourses),
     deadline,
   });
+
+  const sendSyncRequest = (endpoint: string) => {
+    if (canAssignProduct) {
+      const formData = new FormData();
+      formData.append("enterprise_id", selectedEnterprise);
+      if (file) formData.append("file", file);
+      return fetch(endpoint, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+    }
+    return fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        ...(isAdmin ? { enterprise_id: Number(selectedEnterprise) } : {}),
+        users: syncUsers,
+        ...(isSupervisor ? assignmentPayload() : {}),
+      }),
+    });
+  };
 
   const checkContext = () => {
     if (!token) return "Tu sesion expiro. Inicia sesion nuevamente.";
@@ -283,7 +321,7 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
     const csv = isSupervisor
       ? "document_type,dni,first_name,last_name,email,external_supervisor\nDNI,12345678,Juan,Perez,juan@test.com,Fernando Chiroque\n"
       : canAssignProduct
-      ? "document_type,document_number,first_name,last_name,email,producto,external_supervisor\nDNI,12345678,Juan,Perez,juan@test.com,Producto Demo,Fernando Chiroque\n"
+      ? "document_type,document_number,first_name,last_name,email,producto\nDNI,12345678,Juan,Perez,juan@test.com,Producto Demo\n"
       : "document_type,document_number,first_name,last_name,email,external_supervisor\nDNI,12345678,Juan,Perez,juan@test.com,Fernando Chiroque\n";
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const anchor = document.createElement("a");
@@ -306,15 +344,7 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
     setBusy(true);
     setPreview(null);
     try {
-      const response = await fetch(API_USERS_SYNC_PREVIEW, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          ...(isAdmin ? { enterprise_id: Number(selectedEnterprise) } : {}),
-          users: syncUsers,
-          ...(isSupervisor ? assignmentPayload() : {}),
-        }),
-      });
+      const response = await sendSyncRequest(API_USERS_SYNC_PREVIEW);
       const payload = await response.json();
       if (!response.ok) throw new Error(getErrorMessage(payload, "No se pudo generar el preview."));
       setPreview(payload as SyncCounts);
@@ -335,21 +365,13 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
     setError("");
     setBusy(true);
     try {
-      const response = await fetch(API_USERS_SYNC_CONFIRM, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          ...(isAdmin ? { enterprise_id: Number(selectedEnterprise) } : {}),
-          users: syncUsers,
-          ...(isSupervisor ? assignmentPayload() : {}),
-        }),
-      });
+      const response = await sendSyncRequest(API_USERS_SYNC_CONFIRM);
       const payload = await response.json();
       if (!response.ok) throw new Error(getErrorMessage(payload, "No se pudo confirmar la sincronizacion."));
       await onSuccess?.();
       const summary = payload as SyncCounts;
       toast.success("¡Sincronización completada!", {
-        description: `Se crearon ${summary.creados}, se mantuvieron ${summary.actualizados}, se reactivaron ${summary.reactivados} y se desactivaron ${summary.desactivados}.`,
+        description: `Se crearon ${summary.creados}, se mantuvieron ${summary.actualizados}, se reactivaron ${summary.reactivados} y se desactivaron ${summary.desactivados}.${summary.advertenciaSeguridad ? ` ${summary.advertenciaSeguridad}` : ""}`,
         duration: 10000,
       });
       onClose?.();
@@ -446,7 +468,7 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
       ) : (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-gray-600">{isSupervisor ? "Carga el padrón completo de tu equipo con external_supervisor. La vista previa mostrará altas, actualizaciones, reactivaciones y bajas. Las bajas solo se aplican a la empresa 22 y se cancelan si el archivo tiene menos del 80% de sus usuarios activos." : `Excel o CSV con las columnas: Tipo de Documento, Numero de Documento, Nombre, Apellido, Correo (opcional)${canAssignProduct ? " y Producto." : "."}`}</p>
+            <p className="text-sm text-gray-600">{isSupervisor ? "Carga el padrón completo de tu equipo con external_supervisor. La vista previa mostrará altas, actualizaciones, reactivaciones y bajas. Solo afecta a la empresa 22. El archivo tiene menos del 80% de los usuarios activos. Se procesarán las altas y reactivaciones, pero se omitirán las desactivaciones de ausentes para evitar bajas masivas por error." : `Excel o CSV con las columnas: Tipo de Documento, Numero de Documento, Nombre, Apellido, Correo (opcional)${canAssignProduct ? " y Producto." : "."}`}</p>
             <button type="button" onClick={downloadTemplate} className="rounded-md border border-blue-600 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50">Descargar Plantilla</button>
           </div>
           <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFileChange} className="block w-full rounded-md border border-gray-300 p-2 text-sm" />
@@ -459,6 +481,7 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
             <p className="text-sm text-gray-700">Usuarios existentes (se mantienen activos y se actualiza su supervisor): <strong>{preview.actualizados}</strong></p>
             <p className="text-sm text-gray-700">Usuarios inactivos a reactivar: <strong>{preview.reactivados}</strong></p>
             <p className="text-sm text-gray-700">Usuarios a desactivar (no vienen en el Excel): <strong>{preview.desactivados}</strong></p>
+            {preview.advertenciaSeguridad && <p role="status" className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm font-medium text-amber-900">{preview.advertenciaSeguridad}</p>}
             {isSupervisor && <p className="border-t border-blue-200 pt-2 text-xs text-blue-900">Solo afecta a la empresa de tu sesión (22). La confirmación vuelve a validar el candado del 80% dentro de una transacción.</p>}
           </div>}
           {preview && <button type="button" disabled={busy} onClick={confirmSync} className="rounded-md bg-green-700 px-5 py-2 font-medium text-white disabled:opacity-50">{busy ? "Sincronizando..." : "Confirmar Sincronizacion"}</button>}
