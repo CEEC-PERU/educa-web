@@ -6,6 +6,7 @@ import {
   ClipboardDocumentCheckIcon,
   BuildingOfficeIcon,
   UserPlusIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { LogoutIcon } from "../icons/LogoutIcon";
@@ -204,6 +205,15 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                 )}
                 <UserPlusIcon className="h-6 w-6 relative z-10" />
                 {isOpen && <span className="ml-2 relative z-10">Asignacion de Cursos</span>}
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation('/admin/analytics')}
+                className={"relative flex items-center h-[52px] w-full mb-2 rounded-xl overflow-hidden group cursor-pointer transition-all duration-300 border px-4 " + (isActivePath("/admin/analytics") ? "bg-gradient-to-r from-[#5E168C] to-[#8E24AA] text-white shadow-[0_4px_20px_rgba(142,36,170,0.4)] border-white/30" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}
+              >
+                <ChartBarIcon className="h-6 w-6 relative z-10" />
+                {isOpen && <span className="ml-2 relative z-10">Analítica</span>}
               </button>
             </li>
             <li>
