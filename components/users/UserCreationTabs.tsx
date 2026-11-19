@@ -35,6 +35,7 @@ type SyncConflict = {
   currentEnterprise: string;
   reason?: string;
 };
+type ExcelDuplicate = { dni: string; name: string };
 
 // Respuesta del preview (HTTP 200): no escribe nada, solo informa.
 type SyncPreview = {
@@ -42,6 +43,7 @@ type SyncPreview = {
   validCount: number;
   skippedCount: number;
   conflicts: SyncConflict[];
+  excelDuplicates: ExcelDuplicate[];
   validDnis: string[];
   creados: number;
   actualizados: number;
@@ -74,6 +76,15 @@ function readSyncPreview(payload: unknown): SyncPreview | null {
         reason: String(record.reason ?? ""),
       };
     }),
+    excelDuplicates: Array.isArray(candidate.excelDuplicates)
+      ? candidate.excelDuplicates.map((row) => {
+        const record = (row ?? {}) as Record<string, unknown>;
+        return {
+          dni: String(record.dni ?? record.document_number ?? "").trim(),
+          name: String(record.name ?? record.full_name ?? "").trim(),
+        };
+      })
+      : [],
     validDnis: Array.isArray(candidate.validDnis)
       ? candidate.validDnis.map((dni) => String(dni ?? ""))
       : [],
@@ -196,6 +207,8 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [syncUsers, setSyncUsers] = useState<SyncUser[]>([]);
   const [preview, setPreview] = useState<SyncCounts | null>(null);
+  const previewCountsMatch = !previewData || fileRowCount === previewData.validCount
+    + previewData.conflicts.length + previewData.excelDuplicates.length;
   const { isCheckingDocument, documentExists, verificationFailed } = useDocumentAvailability(
     form.document_type,
     form.dni,
@@ -352,9 +365,6 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
           || user.external_supervisor.length > 150 || (useRimacRosterUpload && !user.product_name);
       });
       if (invalidIndex !== -1) throw new Error(`Revisa el tipo y numero de documento, nombre, apellido y correo de la fila ${invalidIndex + 2}.`);
-
-      const documents = parsedUsers.map((user) => user.document_number);
-      if (new Set(documents).size !== documents.length) throw new Error("El archivo contiene documentos duplicados.");
 
       setFile(nextFile);
       // Un archivo nuevo invalida el preview anterior.
@@ -673,6 +683,41 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
           <input type="file" accept=".csv,.xlsx,.xls" onChange={handleFileChange} className="block w-full rounded-md border border-gray-300 p-2 text-sm" />
           {isSupervisor && classrooms && courses && <AssignmentFields classrooms={classrooms} courses={courses} selectedClassroom={selectedClassroom} setSelectedClassroom={setSelectedClassroom} selectedCourses={selectedCourses} toggleCourse={toggleCourse} deadline={deadline} setDeadline={setDeadline} required />}
           {file && <p className="text-sm text-gray-600">{file.name}: {fileRowCount} usuarios listos para sincronizar.</p>}
+          {previewData && previewData.excelDuplicates.length > 0 && (
+            <div role="status" aria-live="polite" className="rounded-lg border-2 border-amber-400 bg-amber-50 p-4 text-amber-950 shadow-sm">
+              <details>
+                <summary className="cursor-pointer list-none text-sm font-semibold">
+                  ⚠️ Se ignoraron {previewData.excelDuplicates.length} registros duplicados dentro del Excel (haz clic para ver).
+                </summary>
+                <div className="mt-2 max-h-40 overflow-y-auto rounded border border-amber-200 bg-white">
+                  <table className="min-w-full text-left text-xs">
+                    <thead className="sticky top-0 bg-amber-100 text-amber-950">
+                      <tr>
+                        <th scope="col" className="px-3 py-2 font-semibold">DNI</th>
+                        <th scope="col" className="px-3 py-2 font-semibold">Nombre ignorado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {previewData.excelDuplicates.map((row, index) => (
+                        <tr key={`${row.dni}-${index}`} className="border-t border-amber-100">
+                          <td className="px-3 py-1.5 font-mono">{row.dni || "-"}</td>
+                          <td className="px-3 py-1.5">{row.name || "-"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            </div>
+          )}
+          {previewData && (
+            <p role="status" className="rounded-md bg-gray-50 px-3 py-2 text-xs text-gray-700">
+              Registros contabilizados: {fileRowCount} = {previewData.validCount} válidos + {previewData.conflicts.length} conflictos + {previewData.excelDuplicates.length} duplicados internos.
+              {fileRowCount === previewData.validCount + previewData.conflicts.length + previewData.excelDuplicates.length
+                ? " Cuadre correcto."
+                : ` Diferencia de ${fileRowCount - previewData.validCount - previewData.conflicts.length - previewData.excelDuplicates.length}; revisa el preview antes de continuar.`}
+            </p>
+          )}
           {previewData && previewData.conflicts.length > 0 && (
             <div role="alert" className="rounded-lg border border-red-300 bg-red-50 p-4">
               <p className="text-sm font-semibold text-red-800">{previewData.message}</p>
@@ -713,7 +758,7 @@ const UserCreationTabs: React.FC<UserCreationTabsProps> = ({
             <button
               type="button"
               onClick={confirmSync}
-              disabled={syncing || busy}
+              disabled={syncing || busy || !previewCountsMatch}
               className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {syncing && <span aria-hidden="true" className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />}
