@@ -18,30 +18,30 @@ export const useChangePassword = () => {
   const submitChangePassword = async (
     currentPassword: string,
     newPassword: string,
-  ) => {
+  ): Promise<string | null> => {
     setError(null);
     setSuccess(false);
 
     const validationError = validateNewPassword(newPassword);
     if (validationError) {
       setError(validationError);
-      return false;
+      return null;
     }
 
     if (currentPassword === newPassword) {
       setError("La nueva contrasena no puede ser igual a la actual");
-      return false;
+      return null;
     }
 
     setIsLoading(true);
     try {
-      await changePassword(currentPassword, newPassword);
+      const refreshedToken = await changePassword(currentPassword, newPassword);
       setSuccess(true);
-      return true;
+      return refreshedToken;
     } catch (err: any) {
       const msg = err?.response?.data?.msg ?? "Error al cambiar la contrasena";
       setError(msg);
-      return false;
+      return null;
     } finally {
       setIsLoading(false);
     }

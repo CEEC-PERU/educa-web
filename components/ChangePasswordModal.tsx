@@ -10,7 +10,7 @@ interface Props {
   show: boolean;
   onClose: () => void;
   mandatory?: boolean;
-  onPasswordChanged?: () => void;
+  onPasswordChanged?: (updatedToken: string) => void | Promise<void>;
 }
 
 interface FieldState {
@@ -117,11 +117,11 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onClose, mandatory = false
       return;
     }
 
-    const ok = await submitChangePassword(current.value, next.value);
-    if (ok) {
+    const refreshedToken = await submitChangePassword(current.value, next.value);
+    if (refreshedToken) {
       setTimeout(() => {
         if (mandatory) {
-          onPasswordChanged?.();
+          void onPasswordChanged?.(refreshedToken);
           return;
         }
         handleClose();

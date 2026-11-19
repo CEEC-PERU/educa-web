@@ -48,7 +48,7 @@ export const createProfileLogin = async (
     };
     // Hacer la solicitud POST a la API del perfil
     const response = await axios.post(
-      `${API_PROFILE}/login/${user_id}`,
+      `${API_PROFILE}/login`,
       profileData,
       config
     );

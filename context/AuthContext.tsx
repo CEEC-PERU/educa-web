@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useContext,
   useMemo,
+  useCallback,
 } from "react";
 import { useRouter } from "next/router";
 import { jwtDecode } from "jwt-decode";
@@ -19,8 +20,28 @@ import {
 import { validateToken } from "../helpers/helper-token";
 import { io } from "socket.io-client";
 import axios from "axios";
+import { toast } from "sonner";
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
-const socket = typeof window !== "undefined" ? io(API_SOCKET_URL) : null;
+const socket =
+  typeof window !== "undefined"
+    ? io(API_SOCKET_URL, {
+        reconnectionAttempts: 5,
+        reconnectionDelay: 2000,
+        reconnectionDelayMax: 10000,
+      })
+    : null;
+
+let hasLoggedSocketError = false;
+
+socket?.on("connect", () => {
+  hasLoggedSocketError = false;
+});
+
+socket?.on("connect_error", (err) => {
+  if (hasLoggedSocketError) return;
+  hasLoggedSocketError = true;
+  console.warn("No se pudo conectar con Socket.IO:", err.message);
+});
 
 socket?.on("reconnect", () => {
   const token = localStorage.getItem("userToken");
@@ -42,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     must_change_password: boolean;
   } | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [profileInfo, setProfileInfo] = useState<Profile | UserInfo | null>(
     null,
@@ -103,20 +124,36 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [router.isReady, router.pathname, user?.must_change_password]);
 
-  const refreshProfile = async (token: string, userId: number) => {
+  const refreshProfile = useCallback(async (token: string, userId: number): Promise<Profile | null> => {
     try {
-      const profile = await getProfile(token, userId);
+      if (localStorage.getItem("userToken") !== token) return null;
+      const profile = (await getProfile(token, userId)) as Profile | null;
+      // Ignore a response from an older request if another account logged in meanwhile.
+      if (localStorage.getItem("userToken") !== token) return null;
       if (profile) {
         localStorage.setItem("profileInfo", JSON.stringify(profile));
         setProfileInfo(profile);
+      } else {
+        localStorage.removeItem("profileInfo");
+        setProfileInfo(null);
       }
+      return profile;
     } catch (error) {
       console.error("Error refreshing profile:", error);
+      throw error;
     }
-  };
+  }, []);
 
   const login = async (dni: string, password: string) => {
     setIsLoading(true);
+    setError(null);
+    setUser(null);
+    setToken(null);
+    setProfileInfo(null);
+    localStorage.removeItem("userToken");
+    localStorage.removeItem("userInfo");
+    localStorage.removeItem("profileInfo");
+    delete axios.defaults.headers.common["Authorization"];
     try {
       const response: LoginResponse = await signin({ dni, password });
       if (response.token) {
@@ -156,13 +193,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           await router.replace("/change-password");
           return;
         }
-        const profile = await getProfile(response.token, decodedToken.id);
-        if (profile) {
-          setProfileInfo(profile);
-          localStorage.setItem("profileInfo", JSON.stringify(profile));
-          redirectToDashboard(decodedToken.role);
-        } else {
-          redirectToProfile(decodedToken.role);
+        try {
+          const profile = await refreshProfile(response.token, decodedToken.id);
+          if (profile) {
+            redirectToDashboard(decodedToken.role, response.token);
+          } else {
+            redirectToProfile(decodedToken.role);
+          }
+        } catch {
+          // La autenticación ya fue confirmada; no devolver al usuario al login
+          // por un fallo temporal al cargar los datos de perfil.
+          toast.warning("Sesión iniciada. No se pudo cargar el perfil; se volverá a intentar desde la plataforma.");
+          redirectToDashboard(decodedToken.role, response.token);
         }
       } else {
         setError(
@@ -191,6 +233,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem("userToken");
     localStorage.removeItem("userInfo");
     localStorage.removeItem("profileInfo");
+    delete axios.defaults.headers.common["Authorization"];
     if (token) {
       const decodedToken: {
         id: number;
@@ -208,7 +251,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     router.push("/");
   };
 
-  const completePasswordChange = () => {
+  const completePasswordChange = (updatedToken?: string) => {
+    if (updatedToken) {
+      setToken(updatedToken);
+      localStorage.setItem("userToken", updatedToken);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${updatedToken}`;
+    }
     setUser((current) => {
       if (!current) return current;
       const updated = { ...current, must_change_password: false };
@@ -218,54 +266,90 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    try {
-      const storedUserToken = localStorage.getItem("userToken");
-      const storedUserInfo = localStorage.getItem("userInfo");
-      const isValid = storedUserToken ? validateToken(storedUserToken) : false;
+    let cancelled = false;
 
-      if (storedUserInfo && isValid) {
-        const storedProfileInfo = localStorage.getItem("profileInfo");
-        if (storedProfileInfo) {
-          setProfileInfo(JSON.parse(storedProfileInfo));
+    const initializeAuth = async () => {
+      setIsLoading(true);
+      try {
+        const storedUserToken = localStorage.getItem("userToken");
+        const isValid = storedUserToken ? await validateToken(storedUserToken) : false;
+
+        if (cancelled) return;
+
+        if (storedUserToken && isValid) {
+          const decodedToken = jwtDecode<{
+            id: number;
+            role: number;
+            enterprise_id: number;
+            must_change_password?: boolean;
+          }>(storedUserToken);
+          if (!Number.isInteger(decodedToken.id) || decodedToken.id <= 0) {
+            throw new Error("Token de usuario inválido");
+          }
+
+          const safeUser = {
+            id: decodedToken.id,
+            role: decodedToken.role,
+            enterprise_id: decodedToken.enterprise_id,
+            must_change_password: Boolean(decodedToken.must_change_password),
+          };
+          setToken(storedUserToken);
+          setUser(safeUser);
+          localStorage.setItem("userInfo", JSON.stringify(safeUser));
+
+          // Nunca hidratar identidad personal desde una caché sin vínculo con el token.
+          try {
+            await refreshProfile(storedUserToken, decodedToken.id);
+          } catch {
+            if (!cancelled) {
+              setProfileInfo(null);
+              localStorage.removeItem("profileInfo");
+            }
+          }
+        } else {
+          localStorage.removeItem("userToken");
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("profileInfo");
+          delete axios.defaults.headers.common["Authorization"];
+          setToken(null);
+          setUser(null);
+          setProfileInfo(null);
         }
-
-        const storedUser = JSON.parse(storedUserInfo);
-        const decodedToken: { must_change_password?: boolean } = jwtDecode(storedUserToken!);
-        const { id, role, enterprise_id } = storedUser;
-        const must_change_password = Boolean(
-          storedUser.must_change_password ?? decodedToken.must_change_password,
-        );
-
-        setToken(storedUserToken);
-        const safeUser = { id, role, enterprise_id, must_change_password };
-        setUser(safeUser);
-        localStorage.setItem("userInfo", JSON.stringify(safeUser));
-      } else {
-        setToken(null);
-        setUser(null);
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        if (!cancelled) {
+          localStorage.removeItem("userToken");
+          localStorage.removeItem("userInfo");
+          localStorage.removeItem("profileInfo");
+          setToken(null);
+          setUser(null);
+          setProfileInfo(null);
+        }
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error initializing auth:", error);
-      logout();
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    void initializeAuth();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const redirectToDashboard = (role: number) => {
+  const redirectToDashboard = (role: number, accessToken?: string) => {
+    const sessionToken = accessToken ?? token;
     switch (role) {
       case 1:
         router.push("/student");
-        if (token) {
+        if (sessionToken) {
           const decodedToken: {
             id: number;
             role: number;
             email: string;
             client_id: number;
-          } = jwtDecode(token);
+          } = jwtDecode(sessionToken);
           if (decodedToken.role === 1) {
-            socket?.emit("login", { userToken: token });
+            socket?.emit("login", { userToken: sessionToken });
           }
         }
         break;

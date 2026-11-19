@@ -8,6 +8,7 @@ interface ModalProps {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl" | "2xl";
   closeOnBackdropClick?: boolean;
+  bodyClassName?: string;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -18,6 +19,7 @@ const Modal: React.FC<ModalProps> = ({
   children,
   size = "md",
   closeOnBackdropClick = true,
+  bodyClassName,
 }) => {
   // ✅ Usar show o isOpen, dando prioridad a isOpen
   const modalIsOpen = isOpen !== undefined ? isOpen : show;
@@ -66,10 +68,10 @@ const Modal: React.FC<ModalProps> = ({
       onClick={handleOverlayClick}
     >
       <div
-        className={`relative w-full ${sizeClasses[size]} mx-4 md:mx-8 rounded-lg shadow-lg bg-white max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${sizeClasses[size]} mx-4 md:mx-8 rounded-lg shadow-lg bg-white max-h-[85vh] flex flex-col`}
       >
         {/* Header del Modal */}
-        <div className="flex justify-between items-center border-b p-6 bg-gray-50 rounded-t-lg">
+        <div className="flex shrink-0 justify-between items-center border-b p-6 bg-gray-50 rounded-t-lg">
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           <button
             onClick={onClose}
@@ -94,7 +96,7 @@ const Modal: React.FC<ModalProps> = ({
         </div>
 
         {/* Contenido del Modal */}
-        <div className="p-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div className={bodyClassName || "p-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"}>
           {children}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { KeyIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { KeyIcon, PencilIcon, TrashIcon, TagIcon } from '@heroicons/react/24/outline';
 
 interface Column {
   header: string;
@@ -9,37 +9,37 @@ interface Column {
 interface TableProps {
   columns: Column[];
   data: any[];
-  showProductColumn?: boolean;
+  rowNumberOffset?: number;
   actionLabel?: string;
   onActionClick?: (row: any) => void;
   onDeleteClick?: (row: any) => void;
   onResetPassword?: (row: any) => void;
+  onEditCampaign?: (row: any) => void;
 }
 
 
 
-const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = false, actionLabel, onActionClick , onDeleteClick, onResetPassword }) => {
-  const visibleColumns = columns.filter(
-    (column) => column.accessor !== 'product' || showProductColumn,
-  );
+const TableUser: React.FC<TableProps> = ({ columns, data, rowNumberOffset, actionLabel, onActionClick , onDeleteClick, onResetPassword, onEditCampaign }) => {
   return (
     <div className="relative z-10 isolate overflow-x-auto mt-4">
       <table className="min-w-full bg-white text-black">
         <thead>
           <tr>
-            {visibleColumns.map((column) => (
+            {rowNumberOffset !== undefined && <th className="w-12 px-2 py-3 border-b-2 border-gray-300 text-center text-xs leading-4 text-black uppercase tracking-wider">#</th>}
+            {columns.map((column) => (
               <th key={column.accessor} className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">
                 {column.header}
               </th>
             ))}
-            {(onActionClick || onDeleteClick || onResetPassword) && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">Acciones</th>}
+            {(onActionClick || onDeleteClick || onResetPassword || onEditCampaign) && <th className="px-6 py-3 border-b-2 border-gray-300 text-left text-xs leading-4 text-black uppercase tracking-wider">Acciones</th>}
           </tr>
         </thead>
         <tbody className='text-black'>
           {data.map((row, rowIndex) => {
             return (
             <tr key={rowIndex}>
-              {visibleColumns.map((column) => {
+              {rowNumberOffset !== undefined && <td className="w-12 px-2 py-4 text-center whitespace-no-wrap border-b border-gray-500">{rowNumberOffset + rowIndex + 1}</td>}
+              {columns.map((column) => {
                 const value = column.accessor.split('.').reduce((acc, part) => acc && acc[part], row);
                 return (
                   <td key={column.accessor} className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
@@ -58,7 +58,7 @@ const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = fa
                 );
               })}
               
-              {(onActionClick || onDeleteClick || onResetPassword) && (
+              {(onActionClick || onDeleteClick || onResetPassword || onEditCampaign) && (
                 <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                   {onActionClick && (
                     <button type="button" aria-label={actionLabel ?? 'Editar usuario'} className="relative z-10 text-blue-500 hover:text-blue-700" onClick={() => onActionClick(row)}>
@@ -66,6 +66,9 @@ const TableUser: React.FC<TableProps> = ({ columns, data, showProductColumn = fa
                     </button>
                   )}
                   {onResetPassword && <button type="button" aria-label="Generar clave temporal" title="Generar clave temporal" className="relative z-10 ml-2 text-amber-600 hover:text-amber-800" onClick={() => onResetPassword(row)}><KeyIcon className="h-5 w-5" /></button>}
+                  {onEditCampaign && row.product && (
+                    <button type="button" aria-label="Editar campana" title="Editar campana" className="relative z-10 ml-2 text-violet-600 hover:text-violet-800" onClick={() => onEditCampaign(row)}><TagIcon className="h-5 w-5" /></button>
+                  )}
                   {onDeleteClick && (
                     <button type="button" aria-label="Eliminar usuario" className="relative z-10 ml-2 text-red-500 hover:text-red-700" onClick={() => onDeleteClick(row)}>
                       <TrashIcon className="h-5 w-5" />

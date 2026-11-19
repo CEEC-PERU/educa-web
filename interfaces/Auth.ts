@@ -16,10 +16,10 @@ export interface AuthContextData {
   isLoading?: boolean;
   error?: string | null;
   resetInactivityTimer: () => void;
-  redirectToDashboard: (role: number) => void;
+  redirectToDashboard: (role: number, accessToken?: string) => void;
   profileInfo?: Profile | null | UserInfo;
-  refreshProfile: (token: string, userId: number) => Promise<void>; // Anadido aqui
-  completePasswordChange: () => void;
+  refreshProfile: (token: string, userId: number) => Promise<Profile | null>;
+  completePasswordChange: (updatedToken?: string) => void;
 }
 
 export interface AuthProviderProps {

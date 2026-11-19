@@ -1,4 +1,4 @@
-export const WHATSAPP_NUMBER = "51965338844"; // +51 965 338 844
+export const WHATSAPP_NUMBER = "51963002441"; // +51 963002441
 
 export const WHATSAPP_PREFILLED_MESSAGE =
   "Hola, tengo una consulta sobre la plataforma Mentormind.";

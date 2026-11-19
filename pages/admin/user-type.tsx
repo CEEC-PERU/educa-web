@@ -22,6 +22,9 @@ import { User } from '../../interfaces/User/UserAdmin';
 import { Enterprise } from '../../interfaces/Enterprise';
 import './../../app/globals.css';
 import { API_ADMIN_RIMAC_SYNC } from '../../utils/Endpoints';
+import { getCampaignLabel, getCampaignColumnLabel } from '../../utils/campaigns';
+import CampaignFormModal from '../../components/campaigns/CampaignFormModal';
+import { Campaign, getCampaigns, updateCampaign } from '../../services/campaignService';
 
 const RoleDetail: React.FC = () => {
   const [showSidebar, setShowSidebar] = useState(true);
@@ -43,6 +46,13 @@ const RoleDetail: React.FC = () => {
   const [userToReset, setUserToReset] = useState<User | null>(null);
   const [rimacSyncing, setRimacSyncing] = useState(false);
   const rimacFileInput = useRef<HTMLInputElement>(null);
+  // Edicion puntual de la campana de un usuario (nombre y CECO).
+  const [campaignModalOpen, setCampaignModalOpen] = useState(false);
+  const [campaignToEdit, setCampaignToEdit] = useState<Campaign | null>(null);
+  const [campaignSaving, setCampaignSaving] = useState(false);
+  const [campaignFormError, setCampaignFormError] = useState<string | null>(null);
+  // Se incrementa para forzar la recarga del listado de usuarios.
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const STUDENT_ROLE_ID = 1; // Reemplaza este valor con el ID real del rol de estudiante
   const ADMIN_ROLE_ID = 4; // Reemplaza este valor con el ID real del rol de admin
@@ -51,7 +61,9 @@ const RoleDetail: React.FC = () => {
   const isCompanyScopedList = Boolean(
     roleId && Number(roleId) !== ADMIN_ROLE_ID && Number(roleId) !== CONTENT_ROLE_ID
   );
-  const showProductColumn = Number(selectedCompany) === 2;
+  // La columna de campaña se muestra siempre. El encabezado depende de la empresa
+  // que se está listando: "Producto" para Rimac (enterprise_id === 2), "Campaña" en el resto.
+  const campaignColumnLabel = getCampaignColumnLabel(selectedCompany);
   const isSystemAdmin = typeof user === 'object' && user !== null && Number(user.role) === 4;
   const canSyncRimac = isSystemAdmin && Number(roleId) === STUDENT_ROLE_ID && Number(selectedCompany) === 2;
 
@@ -124,7 +136,7 @@ const RoleDetail: React.FC = () => {
 
     fetchUsers();
     return () => { active = false; };
-  }, [selectedCompany, roleId, page, debouncedFilter]);
+  }, [selectedCompany, roleId, page, debouncedFilter, refreshKey]);
 
   const handleFilterChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -156,8 +168,9 @@ const RoleDetail: React.FC = () => {
   ];
 
   if (roleId && Number(roleId) === STUDENT_ROLE_ID) {
-    columnsWithProfile.push({ header: 'Producto', accessor: 'product' });
-    columnsWithoutProfile.push({ header: 'Producto', accessor: 'product' });
+    // El accessor sigue siendo 'product' porque es la clave del contrato JSON de la API.
+    columnsWithProfile.push({ header: campaignColumnLabel, accessor: 'product' });
+    columnsWithoutProfile.push({ header: campaignColumnLabel, accessor: 'product' });
     columnsWithProfile.push({ header: 'Sesiones', accessor: 'session_count' });
     columnsWithoutProfile.push({
       header: 'Sesiones',
@@ -182,6 +195,45 @@ const RoleDetail: React.FC = () => {
 
   const handleResetPassword = (row: User) => {
     setUserToReset(row);
+  };
+
+  // Abre el editor de la campana del usuario: recupera el CECO desde el listado
+  // de campanas de la empresa (la tabla de usuarios solo trae id y nombre).
+  const handleEditCampaign = async (row: any) => {
+    const campaignId = Number(row?.product?.id);
+    if (!token || !campaignId || !selectedCompany) return;
+    try {
+      const list = await getCampaigns(token, Number(selectedCompany));
+      const found = (Array.isArray(list) ? list : []).find(
+        (campaign) => Number(campaign.id) === campaignId,
+      );
+      if (!found) {
+        toast.error('No se encontro la campana del usuario.');
+        return;
+      }
+      setCampaignToEdit(found);
+      setCampaignFormError(null);
+      setCampaignModalOpen(true);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'No se pudo cargar la campana.');
+    }
+  };
+
+  const handleSaveCampaign = async (values: { name: string; ceco: string | null }) => {
+    if (!token || !campaignToEdit) return;
+    setCampaignSaving(true);
+    setCampaignFormError(null);
+    try {
+      await updateCampaign(token, campaignToEdit.id, values);
+      toast.success('Campana actualizada correctamente.');
+      setCampaignModalOpen(false);
+      setCampaignToEdit(null);
+      setRefreshKey((current) => current + 1);
+    } catch (error) {
+      setCampaignFormError(error instanceof Error ? error.message : 'No se pudo actualizar la campana.');
+    } finally {
+      setCampaignSaving(false);
+    }
   };
 
   const confirmResetPassword = async () => {
@@ -349,7 +401,7 @@ const RoleDetail: React.FC = () => {
             {roleId &&
               Number(roleId) !== ADMIN_ROLE_ID &&
               Number(roleId) !== CONTENT_ROLE_ID && (
-                <div className="gap-6 w-full max-w-2xl flex space-x-4 mb-6 mt-8">
+                <div className="flex w-full flex-wrap items-center gap-3 mb-6 mt-8">
                   {companies.map((company, index) => (
                     <ButtonContent
                       key={company.enterprise_id}
@@ -380,10 +432,11 @@ const RoleDetail: React.FC = () => {
                 <TableUser
                   columns={columnsWithProfile}
                   data={usersWithProfile}
-                  showProductColumn={showProductColumn}
+                  rowNumberOffset={(page - 1) * PAGE_SIZE}
                   actionLabel="Editar"
                   onActionClick={handleActionClick}
                   onResetPassword={handleResetPassword}
+                  onEditCampaign={handleEditCampaign}
                 />
               </div>
               <div>
@@ -393,8 +446,8 @@ const RoleDetail: React.FC = () => {
                 <TableUser
                   columns={columnsWithoutProfile}
                   data={usersWithoutProfile}
-                  showProductColumn={showProductColumn}
                   onResetPassword={handleResetPassword}
+                  onEditCampaign={handleEditCampaign}
                 />
               </div>
             </div>
@@ -427,13 +480,25 @@ const RoleDetail: React.FC = () => {
           show={isModalOpen}
           onClose={handleModalClose}
           title="Registrar nuevo usuario"
+          bodyClassName="flex min-h-0 flex-1 flex-col overflow-hidden p-4 sm:p-6"
         >
           <UserForm
             roleId={Number(roleId)}
+            activeEnterpriseId={selectedCompany ?? undefined}
+            activeEnterpriseName={companies.find((company) => Number(company.enterprise_id) === Number(selectedCompany))?.name}
             onClose={handleModalClose}
             onSuccess={handleUserCreateSuccess}
           />
         </Modal>
+        <CampaignFormModal
+          show={campaignModalOpen}
+          onClose={() => { setCampaignModalOpen(false); setCampaignToEdit(null); setCampaignFormError(null); }}
+          onSubmit={handleSaveCampaign}
+          campaign={campaignToEdit}
+          label={getCampaignLabel(selectedCompany)}
+          submitting={campaignSaving}
+          error={campaignFormError}
+        />
         {userToReset && <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget && !resettingUser) setUserToReset(null); }}>
           <section role="dialog" aria-modal="true" aria-labelledby="reset-password-title" className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl">
             <div className="bg-gradient-to-r from-blue-600 to-violet-600 px-6 py-5 text-white"><div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/15"><KeyIcon className="h-6 w-6" /></div><h2 id="reset-password-title" className="text-xl font-semibold">Generar clave temporal</h2><p className="mt-1 text-sm text-white/80">Confirma el restablecimiento de acceso</p></div>

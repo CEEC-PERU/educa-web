@@ -2,7 +2,7 @@ import axios from 'axios';
 import { UserInfoData } from '../../interfaces/User/UserInfo';
 import { API_USER_INFO } from '../../utils/Endpoints';
 
-export const createUserInfo = async (data: UserInfoData) => {
+export const createUserInfo = async (data: UserInfoData, token: string) => {
   const formData = new FormData();
 
   formData.append('user_id', String(data.user_id));
@@ -15,6 +15,7 @@ export const createUserInfo = async (data: UserInfoData) => {
     const response = await axios.post(API_USER_INFO, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
       },
     });
     return response.data;

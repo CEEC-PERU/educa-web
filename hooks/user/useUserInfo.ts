@@ -7,12 +7,12 @@ export const useUserInfo = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const submitUserInfo = async (userInfo: UserInfoData) => {
+  const submitUserInfo = async (userInfo: UserInfoData, token: string) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await createUserInfo(userInfo);
+      const response = await createUserInfo(userInfo, token);
       setLoading(false);
       return response;
     } catch (err) {

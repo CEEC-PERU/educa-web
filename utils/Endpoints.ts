@@ -142,6 +142,8 @@ export const API_USERS_SYNC_PREVIEW = `${baseURL}/api/users/sync/preview`;
 export const API_USERS_SYNC_CONFIRM = `${baseURL}/api/users/sync/confirm`;
 export const API_USERS_CHECK_DOCUMENT = `${baseURL}/api/users/check-document`;
 export const API_PRODUCTS = `${baseURL}/api/products`;
+// Recurso canonico de campanas (CRUD). `/api/products` se conserva como alias.
+export const API_CAMPAIGNS = `${baseURL}/api/campaigns`;
 
 export const API_USERS_COURSE_CREATE = `${baseURL}/api/users/courseusers`;
 
