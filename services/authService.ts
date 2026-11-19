@@ -7,12 +7,12 @@ import { http } from "../lib/http/client";
 export const changePassword = async (
   currentPassword: string,
   newPassword: string,
-): Promise<void> => {
+): Promise<string> => {
   const response = await http.put(API_CHANGE_PASSWORD, {
     currentPassword,
     newPassword,
   });
-  return response.data;
+  return response.data.token;
 };
 
 export const signin = async ({

@@ -7,6 +7,8 @@ import {
   BuildingOfficeIcon,
   UserPlusIcon,
   ChartBarIcon,
+  BookOpenIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext';
 import { LogoutIcon } from "../icons/LogoutIcon";
@@ -30,7 +32,11 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
     const targetPath = path.replace(/\/+$/, "") || "/";
     return currentPath === targetPath || (!exact && currentPath.startsWith(`${targetPath}/`));
   };
-  const { logout, profileInfo } = useAuth();
+  const { logout, profileInfo, user } = useAuth();
+  const isSystemAdmin = typeof user === 'object' && user !== null && Number(user.role) === 4;
+  // La gestion de campañas la pueden usar los administradores global y corporativo.
+  const canManageCampaigns = typeof user === 'object' && user !== null
+    && [4, 5].includes(Number(user.role));
 
   let name = '';
   let uri_picture = '';
@@ -124,6 +130,46 @@ const SidebarAdmin: React.FC<SidebarAdminProps> = ({
                 )}<div className={isOpen ? "relative z-10 flex w-full items-center px-5" : "relative z-10 flex w-full items-center justify-center px-0"}><div className={"flex items-center justify-center w-[38px] h-[38px] rounded-lg shrink-0 transition-colors " + (isOpen ? "mr-3 " : "mr-0 ") + (isActivePath("/admin/users") ? "bg-white/15" : "bg-[#2D0B4A]")}><UserGroupIcon className="h-[20px] w-[20px]" /></div>
                 {isOpen && <span className={"text-[15px] font-medium transition-colors truncate flex-1 " + (isActivePath("/admin/users") ? "text-white" : "text-gray-400 group-hover:text-white")}>Usuarios</span>} {isOpen && <svg className={"ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 " + (isActivePath("/admin/users") ? "text-white/80" : "text-gray-600 group-hover:text-white")} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}</div></button>
             </li>
+            {isSystemAdmin && (
+              <li>
+                <button
+                  type="button"
+                  title="Gestión de Cursos"
+                  aria-label="Gestión de Cursos"
+                  data-active={isActivePath('/admin/courses')}
+                  onClick={() => handleNavigation('/admin/courses')}
+                  className={`relative flex h-[56px] w-full cursor-pointer items-center overflow-hidden rounded-2xl border transition-all duration-300 group ${isActivePath('/admin/courses') ? 'mb-2 border-transparent bg-[#7435c0] text-white' : 'mb-2 border-white/10 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white'}`}
+                >
+                  <div className={isOpen ? 'relative z-10 flex w-full items-center px-5' : 'relative z-10 flex w-full items-center justify-center px-0'}>
+                    <div className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-lg transition-colors ${isOpen ? 'mr-3 ' : 'mr-0 '}${isActivePath('/admin/courses') ? 'bg-white/15' : 'bg-[#2D0B4A]'}`}>
+                      <BookOpenIcon className="h-5 w-5" />
+                    </div>
+                    {isOpen && <span className={`flex-1 truncate text-left text-[15px] font-medium transition-colors ${isActivePath('/admin/courses') ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>Gestión de Cursos</span>}
+                    {isOpen && <svg className="ml-auto h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                  </div>
+                </button>
+              </li>
+            )}
+            {canManageCampaigns && (
+              <li>
+                <button
+                  type="button"
+                  title="Gestión de Campañas"
+                  aria-label="Gestión de Campañas"
+                  data-active={isActivePath('/admin/campaigns')}
+                  onClick={() => handleNavigation('/admin/campaigns')}
+                  className={`relative flex h-[56px] w-full cursor-pointer items-center overflow-hidden rounded-2xl border transition-all duration-300 group ${isActivePath('/admin/campaigns') ? 'mb-2 border-transparent bg-[#7435c0] text-white' : 'mb-2 border-white/10 bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white'}`}
+                >
+                  <div className={isOpen ? 'relative z-10 flex w-full items-center px-5' : 'relative z-10 flex w-full items-center justify-center px-0'}>
+                    <div className={`flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-lg transition-colors ${isOpen ? 'mr-3 ' : 'mr-0 '}${isActivePath('/admin/campaigns') ? 'bg-white/15' : 'bg-[#2D0B4A]'}`}>
+                      <TagIcon className="h-5 w-5" />
+                    </div>
+                    {isOpen && <span className={`flex-1 truncate text-left text-[15px] font-medium transition-colors ${isActivePath('/admin/campaigns') ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>Gestión de Campañas</span>}
+                    {isOpen && <svg className={`ml-auto h-5 w-5 transition-transform group-hover:translate-x-1 ${isActivePath('/admin/campaigns') ? 'text-white/80' : 'text-gray-600 group-hover:text-white'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                  </div>
+                </button>
+              </li>
+            )}
             <li>
               <button data-active={isActivePath("/admin/requirements")} onClick={() => handleNavigation('/admin/requirements')}
                 className={"relative flex items-center h-[56px] w-full mb-2 rounded-2xl overflow-hidden group cursor-pointer border transition-all duration-300 " + (isActivePath("/admin/requirements") ? "bg-[#7435c0] text-white border-transparent" : "bg-[#1A0630] text-gray-400 hover:bg-[#2D0B4A] hover:text-white border-white/10")}

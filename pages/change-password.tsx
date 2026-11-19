@@ -1,9 +1,10 @@
 import React from "react";
 import { useAuth } from "@/context/AuthContext";
 import ChangePasswordModal from "@/components/ChangePasswordModal";
+import { toast } from "sonner";
 
 const ChangePasswordPage: React.FC = () => {
-  const { user, completePasswordChange, redirectToDashboard } = useAuth();
+  const { user, refreshProfile, completePasswordChange, redirectToDashboard } = useAuth();
   const userRole = typeof user === "object" && user ? user.role : null;
 
   if (userRole === null) {
@@ -25,9 +26,21 @@ const ChangePasswordPage: React.FC = () => {
           show
           mandatory
           onClose={() => undefined}
-          onPasswordChanged={() => {
-            completePasswordChange();
-            redirectToDashboard(userRole);
+          onPasswordChanged={async (updatedToken) => {
+            if (!user || typeof user !== "object") {
+              toast.error("No se pudo validar la sesión. Inicia sesión nuevamente.");
+              return;
+            }
+            completePasswordChange(updatedToken);
+            try {
+              const profile = await refreshProfile(updatedToken, user.id);
+              if (!profile) {
+                toast.warning("Contraseña guardada, pero no se encontró el perfil. Se intentará cargar desde la plataforma.");
+              }
+            } catch {
+              toast.warning("Contraseña guardada, pero falló la actualización visual del perfil. Se volverá a intentar desde la plataforma.");
+            }
+            redirectToDashboard(user.role, updatedToken);
           }}
         />
       </div>

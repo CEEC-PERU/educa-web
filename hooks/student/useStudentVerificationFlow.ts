@@ -5,6 +5,7 @@ import { useUserInfo } from "@/hooks/user/useUserInfo";
 import { Profile } from "@/interfaces/User/UserInterfaces";
 import { UserInfoData } from "@/interfaces/User/UserInfo";
 import { API_USER_INFO_SHOWMODAL } from "@/utils/Endpoints";
+import { toast } from "sonner";
 
 function dataURLToFile(dataUrl: string, fileName: string): File {
   const arr = dataUrl.split(",");
@@ -35,7 +36,7 @@ function getEventCoords(
 }
 
 export function useStudentVerificationFlow() {
-  const { user, profileInfo, token } = useAuth();
+  const { user, profileInfo, token, refreshProfile } = useAuth();
   const { submitUserInfo, loading } = useUserInfo();
 
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
@@ -195,7 +196,7 @@ export function useStudentVerificationFlow() {
   }, []);
 
   const submit = useCallback(async () => {
-    if (!signature || !consentGiven || !userId) {
+    if (!signature || !consentGiven || !userId || !token) {
       alert("Debes firmar y confirmar tu consentimiento antes de enviar.");
       return;
     }
@@ -213,13 +214,18 @@ export function useStudentVerificationFlow() {
     };
 
     try {
-      await submitUserInfo(userInfo);
+      await submitUserInfo(userInfo, token);
+      try {
+        await refreshProfile(token, userId);
+      } catch {
+        toast.warning("Firma y consentimiento guardados, pero falló la actualización visual del perfil. Se volverá a intentar.");
+      }
       close();
-      alert("Datos enviados exitosamente");
+      toast.success("Firma y consentimiento enviados exitosamente.");
     } catch {
-      alert("Hubo un error al enviar los datos.");
+      toast.error("No se pudieron guardar la firma y el consentimiento. Inténtalo nuevamente.");
     }
-  }, [signature, consentGiven, userId, name, lastName, submitUserInfo, close]);
+  }, [signature, consentGiven, userId, name, lastName, token, submitUserInfo, refreshProfile, close]);
 
   return {
     isOpen: isOpen === true,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import AppLayout from "@/components/layouts/AppLayout";
 import { Profile } from "../../interfaces/User/UserInterfaces";
@@ -14,7 +14,8 @@ import RecentCourseCard from "../../components/student/RecentCourseCard";
 import Footer from "../../components/Footter";
 
 const StudentIndex = () => {
-  const { profileInfo } = useAuth();
+  const { profileInfo, refreshProfile, token, user } = useAuth();
+  const [profileRetryFailed, setProfileRetryFailed] = useState(false);
   const { coursescount } = useCoursesCount();
   const { summary, isLoading: isSummaryLoading } = useCourseTimeSummary(4);
   const {
@@ -24,8 +25,36 @@ const StudentIndex = () => {
   const router = useRouter();
 
   const profile = profileInfo as Profile | null;
+  const authenticatedUserId =
+    typeof user === "object" && user ? user.id : null;
   const name = profile?.first_name ?? "";
   const avatar = profile?.profile_picture ?? null;
+
+  useEffect(() => {
+    if (profileInfo || !token || !authenticatedUserId) {
+      setProfileRetryFailed(false);
+      return;
+    }
+    let cancelled = false;
+    refreshProfile(token, authenticatedUserId).then((result) => {
+      if (!cancelled) setProfileRetryFailed(!result);
+    }).catch(() => {
+      if (!cancelled) setProfileRetryFailed(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [profileInfo, refreshProfile, token, authenticatedUserId]);
+
+  const retryProfile = async () => {
+    if (!token || !authenticatedUserId) return;
+    try {
+      const result = await refreshProfile(token, authenticatedUserId);
+      setProfileRetryFailed(!result);
+    } catch {
+      setProfileRetryFailed(true);
+    }
+  };
 
   const navigateToCourseDetails = (courseId: number) => {
     router.push({
@@ -69,6 +98,15 @@ const StudentIndex = () => {
             learningTimeSeconds={learningTimeSeconds}
             isLearningTimeLoading={isLearningTimeLoading}
           />
+
+          {profileRetryFailed && (
+            <div role="status" className="mb-4 rounded-lg bg-white/90 px-4 py-3 text-sm text-gray-700 shadow">
+              No se pudieron actualizar tus datos de perfil.
+              <button type="button" onClick={retryProfile} className="ml-2 font-semibold text-blue-700 underline">
+                Reintentar
+              </button>
+            </div>
+          )}
 
           <div className="w-full min-w-0 mt-1 flex items-center justify-between flex-wrap gap-2">
             <h2 className="font-space-grotesk text-2xl font-bold text-black">

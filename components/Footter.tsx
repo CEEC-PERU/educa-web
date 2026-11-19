@@ -79,7 +79,7 @@ export default function Footer() {
           <div className="w-full md:w-auto">
             <h3 className="text-sm font-bold mb-6 text-white">Contactanos</h3>
             <ul className="space-y-4 text-sm text-gray-400">
-              <li>+51 965 338 844</li>
+              <li>+51 963 002 441</li>
               <li>contacto@qtech.com.pe</li>
               <li>MAGDALENA DEL MAR - LIMA</li>
             </ul>
