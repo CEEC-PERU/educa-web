@@ -286,8 +286,27 @@ const RoleDetail: React.FC = () => {
         timeout: 0,
       });
       const summary = response.data;
+      const invalidDocuments = Array.isArray(summary.documentosInvalidos) ? summary.documentosInvalidos : [];
+      const duplicates = Array.isArray(summary.duplicados) ? summary.duplicados : [];
+      const invalidNames = Array.isArray(summary.nombresInvalidos) ? summary.nombresInvalidos : [];
+      if (invalidDocuments.length > 0 || duplicates.length > 0 || invalidNames.length > 0) {
+        const cell = (value: unknown) => {
+          const safe = String(value ?? '').replace(/^[\s\t\r\n]*[=+@-]/, "'$&");
+          return `"${safe.replace(/"/g, '""')}"`;
+        };
+        const lines = ['Fila;Tipo;Documento;Nombre;Producto;Motivo', ...[...invalidDocuments, ...duplicates, ...invalidNames].map((row: { fila: number; tipo: string; documento: string; nombre?: string; producto?: string; motivo: string }) =>
+          [row.fila, row.tipo, row.documento, row.nombre, row.producto, row.motivo].map(cell).join(';'))];
+        const url = URL.createObjectURL(new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'rimac-observaciones.csv';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
       toast.success(
-        `Sincronización completada: ${summary.creados ?? 0} creados, ${summary.mantenidos ?? 0} mantenidos, ${summary.reactivados ?? 0} reactivados y ${summary.desactivados ?? 0} desactivados.`,
+        `Sincronización completada: ${summary.creados ?? 0} creados, ${summary.mantenidos ?? 0} mantenidos, ${summary.reactivados ?? 0} reactivados, ${summary.desactivados ?? 0} desactivados, ${summary.filasTipoDocumentoOmitidas ?? 0} tipos omitidos, ${invalidDocuments.length} CE o PA inválidos, ${duplicates.length} filas duplicadas y ${invalidNames.length} filas con nombres observados.`,
         { id: toastId, duration: 12000, description: summary.advertenciaSeguridad },
       );
       if (roleId) {
